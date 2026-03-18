@@ -1,0 +1,4 @@
+"NSLocationWhenInUseUsageDescription" = "We need your location to show nearby stores and offers";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "We need your location to provide you with the best offers even when the app is in the background";
+"NSLocationAlwaysUsageDescription" = "We need your location to provide you with the best offers even when the app is in the background";
+"NSNotificationUsageDescription" = "Please enable notifications to receive updates and reminders about the latest offers";

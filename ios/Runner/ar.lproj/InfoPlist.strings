@@ -1,0 +1,4 @@
+"NSLocationWhenInUseUsageDescription" = "نحتاج للوصول إلى موقعك لعرض الملحات  والعروض القريبة منك";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "نحتاج للوصول إلى موقعك لتزويدك بأفضل العروض حتى عند تشغيل التطبيق في الخلفية";
+"NSLocationAlwaysUsageDescription" = "نحتاج للوصول إلى موقعك لتزويدك بأفضل العروض حتى عند تشغيل التطبيق في الخلفية";
+"NSNotificationUsageDescription" = "يرجى تمكين الإشعارات لتلقى التحديثات والتذكيرات بأحدث العروض";

@@ -1,0 +1,16 @@
+/* 
+ * InfoPlist.strings (English)
+ * Location: ios/Runner/en.lproj/InfoPlist.strings
+ * 
+ * This file provides localized permission descriptions in English
+ * iOS will automatically use these when device language is English
+ */
+
+/* Location Permission */
+"NSLocationWhenInUseUsageDescription" = "We need your location to show nearby stores and offers";
+
+/* App Display Name (optional - can be different per language) */
+"CFBundleDisplayName" = "Coupony";
+
+/* App Name */
+"CFBundleName" = "Coupony";

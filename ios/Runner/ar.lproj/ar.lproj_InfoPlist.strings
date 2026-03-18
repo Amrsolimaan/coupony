@@ -1,0 +1,16 @@
+/* 
+ * InfoPlist.strings (Arabic)
+ * Location: ios/Runner/ar.lproj/InfoPlist.strings
+ * 
+ * This file provides localized permission descriptions in Arabic
+ * iOS will automatically use these when device language is Arabic
+ */
+
+/* Location Permission */
+"NSLocationWhenInUseUsageDescription" = "نحتاج إلى موقعك لعرض المتاجر والعروض القريبة منك";
+
+/* App Display Name (optional - can be different per language) */
+"CFBundleDisplayName" = "كوبوني";
+
+/* App Name */
+"CFBundleName" = "كوبوني";

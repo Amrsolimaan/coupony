@@ -1,0 +1,40 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:coupon/app.dart';
+import 'package:coupon/core/storage/local_cache_service.dart';
+import 'package:coupon/features/onboarding/data/models/user_preferences_model.dart';
+import 'package:coupon/features/permissions/data/models/permission_status_model.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'config/dependency_injection/injection_container.dart' as di;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 1. Initialize Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Set preferred orientations
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
+  // 1. Initialize Hive
+  await Hive.initFlutter();
+
+  // 2. Register Hive Adapters
+  Hive.registerAdapter(UserPreferencesModelAdapter());
+  Hive.registerAdapter(PermissionStatusModelAdapter());
+
+  // 3. Initialize Dependency Injection أولاً
+  await di.init();
+
+  // 4. تهيئة نسخة الـ Cache الموجودة داخل الحاوية (sl)
+  await di.sl<LocalCacheService>().init();
+
+  runApp(const MyApp());
+}

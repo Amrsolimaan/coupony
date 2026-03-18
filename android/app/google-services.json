@@ -1,0 +1,126 @@
+{
+  "project_info": {
+    "project_number": "601682043196",
+    "project_id": "tset-firebase77",
+    "storage_bucket": "tset-firebase77.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:601682043196:android:449e08ca13df33f9d4be39",
+        "android_client_info": {
+          "package_name": "com.SanadiHealth.sanadi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "601682043196-42mjeia284vm4tl3oumb9quprtfc0cpe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.SanadiHealth.sanadi",
+            "certificate_hash": "622abce5fbcc4b7ae4a69720c7a7450d150eb44f"
+          }
+        },
+        {
+          "client_id": "601682043196-572u0ke3ddkpl5m8d6crq7v406j0i6pr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEtsGYt6wYn1p3FvLb67hvmA4sF2pS4ts"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "601682043196-572u0ke3ddkpl5m8d6crq7v406j0i6pr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "601682043196-1h2jm15r04pjf3fb8todugchmgb8ls17.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.sanadi"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:601682043196:android:3598cb4d05718a8fd4be39",
+        "android_client_info": {
+          "package_name": "com.example.coupony"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "601682043196-572u0ke3ddkpl5m8d6crq7v406j0i6pr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEtsGYt6wYn1p3FvLb67hvmA4sF2pS4ts"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "601682043196-572u0ke3ddkpl5m8d6crq7v406j0i6pr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "601682043196-1h2jm15r04pjf3fb8todugchmgb8ls17.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.sanadi"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:601682043196:android:41ea512d23444f05d4be39",
+        "android_client_info": {
+          "package_name": "com.example.firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "601682043196-572u0ke3ddkpl5m8d6crq7v406j0i6pr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEtsGYt6wYn1p3FvLb67hvmA4sF2pS4ts"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "601682043196-572u0ke3ddkpl5m8d6crq7v406j0i6pr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "601682043196-1h2jm15r04pjf3fb8todugchmgb8ls17.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.sanadi"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
