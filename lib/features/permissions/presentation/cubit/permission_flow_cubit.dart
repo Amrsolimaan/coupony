@@ -6,6 +6,9 @@ import 'dart:convert';
 import '../../../../core/services/notification_service.dart';
 import '../../../../core/services/location_service.dart';
 import '../../domain/repositories/permission_repository.dart';
+import '../../domain/use_cases/check_permission_status_use_case.dart';
+import '../../domain/use_cases/determine_next_permission_step_use_case.dart';
+import '../../domain/use_cases/request_location_permission_use_case.dart';
 import 'permission_flow_state.dart';
 
 /// Permission Flow Cubit
@@ -18,17 +21,22 @@ import 'permission_flow_state.dart';
 /// - Never batches permission requests
 /// - Each permission tied to user action
 ///
-/// ✅ FIXED ISSUES:
-/// - Proper position fetch error handling
-/// - Clear navigation flow on failures
-/// - Retry mechanism for position fetching
-/// - Better error states and user feedback
+/// ✅ REFACTORED:
+/// - Uses Use Cases for business logic
+/// - Cleaner separation of concerns
+/// - Repository only for data operations
 class PermissionFlowCubit extends Cubit<PermissionFlowState> {
+  final CheckPermissionStatusUseCase checkPermissionStatusUseCase;
+  final RequestLocationPermissionUseCase requestLocationPermissionUseCase;
+  final DetermineNextPermissionStepUseCase determineNextPermissionStepUseCase;
   final PermissionRepository repository;
   final NotificationService notificationService;
   final Logger logger;
 
   PermissionFlowCubit({
+    required this.checkPermissionStatusUseCase,
+    required this.requestLocationPermissionUseCase,
+    required this.determineNextPermissionStepUseCase,
     required this.repository,
     required this.logger,
     required this.notificationService,
@@ -52,17 +60,33 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     result.fold(
       (failure) {
         logger.d('No existing permissions found - starting fresh');
-        // First time user - start from location intro
+        // First time user - use use case to determine next step
+        final nextStep = determineNextPermissionStepUseCase.execute(
+          locationStatus: LocationPermissionStatus.notRequested,
+          notificationStatus: NotificationPermissionStatus.notRequested,
+          hasCompletedFlow: false,
+          isLocationServiceEnabled: true,
+        );
         emit(
           state.copyWith(
-            currentStep: 1,
-            navSignal: PermissionNavigationSignal.toLocationIntro,
+            currentStep: nextStep.step,
+            navSignal: nextStep.signal,
           ),
         );
       },
       (status) {
         if (status != null && status.hasCompletedFlow) {
-          // User has completed flow before - go directly to home
+          // User has completed flow before - use use case to determine
+          final nextStep = determineNextPermissionStepUseCase.execute(
+            locationStatus: _mapStringToLocationStatus(status.locationStatus),
+            notificationStatus: _mapStringToNotificationStatus(
+              status.notificationStatus,
+            ),
+            hasCompletedFlow: status.hasCompletedFlow,
+            isLocationServiceEnabled: true,
+            hasPosition: status.hasLocation,
+          );
+          
           emit(
             state.copyWith(
               locationStatus: _mapStringToLocationStatus(status.locationStatus),
@@ -74,18 +98,24 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
               userPosition: status.hasLocation
                   ? _createPosition(status.latitude!, status.longitude!)
                   : null,
-              currentStep: 4,
+              currentStep: nextStep.step,
               isCompleted: true,
-              navSignal: PermissionNavigationSignal.toHome,
+              navSignal: nextStep.signal,
             ),
           );
           logger.i('User has completed flow before - skipping to home');
         } else {
-          // User exists but hasn't completed - start from beginning
+          // User exists but hasn't completed - use use case
+          final nextStep = determineNextPermissionStepUseCase.execute(
+            locationStatus: LocationPermissionStatus.notRequested,
+            notificationStatus: NotificationPermissionStatus.notRequested,
+            hasCompletedFlow: false,
+            isLocationServiceEnabled: true,
+          );
           emit(
             state.copyWith(
-              currentStep: 1,
-              navSignal: PermissionNavigationSignal.toLocationIntro,
+              currentStep: nextStep.step,
+              navSignal: nextStep.signal,
             ),
           );
           logger.i(
@@ -108,10 +138,10 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     emit(state.copyWith(isRequestingLocation: true, errorMessage: null));
 
     try {
-      // Request permission
-      final statusResult = await repository.requestLocationPermission();
+      // ✅ Use the Use Case instead of direct repository calls
+      final result = await requestLocationPermissionUseCase.execute();
 
-      await statusResult.fold(
+      result.fold(
         (failure) {
           logger.e('Location permission request failed: ${failure.message}');
           emit(
@@ -123,29 +153,36 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
             ),
           );
         },
-        (status) async {
-          logger.i('Location permission status: $status');
+        (permissionResult) async {
+          logger.i('Location permission status: ${permissionResult.status}');
 
           // Update state with permission status
           emit(
-            state.copyWith(isRequestingLocation: false, locationStatus: status),
+            state.copyWith(
+              isRequestingLocation: false,
+              locationStatus: permissionResult.status,
+            ),
           );
 
           // Handle different permission statuses
-          if (status == LocationPermissionStatus.granted ||
-              status == LocationPermissionStatus.grantedLimited) {
-            // ✅ FIXED: Try to fetch position with proper error handling
-            final positionFetched = await _fetchCurrentPositionWithValidation();
-
-            if (positionFetched) {
-              // Success! Go to map screen
+          if (permissionResult.isGranted) {
+            if (permissionResult.hasPosition) {
+              // Success! Position fetched, go to map screen
               logger.i('✅ Position fetched successfully, navigating to map');
               emit(
                 state.copyWith(
+                  userPosition: permissionResult.position,
                   currentStep: 2,
                   navSignal: PermissionNavigationSignal.toLocationMap,
                 ),
               );
+              // Fetch address for this position
+              if (permissionResult.position != null) {
+                getAddressFromCoordinates(
+                  permissionResult.position!.latitude,
+                  permissionResult.position!.longitude,
+                );
+              }
             } else {
               // ⚠️ Permission granted but position fetch failed
               logger.w('⚠️ Permission granted but failed to get position');
@@ -156,7 +193,8 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
                 ),
               );
             }
-          } else if (status == LocationPermissionStatus.serviceDisabled) {
+          } else if (permissionResult.status ==
+              LocationPermissionStatus.serviceDisabled) {
             // GPS is turned off
             logger.w('Location service disabled');
             emit(
@@ -168,10 +206,12 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
           } else {
             // Permission denied (temporary or permanent), skip to notification
             logger.w('Location denied, skipping to notification');
+            final nextStep = determineNextPermissionStepUseCase
+                .afterSkippingLocation();
             emit(
               state.copyWith(
-                currentStep: 3,
-                navSignal: PermissionNavigationSignal.toNotificationIntro,
+                currentStep: nextStep.step,
+                navSignal: nextStep.signal,
               ),
             );
           }
@@ -306,11 +346,12 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
   /// User confirmed location on map (clicked "تحديد الموقع")
   void confirmLocation() {
     logger.i('User confirmed location');
-    // Ensure we have a valid signal to navigate
+    // ✅ Use the Use Case to determine next step
+    final nextStep = determineNextPermissionStepUseCase.afterLocationConfirmed();
     emit(
       state.copyWith(
-        currentStep: 3,
-        navSignal: PermissionNavigationSignal.toNotificationIntro,
+        currentStep: nextStep.step,
+        navSignal: nextStep.signal,
       ),
     );
   }
@@ -745,8 +786,9 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
             ),
           );
 
-          // Always proceed to loading, regardless of grant/deny
-          await _completeFlow();
+          // ✅ Use the Use Case to determine next step (always complete after notification)
+          final nextStep = determineNextPermissionStepUseCase.afterNotificationRequest();
+          await _completeFlow(nextStep);
         },
       );
     } catch (e) {
@@ -803,27 +845,37 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     logger.i('User skipped step ${state.currentStep}');
 
     if (state.currentStep == 1 || state.currentStep == 2) {
-      // Skip location → go to notification
+      // Skip location → use use case
+      final nextStep = determineNextPermissionStepUseCase.afterSkippingLocation();
       emit(
         state.copyWith(
-          currentStep: 3,
-          navSignal: PermissionNavigationSignal.toNotificationIntro,
+          currentStep: nextStep.step,
+          navSignal: nextStep.signal,
         ),
       );
     } else if (state.currentStep == 3) {
-      // Skip notification → complete flow
-      _completeFlow();
+      // Skip notification → use use case
+      final nextStep = determineNextPermissionStepUseCase.afterSkippingNotification();
+      emit(
+        state.copyWith(
+          currentStep: nextStep.step,
+          navSignal: nextStep.signal,
+        ),
+      );
     }
   }
 
   /// Skip entire flow (from any step)
   void skipEntireFlow() {
     logger.i('User skipped entire permission flow');
+    // ✅ Use the Use Case to determine next step
+    final nextStep = determineNextPermissionStepUseCase.afterSkippingEntireFlow();
     emit(
       state.copyWith(
         isSkipped: true,
         isCompleted: true,
-        navSignal: PermissionNavigationSignal.toHome,
+        currentStep: nextStep.step,
+        navSignal: nextStep.signal,
       ),
     );
 
@@ -836,14 +888,14 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
   // ════════════════════════════════════════════════════════
 
   /// Complete the permission flow
-  Future<void> _completeFlow() async {
+  Future<void> _completeFlow(NextStepResult nextStep) async {
     logger.i('Completing permission flow...');
 
     // Go to loading screen
     emit(
       state.copyWith(
-        currentStep: 4,
-        navSignal: PermissionNavigationSignal.toLoading,
+        currentStep: nextStep.step,
+        navSignal: nextStep.signal,
       ),
     );
 

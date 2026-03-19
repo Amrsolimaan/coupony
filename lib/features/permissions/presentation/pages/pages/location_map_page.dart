@@ -438,17 +438,16 @@ class _LocationMapPageState extends State<LocationMapPage> {
                         )
                       : IconButton(
                           onPressed: () async {
+                            // ✅ FIX: Capture cubit before async gap
+                            final cubit = context.read<PermissionFlowCubit>();
+                            
                             // Get fresh current location
-                            await context
-                                .read<PermissionFlowCubit>()
-                                .useCurrentLocation();
+                            await cubit.useCurrentLocation();
 
                             if (!mounted) return;
 
                             // Move camera to updated position
-                            final updatedState = context
-                                .read<PermissionFlowCubit>()
-                                .state;
+                            final updatedState = cubit.state;
                             if (updatedState.userPosition != null) {
                               final pos = updatedState.userPosition!;
                               final newLocation = LatLng(
@@ -487,16 +486,15 @@ class _LocationMapPageState extends State<LocationMapPage> {
                     onTap: state.isRequestingLocation
                         ? null
                         : () async {
-                            await context
-                                .read<PermissionFlowCubit>()
-                                .useCurrentLocation();
+                            // ✅ FIX: Capture cubit before async gap
+                            final cubit = context.read<PermissionFlowCubit>();
+                            
+                            await cubit.useCurrentLocation();
 
                             if (!mounted) return;
 
                             // Move camera to updated position
-                            final updatedState = context
-                                .read<PermissionFlowCubit>()
-                                .state;
+                            final updatedState = cubit.state;
                             if (updatedState.userPosition != null) {
                               final pos = updatedState.userPosition!;
                               final newLocation = LatLng(

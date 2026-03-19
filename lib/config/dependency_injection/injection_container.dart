@@ -25,6 +25,9 @@ import '../../features/onboarding/presentation/cubit/onboarding_flow_cubit.dart'
 import '../../features/permissions/data/data_sources/permission_local_data_source.dart';
 import '../../features/permissions/data/repositories/permission_repository_impl.dart';
 import '../../features/permissions/domain/repositories/permission_repository.dart';
+import '../../features/permissions/domain/use_cases/check_permission_status_use_case.dart';
+import '../../features/permissions/domain/use_cases/determine_next_permission_step_use_case.dart';
+import '../../features/permissions/domain/use_cases/request_location_permission_use_case.dart';
 
 final sl = GetIt.instance;
 
@@ -38,7 +41,7 @@ Future<void> init() async {
   // FlutterSecureStorage - Used by SecureStorageService and DioClient
   sl.registerLazySingleton<FlutterSecureStorage>(
     () => const FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
+      aOptions: AndroidOptions(),
     ),
   );
 
@@ -161,9 +164,25 @@ Future<void> init() async {
     ),
   );
 
+  // Use Cases
+  sl.registerLazySingleton<CheckPermissionStatusUseCase>(
+    () => CheckPermissionStatusUseCase(sl<PermissionRepository>()),
+  );
+
+  sl.registerLazySingleton<RequestLocationPermissionUseCase>(
+    () => RequestLocationPermissionUseCase(sl<PermissionRepository>()),
+  );
+
+  sl.registerLazySingleton<DetermineNextPermissionStepUseCase>(
+    () => DetermineNextPermissionStepUseCase(),
+  );
+
   // Cubit
   sl.registerFactory<PermissionFlowCubit>(
     () => PermissionFlowCubit(
+      checkPermissionStatusUseCase: sl<CheckPermissionStatusUseCase>(),
+      requestLocationPermissionUseCase: sl<RequestLocationPermissionUseCase>(),
+      determineNextPermissionStepUseCase: sl<DetermineNextPermissionStepUseCase>(),
       repository: sl<PermissionRepository>(),
       logger: sl<Logger>(),
       notificationService: sl<NotificationService>(),

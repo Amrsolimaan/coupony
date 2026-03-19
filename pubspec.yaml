@@ -45,6 +45,13 @@ dependencies:
   google_maps_flutter: ^2.14.0
   geocoding: ^3.0.0
   speech_to_text: ^7.3.0
+  
+  # ✅ NEW: Image caching dependencies
+  cached_network_image: ^3.4.1
+  flutter_cache_manager: ^3.4.1
+  shimmer: ^3.0.0
+  path: ^1.9.1
+
 flutter_native_splash:
   color: "#ffffff"
   android: true
@@ -69,4 +76,3 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
-

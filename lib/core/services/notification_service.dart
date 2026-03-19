@@ -18,9 +18,10 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
   
-  print("Handling a background message: ${message.messageId}");
-  print("Message data: ${message.data}");
-  print("Message notification: ${message.notification?.body}");
+  final logger = Logger();
+  logger.d("Handling a background message: ${message.messageId}");
+  logger.d("Message data: ${message.data}");
+  logger.d("Message notification: ${message.notification?.body}");
 }
 
 /// Notification Service
@@ -47,15 +48,15 @@ class NotificationService {
 
       if (message.notification != null) {
         logger.i('Message also contained a notification: ${message.notification?.title}');
-        print('Notification Title: ${message.notification?.title}');
-        print('Notification Body: ${message.notification?.body}');
+        logger.i('Notification Title: ${message.notification?.title}');
+        logger.i('Notification Body: ${message.notification?.body}');
       }
     });
 
     // 2. Background/Terminated messages (when app is opened via notification)
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       logger.i('A new onMessageOpenedApp event was published!');
-      print('App opened from notification: ${message.notification?.title}');
+      logger.i('App opened from notification: ${message.notification?.title}');
     });
 
     // 3. Set background handler
@@ -153,7 +154,7 @@ class NotificationService {
     // ════════════════════════════════════════════════════════
     // TODO: Integrate with backend API
     // ════════════════════════════════════════════════════════
-    print('FCM Token: $token');
+    logger.d('FCM Token: $token');
     logger.i('Token sent to backend: ${token.substring(0, 20)}...');
     
     // Example:

@@ -29,6 +29,7 @@ void main() async {
   // 2. Register Hive Adapters
   Hive.registerAdapter(UserPreferencesModelAdapter());
   Hive.registerAdapter(PermissionStatusModelAdapter());
+  // Hive.registerAdapter(CouponModelAdapter()); // ✅ Uncomment after running build_runner
 
   // 3. Initialize Dependency Injection أولاً
   await di.init();

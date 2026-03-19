@@ -1,42 +1,50 @@
 import 'package:hive/hive.dart';
 
+import '../../domain/entities/permission_entity.dart';
+
 part 'permission_status_model.g.dart';
 
-/// Permission Status Model
-/// Stores permission status for location and notifications
-/// Saved locally in Hive to avoid re-asking
-@HiveType(typeId: 2) // typeId must be unique across all Hive models
-class PermissionStatusModel {
-  /// Location permission status
-  /// Values: 'granted', 'denied', 'permanently_denied', 'not_requested'
+@HiveType(typeId: 2)
+class PermissionStatusModel extends PermissionEntity {
+  // ════════════════════════════════════════════════════════
+  // SENTINEL — used to detect "not passed" in copyWith
+  // ════════════════════════════════════════════════════════
+  static const Object _sentinel = Object();
+
+  // ════════════════════════════════════════════════════════
+  // HIVE FIELDS
+  // ════════════════════════════════════════════════════════
+  @override
   @HiveField(0)
   final String locationStatus;
 
-  /// Notification permission status
-  /// Values: 'granted', 'denied', 'permanently_denied', 'not_requested'
+  @override
   @HiveField(1)
   final String notificationStatus;
 
-  /// User's latitude (if location granted)
+  @override
   @HiveField(2)
   final double? latitude;
 
-  /// User's longitude (if location granted)
+  @override
   @HiveField(3)
   final double? longitude;
 
-  /// FCM Token (if notification granted)
+  @override
   @HiveField(4)
   final String? fcmToken;
 
-  /// Timestamp when permissions were last updated
+  @override
   @HiveField(5)
   final DateTime timestamp;
 
-  /// Whether user has seen the permission flow at least once
+  @override
   @HiveField(6)
   final bool hasCompletedFlow;
 
+  // ════════════════════════════════════════════════════════
+  // CONSTRUCTOR
+  // ════════════════════════════════════════════════════════
   const PermissionStatusModel({
     required this.locationStatus,
     required this.notificationStatus,
@@ -45,13 +53,20 @@ class PermissionStatusModel {
     this.fcmToken,
     required this.timestamp,
     this.hasCompletedFlow = false,
-  });
+  }) : super(
+          locationStatus: locationStatus,
+          notificationStatus: notificationStatus,
+          latitude: latitude,
+          longitude: longitude,
+          fcmToken: fcmToken,
+          timestamp: timestamp,
+          hasCompletedFlow: hasCompletedFlow,
+        );
 
   // ════════════════════════════════════════════════════════
   // FACTORY CONSTRUCTORS
   // ════════════════════════════════════════════════════════
 
-  /// Create initial state (nothing requested yet)
   factory PermissionStatusModel.initial() {
     return PermissionStatusModel(
       locationStatus: 'not_requested',
@@ -61,7 +76,6 @@ class PermissionStatusModel {
     );
   }
 
-  /// Create from JSON (for API sync if needed)
   factory PermissionStatusModel.fromJson(Map<String, dynamic> json) {
     return PermissionStatusModel(
       locationStatus: json['location_status'] as String,
@@ -78,7 +92,6 @@ class PermissionStatusModel {
   // TO JSON
   // ════════════════════════════════════════════════════════
 
-  /// Convert to JSON (for API sync if needed)
   Map<String, dynamic> toJson() {
     return {
       'location_status': locationStatus,
@@ -95,51 +108,29 @@ class PermissionStatusModel {
   // COPY WITH
   // ════════════════════════════════════════════════════════
 
-  /// Create a copy with updated fields
   PermissionStatusModel copyWith({
     String? locationStatus,
     String? notificationStatus,
-    double? latitude,
-    double? longitude,
-    String? fcmToken,
+    Object? latitude = _sentinel,   // ✅ Object? مش double?
+    Object? longitude = _sentinel,  // ✅ Object? مش double?
+    Object? fcmToken = _sentinel,   // ✅ Object? مش String?
     DateTime? timestamp,
     bool? hasCompletedFlow,
   }) {
     return PermissionStatusModel(
       locationStatus: locationStatus ?? this.locationStatus,
       notificationStatus: notificationStatus ?? this.notificationStatus,
-      latitude: latitude ?? this.latitude,
-      longitude: longitude ?? this.longitude,
-      fcmToken: fcmToken ?? this.fcmToken,
+      latitude: latitude == _sentinel ? this.latitude : latitude as double?,
+      longitude: longitude == _sentinel ? this.longitude : longitude as double?,
+      fcmToken: fcmToken == _sentinel ? this.fcmToken : fcmToken as String?,
       timestamp: timestamp ?? this.timestamp,
       hasCompletedFlow: hasCompletedFlow ?? this.hasCompletedFlow,
     );
   }
 
   // ════════════════════════════════════════════════════════
-  // HELPER GETTERS
+  // TO STRING
   // ════════════════════════════════════════════════════════
-
-  /// Check if location permission is granted
-  bool get isLocationGranted =>
-      locationStatus == 'granted' || locationStatus == 'limited';
-
-  /// Check if notification permission is granted
-  bool get isNotificationGranted => notificationStatus == 'granted';
-
-  /// Check if location is permanently denied
-  bool get isLocationPermanentlyDenied =>
-      locationStatus == 'permanently_denied';
-
-  /// Check if notification is permanently denied
-  bool get isNotificationPermanentlyDenied =>
-      notificationStatus == 'permanently_denied';
-
-  /// Check if user has a saved location
-  bool get hasLocation => latitude != null && longitude != null;
-
-  /// Check if both permissions are granted
-  bool get areAllPermissionsGranted => isLocationGranted && isNotificationGranted;
 
   @override
   String toString() {
@@ -149,30 +140,5 @@ class PermissionStatusModel {
         'hasLocation: $hasLocation, '
         'hasFCM: ${fcmToken != null}'
         ')';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is PermissionStatusModel &&
-        other.locationStatus == locationStatus &&
-        other.notificationStatus == notificationStatus &&
-        other.latitude == latitude &&
-        other.longitude == longitude &&
-        other.fcmToken == fcmToken &&
-        other.timestamp == timestamp &&
-        other.hasCompletedFlow == hasCompletedFlow;
-  }
-
-  @override
-  int get hashCode {
-    return locationStatus.hashCode ^
-        notificationStatus.hashCode ^
-        latitude.hashCode ^
-        longitude.hashCode ^
-        fcmToken.hashCode ^
-        timestamp.hashCode ^
-        hasCompletedFlow.hashCode;
   }
 }
