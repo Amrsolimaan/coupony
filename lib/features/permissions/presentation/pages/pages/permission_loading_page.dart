@@ -1,4 +1,7 @@
 import 'package:coupon/config/routes/app_router.dart';
+import 'package:coupon/core/localization/l10n/app_localizations.dart';
+import 'package:coupon/core/theme/app_colors.dart';
+import 'package:coupon/core/theme/app_text_styles.dart';
 import 'package:coupon/features/permissions/presentation/cubit/permission_flow_cubit.dart';
 import 'package:coupon/features/permissions/presentation/cubit/permission_flow_state.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +17,8 @@ class PermissionLoadingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -47,12 +52,8 @@ class PermissionLoadingPage extends StatelessWidget {
 
                       // Loading Text
                       Text(
-                        'جاري تحضير كل شيء...',
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Cairo',
-                        ),
+                        l10n.permissions_loading_preparing,
+                        style: AppTextStyles.h4,
                         textAlign: TextAlign.center,
                       ),
 
@@ -64,7 +65,7 @@ class PermissionLoadingPage extends StatelessWidget {
                         child: LinearProgressIndicator(
                           value: progress,
                           minHeight: 6.h,
-                          backgroundColor: Colors.grey[200],
+                          backgroundColor: AppColors.grey200,
                           valueColor: AlwaysStoppedAnimation<Color>(
                             Theme.of(context).primaryColor,
                           ),
@@ -76,10 +77,8 @@ class PermissionLoadingPage extends StatelessWidget {
                       // Progress Text
                       Text(
                         '${(progress * 100).toInt()}%',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.grey[600],
-                          fontFamily: 'Cairo',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.grey600,
                         ),
                       ),
 
@@ -87,11 +86,9 @@ class PermissionLoadingPage extends StatelessWidget {
 
                       // Status Messages (optional)
                       Text(
-                        _getLoadingMessage(progress),
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.grey[500],
-                          fontFamily: 'Cairo',
+                        _getLoadingMessage(context, progress),
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textSecondary,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -107,13 +104,15 @@ class PermissionLoadingPage extends StatelessWidget {
   }
 
   /// Get loading message based on progress
-  String _getLoadingMessage(double progress) {
+  String _getLoadingMessage(BuildContext context, double progress) {
+    final l10n = AppLocalizations.of(context)!;
+    
     if (progress < 0.4) {
-      return 'جاري التحقق من الصلاحيات...';
+      return l10n.permissions_loading_checking;
     } else if (progress < 0.7) {
-      return 'جاري تحميل البيانات...';
+      return l10n.permissions_loading_data;
     } else {
-      return 'اكتمل التحميل...';
+      return l10n.permissions_loading_complete;
     }
   }
 }

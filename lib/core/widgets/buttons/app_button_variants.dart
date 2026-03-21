@@ -1,5 +1,6 @@
 /// Button Variants and Enums
 /// Defines all button types, sizes, and variants used across the app
+library;
 
 /// Button size variants
 enum AppButtonSize {

@@ -7,66 +7,17 @@ part 'user_preferences_model.g.dart';
 /// Serves as a DTO for Hive and API interactions
 @HiveType(typeId: 1) // Unique typeId for Hive
 class UserPreferencesModel extends UserPreferencesEntity {
-  // ════════════════════════════════════════════════════════
-  // Explicitly overridden fields so Hive Generator can see them
-  // ════════════════════════════════════════════════════════
-  @override
-  @HiveField(0)
-  final List<String> selectedCategories;
-
-  @override
-  @HiveField(1)
-  final DateTime timestamp;
-
-  @override
-  @HiveField(2)
-  final bool isSynced;
-
-  @override
-  @HiveField(3)
-  final String? budgetPreference;
-
-  @override
-  @HiveField(4)
-  final double? budgetSliderValue;
-
-  @override
-  @HiveField(5)
-  final List<String>? shoppingStyles;
-
-  @override
-  @HiveField(6)
-  final Map<String, int> categoryScores;
-
-  @override
-  @HiveField(7)
-  final List<String> seenProductIds;
-
-  @override
-  @HiveField(8)
-  final DateTime? lastDecayDate;
-
   const UserPreferencesModel({
-    required this.selectedCategories,
-    required this.timestamp,
-    this.isSynced = false,
-    this.budgetPreference,
-    this.budgetSliderValue,
-    this.shoppingStyles,
-    this.categoryScores = const {},
-    this.seenProductIds = const [],
-    this.lastDecayDate,
-  }) : super(
-          selectedCategories: selectedCategories,
-          timestamp: timestamp,
-          isSynced: isSynced,
-          budgetPreference: budgetPreference,
-          budgetSliderValue: budgetSliderValue,
-          shoppingStyles: shoppingStyles,
-          categoryScores: categoryScores,
-          seenProductIds: seenProductIds,
-          lastDecayDate: lastDecayDate,
-        );
+    @HiveField(0) required super.selectedCategories,
+    @HiveField(1) required super.timestamp,
+    @HiveField(2) super.isSynced = false,
+    @HiveField(3) super.budgetPreference,
+    @HiveField(4) super.budgetSliderValue,
+    @HiveField(5) super.shoppingStyles,
+    @HiveField(6) super.categoryScores = const {},
+    @HiveField(7) super.seenProductIds = const [],
+    @HiveField(8) super.lastDecayDate,
+  });
 
   /// Convert Entity to Model
   factory UserPreferencesModel.fromEntity(UserPreferencesEntity entity) {

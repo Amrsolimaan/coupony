@@ -24,7 +24,7 @@ class OnboardingShoppingStyleScreen extends StatelessWidget {
     final cubit = context.read<OnboardingFlowCubit>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: BlocConsumer<OnboardingFlowCubit, OnboardingFlowState>(
           // الـ Listener لمراقبة إشارات الملاحة
@@ -51,7 +51,9 @@ class OnboardingShoppingStyleScreen extends StatelessWidget {
                 SnackBar(
                   content: Text(
                     state.saveSuccessMessage!,
-                    style: const TextStyle(color: Colors.white),
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.surface,
+                    ),
                   ),
                   backgroundColor: AppColors.primary,
                   behavior: SnackBarBehavior.floating,
@@ -78,7 +80,7 @@ class OnboardingShoppingStyleScreen extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.saveError!),
-                  backgroundColor: Colors.red,
+                  backgroundColor: AppColors.error,
                 ),
               );
             }

@@ -184,4 +184,99 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get loadingAlmostDone => 'تقريباً انتهينا...';
+
+  @override
+  String get permissions_splash_title => 'السماح بالوصول إلى الموقع والإشعارات';
+
+  @override
+  String get permissions_splash_subtitle =>
+      'سنستخدم موقعك لعرض الخدمات القريبة منك، والإشعارات لإبقائك على اطلاع بآخر التحديثات';
+
+  @override
+  String get permissions_loading_preparing => 'جاري تحضير كل شيء...';
+
+  @override
+  String get permissions_loading_checking => 'جاري التحقق من الصلاحيات...';
+
+  @override
+  String get permissions_loading_data => 'جاري تحميل البيانات...';
+
+  @override
+  String get permissions_loading_complete => 'اكتمل التحميل...';
+
+  @override
+  String get permissions_location_checking => 'جاري التحقق من الموقع...';
+
+  @override
+  String get permissions_please_wait => 'الرجاء الانتظار...';
+
+  @override
+  String get location_map_no_results => 'لم يتم العثور على نتائج';
+
+  @override
+  String get location_map_search_error => 'حدث خطأ في البحث';
+
+  @override
+  String get location_map_voice_unavailable => 'البحث الصوتي غير متاح';
+
+  @override
+  String get location_map_use_current => 'استخدم موقعك الحالي';
+
+  @override
+  String get location_map_your_location => 'موقعك';
+
+  @override
+  String get location_map_tap_to_select => 'اضغط على الخريطة لتحديد موقعك';
+
+  @override
+  String get location_map_search_placeholder =>
+      'البحث في المنطقة، اسم الشارع...';
+
+  @override
+  String get location_map_current_location_marker => 'موقعك الحالي';
+
+  @override
+  String get location_map_confirm_button => 'تحديد الموقع';
+
+  @override
+  String location_map_coordinates_format(Object lat, Object lng) {
+    return 'خط العرض: $lat, خط الطول: $lng';
+  }
+
+  @override
+  String get location_error_service_disabled =>
+      'يرجى تفعيل خدمة الموقع (GPS) من إعدادات الجهاز للمتابعة';
+
+  @override
+  String get location_error_permanently_denied =>
+      'تم رفض إذن الموقع بشكل نهائي. يرجى تفعيله من الإعدادات';
+
+  @override
+  String get location_error_generic =>
+      'تعذر التطبيق في الوصول إلى موقعك الحالي، رجاء حاول مرة أخرى';
+
+  @override
+  String get location_error_open_settings => 'فتح إعدادات الجهاز';
+
+  @override
+  String get location_error_open_app_settings => 'فتح الإعدادات';
+
+  @override
+  String get location_error_retry => 'محاولة مرة أخرى';
+
+  @override
+  String get location_error_skip => 'تخطي الآن';
+
+  @override
+  String get location_error_checking => 'جاري التحقق من الموقع...';
+
+  @override
+  String get notification_error_title => 'إشعارات';
+
+  @override
+  String get notification_error_subtitle =>
+      'تعذر التطبيق من تمكين الإشعارات ، يرجاء المحاولة مره أخرى';
+
+  @override
+  String get notification_error_retry => 'محاولة مره أخرى';
 }

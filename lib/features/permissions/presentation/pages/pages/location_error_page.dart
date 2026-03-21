@@ -1,5 +1,8 @@
 import 'package:coupon/config/routes/app_router.dart';
+import 'package:coupon/core/localization/l10n/app_localizations.dart';
 import 'package:coupon/core/services/location_service.dart';
+import 'package:coupon/core/theme/app_colors.dart';
+import 'package:coupon/core/theme/app_text_styles.dart';
 import 'package:coupon/features/permissions/presentation/cubit/permission_flow_cubit.dart';
 import 'package:coupon/features/permissions/presentation/cubit/permission_flow_state.dart';
 import 'package:flutter/material.dart';
@@ -78,6 +81,8 @@ class _LocationErrorPageState extends State<LocationErrorPage>
                     return _buildLoadingView(context);
                   }
 
+                  final l10n = AppLocalizations.of(context)!;
+
                   // ✅ Determine error type and customize messaging
                   final bool isPermanentlyDenied =
                       state.isLocationPermanentlyDenied;
@@ -94,27 +99,25 @@ class _LocationErrorPageState extends State<LocationErrorPage>
                     // GPS is turned off
                     subtitle =
                         state.errorMessage ??
-                        'يرجى تفعيل خدمة الموقع (GPS) من إعدادات الجهاز للمتابعة';
-                    primaryButtonText = 'فتح إعدادات الجهاز';
+                        l10n.location_error_service_disabled;
+                    primaryButtonText = l10n.location_error_open_settings;
                   } else if (isPermanentlyDenied) {
                     // Permission permanently denied
-                    subtitle =
-                        'تم رفض إذن الموقع بشكل نهائي. يرجى تفعيله من الإعدادات';
-                    primaryButtonText = 'فتح الإعدادات';
+                    subtitle = l10n.location_error_permanently_denied;
+                    primaryButtonText = l10n.location_error_open_app_settings;
                   } else if (hasError) {
                     // Custom error message from cubit
                     subtitle = state.errorMessage!;
-                    primaryButtonText = 'محاولة مرة أخرى';
+                    primaryButtonText = l10n.location_error_retry;
                   } else {
                     // Generic error
-                    subtitle =
-                        'تعذر التطبيق في الوصول إلى موقعك الحالي، رجاء حاول مرة أخرى';
-                    primaryButtonText = 'محاولة مرة أخرى';
+                    subtitle = l10n.location_error_generic;
+                    primaryButtonText = l10n.location_error_retry;
                   }
 
                   return PermissionContentCard(
                     iconAssetPath: 'assets/icons/location_error.png',
-                    title: 'الموقع',
+                    title: l10n.locationPermissionTitle,
                     subtitle: subtitle,
                     primaryButtonText: primaryButtonText,
                     onPrimaryPressed: () {
@@ -125,7 +128,7 @@ class _LocationErrorPageState extends State<LocationErrorPage>
                     },
                     // We handle loading with full screen view now
                     isPrimaryLoading: false,
-                    skipButtonText: 'تخطي الآن',
+                    skipButtonText: l10n.location_error_skip,
                     onSkipPressed: () {
                       // Skip to notification
                       context.read<PermissionFlowCubit>().skipCurrentStep();
@@ -142,6 +145,7 @@ class _LocationErrorPageState extends State<LocationErrorPage>
 
   /// ✅ UPDATED: Loading layout fully matching PermissionLoadingPage
   Widget _buildLoadingView(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 40.w),
       child: Column(
@@ -158,12 +162,8 @@ class _LocationErrorPageState extends State<LocationErrorPage>
 
           // Loading Text
           Text(
-            'جاري التحقق من الموقع...',
-            style: TextStyle(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Cairo',
-            ),
+            l10n.location_error_checking,
+            style: AppTextStyles.h4,
             textAlign: TextAlign.center,
           ),
 
@@ -174,7 +174,7 @@ class _LocationErrorPageState extends State<LocationErrorPage>
             borderRadius: BorderRadius.circular(3.r),
             child: LinearProgressIndicator(
               minHeight: 6.h,
-              backgroundColor: Colors.grey[200],
+              backgroundColor: AppColors.grey200,
               valueColor: AlwaysStoppedAnimation<Color>(
                 Theme.of(context).primaryColor,
               ),
@@ -185,11 +185,9 @@ class _LocationErrorPageState extends State<LocationErrorPage>
 
           // Status Message
           Text(
-            'الرجاء الانتظار...',
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: Colors.grey[500],
-              fontFamily: 'Cairo',
+            l10n.permissions_please_wait,
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),

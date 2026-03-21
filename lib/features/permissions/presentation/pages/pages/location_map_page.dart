@@ -1,4 +1,7 @@
 import 'package:coupon/config/routes/app_router.dart';
+import 'package:coupon/core/localization/l10n/app_localizations.dart';
+import 'package:coupon/core/theme/app_colors.dart';
+import 'package:coupon/core/theme/app_text_styles.dart';
 import 'package:coupon/features/permissions/presentation/cubit/permission_flow_cubit.dart';
 import 'package:coupon/features/permissions/presentation/cubit/permission_flow_state.dart';
 import 'package:flutter/material.dart';
@@ -114,13 +117,14 @@ class _LocationMapPageState extends State<LocationMapPage> {
         debugPrint('⚠️ No results found for: $query');
         // Show snackbar
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'لم يتم العثور على نتائج',
-                style: TextStyle(fontFamily: 'Cairo'),
+                l10n.location_map_no_results,
+                style: AppTextStyles.bodyMedium,
               ),
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.error,
             ),
           );
         }
@@ -128,13 +132,14 @@ class _LocationMapPageState extends State<LocationMapPage> {
     } catch (e) {
       debugPrint('❌ Search error: $e');
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'حدث خطأ في البحث',
-              style: TextStyle(fontFamily: 'Cairo'),
+              l10n.location_map_search_error,
+              style: AppTextStyles.bodyMedium,
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
           ),
         );
       }
@@ -178,13 +183,14 @@ class _LocationMapPageState extends State<LocationMapPage> {
       } else {
         debugPrint('⚠️ Speech recognition not available');
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'البحث الصوتي غير متاح',
-                style: TextStyle(fontFamily: 'Cairo'),
+                l10n.location_map_voice_unavailable,
+                style: AppTextStyles.bodyMedium,
               ),
-              backgroundColor: Colors.orange,
+              backgroundColor: AppColors.warning,
             ),
           );
         }
@@ -211,7 +217,7 @@ class _LocationMapPageState extends State<LocationMapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.surface,
       body: Stack(
         children: [
           // ✅ Google Map
@@ -250,7 +256,9 @@ class _LocationMapPageState extends State<LocationMapPage> {
                   Marker(
                     markerId: const MarkerId('current_location'),
                     position: mapCenter,
-                    infoWindow: const InfoWindow(title: 'موقعك الحالي'),
+                    infoWindow: InfoWindow(
+                      title: AppLocalizations.of(context)!.location_map_current_location_marker,
+                    ),
                     icon: BitmapDescriptor.defaultMarkerWithHue(
                       BitmapDescriptor.hueOrange,
                     ),
@@ -293,7 +301,7 @@ class _LocationMapPageState extends State<LocationMapPage> {
                   ),
                   child: Icon(
                     Icons.location_on,
-                    color: Colors.white,
+                    color: AppColors.surface,
                     size: 22.w,
                   ),
                 ),
@@ -305,9 +313,9 @@ class _LocationMapPageState extends State<LocationMapPage> {
                   child: Container(
                     height: 50.h,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.surface,
                       borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(color: Colors.grey[300]!, width: 1),
+                      border: Border.all(color: AppColors.grey200, width: 1),
                     ),
                     child: Row(
                       children: [
@@ -316,7 +324,7 @@ class _LocationMapPageState extends State<LocationMapPage> {
                           padding: EdgeInsets.symmetric(horizontal: 12.w),
                           child: Icon(
                             Icons.search,
-                            color: Colors.grey[400],
+                            color: AppColors.grey600,
                             size: 22.w,
                           ),
                         ),
@@ -326,17 +334,13 @@ class _LocationMapPageState extends State<LocationMapPage> {
                           child: TextField(
                             controller: _searchController,
                             textAlign: TextAlign.right,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              fontFamily: 'Cairo',
-                              color: Colors.grey[800],
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: AppColors.grey800,
                             ),
                             decoration: InputDecoration(
-                              hintText: 'البحث في المنطقة، اسم الشارع...',
-                              hintStyle: TextStyle(
-                                fontSize: 14.sp,
-                                color: Colors.grey[400],
-                                fontFamily: 'Cairo',
+                              hintText: AppLocalizations.of(context)!.location_map_search_placeholder,
+                              hintStyle: AppTextStyles.bodyMedium.copyWith(
+                                color: AppColors.grey600,
                               ),
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.symmetric(
@@ -367,7 +371,7 @@ class _LocationMapPageState extends State<LocationMapPage> {
                               _isListening ? Icons.mic : Icons.mic_none,
                               color: _isListening
                                   ? Theme.of(context).primaryColor
-                                  : Colors.grey[400],
+                                  : AppColors.grey600,
                               size: 22.w,
                             ),
                           ),
@@ -392,12 +396,12 @@ class _LocationMapPageState extends State<LocationMapPage> {
                     width: 40.w,
                     height: 40.h,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.surface,
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Icon(
                       Icons.arrow_forward_ios,
-                      color: Colors.grey[800],
+                      color: AppColors.grey800,
                       size: 18.w,
                     ),
                   ),
@@ -416,11 +420,11 @@ class _LocationMapPageState extends State<LocationMapPage> {
                   width: 56.w,
                   height: 56.w,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF7ED957), // Green color from design
+                    color: AppColors.locationMarker,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.15),
+                        color: AppColors.shadow,
                         blurRadius: 12,
                         offset: Offset(0, 4.h),
                       ),
@@ -432,7 +436,7 @@ class _LocationMapPageState extends State<LocationMapPage> {
                           child: const CircularProgressIndicator(
                             strokeWidth: 2.5,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
+                              AppColors.surface,
                             ),
                           ),
                         )
@@ -464,7 +468,7 @@ class _LocationMapPageState extends State<LocationMapPage> {
                           },
                           icon: Icon(
                             Icons.navigation,
-                            color: Colors.white,
+                            color: AppColors.surface,
                             size: 28.w,
                           ),
                           padding: EdgeInsets.zero,
@@ -531,12 +535,10 @@ class _LocationMapPageState extends State<LocationMapPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'استخدم موقعك الحالي',
-                            style: TextStyle(
-                              fontSize: 15.sp,
+                            AppLocalizations.of(context)!.location_map_use_current,
+                            style: AppTextStyles.bodyLarge.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                              fontFamily: 'Cairo',
+                              color: AppColors.surface,
                             ),
                           ),
                           SizedBox(width: 8.w),
@@ -547,14 +549,14 @@ class _LocationMapPageState extends State<LocationMapPage> {
                               child: const CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
+                                  AppColors.surface,
                                 ),
                               ),
                             )
                           else
                             Icon(
                               Icons.my_location,
-                              color: Colors.white,
+                              color: AppColors.surface,
                               size: 20.w,
                             ),
                         ],
@@ -574,14 +576,14 @@ class _LocationMapPageState extends State<LocationMapPage> {
             child: Container(
               padding: EdgeInsets.fromLTRB(10.w, 20.h, 20.w, 10.h),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.surface,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(24.r),
                   topRight: Radius.circular(24.r),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: AppColors.shadow,
                     blurRadius: 20,
                     offset: Offset(0, -4.h),
                   ),
@@ -614,12 +616,9 @@ class _LocationMapPageState extends State<LocationMapPage> {
                             ),
                             SizedBox(width: 8.w),
                             Text(
-                              'موقعك',
-                              style: TextStyle(
-                                fontSize: 17.sp,
-                                fontWeight: FontWeight.w700,
+                              AppLocalizations.of(context)!.location_map_your_location,
+                              style: AppTextStyles.h4.copyWith(
                                 color: Theme.of(context).primaryColor,
-                                fontFamily: 'Cairo',
                               ),
                             ),
                           ],
@@ -630,45 +629,51 @@ class _LocationMapPageState extends State<LocationMapPage> {
                         // Address
                         Padding(
                           padding: EdgeInsets.only(right: 30.w),
-                          child: Text(
-                            state.currentAddress ??
-                                (displayLocation != null
-                                    ? 'خط العرض: ${displayLocation.latitude.toStringAsFixed(4)}, خط الطول: ${displayLocation.longitude.toStringAsFixed(4)}'
-                                    : 'اضغط على الخريطة لتحديد موقعك'),
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: Colors.grey[700],
-                              fontFamily: 'Cairo',
-                              height: 1.5,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                          child: Builder(
+                            builder: (context) {
+                              final l10n = AppLocalizations.of(context)!;
+                              return Text(
+                                state.currentAddress ??
+                                    (displayLocation != null
+                                        ? 'خط العرض: ${displayLocation.latitude.toStringAsFixed(4)}, خط الطول: ${displayLocation.longitude.toStringAsFixed(4)}'
+                                        : l10n.location_map_tap_to_select),
+                                style: AppTextStyles.bodyMedium.copyWith(
+                                  color: AppColors.textSecondary,
+                                  height: 1.5,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              );
+                            },
                           ),
                         ),
 
                         SizedBox(height: 24.h),
 
                         // Confirm Button
-                        AppPrimaryButton(
-                          text: 'تحديد الموقع',
-                          onPressed: hasPosition
-                              ? () {
-                                  // ✅ Confirm location - Wrapper handles navigation
-                                  context
-                                      .read<PermissionFlowCubit>()
-                                      .confirmLocation();
+                        Builder(
+                          builder: (context) {
+                            final l10n = AppLocalizations.of(context)!;
+                            return AppPrimaryButton(
+                              text: l10n.location_map_confirm_button,
+                              onPressed: hasPosition
+                                  ? () {
+                                      // ✅ Confirm location - Wrapper handles navigation
+                                      context
+                                          .read<PermissionFlowCubit>()
+                                          .confirmLocation();
 
-                                  debugPrint('✅ Location confirmed');
-                                  context.go(
-                                    AppRouter.permissionNotificationIntro,
-                                  );
-                                }
-                              : null,
-                          size: AppButtonSize.medium,
-                          borderRadius: 12.r,
-                          disabledBackgroundColor: Colors.grey.withValues(
-                            alpha: 0.3,
-                          ),
+                                      debugPrint('✅ Location confirmed');
+                                      context.go(
+                                        AppRouter.permissionNotificationIntro,
+                                      );
+                                    }
+                                  : null,
+                              size: AppButtonSize.medium,
+                              borderRadius: 12.r,
+                              disabledBackgroundColor: AppColors.textDisabled,
+                            );
+                          },
                         ),
                       ],
                     );

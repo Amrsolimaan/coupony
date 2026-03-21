@@ -1,4 +1,5 @@
 import 'package:coupon/config/routes/app_router.dart';
+import 'package:coupon/core/localization/l10n/app_localizations.dart';
 import 'package:coupon/features/permissions/presentation/cubit/permission_flow_cubit.dart';
 import 'package:coupon/features/permissions/presentation/cubit/permission_flow_state.dart';
 import 'package:flutter/material.dart';
@@ -15,12 +16,13 @@ class NotificationIntroPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: BlocListener<PermissionFlowCubit, PermissionFlowState>(
           listener: (context, state) {
-            // Navigate to loading page after notification permission is handled
             if (state.navSignal == PermissionNavigationSignal.toLoading) {
               context.go(AppRouter.permissionLoading);
               context.read<PermissionFlowCubit>().clearNavigationSignal();
@@ -34,19 +36,17 @@ class NotificationIntroPage extends StatelessWidget {
                 builder: (context, state) {
                   return PermissionContentCard(
                     iconAssetPath: 'assets/icons/notification.png',
-                    title: 'إشعارات',
-                    subtitle: 'يرجى تمكين الإشعارات لتلقى التحديثات والتذكيرات',
-                    primaryButtonText: 'سماح',
+                    title: l10n.notificationPermissionTitle,
+                    subtitle: l10n.notificationPermissionSubtitle,
+                    primaryButtonText: l10n.allow,
                     onPrimaryPressed: () {
-                      // Request notification permission
                       context
                           .read<PermissionFlowCubit>()
                           .requestNotificationPermission();
                     },
                     isPrimaryLoading: state.isRequestingNotification,
-                    skipButtonText: 'تخطي الآن',
+                    skipButtonText: l10n.skipNow,
                     onSkipPressed: () {
-                      // Skip to completion
                       context.read<PermissionFlowCubit>().skipCurrentStep();
                     },
                   );

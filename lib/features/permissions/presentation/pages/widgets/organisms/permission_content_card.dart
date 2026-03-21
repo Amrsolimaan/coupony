@@ -1,3 +1,4 @@
+import 'package:coupon/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../molecules/permission_header.dart';
@@ -79,7 +80,7 @@ class PermissionContentCard extends StatelessWidget {
           boxShadow: showShadow
               ? [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
+                    color: AppColors.shadow,
                     blurRadius: 20,
                     offset: Offset(0, 10.h),
                   ),

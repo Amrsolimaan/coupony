@@ -185,4 +185,99 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loadingAlmostDone => 'Almost done...';
+
+  @override
+  String get permissions_splash_title =>
+      'Allow Access to Location and Notifications';
+
+  @override
+  String get permissions_splash_subtitle =>
+      'We\'ll use your location to show nearby services, and notifications to keep you updated';
+
+  @override
+  String get permissions_loading_preparing => 'Preparing everything...';
+
+  @override
+  String get permissions_loading_checking => 'Checking permissions...';
+
+  @override
+  String get permissions_loading_data => 'Loading data...';
+
+  @override
+  String get permissions_loading_complete => 'Loading complete...';
+
+  @override
+  String get permissions_location_checking => 'Checking location...';
+
+  @override
+  String get permissions_please_wait => 'Please wait...';
+
+  @override
+  String get location_map_no_results => 'No results found';
+
+  @override
+  String get location_map_search_error => 'Search error occurred';
+
+  @override
+  String get location_map_voice_unavailable => 'Voice search unavailable';
+
+  @override
+  String get location_map_use_current => 'Use your current location';
+
+  @override
+  String get location_map_your_location => 'Your Location';
+
+  @override
+  String get location_map_tap_to_select => 'Tap on map to select your location';
+
+  @override
+  String get location_map_search_placeholder => 'Search area, street name...';
+
+  @override
+  String get location_map_current_location_marker => 'Your current location';
+
+  @override
+  String get location_map_confirm_button => 'Confirm Location';
+
+  @override
+  String location_map_coordinates_format(Object lat, Object lng) {
+    return 'Latitude: $lat, Longitude: $lng';
+  }
+
+  @override
+  String get location_error_service_disabled =>
+      'Please enable location service (GPS) from device settings to continue';
+
+  @override
+  String get location_error_permanently_denied =>
+      'Location permission permanently denied. Please enable it from settings';
+
+  @override
+  String get location_error_generic =>
+      'The app could not access your current location, please try again';
+
+  @override
+  String get location_error_open_settings => 'Open Device Settings';
+
+  @override
+  String get location_error_open_app_settings => 'Open Settings';
+
+  @override
+  String get location_error_retry => 'Try Again';
+
+  @override
+  String get location_error_skip => 'Skip Now';
+
+  @override
+  String get location_error_checking => 'Checking location...';
+
+  @override
+  String get notification_error_title => 'Notifications';
+
+  @override
+  String get notification_error_subtitle =>
+      'The app could not enable notifications, please try again';
+
+  @override
+  String get notification_error_retry => 'Try Again';
 }

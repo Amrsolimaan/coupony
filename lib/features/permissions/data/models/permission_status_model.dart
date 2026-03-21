@@ -12,56 +12,17 @@ class PermissionStatusModel extends PermissionEntity {
   static const Object _sentinel = Object();
 
   // ════════════════════════════════════════════════════════
-  // HIVE FIELDS
-  // ════════════════════════════════════════════════════════
-  @override
-  @HiveField(0)
-  final String locationStatus;
-
-  @override
-  @HiveField(1)
-  final String notificationStatus;
-
-  @override
-  @HiveField(2)
-  final double? latitude;
-
-  @override
-  @HiveField(3)
-  final double? longitude;
-
-  @override
-  @HiveField(4)
-  final String? fcmToken;
-
-  @override
-  @HiveField(5)
-  final DateTime timestamp;
-
-  @override
-  @HiveField(6)
-  final bool hasCompletedFlow;
-
-  // ════════════════════════════════════════════════════════
   // CONSTRUCTOR
   // ════════════════════════════════════════════════════════
   const PermissionStatusModel({
-    required this.locationStatus,
-    required this.notificationStatus,
-    this.latitude,
-    this.longitude,
-    this.fcmToken,
-    required this.timestamp,
-    this.hasCompletedFlow = false,
-  }) : super(
-          locationStatus: locationStatus,
-          notificationStatus: notificationStatus,
-          latitude: latitude,
-          longitude: longitude,
-          fcmToken: fcmToken,
-          timestamp: timestamp,
-          hasCompletedFlow: hasCompletedFlow,
-        );
+    @HiveField(0) required super.locationStatus,
+    @HiveField(1) required super.notificationStatus,
+    @HiveField(2) super.latitude,
+    @HiveField(3) super.longitude,
+    @HiveField(4) super.fcmToken,
+    @HiveField(5) required super.timestamp,
+    @HiveField(6) super.hasCompletedFlow = false,
+  });
 
   // ════════════════════════════════════════════════════════
   // FACTORY CONSTRUCTORS

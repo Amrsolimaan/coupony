@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
 
 class OnboardingStepIndicator extends StatelessWidget {
   final int currentStep;
@@ -40,7 +41,7 @@ class OnboardingStepIndicator extends StatelessWidget {
       height: 40.h,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isActive || isCompleted ? AppColors.primary : Colors.white,
+        color: isActive || isCompleted ? AppColors.primary : AppColors.surface,
         border: Border.all(
           color: isActive || isCompleted
               ? AppColors.primary
@@ -52,14 +53,13 @@ class OnboardingStepIndicator extends StatelessWidget {
         child: isCompleted
             ? Icon(
                 Icons.check,
-                color: Colors.white,
+                color: AppColors.surface,
                 size: 20.w,
               ) // إضافة علامة الصح للخطوات المكتملة كما في التصميم
             : Text(
                 '$stepNumber',
-                style: TextStyle(
-                  color: isActive ? Colors.white : AppColors.primary,
-                  fontSize: 16.sp,
+                style: AppTextStyles.bodyLarge.copyWith(
+                  color: isActive ? AppColors.surface : AppColors.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),

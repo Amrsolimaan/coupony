@@ -25,7 +25,7 @@ class SelectionOptionCard extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.grey200,
@@ -72,7 +72,7 @@ class SelectionOptionCard extends StatelessWidget {
       height: 20.h,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isSelected ? AppColors.primary : Colors.white,
+        color: isSelected ? AppColors.primary : AppColors.surface,
         border: Border.all(
           color: isSelected ? AppColors.primary : AppColors.textDisabled,
           width: 2.w,
@@ -85,7 +85,7 @@ class SelectionOptionCard extends StatelessWidget {
                 height: 8.h,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white,
+                  color: AppColors.surface,
                 ),
               ),
             )

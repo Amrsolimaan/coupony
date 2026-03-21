@@ -34,7 +34,7 @@ class OnboardingCategorySelectionView extends StatelessWidget {
     final cubit = context.read<OnboardingFlowCubit>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: BlocConsumer<OnboardingFlowCubit, OnboardingFlowState>(
           // نراقب إشارات الملاحة والرسائل
@@ -57,7 +57,9 @@ class OnboardingCategorySelectionView extends StatelessWidget {
                 SnackBar(
                   content: Text(
                     state.saveSuccessMessage!,
-                    style: const TextStyle(color: Colors.white),
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.surface,
+                    ),
                   ),
                   backgroundColor: AppColors.primary,
                   behavior: SnackBarBehavior.floating,
@@ -85,7 +87,7 @@ class OnboardingCategorySelectionView extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.saveError!),
-                  backgroundColor: Colors.red,
+                  backgroundColor: AppColors.error,
                 ),
               );
             }

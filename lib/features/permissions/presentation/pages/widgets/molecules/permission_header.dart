@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../../../core/theme/app_text_styles.dart';
 import '../atoms/permission_icon.dart';
 
 /// Permission Header
@@ -68,13 +69,7 @@ class PermissionHeader extends StatelessWidget {
         // Title
         Text(
           title,
-          style: titleStyle ??
-              TextStyle(
-                fontSize: 24.sp,
-                fontWeight: FontWeight.w600,
-                color: theme.colorScheme.onSurface,
-                fontFamily: 'Cairo',
-              ),
+          style: titleStyle ?? AppTextStyles.h3,
           textAlign: TextAlign.center,
         ),
 
@@ -83,14 +78,10 @@ class PermissionHeader extends StatelessWidget {
         // Subtitle
         Text(
           subtitle,
-          style: subtitleStyle ??
-              TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.normal,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                fontFamily: 'Cairo',
-                height: 1.5,
-              ),
+          style: subtitleStyle ?? AppTextStyles.bodyMedium.copyWith(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            height: 1.5,
+          ),
           textAlign: TextAlign.center,
         ),
       ],

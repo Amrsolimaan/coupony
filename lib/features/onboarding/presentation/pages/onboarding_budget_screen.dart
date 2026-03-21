@@ -26,7 +26,7 @@ class OnboardingBudgetScreen extends StatelessWidget {
     final cubit = context.read<OnboardingFlowCubit>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: BlocConsumer<OnboardingFlowCubit, OnboardingFlowState>(
           // نراقب إشارات الملاحة (Navigation Signals)
@@ -48,7 +48,9 @@ class OnboardingBudgetScreen extends StatelessWidget {
                 SnackBar(
                   content: Text(
                     state.saveSuccessMessage!,
-                    style: const TextStyle(color: Colors.white),
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.surface,
+                    ),
                   ),
                   backgroundColor: AppColors.primary,
                   behavior: SnackBarBehavior.floating,
@@ -75,7 +77,7 @@ class OnboardingBudgetScreen extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.saveError!),
-                  backgroundColor: Colors.red,
+                  backgroundColor: AppColors.error,
                 ),
               );
             }
@@ -171,7 +173,7 @@ class OnboardingBudgetScreen extends StatelessWidget {
               trackHeight: 6.h,
               activeTrackColor: AppColors.primary,
               inactiveTrackColor: AppColors.primary.withValues(alpha: 0.2),
-              thumbColor: Colors.white,
+              thumbColor: AppColors.surface,
               thumbShape: RoundSliderThumbShape(
                 enabledThumbRadius: 10.r,
                 elevation: 4,
@@ -231,9 +233,8 @@ class OnboardingBudgetScreen extends StatelessWidget {
         ),
         child: Text(
           '$percentage%',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 12.sp,
+          style: AppTextStyles.caption.copyWith(
+            color: AppColors.surface,
             fontWeight: FontWeight.bold,
           ),
         ),

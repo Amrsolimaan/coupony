@@ -25,6 +25,10 @@ import 'permission_flow_state.dart';
 /// - Uses Use Cases for business logic
 /// - Cleaner separation of concerns
 /// - Repository only for data operations
+///
+/// Note: This Cubit uses a custom state (PermissionFlowState) instead of BaseState
+/// because it manages complex UI flow with multiple steps, navigation signals,
+/// and validation flags that don't fit the simple BaseState pattern.
 class PermissionFlowCubit extends Cubit<PermissionFlowState> {
   final CheckPermissionStatusUseCase checkPermissionStatusUseCase;
   final RequestLocationPermissionUseCase requestLocationPermissionUseCase;
@@ -41,6 +45,17 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     required this.logger,
     required this.notificationService,
   }) : super(const PermissionFlowState());
+
+  // ════════════════════════════════════════════════════════
+  // SAFE EMIT
+  // ════════════════════════════════════════════════════════
+
+  /// Safe emit wrapper to prevent emitting after cubit is closed
+  void _safeEmit(PermissionFlowState newState) {
+    if (!isClosed) {
+      emit(newState);
+    }
+  }
 
   // ════════════════════════════════════════════════════════
   // INITIALIZATION
@@ -67,7 +82,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
           hasCompletedFlow: false,
           isLocationServiceEnabled: true,
         );
-        emit(
+        _safeEmit(
           state.copyWith(
             currentStep: nextStep.step,
             navSignal: nextStep.signal,
@@ -87,7 +102,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
             hasPosition: status.hasLocation,
           );
           
-          emit(
+          _safeEmit(
             state.copyWith(
               locationStatus: _mapStringToLocationStatus(status.locationStatus),
               notificationStatus: _mapStringToNotificationStatus(
@@ -112,7 +127,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
             hasCompletedFlow: false,
             isLocationServiceEnabled: true,
           );
-          emit(
+          _safeEmit(
             state.copyWith(
               currentStep: nextStep.step,
               navSignal: nextStep.signal,
@@ -135,7 +150,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
   Future<void> requestLocationPermission() async {
     logger.i('User requested location permission (rationale shown)');
 
-    emit(state.copyWith(isRequestingLocation: true, errorMessage: null));
+    _safeEmit(state.copyWith(isRequestingLocation: true, errorMessage: null));
 
     try {
       // ✅ Use the Use Case instead of direct repository calls
@@ -144,7 +159,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
       result.fold(
         (failure) {
           logger.e('Location permission request failed: ${failure.message}');
-          emit(
+          _safeEmit(
             state.copyWith(
               isRequestingLocation: false,
               locationStatus: LocationPermissionStatus.error,
@@ -157,7 +172,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
           logger.i('Location permission status: ${permissionResult.status}');
 
           // Update state with permission status
-          emit(
+          _safeEmit(
             state.copyWith(
               isRequestingLocation: false,
               locationStatus: permissionResult.status,
@@ -169,7 +184,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
             if (permissionResult.hasPosition) {
               // Success! Position fetched, go to map screen
               logger.i('✅ Position fetched successfully, navigating to map');
-              emit(
+              _safeEmit(
                 state.copyWith(
                   userPosition: permissionResult.position,
                   currentStep: 2,
@@ -186,7 +201,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
             } else {
               // ⚠️ Permission granted but position fetch failed
               logger.w('⚠️ Permission granted but failed to get position');
-              emit(
+              _safeEmit(
                 state.copyWith(
                   errorMessage: 'تعذر تحديد موقعك الحالي. تأكد من تفعيل GPS',
                   navSignal: PermissionNavigationSignal.toLocationError,
@@ -197,7 +212,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
               LocationPermissionStatus.serviceDisabled) {
             // GPS is turned off
             logger.w('Location service disabled');
-            emit(
+            _safeEmit(
               state.copyWith(
                 errorMessage: 'يرجى تفعيل خدمة الموقع (GPS) من إعدادات الجهاز',
                 navSignal: PermissionNavigationSignal.toLocationError,
@@ -208,7 +223,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
             logger.w('Location denied, skipping to notification');
             final nextStep = determineNextPermissionStepUseCase
                 .afterSkippingLocation();
-            emit(
+            _safeEmit(
               state.copyWith(
                 currentStep: nextStep.step,
                 navSignal: nextStep.signal,
@@ -219,7 +234,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
       );
     } catch (e) {
       logger.e('Unexpected error requesting location: $e');
-      emit(
+      _safeEmit(
         state.copyWith(
           isRequestingLocation: false,
           locationStatus: LocationPermissionStatus.error,
@@ -259,7 +274,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
         logger.i(
           '✅ Position fetched: ${position.latitude}, ${position.longitude}',
         );
-        emit(state.copyWith(userPosition: position));
+        _safeEmit(state.copyWith(userPosition: position));
         // Fetch address for this position
         getAddressFromCoordinates(position.latitude, position.longitude);
         return true;
@@ -277,7 +292,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     logger.d('Checking location status on app resume...');
 
     // 1. Show loading indicator immediately
-    emit(state.copyWith(isRequestingLocation: true, errorMessage: null));
+    _safeEmit(state.copyWith(isRequestingLocation: true, errorMessage: null));
 
     // Add artificial delay for better UX (so user sees the checking process)
     await Future.delayed(const Duration(milliseconds: 1500));
@@ -294,7 +309,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     if (!isGpsEnabled) {
       logger.d('GPS still disabled on resume');
       // Stop loading, show error again
-      emit(state.copyWith(isRequestingLocation: false));
+      _safeEmit(state.copyWith(isRequestingLocation: false));
       return;
     }
 
@@ -304,7 +319,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     permissionResult.fold(
       (failure) {
         logger.w('Failed to check permission on resume');
-        emit(state.copyWith(isRequestingLocation: false));
+        _safeEmit(state.copyWith(isRequestingLocation: false));
       },
       (status) async {
         final locStatus = _mapStringToLocationStatus(status?.locationStatus);
@@ -317,7 +332,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
           final positionFetched = await _fetchCurrentPositionWithValidation();
 
           if (positionFetched) {
-            emit(
+            _safeEmit(
               state.copyWith(
                 isRequestingLocation: false, // Stop loading
                 currentStep: 2,
@@ -326,7 +341,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
               ),
             );
           } else {
-            emit(state.copyWith(isRequestingLocation: false));
+            _safeEmit(state.copyWith(isRequestingLocation: false));
           }
         } else {
           // GPS Enabled but Permission Missing
@@ -336,7 +351,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
             // Retry handles its own loading state
             retryLocationPermission();
           } else {
-            emit(state.copyWith(isRequestingLocation: false));
+            _safeEmit(state.copyWith(isRequestingLocation: false));
           }
         }
       },
@@ -348,7 +363,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     logger.i('User confirmed location');
     // ✅ Use the Use Case to determine next step
     final nextStep = determineNextPermissionStepUseCase.afterLocationConfirmed();
-    emit(
+    _safeEmit(
       state.copyWith(
         currentStep: nextStep.step,
         navSignal: nextStep.signal,
@@ -399,7 +414,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
           final finalAddress = customAddress ?? cleanAddress;
 
           logger.i('✅ Clean address: $finalAddress');
-          emit(state.copyWith(currentAddress: finalAddress));
+          _safeEmit(state.copyWith(currentAddress: finalAddress));
           return; // Success! Exit early
         } else if (data['status'] == 'ZERO_RESULTS') {
           logger.w('⚠️ No address found for coordinates');
@@ -448,7 +463,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
         if (addressParts.isNotEmpty) {
           final String address = addressParts.join('، ');
           logger.i('✅ Address found via native geocoding: $address');
-          emit(state.copyWith(currentAddress: address));
+          _safeEmit(state.copyWith(currentAddress: address));
           return;
         }
       }
@@ -458,7 +473,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
 
     // Method 3: Last resort - show coordinates
     logger.w('⚠️ All geocoding methods failed, showing coordinates');
-    emit(
+    _safeEmit(
       state.copyWith(
         currentAddress:
             'الموقع: ${lat.toStringAsFixed(6)}, ${lng.toStringAsFixed(6)}',
@@ -558,17 +573,17 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
   Future<void> useCurrentLocation() async {
     logger.i('User wants to use current location');
 
-    emit(state.copyWith(isRequestingLocation: true, errorMessage: null));
+    _safeEmit(state.copyWith(isRequestingLocation: true, errorMessage: null));
 
     final success = await _fetchCurrentPositionWithValidation();
 
-    emit(state.copyWith(isRequestingLocation: false));
+    _safeEmit(state.copyWith(isRequestingLocation: false));
 
     if (success) {
       logger.i('✅ Current location updated successfully');
     } else {
       logger.w('⚠️ Failed to get current location');
-      emit(
+      _safeEmit(
         state.copyWith(
           errorMessage: 'تعذر تحديد موقعك. تأكد من تفعيل GPS وحاول مرة أخرى',
         ),
@@ -582,14 +597,14 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     logger.i('User retrying location permission');
 
     // Clear previous error
-    emit(state.copyWith(errorMessage: null));
+    _safeEmit(state.copyWith(errorMessage: null));
 
     // First check if location service (GPS) is enabled
     final serviceResult = await repository.checkLocationServiceEnabled();
     await serviceResult.fold(
       (failure) {
         logger.e('Failed to check location service: ${failure.message}');
-        emit(
+        _safeEmit(
           state.copyWith(
             errorMessage: 'تعذر التحقق من حالة GPS',
             navSignal: PermissionNavigationSignal.toLocationError,
@@ -600,7 +615,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
         if (!serviceEnabled) {
           logger.w('Location service is disabled, opening location settings');
           // First show error page
-          emit(
+          _safeEmit(
             state.copyWith(
               locationStatus: LocationPermissionStatus.serviceDisabled,
               errorMessage:
@@ -625,15 +640,15 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
             currentStatus == LocationPermissionStatus.grantedLimited) {
           // Permission already granted, just retry fetching position
           logger.i('Permission already granted, retrying position fetch');
-          emit(state.copyWith(isRequestingLocation: true));
+          _safeEmit(state.copyWith(isRequestingLocation: true));
 
           final success = await _fetchCurrentPositionWithValidation();
 
-          emit(state.copyWith(isRequestingLocation: false));
+          _safeEmit(state.copyWith(isRequestingLocation: false));
 
           if (success) {
             // Success! Go to map
-            emit(
+            _safeEmit(
               state.copyWith(
                 currentStep: 2,
                 navSignal: PermissionNavigationSignal.toLocationMap,
@@ -641,7 +656,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
             );
           } else {
             // Still failed
-            emit(
+            _safeEmit(
               state.copyWith(
                 errorMessage: 'تعذر تحديد موقعك. تأكد من وجود إشارة GPS قوية',
                 navSignal: PermissionNavigationSignal.toLocationError,
@@ -675,12 +690,12 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
       result.fold(
         (failure) {
           logger.e('Failed to open location settings: ${failure.message}');
-          emit(state.copyWith(errorMessage: 'تعذر فتح الإعدادات'));
+          _safeEmit(state.copyWith(errorMessage: 'تعذر فتح الإعدادات'));
         },
         (opened) {
           if (opened) {
             logger.i('Opened location settings successfully');
-            emit(
+            _safeEmit(
               state.copyWith(
                 errorMessage:
                     'بعد تفعيل GPS، ارجع للتطبيق واضغط محاولة مرة أخرى',
@@ -688,7 +703,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
             );
           } else {
             logger.w('Could not open location settings');
-            emit(
+            _safeEmit(
               state.copyWith(
                 errorMessage:
                     'تعذر فتح الإعدادات. افتح إعدادات الجهاز يدوياً وفعّل الموقع',
@@ -705,12 +720,12 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
       result.fold(
         (failure) {
           logger.e('Failed to open app settings: ${failure.message}');
-          emit(state.copyWith(errorMessage: 'تعذر فتح إعدادات التطبيق'));
+          _safeEmit(state.copyWith(errorMessage: 'تعذر فتح إعدادات التطبيق'));
         },
         (opened) {
           if (opened) {
             logger.i('Opened app settings successfully');
-            emit(
+            _safeEmit(
               state.copyWith(
                 errorMessage:
                     'بعد السماح بالموقع، ارجع للتطبيق واضغط محاولة مرة أخرى',
@@ -718,7 +733,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
             );
           } else {
             logger.w('Could not open app settings');
-            emit(
+            _safeEmit(
               state.copyWith(
                 errorMessage:
                     'تعذر فتح الإعدادات. افتح إعدادات الجهاز يدوياً وامنح التطبيق إذن الموقع',
@@ -739,7 +754,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
   Future<void> requestNotificationPermission() async {
     logger.i('User requested notification permission (rationale shown)');
 
-    emit(state.copyWith(isRequestingNotification: true, errorMessage: null));
+    _safeEmit(state.copyWith(isRequestingNotification: true, errorMessage: null));
 
     try {
       // Request permission
@@ -750,7 +765,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
           logger.e(
             'Notification permission request failed: ${failure.message}',
           );
-          emit(
+          _safeEmit(
             state.copyWith(
               isRequestingNotification: false,
               notificationStatus: NotificationPermissionStatus.error,
@@ -778,7 +793,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
           }
 
           // Update state
-          emit(
+          _safeEmit(
             state.copyWith(
               isRequestingNotification: false,
               notificationStatus: status,
@@ -793,7 +808,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
       );
     } catch (e) {
       logger.e('Unexpected error requesting notification: $e');
-      emit(
+      _safeEmit(
         state.copyWith(
           isRequestingNotification: false,
           notificationStatus: NotificationPermissionStatus.error,
@@ -824,7 +839,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     result.fold(
       (failure) {
         logger.e('Failed to open notification settings: ${failure.message}');
-        emit(state.copyWith(errorMessage: 'تعذر فتح الإعدادات'));
+        _safeEmit(state.copyWith(errorMessage: 'تعذر فتح الإعدادات'));
       },
       (opened) {
         if (opened) {
@@ -847,7 +862,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     if (state.currentStep == 1 || state.currentStep == 2) {
       // Skip location → use use case
       final nextStep = determineNextPermissionStepUseCase.afterSkippingLocation();
-      emit(
+      _safeEmit(
         state.copyWith(
           currentStep: nextStep.step,
           navSignal: nextStep.signal,
@@ -856,7 +871,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     } else if (state.currentStep == 3) {
       // Skip notification → use use case
       final nextStep = determineNextPermissionStepUseCase.afterSkippingNotification();
-      emit(
+      _safeEmit(
         state.copyWith(
           currentStep: nextStep.step,
           navSignal: nextStep.signal,
@@ -870,7 +885,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     logger.i('User skipped entire permission flow');
     // ✅ Use the Use Case to determine next step
     final nextStep = determineNextPermissionStepUseCase.afterSkippingEntireFlow();
-    emit(
+    _safeEmit(
       state.copyWith(
         isSkipped: true,
         isCompleted: true,
@@ -892,7 +907,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     logger.i('Completing permission flow...');
 
     // Go to loading screen
-    emit(
+    _safeEmit(
       state.copyWith(
         currentStep: nextStep.step,
         navSignal: nextStep.signal,
@@ -905,7 +920,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     // Mark as completed
     await repository.savePermissionStatus(hasCompletedFlow: true);
 
-    emit(
+    _safeEmit(
       state.copyWith(
         isCompleted: true,
         hasCompletedFlow: true,
@@ -919,15 +934,15 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
   /// Simulate loading progress for better UX
   Future<void> _simulateLoading() async {
     // Step 1: Checking permissions (33%)
-    emit(state.copyWith(loadingProgress: 0.33));
+    _safeEmit(state.copyWith(loadingProgress: 0.33));
     await Future.delayed(const Duration(milliseconds: 500));
 
     // Step 2: Loading data (66%)
-    emit(state.copyWith(loadingProgress: 0.66));
+    _safeEmit(state.copyWith(loadingProgress: 0.66));
     await Future.delayed(const Duration(milliseconds: 500));
 
     // Step 3: Almost there (100%)
-    emit(state.copyWith(loadingProgress: 1.0));
+    _safeEmit(state.copyWith(loadingProgress: 1.0));
     await Future.delayed(const Duration(milliseconds: 300));
   }
 
@@ -954,20 +969,20 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
           break;
       }
 
-      emit(state.copyWith(currentStep: step, navSignal: signal));
+      _safeEmit(state.copyWith(currentStep: step, navSignal: signal));
       logger.d('Navigated to step $step with signal $signal');
     }
   }
 
   /// Clear the navigation signal after it has been handled by UI
   void clearNavigationSignal() {
-    emit(state.copyWith(navSignal: PermissionNavigationSignal.none));
+    _safeEmit(state.copyWith(navSignal: PermissionNavigationSignal.none));
   }
 
   /// Reset the entire flow (for testing)
   Future<void> resetFlow() async {
     await repository.clearPermissionStatus();
-    emit(const PermissionFlowState());
+    _safeEmit(const PermissionFlowState());
     logger.i('Permission flow reset');
   }
 
@@ -985,7 +1000,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
 
   /// Clear error message
   void clearError() {
-    emit(state.copyWith(errorMessage: null));
+    _safeEmit(state.copyWith(errorMessage: null));
   }
 
   // ════════════════════════════════════════════════════════

@@ -439,6 +439,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Almost done...'**
   String get loadingAlmostDone;
+
+  /// No description provided for @permissions_splash_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Access to Location and Notifications'**
+  String get permissions_splash_title;
+
+  /// No description provided for @permissions_splash_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll use your location to show nearby services, and notifications to keep you updated'**
+  String get permissions_splash_subtitle;
+
+  /// No description provided for @permissions_loading_preparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing everything...'**
+  String get permissions_loading_preparing;
+
+  /// No description provided for @permissions_loading_checking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking permissions...'**
+  String get permissions_loading_checking;
+
+  /// No description provided for @permissions_loading_data.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading data...'**
+  String get permissions_loading_data;
+
+  /// No description provided for @permissions_loading_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading complete...'**
+  String get permissions_loading_complete;
+
+  /// No description provided for @permissions_location_checking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking location...'**
+  String get permissions_location_checking;
+
+  /// No description provided for @permissions_please_wait.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait...'**
+  String get permissions_please_wait;
+
+  /// No description provided for @location_map_no_results.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get location_map_no_results;
+
+  /// No description provided for @location_map_search_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Search error occurred'**
+  String get location_map_search_error;
+
+  /// No description provided for @location_map_voice_unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice search unavailable'**
+  String get location_map_voice_unavailable;
+
+  /// No description provided for @location_map_use_current.
+  ///
+  /// In en, this message translates to:
+  /// **'Use your current location'**
+  String get location_map_use_current;
+
+  /// No description provided for @location_map_your_location.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Location'**
+  String get location_map_your_location;
+
+  /// No description provided for @location_map_tap_to_select.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap on map to select your location'**
+  String get location_map_tap_to_select;
+
+  /// No description provided for @location_map_search_placeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Search area, street name...'**
+  String get location_map_search_placeholder;
+
+  /// No description provided for @location_map_current_location_marker.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current location'**
+  String get location_map_current_location_marker;
+
+  /// No description provided for @location_map_confirm_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Location'**
+  String get location_map_confirm_button;
+
+  /// No description provided for @location_map_coordinates_format.
+  ///
+  /// In en, this message translates to:
+  /// **'Latitude: {lat}, Longitude: {lng}'**
+  String location_map_coordinates_format(Object lat, Object lng);
+
+  /// No description provided for @location_error_service_disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enable location service (GPS) from device settings to continue'**
+  String get location_error_service_disabled;
+
+  /// No description provided for @location_error_permanently_denied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission permanently denied. Please enable it from settings'**
+  String get location_error_permanently_denied;
+
+  /// No description provided for @location_error_generic.
+  ///
+  /// In en, this message translates to:
+  /// **'The app could not access your current location, please try again'**
+  String get location_error_generic;
+
+  /// No description provided for @location_error_open_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Device Settings'**
+  String get location_error_open_settings;
+
+  /// No description provided for @location_error_open_app_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get location_error_open_app_settings;
+
+  /// No description provided for @location_error_retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get location_error_retry;
+
+  /// No description provided for @location_error_skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip Now'**
+  String get location_error_skip;
+
+  /// No description provided for @location_error_checking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking location...'**
+  String get location_error_checking;
+
+  /// No description provided for @notification_error_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notification_error_title;
+
+  /// No description provided for @notification_error_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The app could not enable notifications, please try again'**
+  String get notification_error_subtitle;
+
+  /// No description provided for @notification_error_retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get notification_error_retry;
 }
 
 class _AppLocalizationsDelegate

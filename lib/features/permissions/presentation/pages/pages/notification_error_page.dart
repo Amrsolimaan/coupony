@@ -1,4 +1,5 @@
 import 'package:coupon/config/routes/app_router.dart';
+import 'package:coupon/core/localization/l10n/app_localizations.dart';
 import 'package:coupon/features/permissions/presentation/cubit/permission_flow_cubit.dart';
 import 'package:coupon/features/permissions/presentation/cubit/permission_flow_state.dart';
 import 'package:flutter/material.dart';
@@ -34,19 +35,19 @@ class NotificationErrorPage extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 40.h),
               child: BlocBuilder<PermissionFlowCubit, PermissionFlowState>(
                 builder: (context, state) {
+                  final l10n = AppLocalizations.of(context)!;
                   return PermissionContentCard(
                     iconAssetPath: 'assets/icons/notification_error.png',
-                    title: 'إشعارات',
-                    subtitle:
-                        'تعذر التطبيق من تمكين الإشعارات ، يرجاء المحاولة مره أخرى',
-                    primaryButtonText: 'محاولة مره أخرى',
+                    title: l10n.notification_error_title,
+                    subtitle: l10n.notification_error_subtitle,
+                    primaryButtonText: l10n.notification_error_retry,
                     onPrimaryPressed: () {
                       context
                           .read<PermissionFlowCubit>()
                           .retryNotificationPermission();
                     },
                     isPrimaryLoading: state.isRequestingNotification,
-                    skipButtonText: 'تخطي الآن',
+                    skipButtonText: l10n.location_error_skip,
                     onSkipPressed: () {
                       context.read<PermissionFlowCubit>().skipCurrentStep();
                     },

@@ -33,6 +33,9 @@ class AppColors {
   static const Color warning = Color(0xFFFFC107);
   static const Color info = Color(0xFF2196F3);
 
+  // Location & Map Colors
+  static const Color locationMarker = Color(0xFF7ED957); // Green marker for map
+
   // Merchant-Specific Colors
   static const Color merchantPrimary = Color(0xFF1976D2);
   static const Color merchantAccent = Color(0xFFFFA726);

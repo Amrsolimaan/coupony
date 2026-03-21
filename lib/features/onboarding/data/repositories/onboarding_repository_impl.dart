@@ -1,24 +1,26 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failures.dart';
-import '../../../../core/network/network_info.dart';
-import '../../../../core/storage/local_cache_service.dart';
+import '../../../../core/repositories/base_repository.dart';
 import '../data_sources/onboarding_local_data_source.dart';
 import '../data_sources/onboarding_remote_data_source.dart';
 import '../models/user_preferences_model.dart';
 import '../../domain/repositories/onboarding_repository.dart';
 import '../../domain/entities/user_preferences_entity.dart';
 
-class OnboardingRepositoryImpl implements OnboardingRepository {
+/// Onboarding Repository Implementation
+/// 
+/// Extends BaseRepository for network/cache strategies and centralized error handling.
+/// Handles user preferences storage (local) and syncing (remote).
+class OnboardingRepositoryImpl extends BaseRepository
+    implements OnboardingRepository {
   final OnboardingLocalDataSource localDataSource;
   final OnboardingRemoteDataSource remoteDataSource;
-  final NetworkInfo networkInfo;
-  final LocalCacheService cacheService;
 
   OnboardingRepositoryImpl({
     required this.localDataSource,
     required this.remoteDataSource,
-    required this.networkInfo,
-    required this.cacheService,
+    required super.networkInfo,
+    required super.cacheService,
   });
 
   @override
@@ -42,7 +44,7 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
       // Save to local storage
       return await localDataSource.savePreferences(preferences);
     } catch (e) {
-      return Left(UnexpectedFailure('Failed to save preferences: $e'));
+      return Left(CacheFailure('Failed to save preferences: $e'));
     }
   }
 
@@ -120,7 +122,7 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
         return const Right(null);
       });
     } catch (e) {
-      return Left(UnexpectedFailure('Sync failed: $e'));
+      return Left(ServerFailure('Sync failed: $e'));
     }
   }
 }

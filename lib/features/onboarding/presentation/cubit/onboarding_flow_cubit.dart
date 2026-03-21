@@ -1,5 +1,4 @@
 import 'package:coupon/core/storage/local_cache_service.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import '../../../../core/constants/category_constants.dart';
 import '../../../../core/constants/budget_constants.dart';
@@ -9,9 +8,14 @@ import '../../domain/use_cases/get_onboarding_preferences_use_case.dart';
 import '../../domain/use_cases/init_interest_scores_use_case.dart';
 import '../../domain/entities/user_preferences_entity.dart';
 import 'onboarding_flow_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Unified Cubit for managing all onboarding flow (Steps 1, 2, 3)
 /// with Interest Tracking System
+/// 
+/// Note: This Cubit uses a custom state (OnboardingFlowState) instead of BaseState
+/// because it manages complex UI flow with multiple steps, navigation signals,
+/// and validation flags that don't fit the simple BaseState pattern.
 class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
   final SaveOnboardingPreferencesUseCase savePreferencesUseCase;
   final GetOnboardingPreferencesUseCase getPreferencesUseCase;
@@ -33,6 +37,13 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
     required this.logger,
   }) : super(const OnboardingFlowState()) {
     _loadExistingPreferences();
+  }
+
+  /// Safe emit wrapper to prevent emitting after cubit is closed
+  void _safeEmit(OnboardingFlowState newState) {
+    if (!isClosed) {
+      emit(newState);
+    }
   }
 
   // ════════════════════════════════════════════════════════
@@ -66,7 +77,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
             preferences.shoppingStyles ?? [],
           );
 
-          emit(
+          _safeEmit(
             state.copyWith(
               selectedCategories: preferences.selectedCategories,
               budgetPreference: preferences.budgetPreference,
@@ -124,7 +135,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
 
     // Emit new state with change tracking
     final hasChanges = _hasCategoryChanges(categories);
-    emit(
+    _safeEmit(
       state.copyWith(
         selectedCategories: categories,
         isStep1Valid: categories.isNotEmpty,
@@ -136,7 +147,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
 
   /// Clear all category selections
   void clearCategories() {
-    emit(state.copyWith(selectedCategories: [], isStep1Valid: false));
+    _safeEmit(state.copyWith(selectedCategories: [], isStep1Valid: false));
     logger.i('Cleared all category selections');
   }
 
@@ -149,7 +160,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
     final budgetOption = BudgetConstants.getBudgetFromSlider(value);
 
     final hasChanges = _hasBudgetChanges(budgetOption, value);
-    emit(
+    _safeEmit(
       state.copyWith(
         budgetSliderValue: value,
         budgetPreference: budgetOption,
@@ -172,7 +183,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
     final sliderValue = BudgetConstants.getSliderFromBudget(budgetOption);
 
     final hasChanges = _hasBudgetChanges(budgetOption, sliderValue);
-    emit(
+    _safeEmit(
       state.copyWith(
         budgetPreference: budgetOption,
         budgetSliderValue: sliderValue,
@@ -209,7 +220,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
 
     // Emit new state with change tracking
     final hasChanges = _hasShoppingStyleChanges(styles);
-    emit(
+    _safeEmit(
       state.copyWith(
         shoppingStyles: styles,
         isStep3Valid: styles.isNotEmpty,
@@ -221,7 +232,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
 
   /// Clear all shopping style selections
   void clearShoppingStyles() {
-    emit(state.copyWith(shoppingStyles: [], isStep3Valid: false));
+    _safeEmit(state.copyWith(shoppingStyles: [], isStep3Valid: false));
     logger.i('Cleared all shopping style selections');
   }
 
@@ -231,12 +242,12 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
 
   /// Clear any pending navigation signal (call after UI handles it)
   void clearNavigationSignal() {
-    emit(state.copyWith(navigationSignal: OnboardingNavigation.none));
+    _safeEmit(state.copyWith(navigationSignal: OnboardingNavigation.none));
   }
 
   /// Clear success message (call after UI shows it)
   void clearSuccessMessage() {
-    emit(state.copyWith(saveSuccessMessage: null));
+    _safeEmit(state.copyWith(saveSuccessMessage: null));
   }
 
   /// Step 1 -> Step 2
@@ -245,7 +256,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
       // Save first to avoid race conditions with navigation signal
       await saveProgress(silent: true);
 
-      emit(
+      _safeEmit(
         state.copyWith(
           currentStep: 2,
           navigationSignal: OnboardingNavigation.toBudget,
@@ -260,7 +271,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
     if (state.isStep2Valid) {
       await saveProgress(silent: true);
 
-      emit(
+      _safeEmit(
         state.copyWith(
           currentStep: 3,
           navigationSignal: OnboardingNavigation.toShoppingStyle,
@@ -273,7 +284,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
   /// Go back to previous step
   void goToPreviousStep() {
     if (state.currentStep > 1) {
-      emit(state.copyWith(currentStep: state.currentStep - 1));
+      _safeEmit(state.copyWith(currentStep: state.currentStep - 1));
       logger.i('Going back to step ${state.currentStep - 1}');
     }
   }
@@ -284,7 +295,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
 
   /// Save current progress locally
   Future<void> saveProgress({bool silent = false}) async {
-    emit(state.copyWith(isSaving: true, saveError: null));
+    _safeEmit(state.copyWith(isSaving: true, saveError: null));
 
     final changes = _detectChanges();
     final hasAnyChanges = changes.isNotEmpty;
@@ -293,7 +304,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
 
     // Check if really changed before emit saving state
     if (!hasAnyChanges && !silent) {
-      emit(state.copyWith(isSaving: false, saveSuccessMessage: null));
+      _safeEmit(state.copyWith(isSaving: false, saveSuccessMessage: null));
       return;
     }
 
@@ -309,7 +320,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
     result.fold(
       (failure) {
         logger.e('Failed to save progress: ${failure.message}');
-        emit(
+        _safeEmit(
           state.copyWith(
             isSaving: false,
             saveError: failure.message,
@@ -330,7 +341,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
             : _generateSuccessMessage(changes, hasAnyChanges);
 
         logger.i('Progress saved successfully. Changes: $changes');
-        emit(
+        _safeEmit(
           state.copyWith(
             isSaving: false,
             saveError: null,
@@ -347,19 +358,19 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
     // Validate all steps
     if (!state.isStep1Valid) {
       logger.w('Cannot submit: Step 1 incomplete');
-      emit(state.copyWith(saveError: 'Please select at least one category'));
+      _safeEmit(state.copyWith(saveError: 'Please select at least one category'));
       return;
     }
 
     if (!state.isStep2Valid) {
       logger.w('Cannot submit: Step 2 incomplete');
-      emit(state.copyWith(saveError: 'Please select your budget preference'));
+      _safeEmit(state.copyWith(saveError: 'Please select your budget preference'));
       return;
     }
 
     if (!state.isStep3Valid) {
       logger.w('Cannot submit: Step 3 incomplete');
-      emit(
+      _safeEmit(
         state.copyWith(saveError: 'Please select at least one shopping style'),
       );
       return;
@@ -367,7 +378,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
 
     logger.i('Submitting complete onboarding...');
 
-    emit(state.copyWith(isSaving: true, saveError: null));
+    _safeEmit(state.copyWith(isSaving: true, saveError: null));
 
     final result = await savePreferencesUseCase(
       selectedCategories: state.selectedCategories,
@@ -379,7 +390,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
     result.fold(
       (failure) {
         logger.e('Failed to submit onboarding: ${failure.message}');
-        emit(state.copyWith(isSaving: false, saveError: failure.message));
+        _safeEmit(state.copyWith(isSaving: false, saveError: failure.message));
       },
       (_) async {
         // Initialize category scores with +50 for each selected category
@@ -400,7 +411,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
         logger.i('Onboarding submitted successfully');
 
         // 1. Emit success message first
-        emit(
+        _safeEmit(
           state.copyWith(
             isSaving: false,
             isCompleted: true,
@@ -412,7 +423,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
         );
 
         // 2. Emit Navigation Signal immediately (UI will handle delay)
-        emit(
+        _safeEmit(
           state.copyWith(navigationSignal: OnboardingNavigation.toPermissions),
         );
       },
@@ -440,7 +451,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
   /// Skip onboarding
   void skipOnboarding() {
     logger.i('User skipped onboarding');
-    emit(
+    _safeEmit(
       state.copyWith(
         isSkipped: true,
         navigationSignal: OnboardingNavigation.toLogin,
@@ -573,7 +584,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
     _originalBudgetPreference = null;
     _originalBudgetSliderValue = BudgetConstants.defaultSliderValue;
     _originalShoppingStyles = [];
-    emit(const OnboardingFlowState());
+    _safeEmit(const OnboardingFlowState());
     logger.i('Onboarding flow reset');
   }
 
