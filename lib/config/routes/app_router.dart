@@ -1,20 +1,21 @@
-import 'package:coupon/features/permissions/presentation/pages/permission_flow_wrapper.dart';
-import 'package:coupon/features/permissions/presentation/pages/pages/location_error_page.dart';
-import 'package:coupon/features/permissions/presentation/pages/pages/location_intro_page.dart';
-import 'package:coupon/features/permissions/presentation/pages/pages/location_map_page.dart';
-import 'package:coupon/features/permissions/presentation/pages/pages/notification_error_page.dart';
-import 'package:coupon/features/permissions/presentation/pages/pages/notification_intro_page.dart';
-import 'package:coupon/features/permissions/presentation/pages/pages/permission_loading_page.dart';
-import 'package:coupon/features/permissions/presentation/pages/pages/permission_splash_page.dart';
+import 'package:coupony/features/permissions/presentation/pages/permission_flow_wrapper.dart';
+import 'package:coupony/features/permissions/presentation/pages/pages/location_error_page.dart';
+import 'package:coupony/features/permissions/presentation/pages/pages/location_intro_page.dart';
+import 'package:coupony/features/permissions/presentation/pages/pages/location_map_page.dart';
+import 'package:coupony/features/permissions/presentation/pages/pages/notification_error_page.dart';
+import 'package:coupony/features/permissions/presentation/pages/pages/notification_intro_page.dart';
+import 'package:coupony/features/permissions/presentation/pages/pages/permission_loading_page.dart';
+import 'package:coupony/features/permissions/presentation/pages/pages/permission_splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 // استيراد شاشات الـ Onboarding
-import 'package:coupon/features/auth/presentation/pages/splash_screen.dart';
-import 'package:coupon/features/auth/presentation/pages/onboarding_screen.dart';
-import 'package:coupon/features/onboarding/presentation/pages/onboarding_preferences_screen.dart';
-import 'package:coupon/features/onboarding/presentation/pages/onboarding_budget_screen.dart';
-import 'package:coupon/features/onboarding/presentation/pages/onboarding_shopping_style_screen.dart';
+import 'package:coupony/features/auth/presentation/pages/splash_screen.dart';
+import 'package:coupony/features/auth/presentation/pages/onboarding_screen.dart';
+import 'package:coupony/features/onboarding/presentation/pages/language_selection_page.dart';
+import 'package:coupony/features/onboarding/presentation/pages/onboarding_preferences_screen.dart';
+import 'package:coupony/features/onboarding/presentation/pages/onboarding_budget_screen.dart';
+import 'package:coupony/features/onboarding/presentation/pages/onboarding_shopping_style_screen.dart';
 
 // Placeholder screens for testing
 class LoginScreen extends StatelessWidget {
@@ -48,6 +49,7 @@ class MerchantDashboardScreen extends StatelessWidget {
 class AppRouter {
   // أسماء المسارات (Route Names)
   static const String splash = '/';
+  static const String languageSelection = '/language-selection';
   static const String onboarding = '/onboarding';
   static const String onboardingPreferences = '/onboarding-preferences';
   static const String onboardingBudget = '/onboarding-budget';
@@ -79,7 +81,13 @@ class AppRouter {
         builder: (context, state) => const AnimatedSplashScreen(),
       ),
 
-      // 2. Onboarding Flow
+      // 2. Language Selection (First-time setup)
+      GoRoute(
+        path: languageSelection,
+        builder: (context, state) => const LanguageSelectionPage(),
+      ),
+
+      // 3. Onboarding Flow
       GoRoute(
         path: onboarding,
         builder: (context, state) => const OnboardingScreen(),
@@ -97,7 +105,7 @@ class AppRouter {
         builder: (context, state) => const OnboardingShoppingStyleScreen(),
       ),
 
-      // ✅ 3. Permission Flow - NEW ARCHITECTURE
+      // ✅ 4. Permission Flow - NEW ARCHITECTURE
       // Entry Point - Wrapper that listens to Cubit and auto-navigates
       GoRoute(
         path: permissionFlow,
@@ -134,14 +142,14 @@ class AppRouter {
         builder: (context, state) => const PermissionLoadingPage(),
       ),
 
-      // 4. Auth Screens
+      // 5. Auth Screens
       GoRoute(path: login, builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: register,
         builder: (context, state) => const RegisterScreen(),
       ),
 
-      // 5. Main App Screens
+      // 6. Main App Screens
       GoRoute(path: home, builder: (context, state) => const UserHomeScreen()),
       GoRoute(
         path: merchantDashboard,

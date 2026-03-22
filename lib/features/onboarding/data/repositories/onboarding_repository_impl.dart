@@ -70,59 +70,49 @@ class OnboardingRepositoryImpl extends BaseRepository
   @override
   Future<Either<Failure, void>> syncPreferencesToBackend(
     String authToken,
-  ) async {
-    try {
-      // Check if online
-      final isConnected = await networkInfo.isConnected;
-      if (!isConnected) {
-        return const Left(
-          NetworkFailure('No internet connection to sync preferences'),
+  ) {
+    return executeOnlineOperation(
+      operation: () async {
+        // Get local preferences
+        final preferencesResult = await getLocalPreferences();
+
+        return await preferencesResult.fold(
+          (failure) => throw failure,
+          (preferences) async {
+            if (preferences == null) {
+              throw const CacheFailure('No local preferences to sync');
+            }
+
+            // Already synced? Skip
+            if (preferences.isSynced) {
+              return;
+            }
+
+            // Sync to backend
+            // ══════════════════════════════════════════════════════
+            // TODO: Uncomment when API is available
+            // ══════════════════════════════════════════════════════
+            // final syncResult = await remoteDataSource.syncPreferences(
+            //   preferences,
+            //   authToken,
+            // );
+            //
+            // if (syncResult.isLeft()) {
+            //   throw syncResult.fold((f) => f, (_) => UnexpectedFailure(''));
+            // }
+            //
+            // // Mark as synced in local storage
+            // final updatedPreferences = preferences.copyWith(isSynced: true);
+            // await localDataSource.savePreferences(updatedPreferences);
+            // ══════════════════════════════════════════════════════
+
+            // Placeholder: Mark as synced without API call
+            final updatedEntity = preferences.copyWith(isSynced: true);
+            final updatedModel = UserPreferencesModel.fromEntity(updatedEntity);
+            await localDataSource.savePreferences(updatedModel);
+          },
         );
-      }
-
-      // Get local preferences
-      final preferencesResult = await getLocalPreferences();
-
-      return preferencesResult.fold((failure) => Left(failure), (
-        preferences,
-      ) async {
-        if (preferences == null) {
-          return const Left(CacheFailure('No local preferences to sync'));
-        }
-
-        // Already synced? Skip
-        if (preferences.isSynced) {
-          return const Right(null);
-        }
-
-        // Sync to backend
-        // ══════════════════════════════════════════════════════
-        // TODO: Uncomment when API is available
-        // ══════════════════════════════════════════════════════
-        // final syncResult = await remoteDataSource.syncPreferences(
-        //   preferences,
-        //   authToken,
-        // );
-        //
-        // return syncResult.fold(
-        //   (failure) => Left(failure),
-        //   (_) async {
-        //     // Mark as synced in local storage
-        //     final updatedPreferences = preferences.copyWith(isSynced: true);
-        //     await localDataSource.savePreferences(updatedPreferences);
-        //     return const Right(null);
-        //   },
-        // );
-        // ══════════════════════════════════════════════════════
-
-        // Placeholder: Mark as synced without API call
-        final updatedEntity = preferences.copyWith(isSynced: true);
-        final updatedModel = UserPreferencesModel.fromEntity(updatedEntity);
-        await localDataSource.savePreferences(updatedModel);
-        return const Right(null);
-      });
-    } catch (e) {
-      return Left(ServerFailure('Sync failed: $e'));
-    }
+      },
+    );
   }
 }

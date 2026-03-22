@@ -1,9 +1,11 @@
 // lib/features/onboarding/presentation/pages/onboarding_shopping_style_screen.dart
 
-import 'package:coupon/config/routes/app_router.dart';
-import 'package:coupon/features/onboarding/presentation/widgets/onboarding_action_buttons.dart';
-import 'package:coupon/features/onboarding/presentation/widgets/category_card.dart';
-import 'package:coupon/features/onboarding/presentation/widgets/onboarding_submit_button.dart';
+import 'package:coupony/config/routes/app_router.dart';
+import 'package:coupony/features/onboarding/presentation/widgets/onboarding_action_buttons.dart';
+import 'package:coupony/features/onboarding/presentation/widgets/category_card.dart';
+import 'package:coupony/features/onboarding/presentation/widgets/onboarding_submit_button.dart';
+// import 'package:coupony/core/widgets/loading/loading.dart'; // Disabled - using inline button loading
+import 'package:coupony/core/utils/message_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,7 +29,7 @@ class OnboardingShoppingStyleScreen extends StatelessWidget {
       backgroundColor: AppColors.surface,
       body: SafeArea(
         child: BlocConsumer<OnboardingFlowCubit, OnboardingFlowState>(
-          // الـ Listener لمراقبة إشارات الملاحة
+          // Listener to monitor navigation signals
           listener: (context, state) {
             if (state.navigationSignal == OnboardingNavigation.toPermissions) {
               // Add delay here to allow user to read the "Saved" message
@@ -45,22 +47,22 @@ class OnboardingShoppingStyleScreen extends StatelessWidget {
             }
 
             // Show success message when saved (only if not null)
-            if (state.saveSuccessMessage != null && state.saveSuccessMessage!.isNotEmpty) {
+            if (state.successMessageKey != null && state.successMessageKey!.isNotEmpty) {
               ScaffoldMessenger.of(context).hideCurrentSnackBar(); // Hide any existing snackbar
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                    state.saveSuccessMessage!,
+                    context.getLocalizedMessage(state.successMessageKey),
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.surface,
                     ),
                   ),
                   backgroundColor: AppColors.primary,
                   behavior: SnackBarBehavior.floating,
-                  margin: EdgeInsets.only(
+                  margin: EdgeInsetsDirectional.only(
                     bottom: 100.h,
-                    left: 20.w,
-                    right: 20.w,
+                    start: 20.w,
+                    end: 20.w,
                   ),
                   duration: const Duration(seconds: 2),
                   shape: RoundedRectangleBorder(
@@ -75,17 +77,23 @@ class OnboardingShoppingStyleScreen extends StatelessWidget {
                 }
               });
             }
-            // إظهار خطأ إذا فشلت عملية الحفظ
-            if (state.saveError != null) {
+            // Show error if save failed
+            if (state.errorMessageKey != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(state.saveError!),
+                  content: Text(context.getLocalizedMessage(state.errorMessageKey)),
                   backgroundColor: AppColors.error,
                 ),
               );
             }
           },
           builder: (context, state) {
+            // Full-screen loader disabled - using inline button loading instead
+            // return LoadingOverlay(
+            //   isLoading: state.isSaving,
+            //   message: 'Saving preferences...',
+            //   icon: LoadingIcons.saving,
+            //   child: Column(
             return Column(
               children: [
                 SizedBox(height: 24.h),
@@ -146,6 +154,7 @@ class OnboardingShoppingStyleScreen extends StatelessWidget {
                   onSkip: () => cubit.skipOnboarding(),
                 ),
               ],
+            // ), // Closing for LoadingOverlay - commented out
             );
           },
         ),

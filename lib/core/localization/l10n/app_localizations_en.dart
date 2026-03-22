@@ -280,4 +280,97 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notification_error_retry => 'Try Again';
+
+  @override
+  String get error_location_position_failed =>
+      'Could not determine your current location. Make sure GPS is enabled';
+
+  @override
+  String get error_location_service_disabled =>
+      'Please enable location service (GPS) from device settings';
+
+  @override
+  String get error_location_unexpected =>
+      'An unexpected error occurred. Please try again';
+
+  @override
+  String get error_location_gps_check_failed => 'Failed to check GPS status';
+
+  @override
+  String get error_location_weak_signal =>
+      'Could not determine your location. Make sure you have a strong GPS signal';
+
+  @override
+  String get error_location_use_current_failed =>
+      'Could not determine your location. Make sure GPS is enabled and try again';
+
+  @override
+  String get error_settings_open_failed => 'Failed to open settings';
+
+  @override
+  String get error_settings_app_open_failed => 'Failed to open app settings';
+
+  @override
+  String get error_notification_unexpected => 'An unexpected error occurred';
+
+  @override
+  String get error_notification_settings_failed => 'Failed to open settings';
+
+  @override
+  String get success_location_gps_enabled =>
+      'After enabling GPS, return to the app and press Try Again';
+
+  @override
+  String get success_location_settings_opened =>
+      'After allowing location access, return to the app and press Try Again';
+
+  @override
+  String get info_location_settings_manual =>
+      'Could not open settings. Open device settings manually and enable location';
+
+  @override
+  String get info_location_app_settings_manual =>
+      'Could not open settings. Open device settings manually and grant location permission to the app';
+
+  @override
+  String get info_notification_settings_manual =>
+      'Could not open settings. Open device settings manually and enable notifications';
+
+  @override
+  String get success_onboarding_preferences_saved =>
+      'Your preferences have been saved successfully';
+
+  @override
+  String get success_onboarding_categories_updated =>
+      'Categories updated successfully';
+
+  @override
+  String get success_onboarding_budget_updated => 'Budget updated successfully';
+
+  @override
+  String get success_onboarding_styles_updated =>
+      'Shopping style updated successfully';
+
+  @override
+  String get success_onboarding_all_updated =>
+      'All your preferences have been updated successfully';
+
+  @override
+  String get error_onboarding_step1_incomplete =>
+      'Please select at least one category';
+
+  @override
+  String get error_onboarding_step2_incomplete =>
+      'Please select your budget preference';
+
+  @override
+  String get error_onboarding_step3_incomplete =>
+      'Please select at least one shopping style';
+
+  @override
+  String get onboarding_intro_title =>
+      'Let\'s get to know you better\nand offer you more';
+
+  @override
+  String get onboarding_intro_continue => 'Continue';
 }

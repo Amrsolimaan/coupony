@@ -1,4 +1,4 @@
-import 'package:coupon/core/storage/local_cache_service.dart';
+import 'package:coupony/core/storage/local_cache_service.dart';
 import 'package:logger/logger.dart';
 import '../../../../core/constants/category_constants.dart';
 import '../../../../core/constants/budget_constants.dart';
@@ -140,7 +140,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
         selectedCategories: categories,
         isStep1Valid: categories.isNotEmpty,
         hasChanges: hasChanges,
-        saveSuccessMessage: null, // Clear previous message
+        successMessageKey: null, // Clear previous message
       ),
     );
   }
@@ -166,7 +166,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
         budgetPreference: budgetOption,
         isStep2Valid: true,
         hasChanges: hasChanges,
-        saveSuccessMessage: null, // Clear previous message
+        successMessageKey: null, // Clear previous message
       ),
     );
 
@@ -189,7 +189,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
         budgetSliderValue: sliderValue,
         isStep2Valid: true,
         hasChanges: hasChanges,
-        saveSuccessMessage: null, // Clear previous message
+        successMessageKey: null, // Clear previous message
       ),
     );
 
@@ -225,7 +225,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
         shoppingStyles: styles,
         isStep3Valid: styles.isNotEmpty,
         hasChanges: hasChanges,
-        saveSuccessMessage: null, // Clear previous message
+        successMessageKey: null, // Clear previous message
       ),
     );
   }
@@ -247,7 +247,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
 
   /// Clear success message (call after UI shows it)
   void clearSuccessMessage() {
-    _safeEmit(state.copyWith(saveSuccessMessage: null));
+    _safeEmit(state.copyWith(successMessageKey: null));
   }
 
   /// Step 1 -> Step 2
@@ -295,7 +295,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
 
   /// Save current progress locally
   Future<void> saveProgress({bool silent = false}) async {
-    _safeEmit(state.copyWith(isSaving: true, saveError: null));
+    _safeEmit(state.copyWith(isSaving: true, errorMessageKey: null));
 
     final changes = _detectChanges();
     final hasAnyChanges = changes.isNotEmpty;
@@ -304,7 +304,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
 
     // Check if really changed before emit saving state
     if (!hasAnyChanges && !silent) {
-      _safeEmit(state.copyWith(isSaving: false, saveSuccessMessage: null));
+      _safeEmit(state.copyWith(isSaving: false, successMessageKey: null));
       return;
     }
 
@@ -323,8 +323,8 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
         _safeEmit(
           state.copyWith(
             isSaving: false,
-            saveError: failure.message,
-            saveSuccessMessage: null,
+            errorMessageKey: failure.message,
+            successMessageKey: null,
           ),
         );
       },
@@ -336,16 +336,16 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
         _originalShoppingStyles = List<String>.from(state.shoppingStyles);
 
         // Generate success message only if not silent and has changes
-        final successMessage = (silent || !hasAnyChanges)
+        final successMessageKey = (silent || !hasAnyChanges)
             ? null
-            : _generateSuccessMessage(changes, hasAnyChanges);
+            : _generateSuccessMessageKey(changes, hasAnyChanges);
 
         logger.i('Progress saved successfully. Changes: $changes');
         _safeEmit(
           state.copyWith(
             isSaving: false,
-            saveError: null,
-            saveSuccessMessage: successMessage,
+            errorMessageKey: null,
+            successMessageKey: successMessageKey,
             hasChanges: false, // Reset after save
           ),
         );
@@ -358,27 +358,27 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
     // Validate all steps
     if (!state.isStep1Valid) {
       logger.w('Cannot submit: Step 1 incomplete');
-      _safeEmit(state.copyWith(saveError: 'Please select at least one category'));
+      _safeEmit(state.copyWith(errorMessageKey: 'error_onboarding_step1_incomplete'));
       return;
     }
 
     if (!state.isStep2Valid) {
       logger.w('Cannot submit: Step 2 incomplete');
-      _safeEmit(state.copyWith(saveError: 'Please select your budget preference'));
+      _safeEmit(state.copyWith(errorMessageKey: 'error_onboarding_step2_incomplete'));
       return;
     }
 
     if (!state.isStep3Valid) {
       logger.w('Cannot submit: Step 3 incomplete');
       _safeEmit(
-        state.copyWith(saveError: 'Please select at least one shopping style'),
+        state.copyWith(errorMessageKey: 'error_onboarding_step3_incomplete'),
       );
       return;
     }
 
     logger.i('Submitting complete onboarding...');
 
-    _safeEmit(state.copyWith(isSaving: true, saveError: null));
+    _safeEmit(state.copyWith(isSaving: true, errorMessageKey: null));
 
     final result = await savePreferencesUseCase(
       selectedCategories: state.selectedCategories,
@@ -390,7 +390,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
     result.fold(
       (failure) {
         logger.e('Failed to submit onboarding: ${failure.message}');
-        _safeEmit(state.copyWith(isSaving: false, saveError: failure.message));
+        _safeEmit(state.copyWith(isSaving: false, errorMessageKey: failure.message));
       },
       (_) async {
         // Initialize category scores with +50 for each selected category
@@ -403,7 +403,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
         _originalShoppingStyles = List<String>.from(state.shoppingStyles);
 
         final changes = _detectChanges();
-        final successMessage = _generateSuccessMessage(
+        final successMessageKey = _generateSuccessMessageKey(
           changes,
           changes.isNotEmpty,
         );
@@ -415,8 +415,8 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
           state.copyWith(
             isSaving: false,
             isCompleted: true,
-            saveError: null,
-            saveSuccessMessage: successMessage,
+            errorMessageKey: null,
+            successMessageKey: successMessageKey,
             hasChanges: false, // Reset after save
             navigationSignal: OnboardingNavigation.none,
           ),
@@ -635,29 +635,24 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
     return changes;
   }
 
-  /// Generate user-friendly success message
-  String _generateSuccessMessage(List<String> changes, bool hasAnyChanges) {
+  /// Generate user-friendly success message key
+  String _generateSuccessMessageKey(List<String> changes, bool hasAnyChanges) {
     if (!hasAnyChanges) {
-      return 'تم حفظ اختياراتك بنجاح'; // "Your preferences saved successfully"
+      return 'success_onboarding_preferences_saved';
     }
 
-    final changeMessages = <String>[];
-    if (changes.contains('categories')) {
-      changeMessages.add('التصنيفات');
-    }
-    if (changes.contains('budget')) {
-      changeMessages.add('الميزانية');
-    }
-    if (changes.contains('shopping_styles')) {
-      changeMessages.add('أسلوب التسوق');
+    // Single change - return specific key
+    if (changes.length == 1) {
+      if (changes.contains('categories')) {
+        return 'success_onboarding_categories_updated';
+      } else if (changes.contains('budget')) {
+        return 'success_onboarding_budget_updated';
+      } else if (changes.contains('shopping_styles')) {
+        return 'success_onboarding_styles_updated';
+      }
     }
 
-    if (changeMessages.length == 1) {
-      return 'تم تحديث ${changeMessages.first} بنجاح';
-    } else if (changeMessages.length == 2) {
-      return 'تم تحديث ${changeMessages.first} و ${changeMessages.last} بنجاح';
-    } else {
-      return 'تم تحديث جميع اختياراتك بنجاح';
-    }
+    // Multiple changes - return generic "all updated" key
+    return 'success_onboarding_all_updated';
   }
 }

@@ -1,5 +1,5 @@
-import 'package:coupon/config/routes/app_router.dart';
-import 'package:coupon/core/localization/l10n/app_localizations.dart';
+import 'package:coupony/config/routes/app_router.dart';
+import 'package:coupony/core/localization/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';

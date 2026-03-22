@@ -1,7 +1,8 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:coupon/core/services/location_service.dart';
-import 'package:coupon/core/services/notification_service.dart';
-import 'package:coupon/features/permissions/presentation/cubit/permission_flow_cubit.dart';
+import 'package:coupony/core/localization/locale_cubit.dart';
+import 'package:coupony/core/services/location_service.dart';
+import 'package:coupony/core/services/notification_service.dart';
+import 'package:coupony/features/permissions/presentation/cubit/permission_flow_cubit.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
@@ -92,6 +93,15 @@ Future<void> init() async {
   // so we only pass FlutterSecureStorage
   sl.registerLazySingleton<DioClient>(
     () => DioClient(sl<FlutterSecureStorage>()),
+  );
+
+  // ═══════════════════════════════════════════════════════════
+  // 2.5. LOCALIZATION
+  // ═══════════════════════════════════════════════════════════
+
+  // LocaleCubit - Manages app language (Singleton to persist across app)
+  sl.registerLazySingleton<LocaleCubit>(
+    () => LocaleCubit(sl<FlutterSecureStorage>()),
   );
 
   // ═══════════════════════════════════════════════════════════

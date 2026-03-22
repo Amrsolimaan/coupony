@@ -41,8 +41,8 @@ class OnboardingFlowState extends Equatable {
   // FLOW STATE
   // ════════════════════════════════════════════════════════
   final bool isSaving; // Loading state during save
-  final String? saveError; // Error message if save fails
-  final String? saveSuccessMessage; // Success message after save
+  final String? errorMessageKey; // Error message key for localization
+  final String? successMessageKey; // Success message key for localization
   final bool isCompleted; // All steps completed and saved
   final bool isSkipped; // User skipped onboarding
   final bool hasChanges; // Track if user made any changes
@@ -62,8 +62,8 @@ class OnboardingFlowState extends Equatable {
     this.isStep3Valid = false,
     // Flow
     this.isSaving = false,
-    this.saveError,
-    this.saveSuccessMessage,
+    this.errorMessageKey,
+    this.successMessageKey,
     this.isCompleted = false,
     this.isSkipped = false,
     this.hasChanges = false,
@@ -85,8 +85,8 @@ class OnboardingFlowState extends Equatable {
     bool? isStep3Valid,
     // Flow
     bool? isSaving,
-    String? saveError,
-    String? saveSuccessMessage,
+    String? errorMessageKey,
+    String? successMessageKey,
     bool? isCompleted,
     bool? isSkipped,
     bool? hasChanges,
@@ -106,8 +106,8 @@ class OnboardingFlowState extends Equatable {
       isStep3Valid: isStep3Valid ?? this.isStep3Valid,
       // Flow
       isSaving: isSaving ?? this.isSaving,
-      saveError: saveError,
-      saveSuccessMessage: saveSuccessMessage,
+      errorMessageKey: errorMessageKey,
+      successMessageKey: successMessageKey,
       isCompleted: isCompleted ?? this.isCompleted,
       isSkipped: isSkipped ?? this.isSkipped,
       hasChanges: hasChanges ?? this.hasChanges,
@@ -158,8 +158,8 @@ class OnboardingFlowState extends Equatable {
     shoppingStyles,
     isStep3Valid,
     isSaving,
-    saveError,
-    saveSuccessMessage,
+    errorMessageKey,
+    successMessageKey,
     isCompleted,
     isSkipped,
     hasChanges,

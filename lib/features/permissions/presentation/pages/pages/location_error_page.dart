@@ -1,10 +1,11 @@
-import 'package:coupon/config/routes/app_router.dart';
-import 'package:coupon/core/localization/l10n/app_localizations.dart';
-import 'package:coupon/core/services/location_service.dart';
-import 'package:coupon/core/theme/app_colors.dart';
-import 'package:coupon/core/theme/app_text_styles.dart';
-import 'package:coupon/features/permissions/presentation/cubit/permission_flow_cubit.dart';
-import 'package:coupon/features/permissions/presentation/cubit/permission_flow_state.dart';
+import 'package:coupony/config/routes/app_router.dart';
+import 'package:coupony/core/localization/l10n/app_localizations.dart';
+import 'package:coupony/core/services/location_service.dart';
+import 'package:coupony/core/theme/app_colors.dart';
+import 'package:coupony/core/theme/app_text_styles.dart';
+import 'package:coupony/core/utils/message_formatter.dart';
+import 'package:coupony/features/permissions/presentation/cubit/permission_flow_cubit.dart';
+import 'package:coupony/features/permissions/presentation/cubit/permission_flow_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -89,7 +90,7 @@ class _LocationErrorPageState extends State<LocationErrorPage>
                   final bool isServiceDisabled =
                       state.locationStatus ==
                       LocationPermissionStatus.serviceDisabled;
-                  final bool hasError = state.errorMessage != null;
+                  final bool hasError = state.messageKey != null;
 
                   // ✅ Build appropriate error message
                   String subtitle;
@@ -97,9 +98,9 @@ class _LocationErrorPageState extends State<LocationErrorPage>
 
                   if (isServiceDisabled) {
                     // GPS is turned off
-                    subtitle =
-                        state.errorMessage ??
-                        l10n.location_error_service_disabled;
+                    subtitle = hasError
+                        ? context.getLocalizedMessage(state.messageKey)
+                        : l10n.location_error_service_disabled;
                     primaryButtonText = l10n.location_error_open_settings;
                   } else if (isPermanentlyDenied) {
                     // Permission permanently denied
@@ -107,7 +108,7 @@ class _LocationErrorPageState extends State<LocationErrorPage>
                     primaryButtonText = l10n.location_error_open_app_settings;
                   } else if (hasError) {
                     // Custom error message from cubit
-                    subtitle = state.errorMessage!;
+                    subtitle = context.getLocalizedMessage(state.messageKey);
                     primaryButtonText = l10n.location_error_retry;
                   } else {
                     // Generic error

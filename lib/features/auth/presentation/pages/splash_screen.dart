@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/localization/locale_cubit.dart';
 import '../../../../config/routes/app_router.dart';
 import '../../../../config/dependency_injection/injection_container.dart' as di;
 import '../../../onboarding/domain/repositories/onboarding_repository.dart';
@@ -55,29 +57,39 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
     );
 
     _controller.forward().then((_) async {
-      // بعد انتهاء الأنيميشن، نتحقق من حالة الـ Onboarding
+      // ✅ STEP 1: Check if language has been selected (First-time check)
       try {
+        final localeCubit = context.read<LocaleCubit>();
+        final hasLanguagePreference = await localeCubit.hasManualPreference();
+
+        if (!hasLanguagePreference) {
+          // First time run - Navigate to Language Selection
+          if (mounted) context.go(AppRouter.languageSelection);
+          return;
+        }
+
+        // ✅ STEP 2: Language exists, check Onboarding status
         final repository = di.sl<OnboardingRepository>();
         final result = await repository.getLocalPreferences();
 
         result.fold(
           (failure) {
-            // في حالة الفشل (أو عدم وجود بيانات)، نذهب للـ Onboarding كاحتياط
+            // In case of failure (or no data), go to Onboarding as fallback
             if (mounted) context.go(AppRouter.onboarding);
           },
           (preferences) {
             if (preferences != null && preferences.isOnboardingCompleted) {
-              // إذا أكمل المستخدم الـ Onboarding، ننتقل لصفحة الصلاحيات
+              // User completed Onboarding, navigate to Permissions
               if (mounted) context.go(AppRouter.permissionSplash);
             } else {
-              // إذا لم يكمل، نذهب للـ Onboarding
+              // User hasn't completed Onboarding
               if (mounted) context.go(AppRouter.onboarding);
             }
           },
         );
       } catch (e) {
-        // Fallback safety
-        if (mounted) context.go(AppRouter.onboarding);
+        // Fallback safety - go to language selection
+        if (mounted) context.go(AppRouter.languageSelection);
       }
     });
   }

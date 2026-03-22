@@ -55,7 +55,7 @@ class OnboardingStepIndicator extends StatelessWidget {
                 Icons.check,
                 color: AppColors.surface,
                 size: 20.w,
-              ) // إضافة علامة الصح للخطوات المكتملة كما في التصميم
+              ) // Add checkmark for completed steps as per design
             : Text(
                 '$stepNumber',
                 style: AppTextStyles.bodyLarge.copyWith(

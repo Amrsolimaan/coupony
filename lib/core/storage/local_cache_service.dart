@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:coupon/core/errors/failures.dart';
-import 'package:coupon/features/onboarding/data/models/user_preferences_model.dart';
+import 'package:coupony/core/errors/failures.dart';
+import 'package:coupony/features/onboarding/data/models/user_preferences_model.dart';
 import 'package:crypto/crypto.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';

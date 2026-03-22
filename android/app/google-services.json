@@ -51,9 +51,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:601682043196:android:3598cb4d05718a8fd4be39",
+        "mobilesdk_app_id": "1:601682043196:android:8c82764cc848dc89d4be39",
         "android_client_info": {
-          "package_name": "com.example.coupony"
+          "package_name": "com.coupony"
         }
       },
       "oauth_client": [

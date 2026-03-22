@@ -1,4 +1,4 @@
-import 'package:coupon/core/localization/l10n/app_localizations.dart';
+import 'package:coupony/core/localization/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 /// Category constants for onboarding preferences

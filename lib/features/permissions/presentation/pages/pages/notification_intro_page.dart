@@ -1,7 +1,7 @@
-import 'package:coupon/config/routes/app_router.dart';
-import 'package:coupon/core/localization/l10n/app_localizations.dart';
-import 'package:coupon/features/permissions/presentation/cubit/permission_flow_cubit.dart';
-import 'package:coupon/features/permissions/presentation/cubit/permission_flow_state.dart';
+import 'package:coupony/config/routes/app_router.dart';
+import 'package:coupony/core/localization/l10n/app_localizations.dart';
+import 'package:coupony/features/permissions/presentation/cubit/permission_flow_cubit.dart';
+import 'package:coupony/features/permissions/presentation/cubit/permission_flow_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

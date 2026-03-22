@@ -1,4 +1,4 @@
-import 'package:coupon/features/auth/domain/entities/user_entity.dart';
+import 'package:coupony/features/auth/domain/entities/user_entity.dart';
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failures.dart';
 

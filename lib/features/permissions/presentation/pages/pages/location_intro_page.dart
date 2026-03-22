@@ -1,6 +1,7 @@
-import 'package:coupon/config/routes/app_router.dart';
-import 'package:coupon/features/permissions/presentation/cubit/permission_flow_cubit.dart';
-import 'package:coupon/features/permissions/presentation/cubit/permission_flow_state.dart';
+import 'package:coupony/config/routes/app_router.dart';
+import 'package:coupony/core/localization/l10n/app_localizations.dart';
+import 'package:coupony/features/permissions/presentation/cubit/permission_flow_cubit.dart';
+import 'package:coupony/features/permissions/presentation/cubit/permission_flow_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -44,12 +45,13 @@ class LocationIntroPage extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 40.h),
               child: BlocBuilder<PermissionFlowCubit, PermissionFlowState>(
                 builder: (context, state) {
+                  final l10n = AppLocalizations.of(context)!;
+                  
                   return PermissionContentCard(
                     iconAssetPath: 'assets/icons/location.png',
-                    title: 'الموقع',
-                    subtitle:
-                        'السماح للتطبيق بالوصول إلى موقعك أثناء استخدامك للتطبيق؟',
-                    primaryButtonText: 'سماح',
+                    title: l10n.locationPermissionTitle,
+                    subtitle: l10n.locationPermissionSubtitle,
+                    primaryButtonText: l10n.allow,
                     onPrimaryPressed: () {
                       // Request location permission
                       context
@@ -57,7 +59,7 @@ class LocationIntroPage extends StatelessWidget {
                           .requestLocationPermission();
                     },
                     isPrimaryLoading: state.isRequestingLocation,
-                    skipButtonText: 'تخطي الآن',
+                    skipButtonText: l10n.skipNow,
                     onSkipPressed: () {
                       // Skip to notification
                       context.read<PermissionFlowCubit>().skipCurrentStep();

@@ -279,4 +279,92 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get notification_error_retry => 'محاولة مره أخرى';
+
+  @override
+  String get error_location_position_failed =>
+      'تعذر تحديد موقعك الحالي. تأكد من تفعيل GPS';
+
+  @override
+  String get error_location_service_disabled =>
+      'يرجى تفعيل خدمة الموقع (GPS) من إعدادات الجهاز';
+
+  @override
+  String get error_location_unexpected =>
+      'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى';
+
+  @override
+  String get error_location_gps_check_failed => 'تعذر التحقق من حالة GPS';
+
+  @override
+  String get error_location_weak_signal =>
+      'تعذر تحديد موقعك. تأكد من وجود إشارة GPS قوية';
+
+  @override
+  String get error_location_use_current_failed =>
+      'تعذر تحديد موقعك. تأكد من تفعيل GPS وحاول مرة أخرى';
+
+  @override
+  String get error_settings_open_failed => 'تعذر فتح الإعدادات';
+
+  @override
+  String get error_settings_app_open_failed => 'تعذر فتح إعدادات التطبيق';
+
+  @override
+  String get error_notification_unexpected => 'حدث خطأ غير متوقع';
+
+  @override
+  String get error_notification_settings_failed => 'تعذر فتح الإعدادات';
+
+  @override
+  String get success_location_gps_enabled =>
+      'بعد تفعيل GPS، ارجع للتطبيق واضغط محاولة مرة أخرى';
+
+  @override
+  String get success_location_settings_opened =>
+      'بعد السماح بالموقع، ارجع للتطبيق واضغط محاولة مرة أخرى';
+
+  @override
+  String get info_location_settings_manual =>
+      'تعذر فتح الإعدادات. افتح إعدادات الجهاز يدوياً وفعّل الموقع';
+
+  @override
+  String get info_location_app_settings_manual =>
+      'تعذر فتح الإعدادات. افتح إعدادات الجهاز يدوياً وامنح التطبيق إذن الموقع';
+
+  @override
+  String get info_notification_settings_manual =>
+      'تعذر فتح الإعدادات. افتح إعدادات الجهاز يدوياً وفعّل الإشعارات';
+
+  @override
+  String get success_onboarding_preferences_saved => 'تم حفظ اختياراتك بنجاح';
+
+  @override
+  String get success_onboarding_categories_updated =>
+      'تم تحديث التصنيفات بنجاح';
+
+  @override
+  String get success_onboarding_budget_updated => 'تم تحديث الميزانية بنجاح';
+
+  @override
+  String get success_onboarding_styles_updated => 'تم تحديث أسلوب التسوق بنجاح';
+
+  @override
+  String get success_onboarding_all_updated => 'تم تحديث جميع اختياراتك بنجاح';
+
+  @override
+  String get error_onboarding_step1_incomplete =>
+      'يرجى اختيار تصنيف واحد على الأقل';
+
+  @override
+  String get error_onboarding_step2_incomplete => 'يرجى اختيار تفضيل الميزانية';
+
+  @override
+  String get error_onboarding_step3_incomplete =>
+      'يرجى اختيار أسلوب تسوق واحد على الأقل';
+
+  @override
+  String get onboarding_intro_title => '...خلّينا نعرفك أكتر\nوهنوفرلك أكتر ';
+
+  @override
+  String get onboarding_intro_continue => 'متابعه';
 }

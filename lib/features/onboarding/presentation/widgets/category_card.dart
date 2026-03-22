@@ -5,7 +5,7 @@ import '../../../../core/theme/app_text_styles.dart';
 
 class SelectionOptionCard extends StatelessWidget {
   final String title;
-  final IconData? icon; // اختياري
+  final IconData? icon; // Optional
   final bool isSelected;
   final VoidCallback onTap;
 

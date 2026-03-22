@@ -1,4 +1,4 @@
-package com.example.coupony
+package com.coupony
 
 import io.flutter.embedding.android.FlutterActivity
 

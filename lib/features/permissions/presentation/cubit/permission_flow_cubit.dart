@@ -150,7 +150,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
   Future<void> requestLocationPermission() async {
     logger.i('User requested location permission (rationale shown)');
 
-    _safeEmit(state.copyWith(isRequestingLocation: true, errorMessage: null));
+    _safeEmit(state.copyWith(isRequestingLocation: true, messageKey: null, messageType: null));
 
     try {
       // ✅ Use the Use Case instead of direct repository calls
@@ -163,7 +163,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
             state.copyWith(
               isRequestingLocation: false,
               locationStatus: LocationPermissionStatus.error,
-              errorMessage: failure.message,
+              messageKey: failure.message,
               navSignal: PermissionNavigationSignal.toLocationError,
             ),
           );
@@ -203,7 +203,8 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
               logger.w('⚠️ Permission granted but failed to get position');
               _safeEmit(
                 state.copyWith(
-                  errorMessage: 'تعذر تحديد موقعك الحالي. تأكد من تفعيل GPS',
+                  messageKey: 'error_location_position_failed',
+                  messageType: MessageType.error,
                   navSignal: PermissionNavigationSignal.toLocationError,
                 ),
               );
@@ -214,7 +215,8 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
             logger.w('Location service disabled');
             _safeEmit(
               state.copyWith(
-                errorMessage: 'يرجى تفعيل خدمة الموقع (GPS) من إعدادات الجهاز',
+                messageKey: 'error_location_service_disabled',
+                messageType: MessageType.error,
                 navSignal: PermissionNavigationSignal.toLocationError,
               ),
             );
@@ -238,7 +240,8 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
         state.copyWith(
           isRequestingLocation: false,
           locationStatus: LocationPermissionStatus.error,
-          errorMessage: 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى',
+          messageKey: 'error_location_unexpected',
+          messageType: MessageType.error,
           navSignal: PermissionNavigationSignal.toLocationError,
         ),
       );
@@ -292,7 +295,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     logger.d('Checking location status on app resume...');
 
     // 1. Show loading indicator immediately
-    _safeEmit(state.copyWith(isRequestingLocation: true, errorMessage: null));
+    _safeEmit(state.copyWith(isRequestingLocation: true, messageKey: null, messageType: null));
 
     // Add artificial delay for better UX (so user sees the checking process)
     await Future.delayed(const Duration(milliseconds: 1500));
@@ -337,7 +340,8 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
                 isRequestingLocation: false, // Stop loading
                 currentStep: 2,
                 navSignal: PermissionNavigationSignal.toLocationMap,
-                errorMessage: null,
+                messageKey: null,
+                messageType: null,
               ),
             );
           } else {
@@ -573,7 +577,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
   Future<void> useCurrentLocation() async {
     logger.i('User wants to use current location');
 
-    _safeEmit(state.copyWith(isRequestingLocation: true, errorMessage: null));
+    _safeEmit(state.copyWith(isRequestingLocation: true, messageKey: null, messageType: null));
 
     final success = await _fetchCurrentPositionWithValidation();
 
@@ -585,7 +589,8 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
       logger.w('⚠️ Failed to get current location');
       _safeEmit(
         state.copyWith(
-          errorMessage: 'تعذر تحديد موقعك. تأكد من تفعيل GPS وحاول مرة أخرى',
+          messageKey: 'error_location_use_current_failed',
+          messageType: MessageType.error,
         ),
       );
     }
@@ -597,7 +602,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     logger.i('User retrying location permission');
 
     // Clear previous error
-    _safeEmit(state.copyWith(errorMessage: null));
+    _safeEmit(state.copyWith(messageKey: null, messageType: null));
 
     // First check if location service (GPS) is enabled
     final serviceResult = await repository.checkLocationServiceEnabled();
@@ -606,7 +611,8 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
         logger.e('Failed to check location service: ${failure.message}');
         _safeEmit(
           state.copyWith(
-            errorMessage: 'تعذر التحقق من حالة GPS',
+            messageKey: 'error_location_gps_check_failed',
+            messageType: MessageType.error,
             navSignal: PermissionNavigationSignal.toLocationError,
           ),
         );
@@ -618,8 +624,8 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
           _safeEmit(
             state.copyWith(
               locationStatus: LocationPermissionStatus.serviceDisabled,
-              errorMessage:
-                  'يرجى تفعيل خدمة الموقع (GPS) من إعدادات الجهاز ثم ارجع للتطبيق',
+              messageKey: 'error_location_service_disabled',
+              messageType: MessageType.error,
               navSignal: PermissionNavigationSignal.toLocationError,
             ),
           );
@@ -658,7 +664,8 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
             // Still failed
             _safeEmit(
               state.copyWith(
-                errorMessage: 'تعذر تحديد موقعك. تأكد من وجود إشارة GPS قوية',
+                messageKey: 'error_location_weak_signal',
+                messageType: MessageType.error,
                 navSignal: PermissionNavigationSignal.toLocationError,
               ),
             );
@@ -690,23 +697,28 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
       result.fold(
         (failure) {
           logger.e('Failed to open location settings: ${failure.message}');
-          _safeEmit(state.copyWith(errorMessage: 'تعذر فتح الإعدادات'));
+          _safeEmit(
+            state.copyWith(
+              messageKey: 'error_settings_open_failed',
+              messageType: MessageType.error,
+            ),
+          );
         },
         (opened) {
           if (opened) {
             logger.i('Opened location settings successfully');
             _safeEmit(
               state.copyWith(
-                errorMessage:
-                    'بعد تفعيل GPS، ارجع للتطبيق واضغط محاولة مرة أخرى',
+                messageKey: 'success_location_gps_enabled',
+                messageType: MessageType.success,
               ),
             );
           } else {
             logger.w('Could not open location settings');
             _safeEmit(
               state.copyWith(
-                errorMessage:
-                    'تعذر فتح الإعدادات. افتح إعدادات الجهاز يدوياً وفعّل الموقع',
+                messageKey: 'info_location_settings_manual',
+                messageType: MessageType.info,
               ),
             );
           }
@@ -720,23 +732,28 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
       result.fold(
         (failure) {
           logger.e('Failed to open app settings: ${failure.message}');
-          _safeEmit(state.copyWith(errorMessage: 'تعذر فتح إعدادات التطبيق'));
+          _safeEmit(
+            state.copyWith(
+              messageKey: 'error_settings_app_open_failed',
+              messageType: MessageType.error,
+            ),
+          );
         },
         (opened) {
           if (opened) {
             logger.i('Opened app settings successfully');
             _safeEmit(
               state.copyWith(
-                errorMessage:
-                    'بعد السماح بالموقع، ارجع للتطبيق واضغط محاولة مرة أخرى',
+                messageKey: 'success_location_settings_opened',
+                messageType: MessageType.success,
               ),
             );
           } else {
             logger.w('Could not open app settings');
             _safeEmit(
               state.copyWith(
-                errorMessage:
-                    'تعذر فتح الإعدادات. افتح إعدادات الجهاز يدوياً وامنح التطبيق إذن الموقع',
+                messageKey: 'info_location_app_settings_manual',
+                messageType: MessageType.info,
               ),
             );
           }
@@ -754,7 +771,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
   Future<void> requestNotificationPermission() async {
     logger.i('User requested notification permission (rationale shown)');
 
-    _safeEmit(state.copyWith(isRequestingNotification: true, errorMessage: null));
+    _safeEmit(state.copyWith(isRequestingNotification: true, messageKey: null, messageType: null));
 
     try {
       // Request permission
@@ -769,7 +786,7 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
             state.copyWith(
               isRequestingNotification: false,
               notificationStatus: NotificationPermissionStatus.error,
-              errorMessage: failure.message,
+              messageKey: failure.message,
             ),
           );
         },
@@ -812,7 +829,8 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
         state.copyWith(
           isRequestingNotification: false,
           notificationStatus: NotificationPermissionStatus.error,
-          errorMessage: 'حدث خطأ غير متوقع',
+          messageKey: 'error_notification_unexpected',
+          messageType: MessageType.error,
         ),
       );
     }
@@ -839,13 +857,24 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     result.fold(
       (failure) {
         logger.e('Failed to open notification settings: ${failure.message}');
-        _safeEmit(state.copyWith(errorMessage: 'تعذر فتح الإعدادات'));
+        _safeEmit(
+          state.copyWith(
+            messageKey: 'error_notification_settings_failed',
+            messageType: MessageType.error,
+          ),
+        );
       },
       (opened) {
         if (opened) {
           logger.i('Opened notification settings');
         } else {
           logger.w('Could not open notification settings');
+          _safeEmit(
+            state.copyWith(
+              messageKey: 'info_notification_settings_manual',
+              messageType: MessageType.info,
+            ),
+          );
         }
       },
     );
@@ -998,9 +1027,9 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
     return null; // We'll handle this in UI layer
   }
 
-  /// Clear error message
-  void clearError() {
-    _safeEmit(state.copyWith(errorMessage: null));
+  /// Clear message
+  void clearMessage() {
+    _safeEmit(state.copyWith(messageKey: null, messageType: null));
   }
 
   // ════════════════════════════════════════════════════════

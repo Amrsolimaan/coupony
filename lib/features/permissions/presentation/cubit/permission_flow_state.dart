@@ -15,6 +15,13 @@ enum PermissionNavigationSignal {
   toHome,
 }
 
+/// Message types for user feedback
+enum MessageType {
+  error,
+  success,
+  info,
+}
+
 /// Permission Flow State
 /// Manages the state of the permission flow (location + notification)
 class PermissionFlowState extends Equatable {
@@ -71,8 +78,11 @@ class PermissionFlowState extends Equatable {
   /// Whether flow has completed at least once
   final bool hasCompletedFlow;
 
-  /// Error message (if any)
-  final String? errorMessage;
+  /// Message key for localized user feedback (replaces errorMessage)
+  final String? messageKey;
+
+  /// Message type (error, success, info)
+  final MessageType? messageType;
 
   /// Current human-readable address
   final String? currentAddress;
@@ -92,7 +102,8 @@ class PermissionFlowState extends Equatable {
     this.isCompleted = false,
     this.isSkipped = false,
     this.hasCompletedFlow = false,
-    this.errorMessage,
+    this.messageKey,
+    this.messageType,
     this.loadingProgress = 0.0,
     this.currentAddress,
   });
@@ -113,7 +124,8 @@ class PermissionFlowState extends Equatable {
     bool? isCompleted,
     bool? isSkipped,
     bool? hasCompletedFlow,
-    String? errorMessage,
+    String? messageKey,
+    MessageType? messageType,
     double? loadingProgress,
     String? currentAddress,
   }) {
@@ -130,7 +142,8 @@ class PermissionFlowState extends Equatable {
       isCompleted: isCompleted ?? this.isCompleted,
       isSkipped: isSkipped ?? this.isSkipped,
       hasCompletedFlow: hasCompletedFlow ?? this.hasCompletedFlow,
-      errorMessage: errorMessage,
+      messageKey: messageKey,
+      messageType: messageType,
       loadingProgress: loadingProgress ?? this.loadingProgress,
       currentAddress: currentAddress ?? this.currentAddress,
     );
@@ -191,9 +204,10 @@ class PermissionFlowState extends Equatable {
     isCompleted,
     isSkipped,
     hasCompletedFlow,
-    errorMessage,
+    messageKey,
+    messageType,
     loadingProgress,
-    currentAddress, // ✅ Added this line - was missing!
+    currentAddress,
   ];
 
   @override

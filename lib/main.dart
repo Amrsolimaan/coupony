@@ -1,9 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:coupon/app.dart';
-import 'package:coupon/core/storage/local_cache_service.dart';
-import 'package:coupon/features/onboarding/data/models/user_preferences_model.dart';
-import 'package:coupon/features/permissions/data/models/permission_status_model.dart';
+import 'package:coupony/app.dart';
+import 'package:coupony/core/storage/local_cache_service.dart';
+import 'package:coupony/features/onboarding/data/models/user_preferences_model.dart';
+import 'package:coupony/features/permissions/data/models/permission_status_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';

@@ -1,9 +1,9 @@
-import 'package:coupon/config/routes/app_router.dart';
-import 'package:coupon/core/localization/l10n/app_localizations.dart';
-import 'package:coupon/core/theme/app_colors.dart';
-import 'package:coupon/core/theme/app_text_styles.dart';
-import 'package:coupon/features/permissions/presentation/cubit/permission_flow_cubit.dart';
-import 'package:coupon/features/permissions/presentation/cubit/permission_flow_state.dart';
+import 'package:coupony/config/routes/app_router.dart';
+import 'package:coupony/core/localization/l10n/app_localizations.dart';
+import 'package:coupony/core/theme/app_colors.dart';
+import 'package:coupony/core/theme/app_text_styles.dart';
+import 'package:coupony/features/permissions/presentation/cubit/permission_flow_cubit.dart';
+import 'package:coupony/features/permissions/presentation/cubit/permission_flow_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -285,10 +285,10 @@ class _LocationMapPageState extends State<LocationMapPage> {
           ),
 
           // ✅ Top Search Bar - Exact Original Design
-          Positioned(
+          PositionedDirectional(
             top: MediaQuery.of(context).padding.top + 16.h,
-            left: 16.w,
-            right: 16.w,
+            start: 16.w,
+            end: 16.w,
             child: Row(
               children: [
                 // 1. Orange Location Icon (Left Side)
@@ -411,8 +411,8 @@ class _LocationMapPageState extends State<LocationMapPage> {
           ),
 
           // ✅ My Location Button (Green Circle on Right)
-          Positioned(
-            right: 16.w,
+          PositionedDirectional(
+            end: 16.w,
             top: MediaQuery.of(context).padding.top + 80.h,
             child: BlocBuilder<PermissionFlowCubit, PermissionFlowState>(
               builder: (context, state) {
@@ -479,10 +479,10 @@ class _LocationMapPageState extends State<LocationMapPage> {
           ),
 
           // ✅ Use Current Location Button (Orange - On Map)
-          Positioned(
+          PositionedDirectional(
             bottom: 240.h, // Above bottom sheet
-            left: 0,
-            right: 0,
+            start: 0,
+            end: 0,
             child: Center(
               child: BlocBuilder<PermissionFlowCubit, PermissionFlowState>(
                 builder: (context, state) {
@@ -569,10 +569,10 @@ class _LocationMapPageState extends State<LocationMapPage> {
           ),
 
           // ✅ Bottom Sheet
-          Positioned(
+          PositionedDirectional(
             bottom: 0,
-            left: 0,
-            right: 0,
+            start: 0,
+            end: 0,
             child: Container(
               padding: EdgeInsets.fromLTRB(10.w, 20.h, 20.w, 10.h),
               decoration: BoxDecoration(
@@ -628,14 +628,17 @@ class _LocationMapPageState extends State<LocationMapPage> {
 
                         // Address
                         Padding(
-                          padding: EdgeInsets.only(right: 30.w),
+                          padding: EdgeInsetsDirectional.only(end: 30.w),
                           child: Builder(
                             builder: (context) {
                               final l10n = AppLocalizations.of(context)!;
                               return Text(
                                 state.currentAddress ??
                                     (displayLocation != null
-                                        ? 'خط العرض: ${displayLocation.latitude.toStringAsFixed(4)}, خط الطول: ${displayLocation.longitude.toStringAsFixed(4)}'
+                                        ? l10n.location_map_coordinates_format(
+                                            displayLocation.latitude.toStringAsFixed(4),
+                                            displayLocation.longitude.toStringAsFixed(4),
+                                          )
                                         : l10n.location_map_tap_to_select),
                                 style: AppTextStyles.bodyMedium.copyWith(
                                   color: AppColors.textSecondary,

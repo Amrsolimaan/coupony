@@ -1,7 +1,8 @@
-import 'package:coupon/config/routes/app_router.dart';
-import 'package:coupon/core/theme/app_colors.dart';
-import 'package:coupon/core/theme/app_text_styles.dart';
-import 'package:coupon/core/widgets/buttons/buttons.dart';
+import 'package:coupony/config/routes/app_router.dart';
+import 'package:coupony/core/localization/l10n/app_localizations.dart';
+import 'package:coupony/core/theme/app_colors.dart';
+import 'package:coupony/core/theme/app_text_styles.dart';
+import 'package:coupony/core/widgets/buttons/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +12,9 @@ class OnboardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context);
+    final isArabic = locale.languageCode == 'ar';
+    
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
@@ -19,11 +23,13 @@ class OnboardingScreen extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(height: 100.h),
-              // --- العنوان العلوي (Nunito Style) ---
+              // Title using localization with language-specific styling
               Text(
-                "...خلّينا نعرفك أكتر\nوهنوفرلك أكتر ",
+                AppLocalizations.of(context)!.onboarding_intro_title,
                 textAlign: TextAlign.center,
-                style: AppTextStyles.onboardingHeader,
+                style: isArabic 
+                  ? AppTextStyles.onboardingHeader
+                  : AppTextStyles.onboardingHeaderEnglish,
               ),
 
               // --- الرسم التوضيحي (Illustration) ---
@@ -52,17 +58,15 @@ class OnboardingScreen extends StatelessWidget {
   }
 
   Widget _buildContinueButton(BuildContext context) {
-    // Accept context as parameter
     return AppPrimaryButton(
-      text: "متابعه",
+      text: AppLocalizations.of(context)!.onboarding_intro_continue,
       onPressed: () {
         context.go(AppRouter.onboardingPreferences);
       },
       icon: Icons.arrow_forward,
       iconPosition: AppButtonIconPosition.end, // RTL: icon on right
-      // Maintain exact same UI as before
       size: AppButtonSize.medium,
-      borderRadius: 16.r, // Same as original
+      borderRadius: 16.r,
       backgroundColor: AppColors.primary,
       textStyle: AppTextStyles.button.copyWith(fontSize: 18.sp),
     );

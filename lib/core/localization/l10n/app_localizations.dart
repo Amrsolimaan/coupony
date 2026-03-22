@@ -613,6 +613,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try Again'**
   String get notification_error_retry;
+
+  /// No description provided for @error_location_position_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not determine your current location. Make sure GPS is enabled'**
+  String get error_location_position_failed;
+
+  /// No description provided for @error_location_service_disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enable location service (GPS) from device settings'**
+  String get error_location_service_disabled;
+
+  /// No description provided for @error_location_unexpected.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred. Please try again'**
+  String get error_location_unexpected;
+
+  /// No description provided for @error_location_gps_check_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to check GPS status'**
+  String get error_location_gps_check_failed;
+
+  /// No description provided for @error_location_weak_signal.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not determine your location. Make sure you have a strong GPS signal'**
+  String get error_location_weak_signal;
+
+  /// No description provided for @error_location_use_current_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not determine your location. Make sure GPS is enabled and try again'**
+  String get error_location_use_current_failed;
+
+  /// No description provided for @error_settings_open_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to open settings'**
+  String get error_settings_open_failed;
+
+  /// No description provided for @error_settings_app_open_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to open app settings'**
+  String get error_settings_app_open_failed;
+
+  /// No description provided for @error_notification_unexpected.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred'**
+  String get error_notification_unexpected;
+
+  /// No description provided for @error_notification_settings_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to open settings'**
+  String get error_notification_settings_failed;
+
+  /// No description provided for @success_location_gps_enabled.
+  ///
+  /// In en, this message translates to:
+  /// **'After enabling GPS, return to the app and press Try Again'**
+  String get success_location_gps_enabled;
+
+  /// No description provided for @success_location_settings_opened.
+  ///
+  /// In en, this message translates to:
+  /// **'After allowing location access, return to the app and press Try Again'**
+  String get success_location_settings_opened;
+
+  /// No description provided for @info_location_settings_manual.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open settings. Open device settings manually and enable location'**
+  String get info_location_settings_manual;
+
+  /// No description provided for @info_location_app_settings_manual.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open settings. Open device settings manually and grant location permission to the app'**
+  String get info_location_app_settings_manual;
+
+  /// No description provided for @info_notification_settings_manual.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open settings. Open device settings manually and enable notifications'**
+  String get info_notification_settings_manual;
+
+  /// No description provided for @success_onboarding_preferences_saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Your preferences have been saved successfully'**
+  String get success_onboarding_preferences_saved;
+
+  /// No description provided for @success_onboarding_categories_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories updated successfully'**
+  String get success_onboarding_categories_updated;
+
+  /// No description provided for @success_onboarding_budget_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget updated successfully'**
+  String get success_onboarding_budget_updated;
+
+  /// No description provided for @success_onboarding_styles_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping style updated successfully'**
+  String get success_onboarding_styles_updated;
+
+  /// No description provided for @success_onboarding_all_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'All your preferences have been updated successfully'**
+  String get success_onboarding_all_updated;
+
+  /// No description provided for @error_onboarding_step1_incomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one category'**
+  String get error_onboarding_step1_incomplete;
+
+  /// No description provided for @error_onboarding_step2_incomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select your budget preference'**
+  String get error_onboarding_step2_incomplete;
+
+  /// No description provided for @error_onboarding_step3_incomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one shopping style'**
+  String get error_onboarding_step3_incomplete;
+
+  /// No description provided for @onboarding_intro_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s get to know you better\nand offer you more'**
+  String get onboarding_intro_title;
+
+  /// No description provided for @onboarding_intro_continue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get onboarding_intro_continue;
 }
 
 class _AppLocalizationsDelegate

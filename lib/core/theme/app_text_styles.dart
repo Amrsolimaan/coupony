@@ -12,12 +12,23 @@ class AppTextStyles {
 
   // --- Onboarding Header (Specific Specs Provided) ---
 
+  // Arabic version - using Amiri font (perfect for Arabic)
   static final TextStyle onboardingHeader = GoogleFonts.amiri(
     fontSize: 24.sp,
     fontWeight: FontWeight.w800, // Bold
     fontStyle: FontStyle.normal,
-    height: 1.0, // line-height: 140% للعربية
+    height: 1.4, // line-height: 140% للعربية
     color: AppColors.primary,
+  );
+
+  // English version - using Nunito font (clean and modern for English)
+  static final TextStyle onboardingHeaderEnglish = GoogleFonts.nunito(
+    fontSize: 26.sp,
+    fontWeight: FontWeight.w700, // Bold
+    fontStyle: FontStyle.normal,
+    height: 1.3, // Better line spacing for English
+    color: AppColors.primary,
+    letterSpacing: -0.5, // Tighter letter spacing for better look
   );
 
   // Logo Style (Pacifico - 64px)
