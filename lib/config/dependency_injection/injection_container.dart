@@ -2,7 +2,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:coupony/core/localization/locale_cubit.dart';
 import 'package:coupony/core/services/location_service.dart';
 import 'package:coupony/core/services/notification_service.dart';
-import 'package:coupony/features/permissions/presentation/cubit/permission_flow_cubit.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
@@ -12,23 +11,10 @@ import '../../core/network/network_info.dart';
 import '../../core/storage/local_cache_service.dart';
 import '../../core/storage/secure_storage_service.dart';
 
-// Onboarding Feature
-import '../../features/onboarding/data/data_sources/onboarding_local_data_source.dart';
-import '../../features/onboarding/data/data_sources/onboarding_remote_data_source.dart';
-import '../../features/onboarding/data/repositories/onboarding_repository_impl.dart';
-import '../../features/onboarding/domain/repositories/onboarding_repository.dart';
-import '../../features/onboarding/domain/use_cases/get_onboarding_preferences_use_case.dart';
-import '../../features/onboarding/domain/use_cases/init_interest_scores_use_case.dart';
-import '../../features/onboarding/domain/use_cases/save_onboarding_preferences_use_case.dart';
-import '../../features/onboarding/presentation/cubit/onboarding_flow_cubit.dart';
-
-// Permission Feature
-import '../../features/permissions/data/data_sources/permission_local_data_source.dart';
-import '../../features/permissions/data/repositories/permission_repository_impl.dart';
-import '../../features/permissions/domain/repositories/permission_repository.dart';
-import '../../features/permissions/domain/use_cases/check_permission_status_use_case.dart';
-import '../../features/permissions/domain/use_cases/determine_next_permission_step_use_case.dart';
-import '../../features/permissions/domain/use_cases/request_location_permission_use_case.dart';
+// Feature Modules
+import 'features/auth_injection.dart';
+import 'features/onboarding_injection.dart';
+import 'features/permissions_injection.dart';
 
 final sl = GetIt.instance;
 
@@ -107,114 +93,17 @@ Future<void> init() async {
   // ═══════════════════════════════════════════════════════════
   // 3. FEATURES - ONBOARDING
   // ═══════════════════════════════════════════════════════════
-
-  // Data Sources
-  // ─────────────────
-  sl.registerLazySingleton<OnboardingLocalDataSource>(
-    () => OnboardingLocalDataSourceImpl(cacheService: sl<LocalCacheService>()),
-  );
-
-  sl.registerLazySingleton<OnboardingRemoteDataSource>(
-    () => OnboardingRemoteDataSourceImpl(client: sl<DioClient>()),
-  );
-
-  // Repository
-  // ─────────────────
-  sl.registerLazySingleton<OnboardingRepository>(
-    () => OnboardingRepositoryImpl(
-      localDataSource: sl<OnboardingLocalDataSource>(),
-      remoteDataSource: sl<OnboardingRemoteDataSource>(),
-      networkInfo: sl<NetworkInfo>(),
-      cacheService: sl<LocalCacheService>(),
-    ),
-  );
-
-  // Use Cases
-  // ─────────────────
-  sl.registerLazySingleton<SaveOnboardingPreferencesUseCase>(
-    () => SaveOnboardingPreferencesUseCase(sl<OnboardingRepository>()),
-  );
-
-  sl.registerLazySingleton<GetOnboardingPreferencesUseCase>(
-    () => GetOnboardingPreferencesUseCase(sl<OnboardingRepository>()),
-  );
-
-  sl.registerLazySingleton<InitInterestScoresUseCase>(
-    () => InitInterestScoresUseCase(sl<LocalCacheService>()),
-  );
-
-  // Cubit (Factory - new instance each time)
-  // ─────────────────
-  sl.registerFactory<OnboardingFlowCubit>(
-    () => OnboardingFlowCubit(
-      savePreferencesUseCase: sl<SaveOnboardingPreferencesUseCase>(),
-      getPreferencesUseCase: sl<GetOnboardingPreferencesUseCase>(),
-      initInterestScoresUseCase: sl<InitInterestScoresUseCase>(),
-      cacheService: sl<LocalCacheService>(),
-      logger: sl<Logger>(),
-    ),
-  );
+  registerOnboardingDependencies(sl);
 
   // ═══════════════════════════════════════════════════════════
   // 4. FEATURES - PERMISSIONS
   // ═══════════════════════════════════════════════════════════
-
-  // Data Sources
-  sl.registerLazySingleton<PermissionLocalDataSource>(
-    () => PermissionLocalDataSourceImpl(cacheService: sl<LocalCacheService>()),
-  );
-
-  // Repository
-  sl.registerLazySingleton<PermissionRepository>(
-    () => PermissionRepositoryImpl(
-      localDataSource: sl<PermissionLocalDataSource>(),
-      locationService: sl<LocationService>(),
-      notificationService: sl<NotificationService>(),
-      logger: sl<Logger>(),
-    ),
-  );
-
-  // Use Cases
-  sl.registerLazySingleton<CheckPermissionStatusUseCase>(
-    () => CheckPermissionStatusUseCase(sl<PermissionRepository>()),
-  );
-
-  sl.registerLazySingleton<RequestLocationPermissionUseCase>(
-    () => RequestLocationPermissionUseCase(sl<PermissionRepository>()),
-  );
-
-  sl.registerLazySingleton<DetermineNextPermissionStepUseCase>(
-    () => DetermineNextPermissionStepUseCase(),
-  );
-
-  // Cubit
-  sl.registerFactory<PermissionFlowCubit>(
-    () => PermissionFlowCubit(
-      checkPermissionStatusUseCase: sl<CheckPermissionStatusUseCase>(),
-      requestLocationPermissionUseCase: sl<RequestLocationPermissionUseCase>(),
-      determineNextPermissionStepUseCase: sl<DetermineNextPermissionStepUseCase>(),
-      repository: sl<PermissionRepository>(),
-      logger: sl<Logger>(),
-      notificationService: sl<NotificationService>(),
-    ),
-  );
+  registerPermissionsDependencies(sl);
 
   // ═══════════════════════════════════════════════════════════
-  // 5. FEATURES - DATA SOURCES
+  // 5. FEATURES - AUTH
   // ═══════════════════════════════════════════════════════════
-
-  // Auth Feature
-  // ─────────────────
-  // TODO: Register Auth Data Sources when implemented
-  // sl.registerLazySingleton<AuthRemoteDataSource>(
-  //   () => AuthRemoteDataSourceImpl(client: sl<DioClient>()),
-  // );
-  // sl.registerLazySingleton<AuthLocalDataSource>(
-  //   () => AuthLocalDataSourceImpl(
-  //     secureStorage: sl<SecureStorageService>(),
-  //     cacheService: sl<LocalCacheService>(),
-  //   ),
-  // );
+  registerAuthDependencies(sl);
 
   // Coupons Feature
   // ─────────────────
@@ -237,20 +126,8 @@ Future<void> init() async {
   // );
 
   // ═══════════════════════════════════════════════════════════
-  // 6. FEATURES - REPOSITORIES
+  // 6. FEATURES - REPOSITORIES (Coupons & Stores — pending)
   // ═══════════════════════════════════════════════════════════
-
-  // Auth Repository
-  // ─────────────────
-  // TODO: Register Auth Repository when implemented
-  // sl.registerLazySingleton<AuthRepository>(
-  //   () => AuthRepositoryImpl(
-  //     remoteDataSource: sl<AuthRemoteDataSource>(),
-  //     localDataSource: sl<AuthLocalDataSource>(),
-  //     networkInfo: sl<NetworkInfo>(),
-  //     cacheService: sl<LocalCacheService>(),
-  //   ),
-  // );
 
   // Coupons Repository
   // ─────────────────
@@ -277,24 +154,8 @@ Future<void> init() async {
   // );
 
   // ═══════════════════════════════════════════════════════════
-  // 7. FEATURES - CUBITS/BLOCS (Factory - New instance each time)
-  // أضف هذا السطر ليعرف البرنامج وجود الـ Cubit
-  // تسجيل الـ Cubit الخاص بك (تأكد من مطابقة الـ Constructor)
-
+  // 7. FEATURES - CUBITS/BLOCS (Coupons & Stores — pending)
   // ═══════════════════════════════════════════════════════════
-
-  // Auth Cubits
-  // ─────────────────
-  // TODO: Register Auth Cubits when implemented
-  // sl.registerFactory<LoginCubit>(
-  //   () => LoginCubit(repository: sl<AuthRepository>()),
-  // );
-  // sl.registerFactory<RegisterCubit>(
-  //   () => RegisterCubit(repository: sl<AuthRepository>()),
-  // );
-  // sl.registerFactory<AuthCubit>(
-  //   () => AuthCubit(repository: sl<AuthRepository>()),
-  // );
 
   // Coupons Cubits
   // ─────────────────
