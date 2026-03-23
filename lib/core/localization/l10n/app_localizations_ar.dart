@@ -205,6 +205,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get permissions_loading_complete => 'اكتمل التحميل...';
 
   @override
+  String get onboarding_loading_preparing => 'جاري تحضير تجربتك...';
+
+  @override
+  String get onboarding_loading_saving => 'جاري حفظ تفضيلاتك...';
+
+  @override
+  String get onboarding_loading_preparing_experience =>
+      'جاري تحضير تجربتك الشخصية...';
+
+  @override
+  String get onboarding_loading_complete => 'أوشكنا على الانتهاء...';
+
+  @override
   String get permissions_location_checking => 'جاري التحقق من الموقع...';
 
   @override
@@ -367,4 +380,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get onboarding_intro_continue => 'متابعه';
+
+  @override
+  String get welcome_gateway_title => 'مرحبًا بك';
+
+  @override
+  String get welcome_gateway_subtitle =>
+      'يمكنك تسجيل الدخول للاستفادة من جميع الخدمات،أو المتابعة كزائر';
+
+  @override
+  String get welcome_gateway_login => 'تسجيل دخول';
+
+  @override
+  String get welcome_gateway_guest => 'زائر';
 }

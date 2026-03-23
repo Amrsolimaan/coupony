@@ -24,7 +24,12 @@ class PermissionLoadingPage extends StatelessWidget {
       body: SafeArea(
         child: BlocListener<PermissionFlowCubit, PermissionFlowState>(
           listener: (context, state) {
-            // Navigate to home when loading is complete
+            // Navigate to onboarding when loading is complete
+            if (state.navSignal == PermissionNavigationSignal.toOnboarding) {
+              context.go(AppRouter.onboarding);
+              context.read<PermissionFlowCubit>().clearNavigationSignal();
+            }
+            // Keep home navigation for backward compatibility
             if (state.navSignal == PermissionNavigationSignal.toHome) {
               context.go(AppRouter.home);
               context.read<PermissionFlowCubit>().clearNavigationSignal();

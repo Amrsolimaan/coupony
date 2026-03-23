@@ -476,6 +476,30 @@ abstract class AppLocalizations {
   /// **'Loading complete...'**
   String get permissions_loading_complete;
 
+  /// No description provided for @onboarding_loading_preparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing your experience...'**
+  String get onboarding_loading_preparing;
+
+  /// No description provided for @onboarding_loading_saving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving your preferences...'**
+  String get onboarding_loading_saving;
+
+  /// No description provided for @onboarding_loading_preparing_experience.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing your personalized experience...'**
+  String get onboarding_loading_preparing_experience;
+
+  /// No description provided for @onboarding_loading_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost there...'**
+  String get onboarding_loading_complete;
+
   /// No description provided for @permissions_location_checking.
   ///
   /// In en, this message translates to:
@@ -763,6 +787,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue'**
   String get onboarding_intro_continue;
+
+  /// No description provided for @welcome_gateway_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome'**
+  String get welcome_gateway_title;
+
+  /// No description provided for @welcome_gateway_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You can sign in to access all services, or continue as a guest'**
+  String get welcome_gateway_subtitle;
+
+  /// No description provided for @welcome_gateway_login.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get welcome_gateway_login;
+
+  /// No description provided for @welcome_gateway_guest.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get welcome_gateway_guest;
 }
 
 class _AppLocalizationsDelegate

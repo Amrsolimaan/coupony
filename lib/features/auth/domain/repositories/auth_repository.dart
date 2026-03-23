@@ -1,12 +1,13 @@
-import 'package:coupony/features/auth/domain/entities/user_entity.dart';
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failures.dart';
+import '../entities/user_entity.dart';
 
 abstract class AuthRepository {
-  /// Login with email and password
-  Future<Either<Failure, UserEntity>> login(String email, String password);
+  Future<Either<Failure, UserEntity>> login({
+    required String phone,
+    required String password,
+  });
 
-  /// Register a new user or merchant
   Future<Either<Failure, UserEntity>> register({
     required String name,
     required String email,
@@ -15,9 +16,20 @@ abstract class AuthRepository {
     String role = 'user',
   });
 
-  /// Check if user is logged in
+  /// Send OTP to phone number
+  Future<Either<Failure, Unit>> sendOtp(String phone);
+
+  /// Verify OTP — returns authenticated UserEntity on success
+  Future<Either<Failure, UserEntity>> verifyOtp({
+    required String phone,
+    required String otp,
+  });
+
+  /// Refresh access token using stored refresh token
+  Future<Either<Failure, UserEntity>> refreshToken();
+
+  /// Returns true if a valid auth token is stored locally
   Future<Either<Failure, bool>> checkAuthStatus();
 
-  /// Logout
   Future<Either<Failure, Unit>> logout();
 }

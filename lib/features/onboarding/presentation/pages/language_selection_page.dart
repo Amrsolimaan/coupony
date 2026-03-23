@@ -56,7 +56,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
       await Future.delayed(const Duration(milliseconds: 400));
 
       if (mounted) {
-        context.go(AppRouter.onboarding);
+        context.go(AppRouter.permissionSplash);
       }
     } catch (e) {
       if (mounted) {

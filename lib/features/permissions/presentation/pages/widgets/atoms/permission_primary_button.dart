@@ -6,17 +6,14 @@ import '../../../../../../core/widgets/buttons/buttons.dart';
 /// Wrapper around AppPrimaryButton for backward compatibility
 /// Maintains exact same API and UI
 class PermissionPrimaryButton extends StatelessWidget {
-  /// Button text
   final String text;
-
-  /// On pressed callback
   final VoidCallback? onPressed;
-
-  /// Whether button is in loading state
   final bool isLoading;
-
-  /// Custom width (defaults to full width)
   final double? width;
+  final double? height;
+  final bool isFullWidth;
+  final Color? backgroundColor;
+  final Color? textColor;
 
   const PermissionPrimaryButton({
     super.key,
@@ -24,6 +21,10 @@ class PermissionPrimaryButton extends StatelessWidget {
     this.onPressed,
     this.isLoading = false,
     this.width,
+    this.height,
+    this.isFullWidth = true,
+    this.backgroundColor,
+    this.textColor,
   });
 
   @override
@@ -33,9 +34,19 @@ class PermissionPrimaryButton extends StatelessWidget {
       onPressed: onPressed,
       isLoading: isLoading,
       width: width,
-      // Maintain exact same UI as before
-      size: AppButtonSize.medium, // 56.h height, 16.sp font
-      borderRadius: 12.r, // Same as before
+      height: height,
+      isFullWidth: isFullWidth,
+      backgroundColor: backgroundColor,
+      textStyle: textColor != null
+          ? TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Cairo',
+              color: textColor,
+            )
+          : null,
+      size: AppButtonSize.medium,
+      borderRadius: 12.r,
     );
   }
 }

@@ -102,7 +102,7 @@ class DetermineNextPermissionStepUseCase {
   NextStepResult afterNotificationRequest() {
     return NextStepResult(
       step: 4,
-      signal: PermissionNavigationSignal.toLoading,
+      signal: PermissionNavigationSignal.toWelcomeGateway,
     );
   }
 
@@ -118,7 +118,7 @@ class DetermineNextPermissionStepUseCase {
   NextStepResult afterSkippingNotification() {
     return NextStepResult(
       step: 4,
-      signal: PermissionNavigationSignal.toLoading,
+      signal: PermissionNavigationSignal.toWelcomeGateway,
     );
   }
 

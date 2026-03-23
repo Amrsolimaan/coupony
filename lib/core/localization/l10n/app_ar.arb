@@ -72,6 +72,11 @@
   "permissions_loading_checking": "جاري التحقق من الصلاحيات...",
   "permissions_loading_data": "جاري تحميل البيانات...",
   "permissions_loading_complete": "اكتمل التحميل...",
+  
+  "onboarding_loading_preparing": "جاري تحضير تجربتك...",
+  "onboarding_loading_saving": "جاري حفظ تفضيلاتك...",
+  "onboarding_loading_preparing_experience": "جاري تحضير تجربتك الشخصية...",
+  "onboarding_loading_complete": "أوشكنا على الانتهاء...",
   "permissions_location_checking": "جاري التحقق من الموقع...",
   "permissions_please_wait": "الرجاء الانتظار...",
   "location_map_no_results": "لم يتم العثور على نتائج",
@@ -120,5 +125,10 @@
   "error_onboarding_step2_incomplete": "يرجى اختيار تفضيل الميزانية",
   "error_onboarding_step3_incomplete": "يرجى اختيار أسلوب تسوق واحد على الأقل",
   "onboarding_intro_title": "...خلّينا نعرفك أكتر\nوهنوفرلك أكتر ",
-  "onboarding_intro_continue": "متابعه"
+  "onboarding_intro_continue": "متابعه",
+
+  "welcome_gateway_title": "مرحبًا بك",
+  "welcome_gateway_subtitle": "يمكنك تسجيل الدخول للاستفادة من جميع الخدمات،أو المتابعة كزائر",
+  "welcome_gateway_login": "تسجيل دخول",
+  "welcome_gateway_guest": "زائر"
 }

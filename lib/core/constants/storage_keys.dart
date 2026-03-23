@@ -8,6 +8,7 @@ class StorageKeys {
   static const String refreshToken = 'refresh_token';
   static const String userId = 'user_id';
   static const String userRole = 'user_role'; // 'user' or 'merchant'
+  static const String fcmToken = 'fcm_token';
 
   // ════════════════════════════════════════════════════════
   // HIVE BOX NAMES (Local Cache)

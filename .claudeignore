@@ -1,0 +1,33 @@
+# Build outputs
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Platform folders
+android/
+ios/
+web/
+windows/
+linux/
+macos/
+
+# Assets
+assets/images/
+assets/icons/
+assets/fonts/
+
+# Generated files
+**/*.g.dart
+**/*.freezed.dart
+**/*.mocks.dart
+**/*.config.dart
+
+# IDE
+.idea/
+.vscode/
+
+# Misc
+*.iml
+*.log
+pubspec.lock

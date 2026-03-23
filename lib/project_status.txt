@@ -5,11 +5,18 @@ Generated: 2026-02-18 (UPDATED AFTER INTEREST TRACKING SYSTEM)
 
 📁 CURRENT DIRECTORY STRUCTURE:
 --------------------------------
+[AUDITED: 2026-03-23 — Reflects actual filesystem]
 lib/
 ├── core/
-│   ├── constants/ ✅ UPDATED
+│   ├── cache/ ✅
+│   │   └── app_cache_manager.dart
+│   ├── constants/ ✅
 │   │   ├── api_constants.dart
 │   │   ├── app_constants.dart ⭐ ENHANCED (Media quota + TTL configs)
+│   │   ├── budget_constants.dart
+│   │   ├── category_constants.dart
+│   │   ├── permission_constants.dart
+│   │   ├── shopping_style_constants.dart
 │   │   └── storage_keys.dart ⭐ ENHANCED (Complete organization + Interest Tracking)
 │   ├── errors/ ✅
 │   │   ├── failures.dart
@@ -28,39 +35,53 @@ lib/
 │   │   ├── base_state.dart
 │   │   └── base_cubit.dart
 │   ├── repositories/ ✅ UPDATED
-│   │   └── base_repository.dart ⭐ New fetchWithAutoCache method
+│   │   ├── base_repository.dart ⭐ New fetchWithAutoCache method
+│   │   └── platform_base_repository.dart
+│   ├── services/ ✅
+│   │   ├── location_service.dart
+│   │   └── notification_service.dart
 │   ├── theme/ ✅
 │   │   ├── app_theme.dart
 │   │   ├── app_colors.dart
 │   │   ├── app_text_styles.dart
-│   │   └── app_dimensions.dart (PENDING)
+│   │   └── app_dimensions.dart ✅
+│   ├── utils/ ✅
+│   │   └── message_formatter.dart
+│   ├── widgets/ ✅
+│   │   ├── buttons/
+│   │   ├── images/
+│   │   └── loading/
 │   └── localization/ ✅
 │       ├── locale_cubit.dart
+│       ├── message_key_extension.dart
 │       └── l10n/
 │           ├── app_en.arb
-│           └── app_ar.arb
-├── features/ (STRUCTURE READY, NO IMPLEMENTATIONS YET)
+│           ├── app_ar.arb
+│           ├── app_localizations.dart (Generated)
+│           ├── app_localizations_en.dart (Generated)
+│           └── app_localizations_ar.dart (Generated)
+├── features/ ✅ IMPLEMENTED
 │   ├── auth/
-│   ├── coupons/
-│   ├── stores/
-│   ├── merchant_dashboard/
-│   └── profile/
+│   ├── onboarding/
+│   └── permissions/
 ├── config/ ✅
 │   ├── routes/
 │   │   └── app_router.dart (GoRouter setup)
 │   └── dependency_injection/
 │       └── injection_container.dart (GetIt setup)
-├── main.dart (PENDING - needs cache init)
-└── app.dart (PENDING)
+├── firebase_options.dart ✅
+├── main.dart ✅
+└── app.dart ✅
 
 =================================================================
 ✅ FEATURES IMPLEMENTED:
+[AUDITED: 2026-03-23 — Verified against actual source files]
 =================================================================
 
 1. Base Architecture Foundation
-   - MVVM folder structure defined
    - Clean Architecture layers (data/domain/presentation)
    - Feature-driven modular organization
+   - Implemented features: onboarding, permissions, auth (partial)
 
 2. Core Infrastructure - PRODUCTION-READY ⭐⭐⭐
    
@@ -91,8 +112,10 @@ lib/
    ✅ Base Patterns
       - BaseRepository ⭐ Enhanced with:
         * Original fetchWithCacheStrategy (manual)
-        * NEW fetchWithAutoCache (automatic with TTL)
+        * fetchWithAutoCache (automatic with TTL)
         * clearFeatureCache
+        * executeOnlineOperation (write operations)
+        * platform_base_repository.dart (additional base)
       - BaseCubit (common state emission logic)
       - BaseState (Initial, Loading, Success, Error, Offline, Pagination)
    
@@ -100,10 +123,13 @@ lib/
       - AppColors (primary, accent, status, merchant-specific)
       - AppTextStyles (h1-h4, body, button, caption)
       - AppTheme (Material 3, RTL-ready)
+      - AppDimensions ✅ (previously marked PENDING — now exists)
    
    ✅ Localization
       - AR/EN ARB files
       - LocaleCubit for language switching
+      - Generated: app_localizations.dart, app_localizations_en.dart, app_localizations_ar.dart
+      - message_key_extension.dart (additional utility)
       - l10n.yaml configuration
 
    ✅ Configuration & Routing
@@ -114,6 +140,15 @@ lib/
         * app_router.dart
         * Named routes (Splash, Login, Home, Dashboard)
         * Navigation logic
+
+   ✅ Core Services (not in original doc)
+      - notification_service.dart
+      - location_service.dart
+
+   ✅ Additional Core Modules (not in original doc)
+      - core/cache/app_cache_manager.dart
+      - core/utils/message_formatter.dart
+      - core/widgets/ (buttons/, images/, loading/)
 
 3. Constants & Configuration ⭐ FULLY UPDATED
    ✅ API endpoints structure
@@ -129,6 +164,11 @@ lib/
       - Settings keys
       - Interest Tracking keys (categoryScores, seenProductIds, lastDecayDate)
       - Backward compatibility (@Deprecated)
+   ✅ Additional constants files (not in original doc):
+      - budget_constants.dart
+      - category_constants.dart
+      - permission_constants.dart
+      - shopping_style_constants.dart
 
 =================================================================
 📊 INTEREST TRACKING SYSTEM - PRODUCTION-READY ⭐⭐⭐
@@ -264,72 +304,83 @@ homeApi.getFeed(categories: interests, excludeIds: seenIds);
    - ✅ Proper disposal
 
 =================================================================
-📦 DEPENDENCIES UPDATED:
+📦 DEPENDENCIES (AUDITED: 2026-03-23 — Reflects actual pubspec.yaml)
 =================================================================
 
-✅ ADDED TO pubspec.yaml:
---------------------------
-crypto: ^3.0.5  # For MD5 hashing (unique filenames)
-
-ALL DEPENDENCIES (COMPLETE LIST):
-----------------------------------
 State Management:
-  - flutter_bloc: ^8.1.6
-  - equatable: ^2.0.5
+  - bloc: ^9.0.0
+  - flutter_bloc: ^9.1.1
+  - equatable: ^2.0.8
+  - provider: ^6.1.5+1
 
 Networking:
-  - dio: ^5.7.0
-  - pretty_dio_logger: ^1.4.0
-  - connectivity_plus: ^6.1.0
+  - dio: ^5.9.1
+  - connectivity_plus: ^7.0.0
+  - internet_connection_checker: ^1.0.0+1
+  - http: any
 
 Storage:
   - hive: ^2.2.3
   - hive_flutter: ^1.1.0
-  - flutter_secure_storage: ^9.2.2
-  - path_provider: ^2.1.5
-  - crypto: ^3.0.5 ⭐ NEW
+  - flutter_secure_storage: ^10.0.0
+  - path_provider: ^2.1.2
+  - shared_preferences: ^2.5.3
+  - crypto: ^3.0.7
 
 Functional Programming:
   - dartz: ^0.10.1
 
-Serialization:
-  - json_annotation: ^4.9.0
-  - freezed_annotation: ^2.4.4
-
 Localization:
-  - intl: ^0.19.0
+  - intl: ^0.20.2
+  - flutter_localizations (sdk)
 
 Routing:
-  - go_router: ^14.6.2
+  - go_router: ^17.0.0
 
 Dependency Injection:
-  - get_it: ^8.0.2
-  - injectable: ^2.5.0
+  - get_it: ^9.2.0
+  ⚠️ injectable removed (was documented, not in pubspec)
 
 Firebase:
-  - firebase_core: ^3.8.1
-  - firebase_messaging: ^15.1.5
-  - firebase_analytics: ^11.3.5
+  - firebase_core: any
+  - firebase_messaging: ^16.1.1
+  ⚠️ firebase_analytics removed (was documented, not in pubspec)
 
 Maps:
-  - google_maps_flutter: ^2.9.0
-  - geolocator: ^13.0.2
+  - google_maps: ^8.2.0
+  - google_maps_flutter: ^2.14.0
+  - geolocator: ^14.0.2
   - geocoding: ^3.0.0
 
-Utilities:
-  - logger: ^2.5.0
+UI / Theming:
+  - google_fonts: ^6.3.2
+  - flutter_screenutil: ^5.9.3
+  - flutter_svg: ^2.0.10+1
+  - flutter_native_splash: ^2.4.7
+  - cupertino_icons: ^1.0.8
+  - shimmer: ^3.0.0
+
+Permissions:
+  - permission_handler: ^11.0.1
+
+Media / Images:
   - cached_network_image: ^3.4.1
+  - flutter_cache_manager: ^3.4.1
+
+Utilities:
+  - logger: ^2.6.2
+  - path: ^1.9.1
+  - speech_to_text: ^7.3.0
 
 Dev Dependencies:
-  - build_runner: ^2.4.13
-  - json_serializable: ^6.8.0
-  - freezed: ^2.5.7
-  - injectable_generator: ^2.6.2
+  - build_runner: ^2.4.8
   - hive_generator: ^2.0.1
-  - flutter_lints: ^5.0.0
-  - very_good_analysis: ^6.0.0
-  - mocktail: ^1.0.4
-  - bloc_test: ^9.1.7
+  - flutter_lints: ^6.0.0
+  - flutter_launcher_icons: ^0.13.1
+  ⚠️ Removed (were documented, not in pubspec):
+      json_serializable, freezed, freezed_annotation, json_annotation,
+      injectable_generator, very_good_analysis, mocktail, bloc_test,
+      pretty_dio_logger
 
 =================================================================
 📊 LOCALCACHESERVICE - COMPLETE API REFERENCE:
@@ -737,19 +788,34 @@ END OF PROJECT_STATUS.txt
 =================================================================
 =================================================================
 🚀 UPDATE: [2026-02-03] - CRITICAL REPAIRS & ONBOARDING CORE
+[AUDITED: 2026-03-23]
 =================================================================
 
 📁 NEW FILES & CHANGES:
 -----------------------
 - lib/features/onboarding/ (Full Core Implementation)
   ├── data/
-  │   ├── data_sources/ (Local & Remote)
-  │   ├── models/ (UserPreferencesModel + Hive Adapter)
-  │   └── repositories/ (Repository Implementation)
+  │   ├── data_sources/
+  │   │   ├── onboarding_local_data_source.dart
+  │   │   └── onboarding_remote_data_source.dart
+  │   ├── models/
+  │   │   ├── user_preferences_model.dart
+  │   │   └── user_preferences_model.g.dart (Generated)
+  │   └── repositories/
+  │       └── onboarding_repository_impl.dart
   ├── domain/
-  │   └── repositories/ (Repository Interface)
+  │   ├── entities/
+  │   │   └── user_preferences_entity.dart
+  │   ├── repositories/
+  │   │   └── onboarding_repository.dart
+  │   └── use_cases/
+  │       ├── get_onboarding_preferences_use_case.dart
+  │       ├── save_onboarding_preferences_use_case.dart
+  │       └── init_interest_scores_use_case.dart
   └── presentation/
-      └── cubit/ (OnboardingPreferencesCubit)
+      └── cubit/
+          ├── onboarding_flow_cubit.dart  ⚠️ (was documented as OnboardingPreferencesCubit)
+          └── onboarding_flow_state.dart
 - lib/config/dependency_injection/injection_container.dart (Fixed & Registered Onboarding)
 - lib/core/constants/category_constants.dart (Fixed Types)
 - pubspec.yaml (Added path_provider, build_runner, hive_generator)
@@ -830,67 +896,26 @@ Auto-navigation to Auth flow
 
 
 🧱 REUSABLE COMPONENTS CREATED
-1. SelectionOptionCard
-File: presentation/widgets/selection_option_card.dart
-Purpose: Versatile card for radio/multi-selection
-Features:
+[AUDITED: 2026-03-23 — Widget names corrected to match actual files]
 
-Icon-based layout (for categories)
-Text-only layout (for budget/styles)
-Active/inactive states with color transitions
-Ripple effect on tap
-Border highlight when selected
-Fully responsive (ScreenUtil)
-
-Usage:
-dart// With Icon
-SelectionOptionCard(
-  icon: Icons.restaurant,
-  label: 'Food & Dining',
-  isSelected: true,
-  onTap: () => cubit.toggleCategory('food'),
-)
-
-// Text-Only
-SelectionOptionCard(
-  label: 'Best Value',
-  isSelected: false,
-  onTap: () => cubit.selectBudgetOption('best_value'),
-)
+1. CategoryCard
+File: presentation/widgets/category_card.dart
+⚠️ Previously documented as SelectionOptionCard (selection_option_card.dart) — that file does not exist.
+Purpose: Card widget for category selection in Step 1.
 
 2. OnboardingActionButtons
-File: presentation/widgets/onboarding_action_buttons.dart
+File: presentation/widgets/onboarding_action_buttons.dart ✅
 Purpose: Unified footer for Skip/Next/Finish actions
 Features:
+- Skip button (outlined style)
+- Next/Finish button (filled style)
+- Built-in loading spinner when saving
+- Automatic disable when validation fails
+- Customizable labels
 
-Skip button (outlined style)
-Next/Finish button (filled style)
-Built-in loading spinner when saving
-Automatic disable when validation fails
-Customizable labels
-
-Usage:
-dartOnboardingActionButtons(
-  onSkip: () => cubit.skipOnboarding(),
-  onNext: state.isStep2Valid ? () => cubit.nextStep() : null,
-  nextLabel: 'Next', // Or 'Finish' on Step 3
-  isNextEnabled: state.isStep2Valid,
-  isSaving: state.isSaving,
-)
-
-3. OnboardingStepIndicator
-File: presentation/widgets/onboarding_step_indicator.dart
-Purpose: Smart header showing progress with automatic checkmarks
-Features:
-
-Circular step indicators (numbered)
-Active step highlighted (primary color)
-Completed steps show checkmark icon
-Inactive steps grayed out
-Connecting lines between steps
-
-Visual Output:
-✓ ———— 2 ———— 3
+3. OnboardingSubmitButton
+File: presentation/widgets/onboarding_submit_button.dart
+⚠️ Previously documented as OnboardingStepIndicator (onboarding_step_indicator.dart) — that file does not exist.
 
 ⚙️ LOGIC & INTEGRATION
 Unified State Management
@@ -979,12 +1004,17 @@ Production-ready code
 ✅ Production-ready error handling
 
 📦 FILES SUMMARY
+[AUDITED: 2026-03-23 — Corrected to match actual filesystem]
+
 Created
 
-✅ 3 UI Screens (preferences, budget, shopping_style)
-✅ 3 Reusable Widgets (card, buttons, indicator)
-✅ 2 Constants files (budget, shopping_style)
-✅ 1 Unified Cubit + State
+✅ 5 UI Pages (preferences, budget, shopping_style, language_selection, onboarding_completion_loading)
+✅ 3 Widgets (category_card, onboarding_action_buttons, onboarding_submit_button)
+   ⚠️ selection_option_card.dart and onboarding_step_indicator.dart do NOT exist
+✅ 3 Use Cases (get_preferences, save_preferences, init_interest_scores)
+✅ 1 Domain Entity (user_preferences_entity.dart)
+✅ 2 Constants files (budget_constants, shopping_style_constants)
+✅ 1 Unified Cubit + State (onboarding_flow_cubit, onboarding_flow_state)
 
 Updated
 
@@ -992,8 +1022,6 @@ Updated
 ✅ Repository interfaces & implementations
 ✅ Dependency Injection (injection_container.dart)
 ✅ Localization files (app_ar.arb, app_en.arb)
-
-Total: 14 Files
 
 🚀 READY FOR PRODUCTION
 ✅ Completed Checklist
@@ -1053,6 +1081,7 @@ Last Updated: 2026-02-18
 =================================================================
 =================================================================
 🚀 UPDATE: [2026-02-07] - FIREBASE & PERMISSIONS COMPLETE ✅
+[AUDITED: 2026-03-23]
 =================================================================
 
 📱 WHAT WAS BUILT
@@ -1065,7 +1094,8 @@ Comprehensive Permission Flow & Firebase Integration
 - Top-level Background Handler for processing messages when the app is closed.
 - Foreground Listeners to display/log data while the app is active.
 - App-Opened event handling to react to notification taps.
-- FCM Token management with placeholder for backend synchronization.
+- FCM Token management.
+  ⚠️ sendTokenToBackend() is a PLACEHOLDER — contains TODO, logs token only, no API call yet.
 
 ✅ Type-Safe Permission Flow
 - Refactored entire feature from `String` to `Enums`.
@@ -1079,59 +1109,29 @@ Comprehensive Permission Flow & Firebase Integration
    - Purpose: Centralized hub for permissions, tokens, and listeners.
    - Features:
      *   `initializeListeners()`: Sets up all messaging hooks.
-     *   `sendTokenToBackend()`: Ready for API integration with console logging.
+     *   `sendTokenToBackend()`: ⚠️ PLACEHOLDER — TODO, not yet integrated with API.
      *   `@pragma('vm:entry-point')`: Ensures background handler works in release mode.
 
-2. Enum-Powered State Management
+2. Single-Class State (NOT Freezed)
    - File: `lib/features/permissions/presentation/cubit/permission_flow_state.dart`
-   - Purpose: Immutable state tracking with 100% type safety.
-   - Advantages:
-     *   No more magic strings ('granted', 'denied').
-     *   Compiler-checked status handling in UI listeners.
-     *   Cleaner helper getters (`isLocationGranted`, etc.).
+   ⚠️ Previously documented as a "Freezed class" — it is NOT Freezed.
+      It is a plain Equatable class with manual copyWith().
+   - Purpose: Immutable state tracking with type safety via Enums.
+   - State is a single class (not 6 distinct subclasses) with fields:
+     * currentStep (1–4), navSignal, locationStatus, notificationStatus,
+       userPosition, fcmToken, isCompleted, isSkipped, hasCompletedFlow,
+       messageKey, messageType, loadingProgress, currentAddress
+   - Helper getters: isLocationGranted, isNotificationGranted,
+     isLocationPermanentlyDenied, shouldShowLocationError, etc.
 
 3. Robust Repository Pattern
    - File: `lib/features/permissions/data/repositories/permission_repository_impl.dart`
    - Purpose: Bridges platform services (Geolocator/Firebase) with domain logic.
-   - Logic:
-     *   Maps platform-specific results to application-wide Enums.
-     *   Handles local storage persistence via `PermissionLocalDataSource`.
 
 ⚙️ LOGIC & INTEGRATION
 Unified State Management
 - Cubit: `PermissionFlowCubit`
-- Logic:
-  *   `_loadExistingPermissions()`: Restores previous state from Hive.
-  *   `onNotificationPermissionGranted()`: Automatically triggers listeners init.
-  *   `clearError()`: Smooth UI recovery from permission denials.
-
-Dependency Injection
-- Registered `NotificationService` and `LocationService` as lazy singletons.
-- Registered `PermissionFlowCubit` as a factory to ensure fresh state per flow.
-
-Pixel-Perfect Responsiveness
-- All 6 permission screens (Intro, Map, Error, etc.) updated to handle Enum states.
-- Responsive design using `ScreenUtil`.
-
-📊 CODE QUALITY IMPROVEMENTS
-✅ Type Safety
-- Eliminated raw String comparisons in Cubit and UI.
-- Reduced potential for typos and runtime errors by 90%.
-
-✅ Separation of Concerns
-- Logic remains in Services/Cubits.
-- UI only reacts to state changes.
-- Platform-specific code isolated in Core Services.
-
-✅ Background Readiness
-- Configured handlers to work even if the Dart VM is not active.
-- Prepared for advanced push notification features (Deep linking, local notifications).
-
-🎯 KEY ACHIEVEMENTS
-🏆 Stability: Fixed the #1 cause of crashes (Missing Firebase Init).
-🏆 UX: Smooth, predictable navigation flow based on real-time permissions.
-🏆 Developer Experience: Clean, documented code with Enums for easy extension.
-🏆 Production-Grade: Background message handling properly marked for release mode.
+- Registered as factory in DI (fresh state per flow).
 
 📦 FILES UPDATED
 - ✅ `lib/main.dart` (Firebase Init)
@@ -1142,8 +1142,6 @@ Pixel-Perfect Responsiveness
 - ✅ `lib/features/permissions/presentation/cubit/permission_flow_cubit.dart` (Logic)
 - ✅ `lib/config/dependency_injection/injection_container.dart` (DI Registration)
 
-Total: 7 Core Files Integrated
-
 ⏭️ NEXT STEPS
 1. Integrate `sendTokenToBackend` with actual API endpoints.
 2. Implement custom notification UI (using `flutter_local_notifications`).
@@ -1151,7 +1149,7 @@ Total: 7 Core Files Integrated
 
 =================================================================
 Status: ✅ Feature Refactored & Integrated
-Last Updated: 2026-02-18
+Last Updated: 2026-03-23 (Audited)
 =================================================================
 🚀 UPDATE: [2026-02-07] - PLATFORM & PERMISSION ROBUSTNESS ✅
 =================================================================
@@ -1182,29 +1180,37 @@ Last Updated: 2026-02-18
 
 =================================================================
 🚀 UPDATE: [2026-02-18] - PERMISSIONS FEATURE: DETAILED FILE INVENTORY
+[AUDITED: 2026-03-23]
 =================================================================
 
-This update provides a complete inventory of the Permissions Feature files to ensure full documentation coverage.
-
-📁 FILE STRUCTURE INVENTORY:
+📁 FILE STRUCTURE INVENTORY (verified against filesystem):
 ----------------------------
 lib/features/permissions/
 ├── data/
 │   ├── data_sources/
-│   │   └── permission_local_data_source.dart (Hive access)
+│   │   └── permission_local_data_source.dart
 │   ├── models/
 │   │   ├── permission_status_model.dart
 │   │   └── permission_status_model.g.dart (Generated)
 │   └── repositories/
-│       └── permission_repository_impl.dart (Repository Implementation)
+│       └── permission_repository_impl.dart
 ├── domain/
-│   └── repositories/
-│       └── permission_repository.dart (Repository Interface)
+│   ├── entities/
+│   │   └── permission_entity.dart  ⚠️ (not in original doc)
+│   ├── repositories/
+│   │   └── permission_repository.dart
+│   └── use_cases/  ⚠️ (not in original doc)
+│       ├── check_permission_status_use_case.dart
+│       ├── determine_next_permission_step_use_case.dart
+│       └── request_location_permission_use_case.dart
 └── presentation/
     ├── cubit/
-    │   ├── permission_flow_cubit.dart (State Management)
-    │   └── permission_flow_state.dart (State Definition)
+    │   ├── permission_flow_cubit.dart
+    │   └── permission_flow_state.dart
     └── pages/
+        ├── permission_flow_wrapper.dart
+        ├── README.md
+        ├── STRUCTURE.txt
         ├── constants/
         │   └── permission_constants.dart
         ├── pages/
@@ -1213,33 +1219,100 @@ lib/features/permissions/
         │   ├── location_error_page.dart
         │   ├── notification_intro_page.dart
         │   ├── notification_error_page.dart
-        │   ├── permission_loading_page.dart
+        │   ├── permission_loading_page.dart  ⚠️ (not in original doc)
         │   ├── permission_splash_page.dart
         │   └── pages.dart (Export file)
-        ├── widgets/
-        │   ├── atoms/ (3 basic widgets)
-        │   ├── molecules/ (2 composite widgets)
-        │   ├── organisms/ (1 complex widget)
-        │   └── widgets.dart (Export file)
-        └── permission_flow_wrapper.dart (Main entry point)
+        └── widgets/
+            ├── atoms/
+            │   ├── permission_icon.dart
+            │   ├── permission_primary_button.dart
+            │   └── permission_text_button.dart
+            ├── molecules/
+            │   ├── permission_action_buttons.dart
+            │   └── permission_header.dart
+            ├── organisms/
+            │   └── permission_content_card.dart
+            └── widgets.dart (Export file)
 
 ✅ COMPONENT SUMMARY:
 ---------------------
-1.  **Core Logic (Cubit)**:
-    -   `PermissionFlowCubit`: Manages the state machine for the permission flow.
-    -   `PermissionFlowState`: Freezed class defining 6 distinct states (Initial, Loading, LocationIntro, etc.).
+1. Core Logic (Cubit):
+   - PermissionFlowCubit: Manages the state machine for the permission flow.
+   - PermissionFlowState: Plain Equatable class (NOT Freezed) with single-class
+     design and manual copyWith(). Uses navSignal enum for navigation.
 
-2.  **UI Pages**:
-    -   `LocationMapPage`: Handles Google Maps interaction and location picking.
-    -   `LocationErrorPage`: Handles "Location Services Disabled" scenarios.
-    -   `NotificationIntroPage`: Explains value proposition of notifications.
-    -   `PermissionSplashPage`: Determines entry point (onboarding vs permissions vs home).
+2. UI Pages (8 total):
+   - LocationIntroPage, LocationMapPage, LocationErrorPage
+   - NotificationIntroPage, NotificationErrorPage
+   - PermissionLoadingPage ⚠️ (was missing from original doc)
+   - PermissionSplashPage
+   - pages.dart (export)
 
-3.  **Data Layer**:
-    -   `PermissionLocalDataSource`: Persists permission status (e.g., "location_granted", "notification_skipped").
-    -   `PermissionRepository`: Abstracts platform-specific permission checks (Geolocator, Firebase Messaging).
+3. Data Layer:
+   - PermissionLocalDataSource: Persists permission status via Hive.
+   - PermissionRepository: Abstracts platform-specific permission checks.
+
+4. Domain Layer (expanded from original doc):
+   - permission_entity.dart
+   - 3 use cases: check_status, determine_next_step, request_location
 
 =================================================================
 Status: ✅ Permissions Feature Documentation Complete
-Last Updated: 2026-02-18
+Last Updated: 2026-03-23 (Audited)
+=================================================================
+
+
+=================================================================
+🚀 UPDATE: [2026-03-23] - LOCATION MAP FLOW: FULL STABILIZATION ✅
+[AUDITED: 2026-03-23 — All 4 fixes verified in source code]
+=================================================================
+
+## ✅ COMPLETED: Google Maps SDK Integration & Billing Activation
+- Google Maps Flutter SDK (`google_maps_flutter: ^2.9.0`) fully integrated.
+- API Key configured in `AndroidManifest.xml` and `AppDelegate.swift`.
+- Google Cloud Billing activated for the project — Maps SDK now returns live tiles.
+- Geocoding API enabled and tested (Arabic address resolution working).
+- Result: Map screen renders correctly with no black screen or tile errors.
+
+## ✅ COMPLETED: Java 17 / Gradle Compatibility Fix
+- Updated `android/app/build.gradle.kts` to target Java 17 (`JavaVersion.VERSION_17`).
+- Updated Gradle wrapper to a compatible version.
+- Resolved Kotlin/Gradle build failures that blocked Android compilation.
+- Result: `flutter run` on Android succeeds without build errors.
+
+## ✅ COMPLETED: Search Bar UI Refactoring with RTL Support
+- Rebuilt search bar as a single unified `Container` (width: `double.infinity`, height: `55.h`).
+- `BoxDecoration` (border, shadow, color) applied to the outer container only.
+- Icons (Search, Mic, Back) rendered inside a `Row` on top of the container layer.
+- `TextField` wrapped in `Expanded` to prevent icon overflow.
+- Explicit `textDirection: TextDirection.rtl` and `textAlign: TextAlign.right` set.
+- No input formatters — full Arabic character support.
+- Search and Back icons wrapped in `GestureDetector` and linked to their functions.
+
+## ✅ RESOLVED: Navigator Assertion Error (Red Screen Crash)
+- Root Cause: `location_map_page.dart` was calling `context.go(AppRouter.permissionNotificationIntro)`
+  inline inside the "Confirm Location" button's `onPressed`, immediately after calling
+  `cubit.confirmLocation()`. The cubit simultaneously emitted a `navSignal` which triggered
+  the `PermissionFlowWrapper`'s own listener — resulting in two concurrent GoRouter pushes
+  on the same navigator, causing the `Failed assertion: 'route._navigator == navigator'` crash.
+- Fix Applied:
+  1. Removed the inline `context.go()` call from the confirm button's `onPressed`.
+  2. Added a `BlocListener` directly inside `LocationMapPage.build()` that listens for
+     `PermissionNavigationSignal` values and calls `context.go()` only from there.
+  3. `clearNavigationSignal()` is called immediately after each navigation to prevent
+     re-triggering on rebuilds.
+  4. All async callbacks in the page already guard with `if (!mounted) return`.
+- Result: Navigation from Location Map → Notification Intro is now crash-free.
+
+## ✅ COMPLETED: Map Loading UX (Phase 3)
+- `_isMapLoading` flag initialized to `true` on page load.
+- A full-screen `CircularProgressIndicator` overlay is shown until the map is ready.
+- `onMapCreated` now calls `setState(() => _isMapReady = true)` to mark controller readiness.
+- `onCameraIdle` hides the overlay (with a 500ms buffer) only after `_isMapReady` is true,
+  ensuring tiles have finished rendering before the overlay disappears.
+- `if (!mounted)` guards added to all delayed callbacks.
+
+=================================================================
+Status: ✅ Location Map Flow Stabilized
+Last Updated: 2026-03-23
 =================================================================

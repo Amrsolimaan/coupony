@@ -66,6 +66,16 @@ class _PermissionFlowWrapperState extends State<PermissionFlowWrapper> {
             context.go('/permission-loading');
             break;
 
+          case PermissionNavigationSignal.toOnboarding:
+            // Navigate to onboarding after permissions complete
+            context.go('/onboarding');
+            break;
+
+          case PermissionNavigationSignal.toWelcomeGateway:
+            // Navigate to welcome gateway (login or guest)
+            context.go('/welcome-gateway');
+            break;
+
           case PermissionNavigationSignal.toHome:
             // Complete - go to main app
             context.go('/home');

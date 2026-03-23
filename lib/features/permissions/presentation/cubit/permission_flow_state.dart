@@ -12,6 +12,8 @@ enum PermissionNavigationSignal {
   toNotificationIntro,
   toNotificationError,
   toLoading,
+  toOnboarding, // Navigate to onboarding after permissions complete
+  toWelcomeGateway, // Navigate to welcome gateway (login or guest)
   toHome,
 }
 

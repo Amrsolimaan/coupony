@@ -31,13 +31,12 @@ class OnboardingShoppingStyleScreen extends StatelessWidget {
         child: BlocConsumer<OnboardingFlowCubit, OnboardingFlowState>(
           // Listener to monitor navigation signals
           listener: (context, state) {
-            if (state.navigationSignal == OnboardingNavigation.toPermissions) {
-              // Add delay here to allow user to read the "Saved" message
-              Future.delayed(const Duration(seconds: 2), () {
-                if (context.mounted) {
-                  context.go(AppRouter.permissionSplash);
-                  cubit.clearNavigationSignal();
-                }
+            if (state.navigationSignal == OnboardingNavigation.toLoading) {
+              // Capture router before any async gap to avoid stale context assertion
+              final router = GoRouter.of(context);
+              cubit.clearNavigationSignal();
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                router.go(AppRouter.onboardingCompletionLoading);
               });
             }
 

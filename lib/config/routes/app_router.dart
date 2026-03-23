@@ -1,3 +1,4 @@
+import 'package:coupony/features/onboarding/presentation/pages/onboarding_completion_loading_page.dart';
 import 'package:coupony/features/permissions/presentation/pages/permission_flow_wrapper.dart';
 import 'package:coupony/features/permissions/presentation/pages/pages/location_error_page.dart';
 import 'package:coupony/features/permissions/presentation/pages/pages/location_intro_page.dart';
@@ -9,15 +10,24 @@ import 'package:coupony/features/permissions/presentation/pages/pages/permission
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-// استيراد شاشات الـ Onboarding
+// Core
+import 'package:coupony/config/dependency_injection/injection_container.dart';
+import 'package:coupony/core/constants/storage_keys.dart';
+import 'package:coupony/core/storage/secure_storage_service.dart';
+
+// Auth screens
 import 'package:coupony/features/auth/presentation/pages/splash_screen.dart';
 import 'package:coupony/features/auth/presentation/pages/onboarding_screen.dart';
+
+// Onboarding screens
 import 'package:coupony/features/onboarding/presentation/pages/language_selection_page.dart';
+import 'package:coupony/features/permissions/presentation/pages/pages/welcome_gateway_page.dart';
 import 'package:coupony/features/onboarding/presentation/pages/onboarding_preferences_screen.dart';
 import 'package:coupony/features/onboarding/presentation/pages/onboarding_budget_screen.dart';
 import 'package:coupony/features/onboarding/presentation/pages/onboarding_shopping_style_screen.dart';
 
-// Placeholder screens for testing
+// ── Placeholder screens (replace with real screens when built) ──────────────
+
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
   @override
@@ -30,6 +40,13 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       const Scaffold(body: Center(child: Text('Register Screen')));
+}
+
+class OtpVerificationScreen extends StatelessWidget {
+  const OtpVerificationScreen({super.key});
+  @override
+  Widget build(BuildContext context) =>
+      const Scaffold(body: Center(child: Text('OTP Verification Screen')));
 }
 
 class UserHomeScreen extends StatelessWidget {
@@ -46,48 +63,88 @@ class MerchantDashboardScreen extends StatelessWidget {
       const Scaffold(body: Center(child: Text('Merchant Dashboard')));
 }
 
+// ── Route paths that are always accessible without a token ──────────────────
+const _publicRoutes = {
+  AppRouter.splash,
+  AppRouter.languageSelection,
+  AppRouter.onboarding,
+  AppRouter.onboardingPreferences,
+  AppRouter.onboardingBudget,
+  AppRouter.onboardingShoppingStyle,
+  AppRouter.onboardingCompletionLoading,
+  AppRouter.permissionFlow,
+  AppRouter.permissionSplash,
+  AppRouter.permissionLocationIntro,
+  AppRouter.permissionLocationMap,
+  AppRouter.permissionLocationError,
+  AppRouter.permissionNotificationIntro,
+  AppRouter.permissionNotificationError,
+  AppRouter.permissionLoading,
+  AppRouter.welcomeGateway,
+  AppRouter.login,
+  AppRouter.register,
+  AppRouter.otpVerification,
+};
+
 class AppRouter {
-  // أسماء المسارات (Route Names)
-  static const String splash = '/';
-  static const String languageSelection = '/language-selection';
-  static const String onboarding = '/onboarding';
-  static const String onboardingPreferences = '/onboarding-preferences';
-  static const String onboardingBudget = '/onboarding-budget';
-  static const String onboardingShoppingStyle = '/onboarding-shopping-style';
-  static const String login = '/login';
-  static const String register = '/register';
-  static const String home = '/home';
-  static const String merchantDashboard = '/merchant-dashboard';
+  // ── Route paths ───────────────────────────────────────────────────────────
+  static const String splash                    = '/';
+  static const String languageSelection         = '/language-selection';
+  static const String onboarding                = '/onboarding';
+  static const String onboardingPreferences     = '/onboarding-preferences';
+  static const String onboardingBudget          = '/onboarding-budget';
+  static const String onboardingShoppingStyle   = '/onboarding-shopping-style';
+  static const String onboardingCompletionLoading = '/onboarding-completion-loading';
+  static const String login                     = '/login';
+  static const String register                  = '/register';
+  static const String otpVerification           = '/otp-verification';
+  static const String home                      = '/home';
+  static const String merchantDashboard         = '/merchant-dashboard';
 
-  // ✅ Permission Flow Routes (محدثة)
-  static const String permissionFlow = '/permission-flow'; // NEW - Entry point
-  static const String permissionSplash = '/permission-splash';
-  static const String permissionLocationIntro = '/permission-location-intro';
-  static const String permissionLocationMap = '/permission-location-map';
-  static const String permissionLocationError = '/permission-location-error';
-  static const String permissionNotificationIntro =
-      '/permission-notification-intro';
-  static const String permissionNotificationError =
-      '/permission-notification-error';
-  static const String permissionLoading = '/permission-loading';
+  // Permission flow
+  static const String permissionFlow            = '/permission-flow';
+  static const String permissionSplash          = '/permission-splash';
+  static const String permissionLocationIntro   = '/permission-location-intro';
+  static const String permissionLocationMap     = '/permission-location-map';
+  static const String permissionLocationError   = '/permission-location-error';
+  static const String permissionNotificationIntro  = '/permission-notification-intro';
+  static const String permissionNotificationError  = '/permission-notification-error';
+  static const String permissionLoading         = '/permission-loading';
+  static const String welcomeGateway            = '/welcome-gateway';
 
+  // ── Router ────────────────────────────────────────────────────────────────
   static final GoRouter router = GoRouter(
     initialLocation: splash,
     debugLogDiagnostics: true,
+
+    // ── Auth guard ──────────────────────────────────────────────────────────
+    redirect: (context, state) async {
+      final location = state.matchedLocation;
+
+      // Public routes are always accessible
+      if (_publicRoutes.contains(location)) return null;
+
+      // Protected route — check for stored token
+      final token = await sl<SecureStorageService>().read(StorageKeys.authToken);
+      if (token == null) return login;
+
+      return null; // Token present — allow navigation
+    },
+
     routes: [
-      // 1. Splash Screen
+      // 1. Splash
       GoRoute(
         path: splash,
         builder: (context, state) => const AnimatedSplashScreen(),
       ),
 
-      // 2. Language Selection (First-time setup)
+      // 2. Language Selection
       GoRoute(
         path: languageSelection,
         builder: (context, state) => const LanguageSelectionPage(),
       ),
 
-      // 3. Onboarding Flow
+      // 3. Onboarding flow
       GoRoute(
         path: onboarding,
         builder: (context, state) => const OnboardingScreen(),
@@ -104,15 +161,16 @@ class AppRouter {
         path: onboardingShoppingStyle,
         builder: (context, state) => const OnboardingShoppingStyleScreen(),
       ),
+      GoRoute(
+        path: onboardingCompletionLoading,
+        builder: (context, state) => const OnboardingCompletionLoadingPage(),
+      ),
 
-      // ✅ 4. Permission Flow - NEW ARCHITECTURE
-      // Entry Point - Wrapper that listens to Cubit and auto-navigates
+      // 4. Permission flow
       GoRoute(
         path: permissionFlow,
         builder: (context, state) => const PermissionFlowWrapper(),
       ),
-
-      // Individual Permission Screens (navigated to by Wrapper)
       GoRoute(
         path: permissionSplash,
         builder: (context, state) => const PermissionSplashPage(),
@@ -141,16 +199,30 @@ class AppRouter {
         path: permissionLoading,
         builder: (context, state) => const PermissionLoadingPage(),
       ),
+      GoRoute(
+        path: welcomeGateway,
+        builder: (context, state) => const WelcomeGatewayPage(),
+      ),
 
-      // 5. Auth Screens
-      GoRoute(path: login, builder: (context, state) => const LoginScreen()),
+      // 5. Auth screens
+      GoRoute(
+        path: login,
+        builder: (context, state) => const LoginScreen(),
+      ),
       GoRoute(
         path: register,
         builder: (context, state) => const RegisterScreen(),
       ),
+      GoRoute(
+        path: otpVerification,
+        builder: (context, state) => const OtpVerificationScreen(),
+      ),
 
-      // 6. Main App Screens
-      GoRoute(path: home, builder: (context, state) => const UserHomeScreen()),
+      // 6. Protected app screens
+      GoRoute(
+        path: home,
+        builder: (context, state) => const UserHomeScreen(),
+      ),
       GoRoute(
         path: merchantDashboard,
         builder: (context, state) => const MerchantDashboardScreen(),

@@ -422,9 +422,9 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
           ),
         );
 
-        // 2. Emit Navigation Signal immediately (UI will handle delay)
+        // 2. Emit Navigation Signal to loading page (UI will handle delay)
         _safeEmit(
-          state.copyWith(navigationSignal: OnboardingNavigation.toPermissions),
+          state.copyWith(navigationSignal: OnboardingNavigation.toLoading),
         );
       },
     );

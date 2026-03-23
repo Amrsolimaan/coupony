@@ -897,8 +897,8 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
           navSignal: nextStep.signal,
         ),
       );
-    } else if (state.currentStep == 3) {
-      // Skip notification → use use case
+    } else if (state.currentStep == 3 || state.currentStep == 4) {
+      // Skip notification → complete flow
       final nextStep = determineNextPermissionStepUseCase.afterSkippingNotification();
       _safeEmit(
         state.copyWith(
@@ -935,44 +935,20 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
   Future<void> _completeFlow(NextStepResult nextStep) async {
     logger.i('Completing permission flow...');
 
-    // Go to loading screen
-    _safeEmit(
-      state.copyWith(
-        currentStep: nextStep.step,
-        navSignal: nextStep.signal,
-      ),
-    );
-
-    // Simulate loading progress (for nice UX)
-    await _simulateLoading();
-
     // Mark as completed
     await repository.savePermissionStatus(hasCompletedFlow: true);
 
+    // ✅ Navigate to welcome gateway (login or guest choice)
     _safeEmit(
       state.copyWith(
         isCompleted: true,
         hasCompletedFlow: true,
-        navSignal: PermissionNavigationSignal.toHome,
+        currentStep: nextStep.step,
+        navSignal: PermissionNavigationSignal.toWelcomeGateway,
       ),
     );
 
-    logger.i('Permission flow completed');
-  }
-
-  /// Simulate loading progress for better UX
-  Future<void> _simulateLoading() async {
-    // Step 1: Checking permissions (33%)
-    _safeEmit(state.copyWith(loadingProgress: 0.33));
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    // Step 2: Loading data (66%)
-    _safeEmit(state.copyWith(loadingProgress: 0.66));
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    // Step 3: Almost there (100%)
-    _safeEmit(state.copyWith(loadingProgress: 1.0));
-    await Future.delayed(const Duration(milliseconds: 300));
+    logger.i('Permission flow completed - navigating to welcome gateway');
   }
 
   // ════════════════════════════════════════════════════════

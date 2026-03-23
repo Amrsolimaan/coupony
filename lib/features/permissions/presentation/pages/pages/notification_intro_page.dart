@@ -23,7 +23,17 @@ class NotificationIntroPage extends StatelessWidget {
       body: SafeArea(
         child: BlocListener<PermissionFlowCubit, PermissionFlowState>(
           listener: (context, state) {
-            if (state.navSignal == PermissionNavigationSignal.toLoading) {
+            // Navigate to welcome gateway when permissions complete
+            if (state.navSignal == PermissionNavigationSignal.toWelcomeGateway) {
+              context.go(AppRouter.welcomeGateway);
+              context.read<PermissionFlowCubit>().clearNavigationSignal();
+            }
+            // Legacy: Keep onboarding/loading navigation for backward compatibility
+            else if (state.navSignal == PermissionNavigationSignal.toOnboarding) {
+              context.go(AppRouter.onboarding);
+              context.read<PermissionFlowCubit>().clearNavigationSignal();
+            }
+            else if (state.navSignal == PermissionNavigationSignal.toLoading) {
               context.go(AppRouter.permissionLoading);
               context.read<PermissionFlowCubit>().clearNavigationSignal();
             }

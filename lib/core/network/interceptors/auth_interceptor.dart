@@ -13,19 +13,28 @@ class AuthInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     final token = await secureStorage.read(key: StorageKeys.authToken);
-    
+
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
     }
-    
+
     return handler.next(options);
   }
-  
+
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     if (err.response?.statusCode == 401) {
-      // Handle token expiration (e.g., logout or refresh)
+      // Clear all stored credentials — forces re-login
+      // GoRouter's redirect guard will detect the missing token
+      // and redirect to /login on the next navigation event
+      await secureStorage.delete(key: StorageKeys.authToken);
+      await secureStorage.delete(key: StorageKeys.refreshToken);
+      await secureStorage.delete(key: StorageKeys.userId);
+      await secureStorage.delete(key: StorageKeys.userRole);
     }
-    super.onError(err, handler);
+    return handler.next(err);
   }
 }

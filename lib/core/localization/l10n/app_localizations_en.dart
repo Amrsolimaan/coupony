@@ -207,6 +207,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get permissions_loading_complete => 'Loading complete...';
 
   @override
+  String get onboarding_loading_preparing => 'Preparing your experience...';
+
+  @override
+  String get onboarding_loading_saving => 'Saving your preferences...';
+
+  @override
+  String get onboarding_loading_preparing_experience =>
+      'Preparing your personalized experience...';
+
+  @override
+  String get onboarding_loading_complete => 'Almost there...';
+
+  @override
   String get permissions_location_checking => 'Checking location...';
 
   @override
@@ -373,4 +386,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboarding_intro_continue => 'Continue';
+
+  @override
+  String get welcome_gateway_title => 'Welcome';
+
+  @override
+  String get welcome_gateway_subtitle =>
+      'You can sign in to access all services, or continue as a guest';
+
+  @override
+  String get welcome_gateway_login => 'Sign In';
+
+  @override
+  String get welcome_gateway_guest => 'Guest';
 }

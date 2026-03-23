@@ -70,6 +70,11 @@
   "permissions_loading_checking": "Checking permissions...",
   "permissions_loading_data": "Loading data...",
   "permissions_loading_complete": "Loading complete...",
+  
+  "onboarding_loading_preparing": "Preparing your experience...",
+  "onboarding_loading_saving": "Saving your preferences...",
+  "onboarding_loading_preparing_experience": "Preparing your personalized experience...",
+  "onboarding_loading_complete": "Almost there...",
   "permissions_location_checking": "Checking location...",
   "permissions_please_wait": "Please wait...",
   "location_map_no_results": "No results found",
@@ -118,5 +123,10 @@
   "error_onboarding_step2_incomplete": "Please select your budget preference",
   "error_onboarding_step3_incomplete": "Please select at least one shopping style",
   "onboarding_intro_title": "Let's get to know you better\nand offer you more",
-  "onboarding_intro_continue": "Continue"
+  "onboarding_intro_continue": "Continue",
+
+  "welcome_gateway_title": "Welcome",
+  "welcome_gateway_subtitle": "You can sign in to access all services, or continue as a guest",
+  "welcome_gateway_login": "Sign In",
+  "welcome_gateway_guest": "Guest"
 }

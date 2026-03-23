@@ -15,7 +15,7 @@
         <!-- TODO: Replace with your actual API Key from Google Cloud Console -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDASWTQo7hITM4HU58rRzRw4ha3Mma1qAE" />
+            android:value="AIzaSyBMtc18ot9J6w9fv6l-T-e1iC_R0yGHU_c" />
 
         <activity
             android:name=".MainActivity"

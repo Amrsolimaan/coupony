@@ -6,6 +6,7 @@ enum OnboardingNavigation {
   none,
   toBudget,
   toShoppingStyle,
+  toLoading, // Navigate to loading page after onboarding completion
   toPermissions,
   toLogin,
 }
@@ -150,6 +151,7 @@ class OnboardingFlowState extends Equatable {
   @override
   List<Object?> get props => [
     currentStep,
+    navigationSignal, // ✅ Must be included so BlocConsumer detects signal changes
     selectedCategories,
     isStep1Valid,
     budgetPreference,

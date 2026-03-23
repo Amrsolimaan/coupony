@@ -38,6 +38,7 @@ class _LocationMapPageState extends State<LocationMapPage> {
 
   LatLng? _currentLocation;
   bool _isMapReady = false;
+  bool _isMapLoading = true;
 
   @override
   void initState() {
@@ -218,8 +219,27 @@ class _LocationMapPageState extends State<LocationMapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surface,
-      body: Stack(
-        children: [
+      body: BlocListener<PermissionFlowCubit, PermissionFlowState>(
+        listener: (context, state) {
+          // ✅ Phase 1 Fix: All navigation driven by navSignal only.
+          // Never call context.go() inline after cubit calls — that causes
+          // the "route._navigator == navigator" assertion crash.
+          if (state.navSignal ==
+              PermissionNavigationSignal.toNotificationIntro) {
+            context.go(AppRouter.permissionNotificationIntro);
+            context.read<PermissionFlowCubit>().clearNavigationSignal();
+          } else if (state.navSignal ==
+              PermissionNavigationSignal.toLocationIntro) {
+            context.go(AppRouter.permissionLocationIntro);
+            context.read<PermissionFlowCubit>().clearNavigationSignal();
+          } else if (state.navSignal ==
+              PermissionNavigationSignal.toOnboarding) {
+            context.go(AppRouter.onboarding);
+            context.read<PermissionFlowCubit>().clearNavigationSignal();
+          }
+        },
+        child: Stack(
+          children: [
           // ✅ Google Map
           BlocBuilder<PermissionFlowCubit, PermissionFlowState>(
             builder: (context, state) {
@@ -238,14 +258,24 @@ class _LocationMapPageState extends State<LocationMapPage> {
                 ),
                 onMapCreated: (controller) {
                   _mapController = controller;
-                  _isMapReady = true;
+                  setState(() => _isMapReady = true);
 
                   debugPrint('✅ Google Map Controller created');
 
                   // Move to user position if we have it
                   if (_currentLocation != null) {
                     Future.delayed(const Duration(milliseconds: 300), () {
-                      _moveCameraToPosition(_currentLocation!);
+                      if (mounted) _moveCameraToPosition(_currentLocation!);
+                    });
+                  }
+                },
+                onCameraIdle: () {
+                  // ✅ Phase 3: Hide loading overlay once map tiles settle.
+                  // onCameraIdle fires after tiles finish rendering — safer than
+                  // a fixed timer. Guard with _isMapReady to avoid premature hide.
+                  if (_isMapLoading && _isMapReady) {
+                    Future.delayed(const Duration(milliseconds: 500), () {
+                      if (mounted) setState(() => _isMapLoading = false);
                     });
                   }
                 },
@@ -284,6 +314,20 @@ class _LocationMapPageState extends State<LocationMapPage> {
             },
           ),
 
+          // ✅ Map Loading Indicator - shown until map is fully rendered
+          if (_isMapLoading)
+            Positioned.fill(
+              child: Container(
+                color: AppColors.surface,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.primary,
+                    strokeWidth: 3,
+                  ),
+                ),
+              ),
+            ),
+
           // ✅ Top Search Bar - Exact Original Design
           PositionedDirectional(
             top: MediaQuery.of(context).padding.top + 16.h,
@@ -308,31 +352,51 @@ class _LocationMapPageState extends State<LocationMapPage> {
 
                 SizedBox(width: 12.w),
 
-                // 2. Search Box (Center - Full Width)
+                // 2. Search Box (Center - Full Width) - LAYERED STRUCTURE
                 Expanded(
                   child: Container(
-                    height: 50.h,
+                    width: double.infinity,
+                    height: 55.h,
                     decoration: BoxDecoration(
                       color: AppColors.surface,
                       borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(color: AppColors.grey200, width: 1),
+                      border: Border.all(
+                        color: AppColors.grey200,
+                        width: 1.w,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.shadow.withValues(alpha: 0.05),
+                          blurRadius: 4,
+                          offset: Offset(0, 2.h),
+                        ),
+                      ],
                     ),
                     child: Row(
                       children: [
-                        // Search Icon (Left inside box)
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12.w),
-                          child: Icon(
-                            Icons.search,
-                            color: AppColors.grey600,
-                            size: 22.w,
+                        // Search Icon (Left - Functional) - ON TOP LAYER
+                        GestureDetector(
+                          onTap: () {
+                            if (_searchController.text.trim().isNotEmpty) {
+                              _searchLocation(_searchController.text.trim());
+                              FocusScope.of(context).unfocus();
+                            }
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12.w),
+                            child: Icon(
+                              Icons.search,
+                              color: AppColors.grey600,
+                              size: 22.w,
+                            ),
                           ),
                         ),
 
-                        // Search TextField (Center)
+                        // Search TextField (Center) - EXPANDED TO PREVENT ICON OVERFLOW
                         Expanded(
                           child: TextField(
                             controller: _searchController,
+                            textDirection: TextDirection.rtl,
                             textAlign: TextAlign.right,
                             style: AppTextStyles.bodyMedium.copyWith(
                               color: AppColors.grey800,
@@ -343,9 +407,11 @@ class _LocationMapPageState extends State<LocationMapPage> {
                                 color: AppColors.grey600,
                               ),
                               border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
                               contentPadding: EdgeInsets.symmetric(
                                 horizontal: 8.w,
-                                vertical: 14.h,
+                                vertical: 16.h,
                               ),
                             ),
                             onSubmitted: (value) {
@@ -356,7 +422,7 @@ class _LocationMapPageState extends State<LocationMapPage> {
                           ),
                         ),
 
-                        // Microphone Icon (Right inside box)
+                        // Microphone Icon (Right - Functional) - ON TOP LAYER
                         GestureDetector(
                           onTap: () {
                             if (_isListening) {
@@ -365,7 +431,7 @@ class _LocationMapPageState extends State<LocationMapPage> {
                               _startListening();
                             }
                           },
-                          child: Padding(
+                          child: Container(
                             padding: EdgeInsets.symmetric(horizontal: 12.w),
                             child: Icon(
                               _isListening ? Icons.mic : Icons.mic_none,
@@ -383,14 +449,11 @@ class _LocationMapPageState extends State<LocationMapPage> {
 
                 SizedBox(width: 12.w),
 
-                // 3. Close/Exit Arrow (Right Side)
+                // 3. Back Button (Right Side)
                 GestureDetector(
                   onTap: () {
-                    // Clear search and exit search mode
-                    _searchController.clear();
-                    FocusScope.of(context).unfocus();
-                    // Or navigate back if needed
-                    // Navigator.of(context).pop();
+                    // Navigate back to previous screen
+                    context.go(AppRouter.permissionLocationIntro);
                   },
                   child: Container(
                     width: 40.w,
@@ -400,7 +463,7 @@ class _LocationMapPageState extends State<LocationMapPage> {
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Icon(
-                      Icons.arrow_forward_ios,
+                      Icons.arrow_back_ios,
                       color: AppColors.grey800,
                       size: 18.w,
                     ),
@@ -661,15 +724,14 @@ class _LocationMapPageState extends State<LocationMapPage> {
                               text: l10n.location_map_confirm_button,
                               onPressed: hasPosition
                                   ? () {
-                                      // ✅ Confirm location - Wrapper handles navigation
+                                      // ✅ FIX: Let the cubit emit the navSignal.
+                                      // The BlocListener below handles navigation.
+                                      // Do NOT call context.go() here — that causes
+                                      // the "route._navigator == navigator" assertion crash.
+                                      debugPrint('✅ Location confirmed');
                                       context
                                           .read<PermissionFlowCubit>()
                                           .confirmLocation();
-
-                                      debugPrint('✅ Location confirmed');
-                                      context.go(
-                                        AppRouter.permissionNotificationIntro,
-                                      );
                                     }
                                   : null,
                               size: AppButtonSize.medium,
@@ -685,7 +747,8 @@ class _LocationMapPageState extends State<LocationMapPage> {
               ),
             ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

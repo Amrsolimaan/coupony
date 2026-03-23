@@ -7,6 +7,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/localization/locale_cubit.dart';
 import '../../../../config/routes/app_router.dart';
 import '../../../../config/dependency_injection/injection_container.dart' as di;
+import '../../../permissions/domain/repositories/permission_repository.dart';
 import '../../../onboarding/domain/repositories/onboarding_repository.dart';
 
 class AnimatedSplashScreen extends StatefulWidget {
@@ -68,22 +69,22 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
           return;
         }
 
-        // ✅ STEP 2: Language exists, check Onboarding status
-        final repository = di.sl<OnboardingRepository>();
-        final result = await repository.getLocalPreferences();
-
-        result.fold(
+        // ✅ STEP 2: Check Permission status first (NEW FLOW: Permissions → Onboarding)
+        final permissionRepository = di.sl<PermissionRepository>();
+        final permissionResult = await permissionRepository.getPermissionStatus();
+        
+        permissionResult.fold(
           (failure) {
-            // In case of failure (or no data), go to Onboarding as fallback
-            if (mounted) context.go(AppRouter.onboarding);
+            // No permission data - start permission flow
+            if (mounted) context.go(AppRouter.permissionSplash);
           },
-          (preferences) {
-            if (preferences != null && preferences.isOnboardingCompleted) {
-              // User completed Onboarding, navigate to Permissions
-              if (mounted) context.go(AppRouter.permissionSplash);
+          (permissionStatus) {
+            if (permissionStatus != null && permissionStatus.hasCompletedFlow) {
+              // ✅ Permissions completed, check onboarding
+              _checkOnboardingStatus();
             } else {
-              // User hasn't completed Onboarding
-              if (mounted) context.go(AppRouter.onboarding);
+              // Permissions not completed - start permission flow
+              if (mounted) context.go(AppRouter.permissionSplash);
             }
           },
         );
@@ -92,6 +93,33 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
         if (mounted) context.go(AppRouter.languageSelection);
       }
     });
+  }
+
+  /// Check onboarding status after permissions are confirmed
+  Future<void> _checkOnboardingStatus() async {
+    try {
+      final onboardingRepository = di.sl<OnboardingRepository>();
+      final onboardingResult = await onboardingRepository.getLocalPreferences();
+      
+      onboardingResult.fold(
+        (failure) {
+          // No onboarding data - start onboarding
+          if (mounted) context.go(AppRouter.onboarding);
+        },
+        (preferences) {
+          if (preferences != null && preferences.isOnboardingCompleted) {
+            // ✅ Everything completed - go to home
+            if (mounted) context.go(AppRouter.home);
+          } else {
+            // Onboarding not completed - start onboarding
+            if (mounted) context.go(AppRouter.onboarding);
+          }
+        },
+      );
+    } catch (e) {
+      // Fallback - start onboarding
+      if (mounted) context.go(AppRouter.onboarding);
+    }
   }
 
   @override
