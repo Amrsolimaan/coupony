@@ -51,6 +51,7 @@ dependencies:
   flutter_cache_manager: ^3.4.1
   shimmer: ^3.0.0
   path: ^1.9.1
+  flutter_hooks: ^0.21.3+1
 
 flutter_native_splash:
   color: "#ffffff"
@@ -78,6 +79,24 @@ flutter:
     - assets/icons/
 
   fonts:
+    - family: Pacifico
+      fonts:
+        - asset: assets/fonts/Pacifico-Regular.ttf
+          weight: 400
+    - family: Amiri
+      fonts:
+        - asset: assets/fonts/Amiri-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Amiri-Bold.ttf
+          weight: 700
+    - family: Urbanist
+      fonts:
+        - asset: assets/fonts/Urbanist-SemiBold.ttf
+          weight: 600
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-Bold.ttf
+          weight: 700
     - family: NotoNaskhArabic
       fonts:
         - asset: assets/fonts/NotoNaskhArabic-Regular.ttf

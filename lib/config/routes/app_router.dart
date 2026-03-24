@@ -14,10 +14,14 @@ import 'package:go_router/go_router.dart';
 import 'package:coupony/config/dependency_injection/injection_container.dart';
 import 'package:coupony/core/constants/storage_keys.dart';
 import 'package:coupony/core/storage/secure_storage_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Auth screens
 import 'package:coupony/features/auth/presentation/pages/splash_screen.dart';
 import 'package:coupony/features/auth/presentation/pages/onboarding_screen.dart';
+import 'package:coupony/features/auth/presentation/pages/login_screen.dart' as auth_login;
+import 'package:coupony/features/auth/presentation/cubit/login_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Onboarding screens
 import 'package:coupony/features/onboarding/presentation/pages/language_selection_page.dart';
@@ -27,13 +31,6 @@ import 'package:coupony/features/onboarding/presentation/pages/onboarding_budget
 import 'package:coupony/features/onboarding/presentation/pages/onboarding_shopping_style_screen.dart';
 
 // ── Placeholder screens (replace with real screens when built) ──────────────
-
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
-  @override
-  Widget build(BuildContext context) =>
-      const Scaffold(body: Center(child: Text('Login Screen')));
-}
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
@@ -121,14 +118,22 @@ class AppRouter {
     redirect: (context, state) async {
       final location = state.matchedLocation;
 
-      // Public routes are always accessible
+      // Public routes (splash, onboarding, permissions, auth screens) are
+      // always accessible — skip the session check entirely.
       if (_publicRoutes.contains(location)) return null;
 
-      // Protected route — check for stored token
+      // 1. Authenticated user — token present and non-empty.
       final token = await sl<SecureStorageService>().read(StorageKeys.authToken);
-      if (token == null) return login;
+      if (token != null && token.isNotEmpty) return null;
 
-      return null; // Token present — allow navigation
+      // 2. Guest user — explicit visitor session persisted in SharedPreferences.
+      //    getBool() is synchronous once SharedPreferences is initialised.
+      final isGuest = sl<SharedPreferences>().getBool(StorageKeys.isGuest) ?? false;
+      if (isGuest) return null;
+
+      // 3. No session — redirect to the gateway so the user can sign in or
+      //    choose guest mode again.
+      return welcomeGateway;
     },
 
     routes: [
@@ -207,7 +212,10 @@ class AppRouter {
       // 5. Auth screens
       GoRoute(
         path: login,
-        builder: (context, state) => const LoginScreen(),
+        builder: (context, state) => BlocProvider(
+          create: (_) => sl<LoginCubit>(),
+          child: const auth_login.LoginScreen(),
+        ),
       ),
       GoRoute(
         path: register,

@@ -128,5 +128,25 @@
   "welcome_gateway_title": "Welcome",
   "welcome_gateway_subtitle": "You can sign in to access all services, or continue as a guest",
   "welcome_gateway_login": "Sign In",
-  "welcome_gateway_guest": "Guest"
+  "welcome_gateway_guest": "Guest",
+
+  "login_welcome_back": "Welcome Back!",
+  "login_user_role": "User",
+  "login_merchant_role": "Merchant",
+  "login_remember_me": "Remember me",
+  "login_or_divider": "Or continue with",
+  "login_google_button": "Continue with Google",
+  "login_success": "Logged in successfully",
+  "register_success": "Account created successfully",
+  "register_otp_sent": "Verification code sent to your email",
+  "otp_sent_success": "Verification code sent successfully",
+  "otp_verified_success": "Verified successfully",
+  "otp_empty_error": "Please enter the verification code",
+  "register_now": "Register Now",
+
+  "auth_error_invalid_credentials": "Invalid email or password",
+  "auth_error_network": "No internet connection",
+  "auth_error_server": "Server error occurred. Please try again",
+  "auth_error_user_not_found": "No account found with this email",
+  "auth_error_unexpected": "An unexpected error occurred"
 }

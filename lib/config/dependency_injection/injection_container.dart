@@ -5,6 +5,7 @@ import 'package:coupony/core/services/notification_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/network/dio_client.dart';
 import '../../core/network/network_info.dart';
@@ -24,6 +25,10 @@ Future<void> init() async {
   // ═══════════════════════════════════════════════════════════
   // 1. EXTERNAL DEPENDENCIES
   // ═══════════════════════════════════════════════════════════
+
+  // SharedPreferences - Used for non-sensitive flags (e.g. guest mode)
+  final sharedPrefs = await SharedPreferences.getInstance();
+  sl.registerLazySingleton<SharedPreferences>(() => sharedPrefs);
 
   // FlutterSecureStorage - Used by SecureStorageService and DioClient
   sl.registerLazySingleton<FlutterSecureStorage>(

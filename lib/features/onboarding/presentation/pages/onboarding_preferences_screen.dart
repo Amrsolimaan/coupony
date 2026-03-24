@@ -48,7 +48,7 @@ class OnboardingCategorySelectionView extends StatelessWidget {
             }
 
             if (state.navigationSignal == OnboardingNavigation.toLogin) {
-              context.go(AppRouter.login);
+              context.go(AppRouter.home);
               cubit.clearNavigationSignal();
             }
 

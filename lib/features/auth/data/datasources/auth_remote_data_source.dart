@@ -4,22 +4,45 @@ import '../../../../core/network/dio_client.dart';
 import '../models/user_model.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<UserModel> login({required String phone, required String password});
-  Future<UserModel> register({
-    required String name,
+  /// POST /auth/login  body: { email, password, role }
+  Future<UserModel> login({
     required String email,
     required String password,
-    required String phone,
-    String role = 'user',
+    required String role,
   });
-  Future<void> sendOtp(String phone);
-  Future<UserModel> verifyOtp({required String phone, required String otp});
+
+  /// POST /auth/register
+  /// body: { first_name, last_name, email, phone_number, password, password_confirmation }
+  Future<UserModel> register({
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String passwordConfirmation,
+  });
+
+  /// POST /auth/otp/send  body: { email, purpose }
+  Future<void> sendOtp({
+    required String email,
+    String purpose = 'verify_email',
+  });
+
+  /// POST /auth/otp/verify  body: { email, code, purpose }
+  Future<UserModel> verifyOtp({
+    required String email,
+    required String code,
+    String purpose = 'verify_email',
+  });
+
+  /// POST /auth/refresh  body: { refresh_token }
   Future<UserModel> refreshToken(String refreshToken);
-  Future<void> logout(String token);
-  Future<void> updateFcmToken({
-    required String token,
-    required String fcmToken,
-  });
+
+  /// POST /auth/logout  (Bearer token in header via AuthInterceptor)
+  Future<void> logout();
+
+  /// POST /auth/fcm-token  body: { fcm_token }
+  Future<void> updateFcmToken({required String fcmToken});
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -29,39 +52,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<UserModel> login({
-    required String phone,
+    required String email,
     required String password,
+    required String role,
   }) async {
     try {
       final response = await client.post(
         ApiConstants.login,
-        data: {'phone': phone, 'password': password},
-      );
-      return UserModel.fromJson(response.data as Map<String, dynamic>);
-    } on ServerException {
-      rethrow;
-    } catch (e) {
-      throw ServerException(e.toString());
-    }
-  }
-
-  @override
-  Future<UserModel> register({
-    required String name,
-    required String email,
-    required String password,
-    required String phone,
-    String role = 'user',
-  }) async {
-    try {
-      final response = await client.post(
-        ApiConstants.register,
         data: {
-          'name': name,
-          'email': email,
+          'email':    email,
           'password': password,
-          'phone': phone,
-          'role': role,
+          'role':     role,
         },
       );
       return UserModel.fromJson(response.data as Map<String, dynamic>);
@@ -73,9 +74,47 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> sendOtp(String phone) async {
+  Future<UserModel> register({
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
     try {
-      await client.post(ApiConstants.sendOtp, data: {'phone': phone});
+      final response = await client.post(
+        ApiConstants.register,
+        data: {
+          'first_name':             firstName,
+          'last_name':              lastName,
+          'email':                  email,
+          'phone_number':           phoneNumber,
+          'password':               password,
+          'password_confirmation':  passwordConfirmation,
+        },
+      );
+      return UserModel.fromJson(response.data as Map<String, dynamic>);
+    } on ServerException {
+      rethrow;
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> sendOtp({
+    required String email,
+    String purpose = 'verify_email',
+  }) async {
+    try {
+      await client.post(
+        ApiConstants.sendOtp,
+        data: {
+          'email':   email,
+          'purpose': purpose,
+        },
+      );
     } on ServerException {
       rethrow;
     } catch (e) {
@@ -85,13 +124,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<UserModel> verifyOtp({
-    required String phone,
-    required String otp,
+    required String email,
+    required String code,
+    String purpose = 'verify_email',
   }) async {
     try {
       final response = await client.post(
         ApiConstants.verifyOtp,
-        data: {'phone': phone, 'otp': otp},
+        data: {
+          'email':   email,
+          'code':    code,
+          'purpose': purpose,
+        },
       );
       return UserModel.fromJson(response.data as Map<String, dynamic>);
     } on ServerException {
@@ -117,7 +161,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> logout(String token) async {
+  Future<void> logout() async {
     try {
       await client.post(ApiConstants.logout);
     } catch (_) {
@@ -126,10 +170,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> updateFcmToken({
-    required String token,
-    required String fcmToken,
-  }) async {
+  Future<void> updateFcmToken({required String fcmToken}) async {
     try {
       await client.post(
         ApiConstants.updateFcmToken,

@@ -25,7 +25,7 @@ class AppColors {
   // Text Colors
   static const Color textPrimary = Color(0xFF1A1A1A);
   static const Color textSecondary = Color(0xFF6B6B6B);
-  static const Color textDisabled = Color(0xFFAAAAAA);
+  static const Color textDisabled = Color(0xFFAAB2BB);
 
   // Status Colors
   static const Color success = Color(0xFF4CAF50);
@@ -47,5 +47,7 @@ class AppColors {
 
   // Semantic Colors
   static const Color divider = Color(0xFFE0E0E0);
+    static const Color borderField = Color(0xFFFDDBB4);
+
   static const Color shadow = Color(0x1A000000);
 }

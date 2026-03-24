@@ -393,4 +393,60 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get welcome_gateway_guest => 'زائر';
+
+  @override
+  String get login_welcome_back => 'مرحباً بك مرة أخرى!';
+
+  @override
+  String get login_user_role => 'مستخدم';
+
+  @override
+  String get login_merchant_role => 'تاجر';
+
+  @override
+  String get login_remember_me => 'تذكرني';
+
+  @override
+  String get login_or_divider => 'أو باستخدام';
+
+  @override
+  String get login_google_button => 'المتابعة بواسطة Google';
+
+  @override
+  String get login_success => 'تم تسجيل الدخول بنجاح';
+
+  @override
+  String get register_success => 'تم إنشاء الحساب بنجاح';
+
+  @override
+  String get register_otp_sent => 'تم إرسال رمز التحقق إلى بريدك الإلكتروني';
+
+  @override
+  String get otp_sent_success => 'تم إرسال رمز التحقق بنجاح';
+
+  @override
+  String get otp_verified_success => 'تم التحقق بنجاح';
+
+  @override
+  String get otp_empty_error => 'يرجى إدخال رمز التحقق';
+
+  @override
+  String get register_now => 'سجل الآن';
+
+  @override
+  String get auth_error_invalid_credentials =>
+      'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+
+  @override
+  String get auth_error_network => 'لا يوجد اتصال بالإنترنت';
+
+  @override
+  String get auth_error_server => 'حدث خطأ في الخادم. يرجى المحاولة مرة أخرى';
+
+  @override
+  String get auth_error_user_not_found =>
+      'لا يوجد حساب مرتبط بهذا البريد الإلكتروني';
+
+  @override
+  String get auth_error_unexpected => 'حدث خطأ غير متوقع';
 }

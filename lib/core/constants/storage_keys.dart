@@ -53,6 +53,12 @@ class StorageKeys {
   // ════════════════════════════════════════════════════════
   // SETTINGS KEYS
   // ════════════════════════════════════════════════════════
+
+  /// Persisted in SharedPreferences (non-sensitive).
+  /// true  → user explicitly chose to browse as a guest.
+  /// false → user is logged in (or has never chosen guest mode).
+  static const String isGuest = 'is_guest';
+
   static const String isDarkMode = 'is_dark_mode';
   static const String language = 'app_locale';
   static const String notificationsEnabled = 'notifications_enabled';

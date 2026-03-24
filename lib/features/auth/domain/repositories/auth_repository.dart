@@ -3,32 +3,36 @@ import '../../../../core/errors/failures.dart';
 import '../entities/user_entity.dart';
 
 abstract class AuthRepository {
+  /// POST /auth/login
   Future<Either<Failure, UserEntity>> login({
-    required String phone,
-    required String password,
-  });
-
-  Future<Either<Failure, UserEntity>> register({
-    required String name,
     required String email,
     required String password,
-    required String phone,
-    String role = 'user',
+    required String role,
   });
 
-  /// Send OTP to phone number
-  Future<Either<Failure, Unit>> sendOtp(String phone);
+  /// POST /auth/register
+  Future<Either<Failure, UserEntity>> register({
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String passwordConfirmation,
+  });
 
-  /// Verify OTP — returns authenticated UserEntity on success
+  /// POST /auth/otp/send
+  Future<Either<Failure, Unit>> sendOtp(String email);
+
+  /// POST /auth/otp/verify — returns authenticated UserEntity on success
   Future<Either<Failure, UserEntity>> verifyOtp({
-    required String phone,
-    required String otp,
+    required String email,
+    required String code,
   });
 
-  /// Refresh access token using stored refresh token
+  /// POST /auth/refresh — uses stored refresh_token
   Future<Either<Failure, UserEntity>> refreshToken();
 
-  /// Returns true if a valid auth token is stored locally
+  /// Returns true if a valid access_token is stored locally
   Future<Either<Failure, bool>> checkAuthStatus();
 
   Future<Either<Failure, Unit>> logout();

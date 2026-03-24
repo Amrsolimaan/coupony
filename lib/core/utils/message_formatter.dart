@@ -104,6 +104,32 @@ class MessageFormatter {
       case 'error_onboarding_step3_incomplete':
         return l10n.error_onboarding_step3_incomplete;
 
+      // Auth messages
+      case 'login_success':
+        return l10n.login_success;
+      case 'register_success':
+        return l10n.register_success;
+      case 'register_otp_sent':
+        return l10n.register_otp_sent;
+      case 'otp_sent_success':
+        return l10n.otp_sent_success;
+      case 'otp_verified_success':
+        return l10n.otp_verified_success;
+      case 'otp_empty_error':
+        return l10n.otp_empty_error;
+
+      // Auth error keys
+      case 'auth_error_invalid_credentials':
+        return l10n.auth_error_invalid_credentials;
+      case 'auth_error_network':
+        return l10n.auth_error_network;
+      case 'auth_error_server':
+        return l10n.auth_error_server;
+      case 'auth_error_user_not_found':
+        return l10n.auth_error_user_not_found;
+      case 'auth_error_unexpected':
+        return l10n.auth_error_unexpected;
+
       // Fallback: Format key to human-readable
       default:
         return _formatKeyToHumanReadable(messageKey);
@@ -176,6 +202,12 @@ class MessageFormatter {
       'error_onboarding_step1_incomplete',
       'error_onboarding_step2_incomplete',
       'error_onboarding_step3_incomplete',
+      // Auth errors
+      'auth_error_invalid_credentials',
+      'auth_error_network',
+      'auth_error_server',
+      'auth_error_user_not_found',
+      'auth_error_unexpected',
     ];
 
     return knownKeys.contains(key);

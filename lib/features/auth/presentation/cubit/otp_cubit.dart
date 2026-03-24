@@ -7,29 +7,15 @@ import 'auth_state.dart';
 /// Manages OTP send and verification flow
 ///
 /// Flow:
-/// 1. Screen opens with phone pre-filled → sendOtp() called automatically
-/// 2. User enters 4/6-digit code → verifyOtp() called on submit
+/// 1. Screen opens with email pre-filled → sendOtp() called
+/// 2. User enters 6-digit code → verifyOtp() called on submit
 /// 3. On success → navSignal.toHome or toMerchantDash
-/// 4. Resend → sendOtp() again (with cooldown guard)
-///
-/// Usage in UI:
-/// ```dart
-/// BlocConsumer<OtpCubit, AuthState>(
-///   listener: (context, state) {
-///     if (state.navSignal == AuthNavigation.toHome) context.go(AppRouter.home);
-///     if (state.navSignal == AuthNavigation.toMerchantDash) context.go(AppRouter.merchantDashboard);
-///     if (state.errorMessage != null) showSnackBar(context, state.errorMessage!);
-///     if (state.successMessage != null) showSnackBar(context, state.successMessage!, isSuccess: true);
-///   },
-///   builder: (context, state) { ... },
-/// )
-/// ```
+/// 4. Resend → sendOtp() again (60-second cooldown)
 class OtpCubit extends Cubit<AuthState> {
   final SendOtpUseCase sendOtpUseCase;
   final VerifyOtpUseCase verifyOtpUseCase;
   final Logger logger;
 
-  // Resend cooldown tracking
   DateTime? _lastSentAt;
   static const _resendCooldownSeconds = 60;
 
@@ -39,31 +25,27 @@ class OtpCubit extends Cubit<AuthState> {
     required this.logger,
   }) : super(const AuthState());
 
-  // ════════════════════════════════════════════════════════
-  // SAFE EMIT
-  // ════════════════════════════════════════════════════════
-
-  void _safeEmit(AuthState newState) {
-    if (!isClosed) emit(newState);
+  void _safeEmit(AuthState s) {
+    if (!isClosed) emit(s);
   }
 
   // ════════════════════════════════════════════════════════
   // SEND OTP
   // ════════════════════════════════════════════════════════
 
-  Future<void> sendOtp(String phone) async {
+  Future<void> sendOtp(String email) async {
     if (state.isLoading) return;
 
-    logger.i('Sending OTP to: ${_maskPhone(phone)}');
+    logger.i('Sending OTP to: ${_maskEmail(email)}');
     _safeEmit(state.copyWith(
       isLoading: true,
       errorMessage: null,
       successMessage: null,
       navSignal: AuthNavigation.none,
-      otpPhone: phone,
+      otpEmail: email,
     ));
 
-    final result = await sendOtpUseCase(phone);
+    final result = await sendOtpUseCase(email);
 
     result.fold(
       (failure) {
@@ -75,12 +57,12 @@ class OtpCubit extends Cubit<AuthState> {
         ));
       },
       (_) {
-        logger.i('OTP sent successfully to ${_maskPhone(phone)}');
+        logger.i('OTP sent successfully to ${_maskEmail(email)}');
         _lastSentAt = DateTime.now();
         _safeEmit(state.copyWith(
           isLoading: false,
           isOtpSent: true,
-          otpPhone: phone,
+          otpEmail: email,
           successMessage: 'otp_sent_success',
         ));
       },
@@ -91,43 +73,39 @@ class OtpCubit extends Cubit<AuthState> {
   // RESEND OTP
   // ════════════════════════════════════════════════════════
 
-  /// Resend OTP with cooldown guard (60 seconds between requests)
   Future<void> resendOtp() async {
-    final phone = state.otpPhone;
-    if (phone == null) {
-      logger.w('Cannot resend OTP — no phone number in state');
+    final email = state.otpEmail;
+    if (email == null) {
+      logger.w('Cannot resend OTP — no email in state');
       return;
     }
 
-    // Enforce cooldown
     if (_lastSentAt != null) {
       final elapsed = DateTime.now().difference(_lastSentAt!).inSeconds;
       if (elapsed < _resendCooldownSeconds) {
         final remaining = _resendCooldownSeconds - elapsed;
         logger.d('Resend cooldown active — $remaining seconds remaining');
-        _safeEmit(state.copyWith(
-          errorMessage: 'otp_resend_cooldown_$remaining',
-        ));
+        _safeEmit(state.copyWith(errorMessage: 'otp_resend_cooldown_$remaining'));
         return;
       }
     }
 
-    await sendOtp(phone);
+    await sendOtp(email);
   }
 
   // ════════════════════════════════════════════════════════
   // VERIFY OTP
   // ════════════════════════════════════════════════════════
 
-  Future<void> verifyOtp({required String phone, required String otp}) async {
+  Future<void> verifyOtp({required String email, required String code}) async {
     if (state.isLoading) return;
 
-    if (otp.trim().isEmpty) {
+    if (code.trim().isEmpty) {
       _safeEmit(state.copyWith(errorMessage: 'otp_empty_error'));
       return;
     }
 
-    logger.i('Verifying OTP for: ${_maskPhone(phone)}');
+    logger.i('Verifying OTP for: ${_maskEmail(email)}');
     _safeEmit(state.copyWith(
       isLoading: true,
       errorMessage: null,
@@ -135,7 +113,7 @@ class OtpCubit extends Cubit<AuthState> {
       navSignal: AuthNavigation.none,
     ));
 
-    final result = await verifyOtpUseCase(phone: phone, otp: otp.trim());
+    final result = await verifyOtpUseCase(email: email, code: code.trim());
 
     result.fold(
       (failure) {
@@ -165,19 +143,13 @@ class OtpCubit extends Cubit<AuthState> {
   // NAVIGATION HELPERS
   // ════════════════════════════════════════════════════════
 
-  void clearNavSignal() {
-    _safeEmit(state.copyWith(navSignal: AuthNavigation.none));
-  }
-
-  void clearMessages() {
-    _safeEmit(state.copyWith(errorMessage: null, successMessage: null));
-  }
+  void clearNavSignal() => _safeEmit(state.copyWith(navSignal: AuthNavigation.none));
+  void clearMessages()  => _safeEmit(state.copyWith(errorMessage: null, successMessage: null));
 
   // ════════════════════════════════════════════════════════
-  // COMPUTED HELPERS (for UI)
+  // COMPUTED HELPERS (for UI countdown timer)
   // ════════════════════════════════════════════════════════
 
-  /// Seconds remaining before resend is allowed (0 = can resend now)
   int get resendCooldownRemaining {
     if (_lastSentAt == null) return 0;
     final elapsed = DateTime.now().difference(_lastSentAt!).inSeconds;
@@ -191,8 +163,9 @@ class OtpCubit extends Cubit<AuthState> {
   // HELPERS
   // ════════════════════════════════════════════════════════
 
-  String _maskPhone(String phone) {
-    if (phone.length < 6) return '****';
-    return '${phone.substring(0, 3)}****${phone.substring(phone.length - 4)}';
+  String _maskEmail(String email) {
+    final at = email.indexOf('@');
+    if (at <= 1) return '****';
+    return '${email[0]}****${email.substring(at)}';
   }
 }

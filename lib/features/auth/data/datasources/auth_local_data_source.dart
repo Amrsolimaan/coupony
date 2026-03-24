@@ -1,3 +1,5 @@
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/storage/secure_storage_service.dart';
@@ -7,20 +9,31 @@ abstract class AuthLocalDataSource {
   Future<void> cacheUser(UserModel user);
   Future<UserModel?> getCachedUser();
   Future<void> clearUser();
-  Future<String?> getToken();
+  Future<String?> getAccessToken();
   Future<String?> getRefreshToken();
+
+  /// Persist whether the user is browsing as a guest.
+  /// Stored in SharedPreferences (non-sensitive plain flag).
+  Future<void> cacheGuestStatus(bool isGuest);
+
+  /// Returns [true] if the user has explicitly entered as a guest.
+  Future<bool> getGuestStatus();
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   final SecureStorageService secureStorage;
+  final SharedPreferences sharedPrefs;
 
-  AuthLocalDataSourceImpl({required this.secureStorage});
+  AuthLocalDataSourceImpl({
+    required this.secureStorage,
+    required this.sharedPrefs,
+  });
 
   @override
   Future<void> cacheUser(UserModel user) async {
     try {
-      if (user.token != null) {
-        await secureStorage.write(StorageKeys.authToken, user.token!);
+      if (user.accessToken != null) {
+        await secureStorage.write(StorageKeys.authToken, user.accessToken!);
       }
       if (user.refreshToken != null) {
         await secureStorage.write(StorageKeys.refreshToken, user.refreshToken!);
@@ -38,19 +51,20 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<UserModel?> getCachedUser() async {
     try {
-      final token  = await secureStorage.read(StorageKeys.authToken);
-      final userId = await secureStorage.read(StorageKeys.userId);
-      final role   = await secureStorage.read(StorageKeys.userRole);
+      final accessToken = await secureStorage.read(StorageKeys.authToken);
+      final userId      = await secureStorage.read(StorageKeys.userId);
+      final role        = await secureStorage.read(StorageKeys.userRole);
 
-      if (token == null || userId == null) return null;
+      if (accessToken == null || userId == null) return null;
 
       return UserModel(
         id:           int.tryParse(userId) ?? 0,
-        name:         '',
+        firstName:    '',
+        lastName:     '',
         email:        '',
-        phone:        '',
+        phoneNumber:  '',
         role:         role ?? 'user',
-        token:        token,
+        accessToken:  accessToken,
         refreshToken: await secureStorage.read(StorageKeys.refreshToken),
         fcmToken:     await secureStorage.read(StorageKeys.fcmToken),
       );
@@ -69,9 +83,18 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   }
 
   @override
-  Future<String?> getToken() => secureStorage.read(StorageKeys.authToken);
+  Future<String?> getAccessToken() => secureStorage.read(StorageKeys.authToken);
 
   @override
-  Future<String?> getRefreshToken() =>
-      secureStorage.read(StorageKeys.refreshToken);
+  Future<String?> getRefreshToken() => secureStorage.read(StorageKeys.refreshToken);
+
+  @override
+  Future<void> cacheGuestStatus(bool isGuest) async {
+    await sharedPrefs.setBool(StorageKeys.isGuest, isGuest);
+  }
+
+  @override
+  Future<bool> getGuestStatus() async {
+    return sharedPrefs.getBool(StorageKeys.isGuest) ?? false;
+  }
 }

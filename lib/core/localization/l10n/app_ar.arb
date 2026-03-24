@@ -130,5 +130,25 @@
   "welcome_gateway_title": "مرحبًا بك",
   "welcome_gateway_subtitle": "يمكنك تسجيل الدخول للاستفادة من جميع الخدمات،أو المتابعة كزائر",
   "welcome_gateway_login": "تسجيل دخول",
-  "welcome_gateway_guest": "زائر"
+  "welcome_gateway_guest": "زائر",
+
+  "login_welcome_back": "مرحباً بك مرة أخرى!",
+  "login_user_role": "مستخدم",
+  "login_merchant_role": "تاجر",
+  "login_remember_me": "تذكرني",
+  "login_or_divider": "أو باستخدام",
+  "login_google_button": "المتابعة بواسطة Google",
+  "login_success": "تم تسجيل الدخول بنجاح",
+  "register_success": "تم إنشاء الحساب بنجاح",
+  "register_otp_sent": "تم إرسال رمز التحقق إلى بريدك الإلكتروني",
+  "otp_sent_success": "تم إرسال رمز التحقق بنجاح",
+  "otp_verified_success": "تم التحقق بنجاح",
+  "otp_empty_error": "يرجى إدخال رمز التحقق",
+  "register_now": "سجل الآن",
+
+  "auth_error_invalid_credentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+  "auth_error_network": "لا يوجد اتصال بالإنترنت",
+  "auth_error_server": "حدث خطأ في الخادم. يرجى المحاولة مرة أخرى",
+  "auth_error_user_not_found": "لا يوجد حساب مرتبط بهذا البريد الإلكتروني",
+  "auth_error_unexpected": "حدث خطأ غير متوقع"
 }

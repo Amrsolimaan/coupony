@@ -29,14 +29,16 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
 
   @override
   Future<Either<Failure, UserEntity>> login({
-    required String phone,
+    required String email,
     required String password,
+    required String role,
   }) async {
     return executeOnlineOperation<UserEntity>(
       operation: () async {
         final user = await remoteDataSource.login(
-          phone: phone,
+          email: email,
           password: password,
+          role: role,
         );
         await _persistUserAndRegisterFcm(user);
         return user;
@@ -46,23 +48,25 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
 
   @override
   Future<Either<Failure, UserEntity>> register({
-    required String name,
+    required String firstName,
+    required String lastName,
     required String email,
+    required String phoneNumber,
     required String password,
-    required String phone,
-    String role = 'user',
+    required String passwordConfirmation,
   }) async {
     return executeOnlineOperation<UserEntity>(
       operation: () async {
         final user = await remoteDataSource.register(
-          name: name,
-          email: email,
-          password: password,
-          phone: phone,
-          role: role,
+          firstName:            firstName,
+          lastName:             lastName,
+          email:                email,
+          phoneNumber:          phoneNumber,
+          password:             password,
+          passwordConfirmation: passwordConfirmation,
         );
-        // Only persist if backend returned a token (auto-login after register)
-        if (user.token != null) {
+        // Only persist if backend returned an access_token (auto-login after register)
+        if (user.accessToken != null) {
           await _persistUserAndRegisterFcm(user);
         }
         return user;
@@ -71,10 +75,10 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> sendOtp(String phone) async {
+  Future<Either<Failure, Unit>> sendOtp(String email) async {
     return executeOnlineOperation<Unit>(
       operation: () async {
-        await remoteDataSource.sendOtp(phone);
+        await remoteDataSource.sendOtp(email: email);
         return unit;
       },
     );
@@ -82,14 +86,14 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
 
   @override
   Future<Either<Failure, UserEntity>> verifyOtp({
-    required String phone,
-    required String otp,
+    required String email,
+    required String code,
   }) async {
     return executeOnlineOperation<UserEntity>(
       operation: () async {
         final user = await remoteDataSource.verifyOtp(
-          phone: phone,
-          otp: otp,
+          email: email,
+          code:  code,
         );
         await _persistUserAndRegisterFcm(user);
         return user;
@@ -119,7 +123,7 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
   @override
   Future<Either<Failure, bool>> checkAuthStatus() async {
     try {
-      final token = await localDataSource.getToken();
+      final token = await localDataSource.getAccessToken();
       return Right(token != null);
     } catch (_) {
       return const Right(false);
@@ -129,11 +133,8 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
   @override
   Future<Either<Failure, Unit>> logout() async {
     try {
-      final token = await localDataSource.getToken();
-      if (token != null) {
-        // Best-effort API call — don't await failure
-        await remoteDataSource.logout(token);
-      }
+      // Best-effort API call — DioClient already has the token in headers
+      await remoteDataSource.logout();
       // Delete FCM token from Firebase (non-blocking)
       notificationService.deleteFCMToken();
       // Always clear local credentials
@@ -150,19 +151,21 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
   // PRIVATE HELPERS
   // ════════════════════════════════════════════════════════
 
-  /// Persist user tokens to secure storage and register FCM device token
+  /// Persist access/refresh tokens to secure storage and register FCM token
   /// with the backend. FCM registration is fire-and-forget (non-blocking).
+  ///
+  /// Also clears the guest flag so the user is treated as authenticated on
+  /// the next cold start, not as a visitor.
   Future<void> _persistUserAndRegisterFcm(UserModel user) async {
     await localDataSource.cacheUser(user);
+    // A real session supersedes guest mode.
+    await localDataSource.cacheGuestStatus(false);
 
-    if (user.token != null) {
-      // Non-blocking: get FCM token and send to backend
+    if (user.accessToken != null) {
+      // Non-blocking: fetch FCM token and send to backend
       notificationService.getFCMToken().then((fcmToken) {
         if (fcmToken != null) {
-          remoteDataSource.updateFcmToken(
-            token: user.token!,
-            fcmToken: fcmToken,
-          );
+          remoteDataSource.updateFcmToken(fcmToken: fcmToken);
         }
       });
     }

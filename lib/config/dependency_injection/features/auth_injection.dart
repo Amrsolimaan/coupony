@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/network/dio_client.dart';
 import '../../../core/network/network_info.dart';
@@ -29,7 +30,10 @@ void registerAuthDependencies(GetIt sl) {
   );
 
   sl.registerLazySingleton<AuthLocalDataSource>(
-    () => AuthLocalDataSourceImpl(secureStorage: sl<SecureStorageService>()),
+    () => AuthLocalDataSourceImpl(
+      secureStorage: sl<SecureStorageService>(),
+      sharedPrefs:   sl<SharedPreferences>(),
+    ),
   );
 
   // ════════════════════════════════════════════════════════

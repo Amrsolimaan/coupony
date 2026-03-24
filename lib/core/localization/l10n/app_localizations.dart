@@ -811,6 +811,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Guest'**
   String get welcome_gateway_guest;
+
+  /// No description provided for @login_welcome_back.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome Back!'**
+  String get login_welcome_back;
+
+  /// No description provided for @login_user_role.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get login_user_role;
+
+  /// No description provided for @login_merchant_role.
+  ///
+  /// In en, this message translates to:
+  /// **'Merchant'**
+  String get login_merchant_role;
+
+  /// No description provided for @login_remember_me.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember me'**
+  String get login_remember_me;
+
+  /// No description provided for @login_or_divider.
+  ///
+  /// In en, this message translates to:
+  /// **'Or continue with'**
+  String get login_or_divider;
+
+  /// No description provided for @login_google_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get login_google_button;
+
+  /// No description provided for @login_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Logged in successfully'**
+  String get login_success;
+
+  /// No description provided for @register_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created successfully'**
+  String get register_success;
+
+  /// No description provided for @register_otp_sent.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification code sent to your email'**
+  String get register_otp_sent;
+
+  /// No description provided for @otp_sent_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification code sent successfully'**
+  String get otp_sent_success;
+
+  /// No description provided for @otp_verified_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified successfully'**
+  String get otp_verified_success;
+
+  /// No description provided for @otp_empty_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the verification code'**
+  String get otp_empty_error;
+
+  /// No description provided for @register_now.
+  ///
+  /// In en, this message translates to:
+  /// **'Register Now'**
+  String get register_now;
+
+  /// No description provided for @auth_error_invalid_credentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email or password'**
+  String get auth_error_invalid_credentials;
+
+  /// No description provided for @auth_error_network.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get auth_error_network;
+
+  /// No description provided for @auth_error_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Server error occurred. Please try again'**
+  String get auth_error_server;
+
+  /// No description provided for @auth_error_user_not_found.
+  ///
+  /// In en, this message translates to:
+  /// **'No account found with this email'**
+  String get auth_error_user_not_found;
+
+  /// No description provided for @auth_error_unexpected.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred'**
+  String get auth_error_unexpected;
 }
 
 class _AppLocalizationsDelegate

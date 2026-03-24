@@ -399,4 +399,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get welcome_gateway_guest => 'Guest';
+
+  @override
+  String get login_welcome_back => 'Welcome Back!';
+
+  @override
+  String get login_user_role => 'User';
+
+  @override
+  String get login_merchant_role => 'Merchant';
+
+  @override
+  String get login_remember_me => 'Remember me';
+
+  @override
+  String get login_or_divider => 'Or continue with';
+
+  @override
+  String get login_google_button => 'Continue with Google';
+
+  @override
+  String get login_success => 'Logged in successfully';
+
+  @override
+  String get register_success => 'Account created successfully';
+
+  @override
+  String get register_otp_sent => 'Verification code sent to your email';
+
+  @override
+  String get otp_sent_success => 'Verification code sent successfully';
+
+  @override
+  String get otp_verified_success => 'Verified successfully';
+
+  @override
+  String get otp_empty_error => 'Please enter the verification code';
+
+  @override
+  String get register_now => 'Register Now';
+
+  @override
+  String get auth_error_invalid_credentials => 'Invalid email or password';
+
+  @override
+  String get auth_error_network => 'No internet connection';
+
+  @override
+  String get auth_error_server => 'Server error occurred. Please try again';
+
+  @override
+  String get auth_error_user_not_found => 'No account found with this email';
+
+  @override
+  String get auth_error_unexpected => 'An unexpected error occurred';
 }

@@ -9,22 +9,18 @@ import '../../domain/entities/user_entity.dart';
 /// UI listens via BlocConsumer.listener and calls context.go(...)
 enum AuthNavigation {
   none,
-  toHome,           // Successful login/register → user home
-  toMerchantDash,   // Successful login/register → merchant dashboard
-  toOtpVerification,// After register → OTP screen
-  toLogin,          // After logout or session expiry
-  toRegister,       // From login screen
+  toHome,             // Successful login/verify → user home
+  toMerchantDash,     // Successful login/verify → merchant dashboard
+  toOtpVerification,  // After register → OTP screen
+  toLogin,            // After logout or session expiry
+  toRegister,         // From login screen
 }
 
 // ════════════════════════════════════════════════════════
 // AUTH STATE
 // ════════════════════════════════════════════════════════
 
-/// Unified state for all auth cubits (Login, Register, OTP)
-///
-/// Note: Uses a custom state instead of BaseState because auth flow
-/// requires navigation signals, multi-step OTP tracking, and
-/// role-based routing that don't fit the simple BaseState pattern.
+/// Unified state for LoginCubit, RegisterCubit, and OtpCubit
 class AuthState extends Equatable {
   // ── Data ──────────────────────────────────────────────
   final UserEntity? user;
@@ -34,7 +30,8 @@ class AuthState extends Equatable {
 
   // ── OTP ───────────────────────────────────────────────
   final bool isOtpSent;
-  final String? otpPhone; // Phone number OTP was sent to
+  /// Email address the OTP was dispatched to
+  final String? otpEmail;
 
   // ── Feedback ──────────────────────────────────────────
   final String? errorMessage;
@@ -47,7 +44,7 @@ class AuthState extends Equatable {
     this.user,
     this.isLoading = false,
     this.isOtpSent = false,
-    this.otpPhone,
+    this.otpEmail,
     this.errorMessage,
     this.successMessage,
     this.navSignal = AuthNavigation.none,
@@ -57,37 +54,32 @@ class AuthState extends Equatable {
     UserEntity? user,
     bool? isLoading,
     bool? isOtpSent,
-    String? otpPhone,
+    String? otpEmail,
     String? errorMessage,
     String? successMessage,
     AuthNavigation? navSignal,
   }) {
     return AuthState(
-      user:           user ?? this.user,
-      isLoading:      isLoading ?? this.isLoading,
-      isOtpSent:      isOtpSent ?? this.isOtpSent,
-      otpPhone:       otpPhone ?? this.otpPhone,
+      user:           user           ?? this.user,
+      isLoading:      isLoading      ?? this.isLoading,
+      isOtpSent:      isOtpSent      ?? this.isOtpSent,
+      otpEmail:       otpEmail       ?? this.otpEmail,
       errorMessage:   errorMessage,   // nullable — pass null to clear
       successMessage: successMessage, // nullable — pass null to clear
-      navSignal:      navSignal ?? this.navSignal,
+      navSignal:      navSignal      ?? this.navSignal,
     );
   }
 
   // ── Computed ──────────────────────────────────────────
 
-  bool get isAuthenticated => user != null && user!.token != null;
+  bool get isAuthenticated => user != null && user!.accessToken != null;
 
   bool get isMerchant => user?.role == 'merchant';
 
   @override
   List<Object?> get props => [
-    user,
-    isLoading,
-    isOtpSent,
-    otpPhone,
-    errorMessage,
-    successMessage,
-    navSignal,
+    user, isLoading, isOtpSent, otpEmail,
+    errorMessage, successMessage, navSignal,
   ];
 
   @override

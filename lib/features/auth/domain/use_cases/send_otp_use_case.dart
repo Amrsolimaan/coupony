@@ -6,6 +6,6 @@ class SendOtpUseCase {
   final AuthRepository repository;
   SendOtpUseCase(this.repository);
 
-  Future<Either<Failure, Unit>> call(String phone) =>
-      repository.sendOtp(phone);
+  Future<Either<Failure, Unit>> call(String email) =>
+      repository.sendOtp(email);
 }

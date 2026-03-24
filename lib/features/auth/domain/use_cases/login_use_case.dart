@@ -8,8 +8,9 @@ class LoginUseCase {
   LoginUseCase(this.repository);
 
   Future<Either<Failure, UserEntity>> call({
-    required String phone,
+    required String email,
     required String password,
+    required String role,
   }) =>
-      repository.login(phone: phone, password: password);
+      repository.login(email: email, password: password, role: role);
 }

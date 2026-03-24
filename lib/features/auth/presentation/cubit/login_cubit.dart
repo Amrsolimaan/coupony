@@ -3,24 +3,10 @@ import 'package:logger/logger.dart';
 import '../../domain/use_cases/login_use_case.dart';
 import '../../domain/use_cases/logout_use_case.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../../../core/errors/failures.dart';
 import 'auth_state.dart';
 
 /// Manages login and session lifecycle
-///
-/// Usage in UI:
-/// ```dart
-/// BlocProvider(
-///   create: (_) => sl<LoginCubit>(),
-///   child: BlocConsumer<LoginCubit, AuthState>(
-///     listener: (context, state) {
-///       if (state.navSignal == AuthNavigation.toHome) context.go(AppRouter.home);
-///       if (state.navSignal == AuthNavigation.toMerchantDash) context.go(AppRouter.merchantDashboard);
-///       if (state.errorMessage != null) showSnackBar(context, state.errorMessage!);
-///     },
-///     builder: (context, state) { ... },
-///   ),
-/// )
-/// ```
 class LoginCubit extends Cubit<AuthState> {
   final LoginUseCase loginUseCase;
   final LogoutUseCase logoutUseCase;
@@ -36,19 +22,14 @@ class LoginCubit extends Cubit<AuthState> {
     _checkExistingSession();
   }
 
-  // ════════════════════════════════════════════════════════
-  // SAFE EMIT
-  // ════════════════════════════════════════════════════════
-
-  void _safeEmit(AuthState newState) {
-    if (!isClosed) emit(newState);
+  void _safeEmit(AuthState s) {
+    if (!isClosed) emit(s);
   }
 
   // ════════════════════════════════════════════════════════
   // INITIALIZATION
   // ════════════════════════════════════════════════════════
 
-  /// Check if a valid session already exists on startup
   Future<void> _checkExistingSession() async {
     final result = await repository.checkAuthStatus();
     result.fold(
@@ -56,8 +37,6 @@ class LoginCubit extends Cubit<AuthState> {
       (isLoggedIn) {
         if (isLoggedIn) {
           logger.i('Existing session found — restoring');
-          // Emit authenticated with minimal cached user
-          // Full profile fetch is handled by the home screen
           _safeEmit(state.copyWith(navSignal: AuthNavigation.toHome));
         }
       },
@@ -68,10 +47,10 @@ class LoginCubit extends Cubit<AuthState> {
   // LOGIN
   // ════════════════════════════════════════════════════════
 
-  Future<void> login({required String phone, required String password}) async {
+  Future<void> login({required String email, required String password, required String role}) async {
     if (state.isLoading) return;
 
-    logger.i('Login attempt for phone: ${_maskPhone(phone)}');
+    logger.i('Login attempt for: ${_maskEmail(email)}');
     _safeEmit(state.copyWith(
       isLoading: true,
       errorMessage: null,
@@ -79,14 +58,14 @@ class LoginCubit extends Cubit<AuthState> {
       navSignal: AuthNavigation.none,
     ));
 
-    final result = await loginUseCase(phone: phone, password: password);
+    final result = await loginUseCase(email: email, password: password, role: role);
 
     result.fold(
       (failure) {
         logger.e('Login failed: ${failure.message}');
         _safeEmit(state.copyWith(
           isLoading: false,
-          errorMessage: failure.message,
+          errorMessage: _mapFailureToKey(failure),
         ));
       },
       (user) {
@@ -116,7 +95,6 @@ class LoginCubit extends Cubit<AuthState> {
 
     result.fold(
       (failure) {
-        // Logout always succeeds locally — failure is non-critical
         logger.w('Logout API failed (local cleared anyway): ${failure.message}');
         _safeEmit(state.copyWith(
           isLoading: false,
@@ -139,26 +117,34 @@ class LoginCubit extends Cubit<AuthState> {
   // NAVIGATION HELPERS
   // ════════════════════════════════════════════════════════
 
-  /// Call from UI after handling navSignal to prevent re-triggering
-  void clearNavSignal() {
-    _safeEmit(state.copyWith(navSignal: AuthNavigation.none));
-  }
-
-  void clearMessages() {
-    _safeEmit(state.copyWith(errorMessage: null, successMessage: null));
-  }
-
-  void goToRegister() {
-    _safeEmit(state.copyWith(navSignal: AuthNavigation.toRegister));
-  }
+  void clearNavSignal() => _safeEmit(state.copyWith(navSignal: AuthNavigation.none));
+  void clearMessages()  => _safeEmit(state.copyWith(errorMessage: null, successMessage: null));
+  void goToRegister()   => _safeEmit(state.copyWith(navSignal: AuthNavigation.toRegister));
 
   // ════════════════════════════════════════════════════════
   // HELPERS
   // ════════════════════════════════════════════════════════
 
-  /// Mask phone for safe logging (e.g. +201234567890 → +20****7890)
-  String _maskPhone(String phone) {
-    if (phone.length < 6) return '****';
-    return '${phone.substring(0, 3)}****${phone.substring(phone.length - 4)}';
+  /// Maps a Failure to a localization key so the UI can translate it
+  String _mapFailureToKey(Failure failure) {
+    if (failure is NetworkFailure) return 'auth_error_network';
+    if (failure is UnauthorizedFailure) return 'auth_error_invalid_credentials';
+    if (failure is ServerFailure) {
+      final msg = failure.message.toLowerCase();
+      if (msg.contains('invalid') || msg.contains('credentials') || msg.contains('password') || msg.contains('email')) {
+        return 'auth_error_invalid_credentials';
+      }
+      if (msg.contains('not found') || msg.contains('user')) {
+        return 'auth_error_user_not_found';
+      }
+      return 'auth_error_server';
+    }
+    return 'auth_error_unexpected';
+  }
+
+  String _maskEmail(String email) {
+    final at = email.indexOf('@');
+    if (at <= 1) return '****';
+    return '${email[0]}****${email.substring(at)}';
   }
 }

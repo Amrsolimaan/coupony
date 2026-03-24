@@ -8,8 +8,8 @@ class VerifyOtpUseCase {
   VerifyOtpUseCase(this.repository);
 
   Future<Either<Failure, UserEntity>> call({
-    required String phone,
-    required String otp,
+    required String email,
+    required String code,
   }) =>
-      repository.verifyOtp(phone: phone, otp: otp);
+      repository.verifyOtp(email: email, code: code);
 }

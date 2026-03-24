@@ -1,3 +1,4 @@
+import 'package:coupony/config/dependency_injection/injection_container.dart' as di;
 import 'package:coupony/config/routes/app_router.dart';
 import 'package:coupony/core/localization/l10n/app_localizations.dart';
 import 'package:coupony/core/theme/app_colors.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../auth/data/datasources/auth_local_data_source.dart';
 import '../widgets/atoms/permission_icon.dart';
 import '../widgets/atoms/permission_primary_button.dart';
 
@@ -71,7 +73,7 @@ class WelcomeGatewayPage extends StatelessWidget {
                 // Sign In button
                 PermissionPrimaryButton(
                   text: l10n.welcome_gateway_login,
-                  onPressed: () => context.go(AppRouter.onboarding),
+                  onPressed: () => context.go(AppRouter.login),
                   width: 185.w,
                   height: 48.h,
                   isFullWidth: false,
@@ -80,7 +82,10 @@ class WelcomeGatewayPage extends StatelessWidget {
                 // Guest button
                 PermissionPrimaryButton(
                   text: l10n.welcome_gateway_guest,
-                  onPressed: () => context.go(AppRouter.home),
+                  onPressed: () async {
+                    await di.sl<AuthLocalDataSource>().cacheGuestStatus(true);
+                    if (context.mounted) context.go(AppRouter.home);
+                  },
                   width: 185.w,
                   height: 48.h,
                   isFullWidth: false,

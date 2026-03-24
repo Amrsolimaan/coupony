@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui' as ui;
 
 import '../../../../config/routes/app_router.dart';
@@ -49,11 +48,8 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
     });
 
     try {
-      // Save language preference via LocaleCubit
+      // Save language preference and trigger locale rebuild
       await context.read<LocaleCubit>().changeLocale(_selectedLanguage);
-
-      // Small delay for smooth transition
-      await Future.delayed(const Duration(milliseconds: 400));
 
       if (mounted) {
         context.go(AppRouter.permissionSplash);
@@ -77,47 +73,63 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surface,
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 32.w),
-          child: Column(
-            children: [
-              SizedBox(height: 80.h),
+      body: Stack(
+        children: [
+          SafeArea(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 32.w),
+              child: Column(
+                children: [
+                  SizedBox(height: 80.h),
 
-              // Logo
-              _buildLogo(),
+                  // Logo
+                  _buildLogo(),
 
-              SizedBox(height: 60.h),
+                  SizedBox(height: 60.h),
 
-              // Title (changes based on selected language)
-              _buildTitle(),
+                  // Title (changes based on selected language)
+                  _buildTitle(),
 
-              SizedBox(height: 48.h),
+                  SizedBox(height: 48.h),
 
-              // Language Options
-              _buildLanguageOption(
-                languageCode: 'ar',
-                languageName: 'العربية',
-                isSelected: _selectedLanguage == 'ar',
+                  // Language Options
+                  _buildLanguageOption(
+                    languageCode: 'ar',
+                    languageName: 'العربية',
+                    isSelected: _selectedLanguage == 'ar',
+                  ),
+
+                  SizedBox(height: 16.h),
+
+                  _buildLanguageOption(
+                    languageCode: 'en',
+                    languageName: 'English',
+                    isSelected: _selectedLanguage == 'en',
+                  ),
+
+                  const Spacer(),
+
+                  // Continue Button
+                  _buildContinueButton(),
+
+                  SizedBox(height: 40.h),
+                ],
               ),
-
-              SizedBox(height: 16.h),
-
-              _buildLanguageOption(
-                languageCode: 'en',
-                languageName: 'English',
-                isSelected: _selectedLanguage == 'en',
-              ),
-
-              const Spacer(),
-
-              // Continue Button
-              _buildContinueButton(),
-
-              SizedBox(height: 40.h),
-            ],
+            ),
           ),
-        ),
+
+          // Full-screen loading overlay
+          if (_isLoading)
+            Container(
+              color: AppColors.surface.withValues(alpha: 0.75),
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primary,
+                  strokeWidth: 3.w,
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -125,8 +137,9 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
   Widget _buildLogo() {
     return Text(
       'Coupony',
-      style: GoogleFonts.pacifico(
-        fontSize: 48.sp,
+      style: const TextStyle(
+        fontFamily: 'Pacifico',
+        fontSize: 48,
         fontWeight: FontWeight.w400,
         color: AppColors.primary,
         letterSpacing: 0,

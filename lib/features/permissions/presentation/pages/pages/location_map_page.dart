@@ -1,5 +1,6 @@
 import 'package:coupony/config/routes/app_router.dart';
 import 'package:coupony/core/localization/l10n/app_localizations.dart';
+import 'package:coupony/core/network/network_info.dart';
 import 'package:coupony/core/theme/app_colors.dart';
 import 'package:coupony/core/theme/app_text_styles.dart';
 import 'package:coupony/features/permissions/presentation/cubit/permission_flow_cubit.dart';
@@ -12,6 +13,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../../../../../core/widgets/buttons/buttons.dart';
+import '../../../../../../config/dependency_injection/injection_container.dart';
 
 /// Location Map Page
 /// Shows map with user's current location
@@ -39,12 +41,26 @@ class _LocationMapPageState extends State<LocationMapPage> {
   LatLng? _currentLocation;
   bool _isMapReady = false;
   bool _isMapLoading = true;
+  bool _hasNetwork = true;
 
   @override
   void initState() {
     super.initState();
     _speech = stt.SpeechToText();
-    // Load user position from state when widget builds
+    _checkNetworkAndLoad();
+  }
+
+  Future<void> _checkNetworkAndLoad() async {
+    final networkInfo = sl<NetworkInfo>();
+    final connected = await networkInfo.isConnected;
+    if (mounted) {
+      setState(() {
+        _hasNetwork = connected;
+        // No network → no tiles → no onCameraIdle → stop loading immediately
+        if (!connected) _isMapLoading = false;
+      });
+    }
+    // Load user position regardless of network
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadUserPosition();
     });
@@ -328,6 +344,35 @@ class _LocationMapPageState extends State<LocationMapPage> {
               ),
             ),
 
+          // ✅ No Network Banner
+          if (!_hasNetwork)
+            PositionedDirectional(
+              top: MediaQuery.of(context).padding.top + 80.h,
+              start: 16.w,
+              end: 16.w,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                decoration: BoxDecoration(
+                  color: AppColors.error.withValues(alpha: 0.9),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.wifi_off, color: AppColors.surface, size: 18.w),
+                    SizedBox(width: 8.w),
+                    Text(
+                      AppLocalizations.of(context)!.networkError,
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.surface,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
           // ✅ Top Search Bar - Exact Original Design
           PositionedDirectional(
             top: MediaQuery.of(context).padding.top + 16.h,
@@ -473,73 +518,7 @@ class _LocationMapPageState extends State<LocationMapPage> {
             ),
           ),
 
-          // ✅ My Location Button (Green Circle on Right)
-          PositionedDirectional(
-            end: 16.w,
-            top: MediaQuery.of(context).padding.top + 80.h,
-            child: BlocBuilder<PermissionFlowCubit, PermissionFlowState>(
-              builder: (context, state) {
-                return Container(
-                  width: 56.w,
-                  height: 56.w,
-                  decoration: BoxDecoration(
-                    color: AppColors.locationMarker,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.shadow,
-                        blurRadius: 12,
-                        offset: Offset(0, 4.h),
-                      ),
-                    ],
-                  ),
-                  child: state.isRequestingLocation
-                      ? Padding(
-                          padding: EdgeInsets.all(16.w),
-                          child: const CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.surface,
-                            ),
-                          ),
-                        )
-                      : IconButton(
-                          onPressed: () async {
-                            // ✅ FIX: Capture cubit before async gap
-                            final cubit = context.read<PermissionFlowCubit>();
-                            
-                            // Get fresh current location
-                            await cubit.useCurrentLocation();
 
-                            if (!mounted) return;
-
-                            // Move camera to updated position
-                            final updatedState = cubit.state;
-                            if (updatedState.userPosition != null) {
-                              final pos = updatedState.userPosition!;
-                              final newLocation = LatLng(
-                                pos.latitude,
-                                pos.longitude,
-                              );
-
-                              setState(() {
-                                _currentLocation = newLocation;
-                              });
-
-                              _moveCameraToPosition(newLocation);
-                            }
-                          },
-                          icon: Icon(
-                            Icons.navigation,
-                            color: AppColors.surface,
-                            size: 28.w,
-                          ),
-                          padding: EdgeInsets.zero,
-                        ),
-                );
-              },
-            ),
-          ),
 
           // ✅ Use Current Location Button (Orange - On Map)
           PositionedDirectional(
