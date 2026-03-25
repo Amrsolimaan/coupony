@@ -14,6 +14,7 @@ class RegisterUseCase {
     required String phoneNumber,
     required String password,
     required String passwordConfirmation,
+    required String role,
   }) =>
       repository.register(
         firstName:            firstName,
@@ -22,5 +23,6 @@ class RegisterUseCase {
         phoneNumber:          phoneNumber,
         password:             password,
         passwordConfirmation: passwordConfirmation,
+        role:                 role,
       );
 }

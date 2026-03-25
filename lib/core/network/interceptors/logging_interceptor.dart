@@ -57,6 +57,8 @@ class LoggingInterceptor extends Interceptor {
 🔹 URL: ${err.requestOptions.uri}
 🔹 Message: ${err.message}
 🔹 Response: ${err.response?.data}
+🔹 Status Code: ${err.response?.statusCode}
+🔹 Error: ${err.error}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ''');
     }

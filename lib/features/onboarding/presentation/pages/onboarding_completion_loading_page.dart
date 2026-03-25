@@ -78,7 +78,11 @@ class _OnboardingCompletionLoadingPageState
                 // Loading Text
                 Text(
                   l10n.onboarding_loading_preparing,
-                  style: AppTextStyles.h4,
+                  style: AppTextStyles.customStyle(
+                    context,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  ),
                   textAlign: TextAlign.center,
                 ),
 
@@ -102,7 +106,9 @@ class _OnboardingCompletionLoadingPageState
                 // Progress Text
                 Text(
                   '${(_progress * 100).toInt()}%',
-                  style: AppTextStyles.bodyMedium.copyWith(
+                  style: AppTextStyles.customStyle(
+                    context,
+                    fontSize: 14,
                     color: AppColors.grey600,
                   ),
                 ),
@@ -112,7 +118,9 @@ class _OnboardingCompletionLoadingPageState
                 // Status Messages
                 Text(
                   _getLoadingMessage(context, _progress),
-                  style: AppTextStyles.bodyMedium.copyWith(
+                  style: AppTextStyles.customStyle(
+                    context,
+                    fontSize: 14,
                     color: AppColors.textSecondary,
                   ),
                   textAlign: TextAlign.center,

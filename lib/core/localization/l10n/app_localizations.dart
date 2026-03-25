@@ -890,6 +890,54 @@ abstract class AppLocalizations {
   /// **'Register Now'**
   String get register_now;
 
+  /// No description provided for @register_welcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome\nGet Started with Registration!'**
+  String get register_welcome;
+
+  /// No description provided for @register_first_name.
+  ///
+  /// In en, this message translates to:
+  /// **'First Name'**
+  String get register_first_name;
+
+  /// No description provided for @register_last_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Name'**
+  String get register_last_name;
+
+  /// No description provided for @register_phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get register_phone;
+
+  /// No description provided for @register_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get register_password;
+
+  /// No description provided for @register_confirm_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get register_confirm_password;
+
+  /// No description provided for @register_agree_terms.
+  ///
+  /// In en, this message translates to:
+  /// **'Agree to Terms & Conditions'**
+  String get register_agree_terms;
+
+  /// No description provided for @login_now.
+  ///
+  /// In en, this message translates to:
+  /// **'Login Now'**
+  String get login_now;
+
   /// No description provided for @auth_error_invalid_credentials.
   ///
   /// In en, this message translates to:
@@ -919,6 +967,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An unexpected error occurred'**
   String get auth_error_unexpected;
+
+  /// No description provided for @otp_screen_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Verification'**
+  String get otp_screen_title;
+
+  /// No description provided for @otp_screen_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the verification code we just sent to'**
+  String get otp_screen_subtitle;
+
+  /// No description provided for @otp_verify_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get otp_verify_button;
+
+  /// No description provided for @otp_resend_timer_prefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t receive the code?'**
+  String get otp_resend_timer_prefix;
+
+  /// No description provided for @otp_resend_prefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t receive the code?'**
+  String get otp_resend_prefix;
+
+  /// No description provided for @otp_resend_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend'**
+  String get otp_resend_button;
+
+  /// No description provided for @otp_success_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Verified Successfully'**
+  String get otp_success_title;
+
+  /// No description provided for @otp_success_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Home'**
+  String get otp_success_button;
+
+  /// No description provided for @otp_expiry_notice.
+  ///
+  /// In en, this message translates to:
+  /// **'This code is valid for 10 minutes'**
+  String get otp_expiry_notice;
+
+  /// No description provided for @forgot_password_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get forgot_password_title;
+
+  /// No description provided for @forgot_password_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email and we\'ll send you a reset code'**
+  String get forgot_password_subtitle;
+
+  /// No description provided for @forgot_password_email_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your email address'**
+  String get forgot_password_email_hint;
+
+  /// No description provided for @forgot_password_send_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Reset Code'**
+  String get forgot_password_send_button;
+
+  /// No description provided for @forgot_password_code_sent.
+  ///
+  /// In en, this message translates to:
+  /// **'If the account exists, you will receive a reset code'**
+  String get forgot_password_code_sent;
+
+  /// No description provided for @forgot_password_back_to_login.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Login'**
+  String get forgot_password_back_to_login;
+
+  /// No description provided for @reset_password_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Password'**
+  String get reset_password_title;
+
+  /// No description provided for @reset_password_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your new password must be unique from those\npreviously used.'**
+  String get reset_password_subtitle;
+
+  /// No description provided for @reset_password_code_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Code'**
+  String get reset_password_code_hint;
+
+  /// No description provided for @reset_password_new_password_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get reset_password_new_password_hint;
+
+  /// No description provided for @reset_password_confirm_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm New Password'**
+  String get reset_password_confirm_hint;
+
+  /// No description provided for @reset_password_submit_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get reset_password_submit_button;
+
+  /// No description provided for @reset_password_resend_code.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend Code'**
+  String get reset_password_resend_code;
+
+  /// No description provided for @reset_password_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset successfully. You can now log in'**
+  String get reset_password_success;
+
+  /// No description provided for @reset_password_error_invalid_token.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid or expired reset token'**
+  String get reset_password_error_invalid_token;
+
+  /// No description provided for @reset_password_error_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not reset password. Please try again'**
+  String get reset_password_error_server;
+
+  /// No description provided for @reset_password_strength_min_length.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 8 characters'**
+  String get reset_password_strength_min_length;
+
+  /// No description provided for @reset_password_strength_digit.
+  ///
+  /// In en, this message translates to:
+  /// **'At least one number (0-9) or symbol'**
+  String get reset_password_strength_digit;
+
+  /// No description provided for @reset_password_strength_uppercase.
+  ///
+  /// In en, this message translates to:
+  /// **'Lowercase (a-z) and uppercase (A-Z) letters'**
+  String get reset_password_strength_uppercase;
+
+  /// No description provided for @reset_password_strength_lowercase.
+  ///
+  /// In en, this message translates to:
+  /// **'Contains a lowercase letter'**
+  String get reset_password_strength_lowercase;
+
+  /// No description provided for @reset_password_error_mismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match. Please try again'**
+  String get reset_password_error_mismatch;
+
+  /// No description provided for @reset_password_continue_login.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to Login'**
+  String get reset_password_continue_login;
 }
 
 class _AppLocalizationsDelegate

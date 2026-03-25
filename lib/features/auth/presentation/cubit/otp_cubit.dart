@@ -1,19 +1,31 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
+
+import '../../domain/use_cases/resend_reset_code_use_case.dart';
 import '../../domain/use_cases/send_otp_use_case.dart';
 import '../../domain/use_cases/verify_otp_use_case.dart';
+import '../../domain/use_cases/verify_reset_code_use_case.dart';
+import '../pages/otp_screen.dart' show OtpMode;
 import 'auth_state.dart';
 
-/// Manages OTP send and verification flow
+/// Manages OTP send/verify flow for two distinct modes:
 ///
-/// Flow:
-/// 1. Screen opens with email pre-filled → sendOtp() called
-/// 2. User enters 6-digit code → verifyOtp() called on submit
-/// 3. On success → navSignal.toHome or toMerchantDash
-/// 4. Resend → sendOtp() again (60-second cooldown)
+/// [OtpMode.emailVerification]
+///   1. Screen opens → sendOtp() dispatches the code
+///   2. User enters 6 digits → verifyOtp() calls /auth/otp/verify (purpose: verify_email)
+///   3. Success → navSignal.toHome / toMerchantDash
+///
+/// [OtpMode.forgotPassword]
+///   1. Screen opens → sendOtp() is NOT called (code already sent by ForgotPasswordCubit)
+///   2. User enters 6 digits → verifyOtp() calls /auth/password/verify-otp
+///      ✅ 200 OK → navSignal.toResetPassword (email + reset_token in state)
+///      ❌ 422    → stay on screen, show error, vibrate
+///   3. Resend → calls resendResetCodeUseCase (/auth/password/resend-otp)
 class OtpCubit extends Cubit<AuthState> {
   final SendOtpUseCase sendOtpUseCase;
   final VerifyOtpUseCase verifyOtpUseCase;
+  final VerifyResetCodeUseCase verifyResetCodeUseCase;
+  final ResendResetCodeUseCase resendResetCodeUseCase;
   final Logger logger;
 
   DateTime? _lastSentAt;
@@ -22,6 +34,8 @@ class OtpCubit extends Cubit<AuthState> {
   OtpCubit({
     required this.sendOtpUseCase,
     required this.verifyOtpUseCase,
+    required this.verifyResetCodeUseCase,
+    required this.resendResetCodeUseCase,
     required this.logger,
   }) : super(const AuthState());
 
@@ -30,7 +44,7 @@ class OtpCubit extends Cubit<AuthState> {
   }
 
   // ════════════════════════════════════════════════════════
-  // SEND OTP
+  // SEND OTP  (emailVerification only)
   // ════════════════════════════════════════════════════════
 
   Future<void> sendOtp(String email) async {
@@ -38,11 +52,11 @@ class OtpCubit extends Cubit<AuthState> {
 
     logger.i('Sending OTP to: ${_maskEmail(email)}');
     _safeEmit(state.copyWith(
-      isLoading: true,
-      errorMessage: null,
+      isLoading:      true,
+      errorMessage:   null,
       successMessage: null,
-      navSignal: AuthNavigation.none,
-      otpEmail: email,
+      navSignal:      AuthNavigation.none,
+      otpEmail:       email,
     ));
 
     final result = await sendOtpUseCase(email);
@@ -60,9 +74,9 @@ class OtpCubit extends Cubit<AuthState> {
         logger.i('OTP sent successfully to ${_maskEmail(email)}');
         _lastSentAt = DateTime.now();
         _safeEmit(state.copyWith(
-          isLoading: false,
-          isOtpSent: true,
-          otpEmail: email,
+          isLoading:      false,
+          isOtpSent:      true,
+          otpEmail:       email,
           successMessage: 'otp_sent_success',
         ));
       },
@@ -70,10 +84,10 @@ class OtpCubit extends Cubit<AuthState> {
   }
 
   // ════════════════════════════════════════════════════════
-  // RESEND OTP
+  // RESEND OTP  (mode-aware)
   // ════════════════════════════════════════════════════════
 
-  Future<void> resendOtp() async {
+  Future<void> resendOtp({OtpMode mode = OtpMode.emailVerification}) async {
     final email = state.otpEmail;
     if (email == null) {
       logger.w('Cannot resend OTP — no email in state');
@@ -90,14 +104,80 @@ class OtpCubit extends Cubit<AuthState> {
       }
     }
 
-    await sendOtp(email);
+    // CRITICAL: Reset isOtpSent FIRST to trigger listener properly
+    _safeEmit(state.copyWith(
+      isLoading:      true,
+      isOtpSent:      false,
+      errorMessage:   null,
+      successMessage: null,
+    ));
+
+    if (mode == OtpMode.forgotPassword) {
+      await _resendResetCode(email);
+    } else {
+      await _resendForEmailVerification(email);
+    }
+  }
+
+  Future<void> _resendResetCode(String email) async {
+    logger.i('Resending reset code to ${_maskEmail(email)}');
+    final result = await resendResetCodeUseCase(email);
+
+    result.fold(
+      (failure) {
+        logger.e('Resend reset code failed: ${failure.message}');
+        _safeEmit(state.copyWith(
+          isLoading:    false,
+          isOtpSent:    false,
+          errorMessage: failure.message,
+        ));
+      },
+      (_) {
+        logger.i('Reset code resent to ${_maskEmail(email)}');
+        _lastSentAt = DateTime.now();
+        _safeEmit(state.copyWith(
+          isLoading:      false,
+          isOtpSent:      true,
+          successMessage: 'otp_sent_success',
+        ));
+      },
+    );
+  }
+
+  Future<void> _resendForEmailVerification(String email) async {
+    logger.i('Resending OTP to ${_maskEmail(email)}');
+    final result = await sendOtpUseCase(email);
+
+    result.fold(
+      (failure) {
+        logger.e('Resend OTP failed: ${failure.message}');
+        _safeEmit(state.copyWith(
+          isLoading:    false,
+          isOtpSent:    false,
+          errorMessage: failure.message,
+        ));
+      },
+      (_) {
+        logger.i('OTP resent successfully to ${_maskEmail(email)}');
+        _lastSentAt = DateTime.now();
+        _safeEmit(state.copyWith(
+          isLoading:      false,
+          isOtpSent:      true,
+          successMessage: 'otp_sent_success',
+        ));
+      },
+    );
   }
 
   // ════════════════════════════════════════════════════════
-  // VERIFY OTP
+  // VERIFY OTP  (mode-aware)
   // ════════════════════════════════════════════════════════
 
-  Future<void> verifyOtp({required String email, required String code}) async {
+  Future<void> verifyOtp({
+    required String email,
+    required String code,
+    OtpMode mode = OtpMode.emailVerification,
+  }) async {
     if (state.isLoading) return;
 
     if (code.trim().isEmpty) {
@@ -105,12 +185,50 @@ class OtpCubit extends Cubit<AuthState> {
       return;
     }
 
+    // ── forgotPassword mode: verify with server and get reset_token ──────
+    if (mode == OtpMode.forgotPassword) {
+      logger.i('Verifying reset code for ${_maskEmail(email)}');
+      _safeEmit(state.copyWith(
+        isLoading:      true,
+        errorMessage:   null,
+        successMessage: null,
+        navSignal:      AuthNavigation.none,
+      ));
+
+      final resetResult = await verifyResetCodeUseCase(
+        email: email,
+        code:  code.trim(),
+      );
+
+      resetResult.fold(
+        (failure) {
+          logger.e('Reset code verification failed: ${failure.message}');
+          _safeEmit(state.copyWith(
+            isLoading:    false,
+            errorMessage: 'reset_password_error_invalid_token',
+          ));
+        },
+        (resetToken) {
+          logger.i('Reset code verified for ${_maskEmail(email)} — token received: ${resetToken.substring(0, 10)}...');
+          _safeEmit(state.copyWith(
+            isLoading:   false,
+            otpEmail:    email,
+            otpCode:     code.trim(),
+            resetToken:  resetToken, // ✅ حفظ الـ reset_token من السيرفر
+            navSignal:   AuthNavigation.toResetPassword,
+          ));
+        },
+      );
+      return;
+    }
+
+    // ── emailVerification mode: call the API ─────────────────────────────
     logger.i('Verifying OTP for: ${_maskEmail(email)}');
     _safeEmit(state.copyWith(
-      isLoading: true,
-      errorMessage: null,
+      isLoading:      true,
+      errorMessage:   null,
       successMessage: null,
-      navSignal: AuthNavigation.none,
+      navSignal:      AuthNavigation.none,
     ));
 
     final result = await verifyOtpUseCase(email: email, code: code.trim());
@@ -119,7 +237,7 @@ class OtpCubit extends Cubit<AuthState> {
       (failure) {
         logger.e('OTP verification failed: ${failure.message}');
         _safeEmit(state.copyWith(
-          isLoading: false,
+          isLoading:    false,
           errorMessage: failure.message,
         ));
       },
@@ -128,12 +246,13 @@ class OtpCubit extends Cubit<AuthState> {
         final nav = user.role == 'merchant'
             ? AuthNavigation.toMerchantDash
             : AuthNavigation.toHome;
+
         _safeEmit(state.copyWith(
-          isLoading: false,
-          user: user,
-          isOtpSent: false,
+          isLoading:      false,
+          user:           user,
+          isOtpSent:      false,
           successMessage: 'otp_verified_success',
-          navSignal: nav,
+          navSignal:      nav,
         ));
       },
     );
@@ -143,8 +262,14 @@ class OtpCubit extends Cubit<AuthState> {
   // NAVIGATION HELPERS
   // ════════════════════════════════════════════════════════
 
-  void clearNavSignal() => _safeEmit(state.copyWith(navSignal: AuthNavigation.none));
-  void clearMessages()  => _safeEmit(state.copyWith(errorMessage: null, successMessage: null));
+  void setEmail(String email) =>
+      _safeEmit(state.copyWith(otpEmail: email));
+
+  void clearNavSignal() =>
+      _safeEmit(state.copyWith(navSignal: AuthNavigation.none));
+
+  void clearMessages() =>
+      _safeEmit(state.copyWith(errorMessage: null, successMessage: null));
 
   // ════════════════════════════════════════════════════════
   // COMPUTED HELPERS (for UI countdown timer)

@@ -49,8 +49,9 @@ class SelectionOptionCard extends StatelessWidget {
             // Title
             Text(
               title,
-              style: AppTextStyles.body.copyWith(
-                fontSize: 16.sp,
+              style: AppTextStyles.customStyle(
+                context,
+                fontSize: 16,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected
                     ? AppColors.textPrimary

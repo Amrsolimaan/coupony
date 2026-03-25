@@ -1,3 +1,5 @@
+import 'package:coupony/features/auth/presentation/pages/forgot_password_screen.dart';
+import 'package:coupony/features/auth/presentation/pages/register_screen.dart';
 import 'package:coupony/features/onboarding/presentation/pages/onboarding_completion_loading_page.dart';
 import 'package:coupony/features/permissions/presentation/pages/permission_flow_wrapper.dart';
 import 'package:coupony/features/permissions/presentation/pages/pages/location_error_page.dart';
@@ -20,7 +22,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:coupony/features/auth/presentation/pages/splash_screen.dart';
 import 'package:coupony/features/auth/presentation/pages/onboarding_screen.dart';
 import 'package:coupony/features/auth/presentation/pages/login_screen.dart' as auth_login;
+import 'package:coupony/features/auth/presentation/pages/otp_screen.dart';
+import 'package:coupony/features/auth/presentation/cubit/forgot_password_cubit.dart';
 import 'package:coupony/features/auth/presentation/cubit/login_cubit.dart';
+import 'package:coupony/features/auth/presentation/cubit/otp_cubit.dart';
+import 'package:coupony/features/auth/presentation/cubit/register_cubit.dart';
+import 'package:coupony/features/auth/presentation/cubit/reset_password_cubit.dart';
+import 'package:coupony/features/auth/presentation/cubit/auth_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:coupony/features/auth/presentation/pages/reset_password_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Onboarding screens
@@ -32,32 +42,144 @@ import 'package:coupony/features/onboarding/presentation/pages/onboarding_shoppi
 
 // ── Placeholder screens (replace with real screens when built) ──────────────
 
-class RegisterScreen extends StatelessWidget {
-  const RegisterScreen({super.key});
-  @override
-  Widget build(BuildContext context) =>
-      const Scaffold(body: Center(child: Text('Register Screen')));
-}
-
-class OtpVerificationScreen extends StatelessWidget {
-  const OtpVerificationScreen({super.key});
-  @override
-  Widget build(BuildContext context) =>
-      const Scaffold(body: Center(child: Text('OTP Verification Screen')));
-}
-
 class UserHomeScreen extends StatelessWidget {
   const UserHomeScreen({super.key});
+  
   @override
-  Widget build(BuildContext context) =>
-      const Scaffold(body: Center(child: Text('User Home Screen')));
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => sl<LoginCubit>(),
+      child: BlocListener<LoginCubit, AuthState>(
+        listener: (context, state) {
+          if (state.navSignal == AuthNavigation.toLogin) {
+            context.go(AppRouter.login);
+          }
+        },
+        child: Builder(
+          builder: (context) {
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text('Home'),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.logout),
+                    tooltip: 'تسجيل الخروج',
+                    onPressed: () {
+                      // Show confirmation dialog
+                      showDialog(
+                        context: context,
+                        builder: (dialogContext) => AlertDialog(
+                          title: const Text('تسجيل الخروج'),
+                          content: const Text('هل أنت متأكد من تسجيل الخروج؟'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(dialogContext),
+                              child: const Text('إلغاء'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(dialogContext);
+                                // Use the correct context from Builder
+                                context.read<LoginCubit>().logout();
+                              },
+                              child: const Text('تسجيل الخروج'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+              body: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'User Home Screen',
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 16),
+                    Text('مرحباً! تم تسجيل الدخول بنجاح'),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 }
 
 class MerchantDashboardScreen extends StatelessWidget {
   const MerchantDashboardScreen({super.key});
+  
   @override
-  Widget build(BuildContext context) =>
-      const Scaffold(body: Center(child: Text('Merchant Dashboard')));
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => sl<LoginCubit>(),
+      child: BlocListener<LoginCubit, AuthState>(
+        listener: (context, state) {
+          if (state.navSignal == AuthNavigation.toLogin) {
+            context.go(AppRouter.login);
+          }
+        },
+        child: Builder(
+          builder: (context) {
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text('Merchant Dashboard'),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.logout),
+                    tooltip: 'تسجيل الخروج',
+                    onPressed: () {
+                      // Show confirmation dialog
+                      showDialog(
+                        context: context,
+                        builder: (dialogContext) => AlertDialog(
+                          title: const Text('تسجيل الخروج'),
+                          content: const Text('هل أنت متأكد من تسجيل الخروج؟'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(dialogContext),
+                              child: const Text('إلغاء'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(dialogContext);
+                                // Use the correct context from Builder
+                                context.read<LoginCubit>().logout();
+                              },
+                              child: const Text('تسجيل الخروج'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+              body: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Merchant Dashboard',
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 16),
+                    Text('مرحباً! لوحة تحكم التاجر'),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 }
 
 // ── Route paths that are always accessible without a token ──────────────────
@@ -81,6 +203,8 @@ const _publicRoutes = {
   AppRouter.login,
   AppRouter.register,
   AppRouter.otpVerification,
+  AppRouter.forgotPassword,
+  AppRouter.resetPassword,
 };
 
 class AppRouter {
@@ -95,6 +219,8 @@ class AppRouter {
   static const String login                     = '/login';
   static const String register                  = '/register';
   static const String otpVerification           = '/otp-verification';
+  static const String forgotPassword            = '/forgot-password';
+  static const String resetPassword             = '/reset-password';
   static const String home                      = '/home';
   static const String merchantDashboard         = '/merchant-dashboard';
 
@@ -219,11 +345,54 @@ class AppRouter {
       ),
       GoRoute(
         path: register,
-        builder: (context, state) => const RegisterScreen(),
+        builder: (context, state) => BlocProvider(
+          create: (_) => sl<RegisterCubit>(),
+          child: const RegisterScreen(),
+        ),
       ),
       GoRoute(
         path: otpVerification,
-        builder: (context, state) => const OtpVerificationScreen(),
+        builder: (context, state) {
+          // extra can be:
+          //   String  — legacy / register flow (email only, emailVerification mode)
+          //   Map<String,String> — new flow: { 'email': ..., 'mode': 'forgotPassword' }
+          final extra = state.extra;
+          final String email;
+          final OtpMode mode;
+          if (extra is Map<String, String>) {
+            email = extra['email'] ?? '';
+            mode  = extra['mode'] == 'forgotPassword'
+                ? OtpMode.forgotPassword
+                : OtpMode.emailVerification;
+          } else {
+            email = extra as String? ?? '';
+            mode  = OtpMode.emailVerification;
+          }
+          return BlocProvider(
+            create: (_) => sl<OtpCubit>(),
+            child: OtpScreen(email: email, mode: mode),
+          );
+        },
+      ),
+      GoRoute(
+        path: forgotPassword,
+        builder: (context, state) => BlocProvider(
+          create: (_) => sl<ForgotPasswordCubit>(),
+          child: const ForgotPasswordScreen(),
+        ),
+      ),
+      GoRoute(
+        path: resetPassword,
+        builder: (context, state) {
+          final params = state.extra as Map<String, String>?;
+          return BlocProvider(
+            create: (_) => sl<ResetPasswordCubit>(),
+            child: ResetPasswordScreen(
+              email: params?['email'] ?? '',
+              token: params?['token'] ?? '',
+            ),
+          );
+        },
       ),
 
       // 6. Protected app screens

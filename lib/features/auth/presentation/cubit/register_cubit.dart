@@ -33,6 +33,7 @@ class RegisterCubit extends Cubit<AuthState> {
     required String phoneNumber,
     required String password,
     required String passwordConfirmation,
+    required String role,
   }) async {
     if (state.isLoading) return;
 
@@ -51,6 +52,7 @@ class RegisterCubit extends Cubit<AuthState> {
       phoneNumber:          phoneNumber,
       password:             password,
       passwordConfirmation: passwordConfirmation,
+      role:                 role,
     );
 
     result.fold(

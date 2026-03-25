@@ -32,3 +32,8 @@ class UnauthorizedFailure extends Failure {
 class UnexpectedFailure extends Failure {
   const UnexpectedFailure(super.message);
 }
+
+/// Maps to HTTP 422 — invalid or expired password-reset token.
+class InvalidTokenFailure extends Failure {
+  const InvalidTokenFailure(super.message);
+}

@@ -1,10 +1,18 @@
+import 'package:dio/dio.dart';
+import 'package:logger/logger.dart';
+
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/dio_client.dart';
+import '../models/password_reset_response_model.dart';
 import '../models/user_model.dart';
 
+// ═══════════════════════════════════════════════════════════════════════════
+// AUTH REMOTE DATA SOURCE
+// ═══════════════════════════════════════════════════════════════════════════
+
 abstract class AuthRemoteDataSource {
-  /// POST /auth/login  body: { email, password, role }
+  /// POST /auth/login
   Future<UserModel> login({
     required String email,
     required String password,
@@ -12,7 +20,6 @@ abstract class AuthRemoteDataSource {
   });
 
   /// POST /auth/register
-  /// body: { first_name, last_name, email, phone_number, password, password_confirmation }
   Future<UserModel> register({
     required String firstName,
     required String lastName,
@@ -20,35 +27,65 @@ abstract class AuthRemoteDataSource {
     required String phoneNumber,
     required String password,
     required String passwordConfirmation,
+    required String role,
   });
 
-  /// POST /auth/otp/send  body: { email, purpose }
-  Future<void> sendOtp({
-    required String email,
-    String purpose = 'verify_email',
-  });
+  /// POST /auth/otp/send  body: { email }
+  Future<void> sendOtp({required String email});
 
-  /// POST /auth/otp/verify  body: { email, code, purpose }
+  /// POST /auth/otp/verify  body: { email, code, purpose: verify_email }
   Future<UserModel> verifyOtp({
     required String email,
     required String code,
-    String purpose = 'verify_email',
   });
 
-  /// POST /auth/refresh  body: { refresh_token }
+  /// POST /auth/otp/verify  body: { email, code, purpose: reset_password }
+  /// Returns the server-generated reset_token from response.
+  Future<String> verifyResetCode({
+    required String email,
+    required String code,
+  });
+
+  /// POST /auth/password/forgot  body: { email }
+  Future<PasswordResetResponseModel> sendResetCode({required String email});
+
+  /// POST /auth/password/resend-otp  body: { email }
+  Future<PasswordResetResponseModel> resendResetCode({required String email});
+
+  /// POST /auth/password/reset  body: { email, reset_token, password, password_confirmation }
+  Future<void> resetPassword({
+    required String email,
+    required String token,
+    required String password,
+    required String passwordConfirmation,
+  });
+
+  /// POST /auth/refresh
   Future<UserModel> refreshToken(String refreshToken);
 
-  /// POST /auth/logout  (Bearer token in header via AuthInterceptor)
+  /// POST /auth/logout
   Future<void> logout();
 
-  /// POST /auth/fcm-token  body: { fcm_token }
+  /// POST /auth/fcm-token
   Future<void> updateFcmToken({required String fcmToken});
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// IMPLEMENTATION
+// ═══════════════════════════════════════════════════════════════════════════
+
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final DioClient client;
+  final Logger logger;
 
-  AuthRemoteDataSourceImpl({required this.client});
+  AuthRemoteDataSourceImpl({
+    required this.client,
+    required this.logger,
+  });
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // AUTH OPERATIONS
+  // ══════════════════════════════════════════════════════════════════════════
 
   @override
   Future<UserModel> login({
@@ -65,9 +102,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'role':     role,
         },
       );
-      return UserModel.fromJson(response.data as Map<String, dynamic>);
-    } on ServerException {
-      rethrow;
+      final data = response.data as Map<String, dynamic>? ?? {};
+      return UserModel.fromJson(data);
+    } on DioException catch (e) {
+      _rethrowAs422Or(e);
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -81,42 +119,43 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String phoneNumber,
     required String password,
     required String passwordConfirmation,
+    required String role,
   }) async {
     try {
       final response = await client.post(
         ApiConstants.register,
         data: {
-          'first_name':             firstName,
-          'last_name':              lastName,
-          'email':                  email,
-          'phone_number':           phoneNumber,
-          'password':               password,
-          'password_confirmation':  passwordConfirmation,
+          'first_name':            firstName,
+          'last_name':             lastName,
+          'email':                 email,
+          'phone_number':          phoneNumber,
+          'password':              password,
+          'password_confirmation': passwordConfirmation,
+          'role':                  role,
         },
       );
-      return UserModel.fromJson(response.data as Map<String, dynamic>);
-    } on ServerException {
-      rethrow;
+      final data = response.data as Map<String, dynamic>? ?? {};
+      return UserModel.fromJson(data);
+    } on DioException catch (e) {
+      _rethrowAs422Or(e);
     } catch (e) {
       throw ServerException(e.toString());
     }
   }
 
+  // ══════════════════════════════════════════════════════════════════════════
+  // OTP OPERATIONS
+  // ══════════════════════════════════════════════════════════════════════════
+
   @override
-  Future<void> sendOtp({
-    required String email,
-    String purpose = 'verify_email',
-  }) async {
+  Future<void> sendOtp({required String email}) async {
     try {
       await client.post(
         ApiConstants.sendOtp,
-        data: {
-          'email':   email,
-          'purpose': purpose,
-        },
+        data: {'email': email},
       );
-    } on ServerException {
-      rethrow;
+    } on DioException catch (e) {
+      _rethrowAs422Or(e);
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -126,7 +165,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<UserModel> verifyOtp({
     required String email,
     required String code,
-    String purpose = 'verify_email',
   }) async {
     try {
       final response = await client.post(
@@ -134,16 +172,124 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         data: {
           'email':   email,
           'code':    code,
-          'purpose': purpose,
+          'purpose': 'verify_email',
         },
       );
-      return UserModel.fromJson(response.data as Map<String, dynamic>);
-    } on ServerException {
-      rethrow;
+      final data = response.data as Map<String, dynamic>? ?? {};
+      return UserModel.fromJson(data);
+    } on DioException catch (e) {
+      _rethrowAs422Or(e);
     } catch (e) {
       throw ServerException(e.toString());
     }
   }
+
+  @override
+  Future<String> verifyResetCode({
+    required String email,
+    required String code,
+  }) async {
+    try {
+      final response = await client.post(
+        ApiConstants.verifyResetOtp,
+        data: {
+          'email': email,
+          'code':  code,
+        },
+      );
+      
+      logger.i('Verify reset code response: ${response.data}');
+      
+      final data = response.data as Map<String, dynamic>? ?? {};
+      final nested = data['data'] as Map<String, dynamic>? ?? data;
+      
+      // Extract reset_token from response
+      final resetToken = nested['reset_token'] as String?;
+      
+      if (resetToken == null || resetToken.isEmpty) {
+        logger.e('No reset_token in response. Response data: $nested');
+        throw const ServerException('No reset_token in response');
+      }
+      
+      logger.i('Reset token extracted successfully: ${resetToken.substring(0, 10)}...');
+      return resetToken;
+    } on DioException catch (e) {
+      logger.e('Verify reset code DioException: ${e.response?.statusCode} - ${e.response?.data}');
+      _rethrowAs422Or(e);
+    } catch (e) {
+      logger.e('Verify reset code error: $e');
+      if (e is ServerException) rethrow;
+      throw ServerException(e.toString());
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // PASSWORD RESET OPERATIONS
+  // ══════════════════════════════════════════════════════════════════════════
+
+  @override
+  Future<PasswordResetResponseModel> sendResetCode({required String email}) async {
+    try {
+      final response = await client.post(
+        ApiConstants.forgotPassword,
+        data: {'email': email},
+      );
+      final data = response.data as Map<String, dynamic>? ?? {};
+      return PasswordResetResponseModel.fromJson(data);
+    } on DioException catch (e) {
+      _rethrowAs422Or(e);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<PasswordResetResponseModel> resendResetCode({required String email}) async {
+    try {
+      final response = await client.post(
+        ApiConstants.resendResetCode,
+        data: {'email': email},
+      );
+      final data = response.data as Map<String, dynamic>? ?? {};
+      return PasswordResetResponseModel.fromJson(data);
+    } on DioException catch (e) {
+      _rethrowAs422Or(e);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> resetPassword({
+    required String email,
+    required String token,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    try {
+      logger.i('Sending reset password request - email: $email, token: ${token.substring(0, 3)}***, token_length: ${token.length}');
+      await client.post(
+        ApiConstants.resetPassword,
+        data: {
+          'email':                 email,
+          'reset_token':           token,
+          'password':              password,
+          'password_confirmation': passwordConfirmation,
+        },
+      );
+      logger.i('Reset password successful');
+    } on DioException catch (e) {
+      logger.e('Reset password DioException: ${e.response?.statusCode} - ${e.response?.data}');
+      _rethrowAs422Or(e);
+    } catch (e) {
+      logger.e('Reset password error: $e');
+      throw ServerException(e.toString());
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // TOKEN & SESSION OPERATIONS
+  // ══════════════════════════════════════════════════════════════════════════
 
   @override
   Future<UserModel> refreshToken(String refreshToken) async {
@@ -152,9 +298,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         ApiConstants.refreshToken,
         data: {'refresh_token': refreshToken},
       );
-      return UserModel.fromJson(response.data as Map<String, dynamic>);
-    } on ServerException {
-      rethrow;
+      final data = response.data as Map<String, dynamic>? ?? {};
+      return UserModel.fromJson(data);
+    } on DioException catch (e) {
+      _rethrowAs422Or(e);
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -165,7 +312,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       await client.post(ApiConstants.logout);
     } catch (_) {
-      // Best-effort — local state is always cleared regardless
+      // Best-effort — always clear local state regardless
     }
   }
 
@@ -179,5 +326,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } catch (_) {
       // Non-critical — silent fail
     }
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // PRIVATE HELPERS
+  // ══════════════════════════════════════════════════════════════════════════
+
+  /// Rethrows DioException as InvalidTokenFailure if status is 422,
+  /// otherwise throws ServerException.
+  Never _rethrowAs422Or(DioException e) {
+    if (e.response?.statusCode == 422) {
+      final data = e.response?.data;
+      String message = 'Invalid or expired reset token';
+      if (data is Map<String, dynamic>) {
+        message = data['message'] as String? ?? message;
+      }
+      throw InvalidTokenException(message);
+    }
+    throw ServerException(e.message ?? 'Network error');
   }
 }

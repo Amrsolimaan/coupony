@@ -14,11 +14,17 @@ import '../../../features/auth/domain/repositories/auth_repository.dart';
 import '../../../features/auth/domain/use_cases/login_use_case.dart';
 import '../../../features/auth/domain/use_cases/logout_use_case.dart';
 import '../../../features/auth/domain/use_cases/register_use_case.dart';
+import '../../../features/auth/domain/use_cases/resend_reset_code_use_case.dart';
+import '../../../features/auth/domain/use_cases/reset_password_use_case.dart';
 import '../../../features/auth/domain/use_cases/send_otp_use_case.dart';
+import '../../../features/auth/domain/use_cases/send_reset_code_use_case.dart';
 import '../../../features/auth/domain/use_cases/verify_otp_use_case.dart';
+import '../../../features/auth/domain/use_cases/verify_reset_code_use_case.dart';
+import '../../../features/auth/presentation/cubit/forgot_password_cubit.dart';
 import '../../../features/auth/presentation/cubit/login_cubit.dart';
 import '../../../features/auth/presentation/cubit/otp_cubit.dart';
 import '../../../features/auth/presentation/cubit/register_cubit.dart';
+import '../../../features/auth/presentation/cubit/reset_password_cubit.dart';
 
 void registerAuthDependencies(GetIt sl) {
   // ════════════════════════════════════════════════════════
@@ -26,7 +32,10 @@ void registerAuthDependencies(GetIt sl) {
   // ════════════════════════════════════════════════════════
 
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(client: sl<DioClient>()),
+    () => AuthRemoteDataSourceImpl(
+      client: sl<DioClient>(),
+      logger: sl<Logger>(),
+    ),
   );
 
   sl.registerLazySingleton<AuthLocalDataSource>(
@@ -59,6 +68,10 @@ void registerAuthDependencies(GetIt sl) {
   sl.registerLazySingleton(() => SendOtpUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => VerifyOtpUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => LogoutUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => SendResetCodeUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => ResendResetCodeUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => ResetPasswordUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => VerifyResetCodeUseCase(sl<AuthRepository>()));
 
   // ════════════════════════════════════════════════════════
   // CUBITS  (Factory — new instance per screen)
@@ -82,9 +95,26 @@ void registerAuthDependencies(GetIt sl) {
 
   sl.registerFactory<OtpCubit>(
     () => OtpCubit(
-      sendOtpUseCase:   sl<SendOtpUseCase>(),
-      verifyOtpUseCase: sl<VerifyOtpUseCase>(),
-      logger:           sl<Logger>(),
+      sendOtpUseCase:         sl<SendOtpUseCase>(),
+      verifyOtpUseCase:       sl<VerifyOtpUseCase>(),
+      verifyResetCodeUseCase: sl<VerifyResetCodeUseCase>(),
+      resendResetCodeUseCase: sl<ResendResetCodeUseCase>(),
+      logger:                 sl<Logger>(),
+    ),
+  );
+
+  sl.registerFactory<ForgotPasswordCubit>(
+    () => ForgotPasswordCubit(
+      sendResetCodeUseCase: sl<SendResetCodeUseCase>(),
+      logger:               sl<Logger>(),
+    ),
+  );
+
+  sl.registerFactory<ResetPasswordCubit>(
+    () => ResetPasswordCubit(
+      resetPasswordUseCase:  sl<ResetPasswordUseCase>(),
+      resendResetCodeUseCase: sl<ResendResetCodeUseCase>(),
+      logger:                sl<Logger>(),
     ),
   );
 }

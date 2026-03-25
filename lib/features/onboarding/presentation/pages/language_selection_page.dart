@@ -7,6 +7,7 @@ import 'dart:ui' as ui;
 import '../../../../config/routes/app_router.dart';
 import '../../../../core/localization/locale_cubit.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
 
 /// Language Selection Page - Coupony
 ///
@@ -137,12 +138,13 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
   Widget _buildLogo() {
     return Text(
       'Coupony',
-      style: const TextStyle(
-        fontFamily: 'Pacifico',
+      style: AppTextStyles.customStyle(
+        context,
         fontSize: 48,
         fontWeight: FontWeight.w400,
         color: AppColors.primary,
         letterSpacing: 0,
+        fontFamily: AppTextStyles.Main_Font_logo,
       ),
     );
   }
@@ -168,8 +170,9 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
       child: Text(
         title,
         key: ValueKey(_selectedLanguage),
-        style: TextStyle(
-          fontSize: 22.sp,
+        style: AppTextStyles.customStyle(
+          context,
+          fontSize: 22,
           fontWeight: FontWeight.w500,
           color: AppColors.textPrimary,
           height: 1.3,
@@ -207,8 +210,9 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
             Expanded(
               child: Text(
                 languageName,
-                style: TextStyle(
-                  fontSize: 18.sp,
+                style: AppTextStyles.customStyle(
+                  context,
+                  fontSize: 18,
                   fontWeight: FontWeight.w400,
                   color: isSelected ? AppColors.primary : AppColors.textPrimary,
                 ),
@@ -268,10 +272,12 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
               )
             : Text(
                 _selectedLanguage == 'ar' ? 'متابعة' : 'Continue',
-                style: TextStyle(
-                  fontSize: 16.sp,
+                style: AppTextStyles.customStyle(
+                  context,
+                  fontSize: 16,
                   fontWeight: FontWeight.w500,
                   letterSpacing: 0.2,
+                  color: AppColors.surface,
                 ),
               ),
       ),

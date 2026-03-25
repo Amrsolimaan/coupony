@@ -91,11 +91,11 @@ class _Segment extends StatelessWidget {
         alignment: Alignment.center,
         child: Text(
           label,
-          style: AppTextStyles.bodyMedium.copyWith(
+          style: AppTextStyles.customStyle(
+            context,
+            fontSize: 15,
             fontWeight: FontWeight.w700,
             color: selected ? Colors.white : AppColors.textPrimary,
-            fontSize: 15.sp,
-            fontFamily: 'NotoSansArabic',
           ),
         ),
       ),

@@ -59,7 +59,9 @@ class OnboardingCategorySelectionView extends StatelessWidget {
                 SnackBar(
                   content: Text(
                     context.getLocalizedMessage(state.successMessageKey),
-                    style: AppTextStyles.bodyMedium.copyWith(
+                    style: AppTextStyles.customStyle(
+                      context,
+                      fontSize: 14,
                       color: AppColors.surface,
                     ),
                   ),
@@ -119,8 +121,9 @@ class OnboardingCategorySelectionView extends StatelessWidget {
                       Text(
                         l10n?.onboardingTitle ?? 'إيه العروض اللي تهمّك؟',
                         textAlign: TextAlign.center,
-                        style: AppTextStyles.h1.copyWith(
-                          fontSize: 22.sp,
+                        style: AppTextStyles.customStyle(
+                          context,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -129,9 +132,10 @@ class OnboardingCategorySelectionView extends StatelessWidget {
                         l10n?.onboardingSubtitle ??
                             'اختار المجالات اللي تبحث عنها عشان نرشحلك عروض مناسبة ليك',
                         textAlign: TextAlign.center,
-                        style: AppTextStyles.body.copyWith(
+                        style: AppTextStyles.customStyle(
+                          context,
+                          fontSize: 14,
                           color: AppColors.textSecondary,
-                          fontSize: 14.sp,
                           height: 1.5,
                         ),
                       ),

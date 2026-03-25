@@ -434,6 +434,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String get register_now => 'سجل الآن';
 
   @override
+  String get register_welcome => 'مرحباً\nبدأت بالتسجيل!';
+
+  @override
+  String get register_first_name => 'الاسم الأول';
+
+  @override
+  String get register_last_name => 'الاسم الثاني';
+
+  @override
+  String get register_phone => 'رقم الهاتف';
+
+  @override
+  String get register_password => 'كلمة المرور';
+
+  @override
+  String get register_confirm_password => 'تأكيد كلمة المرور';
+
+  @override
+  String get register_agree_terms => 'موافق على الشروط و الأحكام';
+
+  @override
+  String get login_now => 'سجل الدخول الآن';
+
+  @override
   String get auth_error_invalid_credentials =>
       'البريد الإلكتروني أو كلمة المرور غير صحيحة';
 
@@ -449,4 +473,106 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get auth_error_unexpected => 'حدث خطأ غير متوقع';
+
+  @override
+  String get otp_screen_title => 'تأكيد البريد الإلكتروني';
+
+  @override
+  String get otp_screen_subtitle =>
+      'من فضلك أدخل رمز التحقق الذي أرسلناه للتو على';
+
+  @override
+  String get otp_verify_button => 'تأكيد';
+
+  @override
+  String get otp_resend_timer_prefix => 'لم تتلقى الرمز؟';
+
+  @override
+  String get otp_resend_prefix => 'لم تتلقى الرمز؟';
+
+  @override
+  String get otp_resend_button => 'إرسال';
+
+  @override
+  String get otp_success_title => 'تم تأكيد الحساب بنجاح';
+
+  @override
+  String get otp_success_button => 'الذهاب إلى الصفحة الرئيسية';
+
+  @override
+  String get otp_expiry_notice => 'هذا الرمز صالح لمدة 10 دقائق';
+
+  @override
+  String get forgot_password_title => 'نسيت كلمة المرور؟';
+
+  @override
+  String get forgot_password_subtitle =>
+      'أدخل بريدك الإلكتروني وسنرسل لك رمز إعادة التعيين';
+
+  @override
+  String get forgot_password_email_hint => 'عنوان بريدك الإلكتروني';
+
+  @override
+  String get forgot_password_send_button => 'إرسال رمز الاستعادة';
+
+  @override
+  String get forgot_password_code_sent =>
+      'إذا كان الحساب موجوداً، ستتلقى رمز إعادة التعيين';
+
+  @override
+  String get forgot_password_back_to_login => 'العودة لتسجيل الدخول';
+
+  @override
+  String get reset_password_title => 'إنشاء كلمة مرور جديدة';
+
+  @override
+  String get reset_password_subtitle =>
+      'يجب أن تكون كلمة المرور الجديدة فريدة من نوعها\nعن تلك التي استخدمتها سابقًا.';
+
+  @override
+  String get reset_password_code_hint => 'رمز إعادة التعيين';
+
+  @override
+  String get reset_password_new_password_hint => 'كلمة المرور الجديدة';
+
+  @override
+  String get reset_password_confirm_hint => 'تأكيد كلمة المرور الجديدة';
+
+  @override
+  String get reset_password_submit_button => 'إعادة تعيين كلمة المرور';
+
+  @override
+  String get reset_password_resend_code => 'إعادة إرسال الرمز';
+
+  @override
+  String get reset_password_success =>
+      'تم إعادة تعيين كلمة المرور بنجاح. يمكنك تسجيل الدخول الآن';
+
+  @override
+  String get reset_password_error_invalid_token =>
+      'رمز إعادة التعيين غير صالح أو منتهي الصلاحية';
+
+  @override
+  String get reset_password_error_server =>
+      'تعذّر إعادة تعيين كلمة المرور. يرجى المحاولة مرة أخرى';
+
+  @override
+  String get reset_password_strength_min_length => '8 أحرف على الأقل';
+
+  @override
+  String get reset_password_strength_digit => 'رقم واحد على الأقل (0-9) أو رمز';
+
+  @override
+  String get reset_password_strength_uppercase =>
+      'الأحرف الصغيرة (a-z) والأحرف الكبيرة (A-Z)';
+
+  @override
+  String get reset_password_strength_lowercase => 'يحتوي على حرف صغير';
+
+  @override
+  String get reset_password_error_mismatch =>
+      'كلمة المرور غير متطابقة. يرجى إعادة المحاولة';
+
+  @override
+  String get reset_password_continue_login => 'متابعة تسجيل الدخول';
 }

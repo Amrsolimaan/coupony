@@ -6,8 +6,10 @@ import '../../../../core/services/notification_service.dart';
 import '../../../../core/storage/local_cache_service.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../domain/use_cases/reset_password_params.dart';
 import '../datasources/auth_local_data_source.dart';
 import '../datasources/auth_remote_data_source.dart';
+import '../models/password_reset_response_model.dart';
 import '../models/user_model.dart';
 
 class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
@@ -54,6 +56,7 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
     required String phoneNumber,
     required String password,
     required String passwordConfirmation,
+    required String role,
   }) async {
     return executeOnlineOperation<UserEntity>(
       operation: () async {
@@ -64,6 +67,7 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
           phoneNumber:          phoneNumber,
           password:             password,
           passwordConfirmation: passwordConfirmation,
+          role:                 role,
         );
         // Only persist if backend returned an access_token (auto-login after register)
         if (user.accessToken != null) {
@@ -145,6 +149,58 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
       await localDataSource.clearUser();
       return const Right(unit);
     }
+  }
+
+  // ════════════════════════════════════════════════════════
+  // RESET CODE VERIFICATION
+  // ════════════════════════════════════════════════════════
+
+  @override
+@override
+Future<Either<Failure, String>> verifyResetCode({
+  required String email,
+  required String code,
+}) async {
+  return executeOnlineOperation<String>(
+    operation: () async {
+      // هنا الـ remoteDataSource لازم يرجع الـ String (التوكن)
+      final token = await remoteDataSource.verifyResetCode(email: email, code: code);
+      return token; 
+    },
+  );
+}
+
+  // ════════════════════════════════════════════════════════
+  // PASSWORD RESET
+  // ════════════════════════════════════════════════════════
+
+  @override
+  Future<Either<Failure, PasswordResetResponseModel>> sendResetCode(String email) async {
+    return executeOnlineOperation<PasswordResetResponseModel>(
+      operation: () => remoteDataSource.sendResetCode(email: email),
+    );
+  }
+
+  @override
+  Future<Either<Failure, PasswordResetResponseModel>> resendResetCode(String email) async {
+    return executeOnlineOperation<PasswordResetResponseModel>(
+      operation: () => remoteDataSource.resendResetCode(email: email),
+    );
+  }
+
+  @override
+  Future<Either<Failure, Unit>> resetPassword(ResetPasswordParams params) async {
+    return executeOnlineOperation<Unit>(
+      operation: () async {
+        await remoteDataSource.resetPassword(
+          email:                params.email,
+          token:                params.token,
+          password:             params.password,
+          passwordConfirmation: params.passwordConfirmation,
+        );
+        return unit;
+      },
+    );
   }
 
   // ════════════════════════════════════════════════════════

@@ -58,7 +58,11 @@ class PermissionLoadingPage extends StatelessWidget {
                       // Loading Text
                       Text(
                         l10n.permissions_loading_preparing,
-                        style: AppTextStyles.h4,
+                        style: AppTextStyles.customStyle(
+                          context,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
                         textAlign: TextAlign.center,
                       ),
 
@@ -82,7 +86,9 @@ class PermissionLoadingPage extends StatelessWidget {
                       // Progress Text
                       Text(
                         '${(progress * 100).toInt()}%',
-                        style: AppTextStyles.bodyMedium.copyWith(
+                        style: AppTextStyles.customStyle(
+                          context,
+                          fontSize: 14,
                           color: AppColors.grey600,
                         ),
                       ),
@@ -92,7 +98,9 @@ class PermissionLoadingPage extends StatelessWidget {
                       // Status Messages (optional)
                       Text(
                         _getLoadingMessage(context, progress),
-                        style: AppTextStyles.bodyMedium.copyWith(
+                        style: AppTextStyles.customStyle(
+                          context,
+                          fontSize: 14,
                           color: AppColors.textSecondary,
                         ),
                         textAlign: TextAlign.center,

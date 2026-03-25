@@ -6,8 +6,96 @@ class AppTextStyles {
   // Private constructor to prevent instantiation
   AppTextStyles._();
 
+  // Font Constants for Manual Usage
+  static const String Main_Font_arabic = 'Cairo';
+  static const String Sec_Font_arabic = 'Amiri';
+  static const String Main_Font_english = 'Urbanist';
+  static const String Main_Font_logo = 'Pacifico';
+
   // Base Font Family
   static const String fontFamily = 'Cairo';
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // DYNAMIC TEXT STYLE FACTORY
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  /// Creates a custom TextStyle with automatic font selection based on locale.
+  /// 
+  /// Parameters:
+  /// - [context]: Required for locale detection
+  /// - [fontSize]: Font size (will be converted to .sp automatically)
+  /// - [fontWeight]: Font weight (default: FontWeight.normal)
+  /// - [color]: Text color (default: AppColors.textPrimary)
+  /// - [height]: Line height multiplier
+  /// - [letterSpacing]: Letter spacing
+  /// - [fontFamily]: Custom font family (overrides automatic selection)
+  /// - [useSecondaryArabic]: Use Amiri instead of NotoNaskhArabic for Arabic (ignored if fontFamily is provided)
+
+  /// Examples:
+  /// ```dart
+  /// // Automatic font selection (Arabic → NotoNaskhArabic, English → Urbanist)
+  /// Text(
+  ///   'مرحباً',
+  ///   style: AppTextStyles.customStyle(
+  ///     context,
+  ///     fontSize: 26,
+  ///     fontWeight: FontWeight.w700,
+  ///   ),
+  /// )
+  /// 
+  /// // Use secondary Arabic font (Amiri)
+  /// Text(
+  ///   'عنوان',
+  ///   style: AppTextStyles.customStyle(
+  ///     context,
+  ///     fontSize: 24,
+  ///     useSecondaryArabic: true,
+  ///   ),
+  /// )
+  /// 
+  /// // Override with custom font (e.g., Pacifico for logo)
+  /// Text(
+  ///   'Coupony',
+  ///   style: AppTextStyles.customStyle(
+  ///     context,
+  ///     fontSize: 64,
+  ///     fontFamily: AppTextStyles.Main_Font_logo,
+  ///   ),
+  /// )
+  /// ```
+  static TextStyle customStyle(
+    BuildContext context, {
+    required double fontSize,
+    FontWeight? fontWeight,
+    Color? color,
+    double? height,
+    double? letterSpacing,
+    String? fontFamily,
+    bool useSecondaryArabic = false,
+  }) {
+    // If custom fontFamily is provided, use it directly
+    String selectedFont;
+    if (fontFamily != null) {
+      selectedFont = fontFamily;
+    } else {
+      // Automatic font selection based on locale
+      final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+      if (isArabic) {
+        selectedFont = useSecondaryArabic ? Sec_Font_arabic : Main_Font_arabic;
+      } else {
+        selectedFont = Main_Font_english;
+      }
+    }
+
+    return TextStyle(
+      fontFamily: selectedFont,
+      fontSize: fontSize.sp,
+      fontWeight: fontWeight ?? FontWeight.normal,
+      color: color ?? AppColors.textPrimary,
+      height: height,
+      letterSpacing: letterSpacing,
+    );
+  }
 
   // --- Onboarding Header (Specific Specs Provided) ---
 

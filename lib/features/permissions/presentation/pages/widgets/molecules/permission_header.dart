@@ -69,7 +69,11 @@ class PermissionHeader extends StatelessWidget {
         // Title
         Text(
           title,
-          style: titleStyle ?? AppTextStyles.h3,
+          style: titleStyle ?? AppTextStyles.customStyle(
+            context,
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+          ),
           textAlign: TextAlign.center,
         ),
 
@@ -78,7 +82,9 @@ class PermissionHeader extends StatelessWidget {
         // Subtitle
         Text(
           subtitle,
-          style: subtitleStyle ?? AppTextStyles.bodyMedium.copyWith(
+          style: subtitleStyle ?? AppTextStyles.customStyle(
+            context,
+            fontSize: 14,
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             height: 1.5,
           ),

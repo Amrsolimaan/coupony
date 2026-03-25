@@ -11,4 +11,10 @@ class ApiConstants {
   static const String logout         = '/auth/logout';
   static const String refreshToken   = '/auth/refresh';
   static const String updateFcmToken = '/auth/fcm-token';
+
+  // ── Password Reset ─────────────────────────────────────
+  static const String forgotPassword    = '/auth/password/forgot';
+  static const String verifyResetOtp    = '/auth/password/verify-otp';
+  static const String resendResetCode   = '/auth/password/resend-otp';
+  static const String resetPassword     = '/auth/password/reset';
 }

@@ -440,6 +440,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get register_now => 'Register Now';
 
   @override
+  String get register_welcome => 'Welcome\nGet Started with Registration!';
+
+  @override
+  String get register_first_name => 'First Name';
+
+  @override
+  String get register_last_name => 'Last Name';
+
+  @override
+  String get register_phone => 'Phone Number';
+
+  @override
+  String get register_password => 'Password';
+
+  @override
+  String get register_confirm_password => 'Confirm Password';
+
+  @override
+  String get register_agree_terms => 'Agree to Terms & Conditions';
+
+  @override
+  String get login_now => 'Login Now';
+
+  @override
   String get auth_error_invalid_credentials => 'Invalid email or password';
 
   @override
@@ -453,4 +477,107 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get auth_error_unexpected => 'An unexpected error occurred';
+
+  @override
+  String get otp_screen_title => 'Email Verification';
+
+  @override
+  String get otp_screen_subtitle =>
+      'Please enter the verification code we just sent to';
+
+  @override
+  String get otp_verify_button => 'Verify';
+
+  @override
+  String get otp_resend_timer_prefix => 'Didn\'t receive the code?';
+
+  @override
+  String get otp_resend_prefix => 'Didn\'t receive the code?';
+
+  @override
+  String get otp_resend_button => 'Resend';
+
+  @override
+  String get otp_success_title => 'Account Verified Successfully';
+
+  @override
+  String get otp_success_button => 'Go to Home';
+
+  @override
+  String get otp_expiry_notice => 'This code is valid for 10 minutes';
+
+  @override
+  String get forgot_password_title => 'Forgot Password?';
+
+  @override
+  String get forgot_password_subtitle =>
+      'Enter your email and we\'ll send you a reset code';
+
+  @override
+  String get forgot_password_email_hint => 'Your email address';
+
+  @override
+  String get forgot_password_send_button => 'Send Reset Code';
+
+  @override
+  String get forgot_password_code_sent =>
+      'If the account exists, you will receive a reset code';
+
+  @override
+  String get forgot_password_back_to_login => 'Back to Login';
+
+  @override
+  String get reset_password_title => 'Create New Password';
+
+  @override
+  String get reset_password_subtitle =>
+      'Your new password must be unique from those\npreviously used.';
+
+  @override
+  String get reset_password_code_hint => 'Reset Code';
+
+  @override
+  String get reset_password_new_password_hint => 'New Password';
+
+  @override
+  String get reset_password_confirm_hint => 'Confirm New Password';
+
+  @override
+  String get reset_password_submit_button => 'Reset Password';
+
+  @override
+  String get reset_password_resend_code => 'Resend Code';
+
+  @override
+  String get reset_password_success =>
+      'Password reset successfully. You can now log in';
+
+  @override
+  String get reset_password_error_invalid_token =>
+      'Invalid or expired reset token';
+
+  @override
+  String get reset_password_error_server =>
+      'Could not reset password. Please try again';
+
+  @override
+  String get reset_password_strength_min_length => 'At least 8 characters';
+
+  @override
+  String get reset_password_strength_digit =>
+      'At least one number (0-9) or symbol';
+
+  @override
+  String get reset_password_strength_uppercase =>
+      'Lowercase (a-z) and uppercase (A-Z) letters';
+
+  @override
+  String get reset_password_strength_lowercase => 'Contains a lowercase letter';
+
+  @override
+  String get reset_password_error_mismatch =>
+      'Passwords do not match. Please try again';
+
+  @override
+  String get reset_password_continue_login => 'Continue to Login';
 }

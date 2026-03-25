@@ -68,7 +68,12 @@ class OnboardingScreen extends StatelessWidget {
       size: AppButtonSize.medium,
       borderRadius: 16.r,
       backgroundColor: AppColors.primary,
-      textStyle: AppTextStyles.button.copyWith(fontSize: 18.sp),
+      textStyle: AppTextStyles.customStyle(
+        context,
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: AppColors.surface,
+      ),
     );
   }
 }

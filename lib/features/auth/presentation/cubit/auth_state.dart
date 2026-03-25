@@ -12,6 +12,7 @@ enum AuthNavigation {
   toHome,             // Successful login/verify → user home
   toMerchantDash,     // Successful login/verify → merchant dashboard
   toOtpVerification,  // After register → OTP screen
+  toResetPassword,    // OTP verified (forgotPassword mode) → reset password screen
   toLogin,            // After logout or session expiry
   toRegister,         // From login screen
 }
@@ -32,6 +33,10 @@ class AuthState extends Equatable {
   final bool isOtpSent;
   /// Email address the OTP was dispatched to
   final String? otpEmail;
+  /// The entered OTP code — carried to the next screen in forgotPassword flow
+  final String? otpCode;
+  /// The reset token returned by the server after verifying reset OTP
+  final String? resetToken;
 
   // ── Feedback ──────────────────────────────────────────
   final String? errorMessage;
@@ -45,6 +50,8 @@ class AuthState extends Equatable {
     this.isLoading = false,
     this.isOtpSent = false,
     this.otpEmail,
+    this.otpCode,
+    this.resetToken,
     this.errorMessage,
     this.successMessage,
     this.navSignal = AuthNavigation.none,
@@ -55,6 +62,8 @@ class AuthState extends Equatable {
     bool? isLoading,
     bool? isOtpSent,
     String? otpEmail,
+    String? otpCode,
+    String? resetToken,
     String? errorMessage,
     String? successMessage,
     AuthNavigation? navSignal,
@@ -64,6 +73,8 @@ class AuthState extends Equatable {
       isLoading:      isLoading      ?? this.isLoading,
       isOtpSent:      isOtpSent      ?? this.isOtpSent,
       otpEmail:       otpEmail       ?? this.otpEmail,
+      otpCode:        otpCode        ?? this.otpCode,
+      resetToken:     resetToken     ?? this.resetToken,
       errorMessage:   errorMessage,   // nullable — pass null to clear
       successMessage: successMessage, // nullable — pass null to clear
       navSignal:      navSignal      ?? this.navSignal,
@@ -78,7 +89,7 @@ class AuthState extends Equatable {
 
   @override
   List<Object?> get props => [
-    user, isLoading, isOtpSent, otpEmail,
+    user, isLoading, isOtpSent, otpEmail, otpCode, resetToken,
     errorMessage, successMessage, navSignal,
   ];
 

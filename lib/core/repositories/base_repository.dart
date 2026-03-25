@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import '../errors/exceptions.dart';
 import '../errors/failures.dart';
 import '../network/network_info.dart';
 import '../storage/local_cache_service.dart';
@@ -202,9 +203,18 @@ abstract class BaseRepository {
 
   /// Centralized error handling
   Failure _handleError(dynamic error) {
+    // Failure types (already mapped)
     if (error is ServerFailure) return error;
     if (error is NetworkFailure) return error;
     if (error is CacheFailure) return error;
+    if (error is UnauthorizedFailure) return error;
+
+    // Exception types thrown by the error interceptor
+    if (error is InvalidTokenException) return InvalidTokenFailure(error.message);
+    if (error is UnauthorizedException) return UnauthorizedFailure(error.message);
+    if (error is ServerException) return ServerFailure(error.message);
+    if (error is NetworkException) return NetworkFailure(error.message);
+    if (error is CacheException) return CacheFailure(error.message);
 
     return UnexpectedFailure(error.toString());
   }

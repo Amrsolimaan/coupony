@@ -164,7 +164,11 @@ class _LocationErrorPageState extends State<LocationErrorPage>
           // Loading Text
           Text(
             l10n.location_error_checking,
-            style: AppTextStyles.h4,
+            style: AppTextStyles.customStyle(
+              context,
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),
             textAlign: TextAlign.center,
           ),
 
@@ -187,7 +191,9 @@ class _LocationErrorPageState extends State<LocationErrorPage>
           // Status Message
           Text(
             l10n.permissions_please_wait,
-            style: AppTextStyles.bodyMedium.copyWith(
+            style: AppTextStyles.customStyle(
+              context,
+              fontSize: 14,
               color: AppColors.textSecondary,
             ),
             textAlign: TextAlign.center,

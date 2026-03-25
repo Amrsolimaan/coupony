@@ -22,7 +22,7 @@ class OnboardingStepIndicator extends StatelessWidget {
         children: List.generate(totalSteps * 2 - 1, (index) {
           if (index.isEven) {
             final stepNumber = (index ~/ 2) + 1;
-            return _buildStepCircle(stepNumber);
+            return _buildStepCircle(context, stepNumber);
           } else {
             final stepNumber = (index ~/ 2) + 1;
             return _buildConnectingLine(stepNumber);
@@ -32,7 +32,7 @@ class OnboardingStepIndicator extends StatelessWidget {
     );
   }
 
-  Widget _buildStepCircle(int stepNumber) {
+  Widget _buildStepCircle(BuildContext context, int stepNumber) {
     final bool isActive = stepNumber == currentStep;
     final bool isCompleted = stepNumber < currentStep;
 
@@ -58,7 +58,9 @@ class OnboardingStepIndicator extends StatelessWidget {
               ) // Add checkmark for completed steps as per design
             : Text(
                 '$stepNumber',
-                style: AppTextStyles.bodyLarge.copyWith(
+                style: AppTextStyles.customStyle(
+                  context,
+                  fontSize: 16,
                   color: isActive ? AppColors.surface : AppColors.primary,
                   fontWeight: FontWeight.bold,
                 ),

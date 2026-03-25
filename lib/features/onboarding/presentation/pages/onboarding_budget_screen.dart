@@ -50,7 +50,9 @@ class OnboardingBudgetScreen extends StatelessWidget {
                 SnackBar(
                   content: Text(
                     context.getLocalizedMessage(state.successMessageKey),
-                    style: AppTextStyles.bodyMedium.copyWith(
+                    style: AppTextStyles.customStyle(
+                      context,
+                      fontSize: 14,
                       color: AppColors.surface,
                     ),
                   ),
@@ -102,7 +104,11 @@ class OnboardingBudgetScreen extends StatelessWidget {
                 // النصوص التعريفية
                 Text(
                   l10n?.budgetTitle ?? 'حدد ميزانيتك',
-                  style: AppTextStyles.h1.copyWith(fontSize: 22.sp),
+                  style: AppTextStyles.customStyle(
+                    context,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(
@@ -113,7 +119,9 @@ class OnboardingBudgetScreen extends StatelessWidget {
                     l10n?.budgetSubtitle ??
                         'هنستخدم اختيارك عشان نجهزلك تجربة تناسب احتياجاتك من أول لحظة',
                     textAlign: TextAlign.center,
-                    style: AppTextStyles.body.copyWith(
+                    style: AppTextStyles.customStyle(
+                      context,
+                      fontSize: 14,
                       color: AppColors.textSecondary,
                     ),
                   ),
@@ -122,7 +130,7 @@ class OnboardingBudgetScreen extends StatelessWidget {
                 SizedBox(height: 24.h),
 
                 // الـ Slider المخصص مع الـ Tooltip
-                _buildBudgetSlider(state, cubit),
+                _buildBudgetSlider(context, state, cubit),
 
                 SizedBox(height: 32.h),
 
@@ -166,6 +174,7 @@ class OnboardingBudgetScreen extends StatelessWidget {
 
   // بناء السلايدر مع ملصق النسبة المئوية (Tooltip) العلوي
   Widget _buildBudgetSlider(
+    BuildContext context,
     OnboardingFlowState state,
     OnboardingFlowCubit cubit,
   ) {
@@ -176,7 +185,7 @@ class OnboardingBudgetScreen extends StatelessWidget {
       child: Column(
         children: [
           // الـ Tooltip المتحرك
-          _buildSliderLabel(state.budgetSliderValue, percentage),
+          _buildSliderLabel(context, state.budgetSliderValue, percentage),
 
           SliderTheme(
             data: SliderThemeData(
@@ -207,19 +216,25 @@ class OnboardingBudgetScreen extends StatelessWidget {
               children: [
                 Text(
                   '0%',
-                  style: AppTextStyles.caption.copyWith(
+                  style: AppTextStyles.customStyle(
+                    context,
+                    fontSize: 12,
                     color: AppColors.textSecondary,
                   ),
                 ),
                 Text(
                   '50%',
-                  style: AppTextStyles.caption.copyWith(
+                  style: AppTextStyles.customStyle(
+                    context,
+                    fontSize: 12,
                     color: AppColors.textSecondary,
                   ),
                 ),
                 Text(
                   '100%',
-                  style: AppTextStyles.caption.copyWith(
+                  style: AppTextStyles.customStyle(
+                    context,
+                    fontSize: 12,
                     color: AppColors.textSecondary,
                   ),
                 ),
@@ -232,7 +247,7 @@ class OnboardingBudgetScreen extends StatelessWidget {
   }
 
   // المربع البرتقالي الصغير فوق السلايدر
-  Widget _buildSliderLabel(double value, int percentage) {
+  Widget _buildSliderLabel(BuildContext context, double value, int percentage) {
     return Align(
       alignment: Alignment(value * 2 - 1, 0),
       child: Container(
@@ -243,7 +258,9 @@ class OnboardingBudgetScreen extends StatelessWidget {
         ),
         child: Text(
           '$percentage%',
-          style: AppTextStyles.caption.copyWith(
+          style: AppTextStyles.customStyle(
+            context,
+            fontSize: 12,
             color: AppColors.surface,
             fontWeight: FontWeight.bold,
           ),

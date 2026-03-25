@@ -8,8 +8,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../auth/data/datasources/auth_local_data_source.dart';
-import '../widgets/atoms/permission_icon.dart';
-import '../widgets/atoms/permission_primary_button.dart';
 
 /// Welcome Gateway Page
 /// Shown after permissions flow completes.
@@ -24,76 +22,131 @@ class WelcomeGatewayPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 44.w),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Icon
-                PermissionIcon(
-                  icon: Container(
-                    decoration: const BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.group_outlined,
-                      color: Colors.white,
-                      size: 48.w,
-                    ),
-                  ),
-                  size: 100.w,
-                  showShadow: false,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 40.w),
+          child: Column(
+            children: [
+              const Spacer(flex: 2),
+              
+              // Icon
+              Container(
+                width: 120.w,
+                height: 120.w,
+                decoration: const BoxDecoration(
+                  color: AppColors.primary,
+                  shape: BoxShape.circle,
                 ),
-                SizedBox(height: 20.h),
-                // Title
-                Text(
-                  l10n.welcome_gateway_title,
-                  style: AppTextStyles.h3.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
+                child: Icon(
+                  Icons.group_outlined,
+                  color: Colors.white,
+                  size: 60.w,
                 ),
-                SizedBox(height: 12.h),
-                // Subtitle
-                Text(
-                  l10n.welcome_gateway_subtitle,
-                  style: TextStyle(
-                    fontFamily: 'NotoNaskhArabic',
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                    height: 1.5,
-                    letterSpacing: 0,
-                    color: const Color.fromARGB(255, 114, 113, 113),
-                  ),
-                  textAlign: TextAlign.center,
+              ),
+              
+              SizedBox(height: 32.h),
+              
+              // Title
+              Text(
+                l10n.welcome_gateway_title,
+                style: AppTextStyles.customStyle(
+                  context,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
                 ),
-                SizedBox(height: 40.h),
-                // Sign In button
-                PermissionPrimaryButton(
-                  text: l10n.welcome_gateway_login,
+                textAlign: TextAlign.center,
+              ),
+              
+              SizedBox(height: 24.h),
+              
+              // Subtitle
+              Text(
+                l10n.welcome_gateway_subtitle,
+                style: AppTextStyles.customStyle(
+                  context,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  height: 1.6,
+                  color: AppColors.textPrimary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              
+              const Spacer(flex: 1),
+              
+              // Sign In button
+              SizedBox(
+                width: double.infinity,
+                height: 56.h,
+                child: ElevatedButton(
                   onPressed: () => context.go(AppRouter.login),
-                  width: 185.w,
-                  height: 48.h,
-                  isFullWidth: false,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                  ),
+                  child: Text(
+                    l10n.welcome_gateway_login,
+                    style: AppTextStyles.customStyle(
+                      context,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
-                SizedBox(height: 12.h),
-                // Guest button
-                PermissionPrimaryButton(
-                  text: l10n.welcome_gateway_guest,
+              ),
+              
+              SizedBox(height: 16.h),
+              
+              // Guest button (Outline style with shadow)
+              Container(
+                width: double.infinity,
+                height: 56.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.15),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: OutlinedButton(
                   onPressed: () async {
                     await di.sl<AuthLocalDataSource>().cacheGuestStatus(true);
                     if (context.mounted) context.go(AppRouter.home);
                   },
-                  width: 185.w,
-                  height: 48.h,
-                  isFullWidth: false,
-                  backgroundColor: const Color(0xFFBDBDBD),
-                  textColor: AppColors.textPrimary,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.primary,
+                    side: BorderSide(
+                      color: AppColors.primary,
+                      width: 1.5.w,
+                    ),
+                    backgroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                  ),
+                  child: Text(
+                    l10n.welcome_gateway_guest,
+                    style: AppTextStyles.customStyle(
+                      context,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primary,
+                    ),
+                  ),
                 ),
-              ],
-            ),
+              ),
+              
+              const Spacer(flex: 2),
+            ],
           ),
         ),
       ),

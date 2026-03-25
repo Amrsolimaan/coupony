@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../../../core/theme/app_text_styles.dart';
 import '../../../../../../core/widgets/buttons/buttons.dart';
 
 /// Permission Primary Button
@@ -38,11 +39,12 @@ class PermissionPrimaryButton extends StatelessWidget {
       isFullWidth: isFullWidth,
       backgroundColor: backgroundColor,
       textStyle: textColor != null
-          ? TextStyle(
-              fontSize: 16.sp,
+          ? AppTextStyles.customStyle(
+              context,
+              fontSize: 16,
               fontWeight: FontWeight.w600,
-              fontFamily: 'Cairo',
-              color: textColor,
+              color: textColor!,
+              fontFamily: AppTextStyles.fontFamily,
             )
           : null,
       size: AppButtonSize.medium,

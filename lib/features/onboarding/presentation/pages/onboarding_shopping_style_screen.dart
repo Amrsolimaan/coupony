@@ -52,7 +52,9 @@ class OnboardingShoppingStyleScreen extends StatelessWidget {
                 SnackBar(
                   content: Text(
                     context.getLocalizedMessage(state.successMessageKey),
-                    style: AppTextStyles.bodyMedium.copyWith(
+                    style: AppTextStyles.customStyle(
+                      context,
+                      fontSize: 14,
                       color: AppColors.surface,
                     ),
                   ),
@@ -102,7 +104,11 @@ class OnboardingShoppingStyleScreen extends StatelessWidget {
 
                 Text(
                   l10n?.shoppingStyleTitle ?? 'أسلوبك في الشوبينج؟',
-                  style: AppTextStyles.h1.copyWith(fontSize: 22.sp),
+                  style: AppTextStyles.customStyle(
+                    context,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(
@@ -113,7 +119,9 @@ class OnboardingShoppingStyleScreen extends StatelessWidget {
                     l10n?.shoppingStyleSubtitle ??
                         'قوليلنا بتشتري إزاي عشان ترشيحاتنا تبقى أدق',
                     textAlign: TextAlign.center,
-                    style: AppTextStyles.body.copyWith(
+                    style: AppTextStyles.customStyle(
+                      context,
+                      fontSize: 14,
                       color: AppColors.textSecondary,
                     ),
                   ),

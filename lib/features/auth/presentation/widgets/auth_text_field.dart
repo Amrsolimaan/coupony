@@ -138,16 +138,22 @@ Widget _buildField({
       minLines: useExpands ? null : null,
       expands: useExpands,
       textAlignVertical: TextAlignVertical.center,
-      style: AppTextStyles.bodyMedium.copyWith(
-        color: AppColors.textPrimary,
+      style: AppTextStyles.customStyle(
+        context,
+        fontSize: 14,
         fontWeight: FontWeight.w600,
-        fontFamily: obscure ? null : 'Urbanist',
-        fontSize: obscure ? 14.sp : null,
-        letterSpacing: obscure ? 2.0 : null,
+        color: AppColors.textPrimary,
+        letterSpacing: obscure ? 2.0 : 0,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textDisabled,fontWeight: FontWeight.w600,fontFamily: 'Urbanist'),
+        hintStyle: AppTextStyles.customStyle(
+          context,
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textDisabled,
+          letterSpacing: 0,
+        ),
         contentPadding: EdgeInsetsDirectional.symmetric(
           horizontal: 16.w,
           vertical: useExpands ? 0 : 18.r,
