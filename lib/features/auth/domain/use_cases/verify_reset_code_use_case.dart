@@ -6,14 +6,12 @@ import '../repositories/auth_repository.dart';
 /// navigation to ResetPasswordScreen.
 ///
 /// Calls POST /auth/otp/verify with purpose: reset_password.
-/// Returns the [reset_token] string on success — this token must be passed
-/// to ResetPasswordScreen and then to POST /auth/password/reset.
-/// Returns [InvalidTokenFailure] on HTTP 422.
+/// Returns [Unit] on success, [InvalidTokenFailure] on HTTP 422.
 class VerifyResetCodeUseCase {
   final AuthRepository repository;
   VerifyResetCodeUseCase(this.repository);
 
-  Future<Either<Failure, String>> call({
+  Future<Either<Failure, Unit>> call({
     required String email,
     required String code,
   }) =>

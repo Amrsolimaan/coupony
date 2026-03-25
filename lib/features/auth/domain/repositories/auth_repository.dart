@@ -42,7 +42,7 @@ abstract class AuthRepository {
 
   /// POST /auth/otp/verify (purpose: reset_password) — validates the code
   /// server-side. The raw OTP code is used as reset_token for /password/reset.
-  Future<Either<Failure, String>> verifyResetCode({
+  Future<Either<Failure, Unit>> verifyResetCode({
     required String email,
     required String code,
   });

@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
-
 import '../../domain/use_cases/resend_reset_code_use_case.dart';
 import '../../domain/use_cases/send_otp_use_case.dart';
 import '../../domain/use_cases/verify_otp_use_case.dart';
@@ -208,13 +207,14 @@ class OtpCubit extends Cubit<AuthState> {
             errorMessage: 'reset_password_error_invalid_token',
           ));
         },
-        (resetToken) {
-          logger.i('Reset code verified for ${_maskEmail(email)} — token received: ${resetToken.substring(0, 10)}...');
+        (_) {
+          // The OTP code itself is used as the reset token
+          logger.i('Reset code verified for ${_maskEmail(email)}');
           _safeEmit(state.copyWith(
             isLoading:   false,
             otpEmail:    email,
             otpCode:     code.trim(),
-            resetToken:  resetToken, // ✅ حفظ الـ reset_token من السيرفر
+            resetToken:  code.trim(), 
             navSignal:   AuthNavigation.toResetPassword,
           ));
         },

@@ -156,19 +156,17 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
   // ════════════════════════════════════════════════════════
 
   @override
-@override
-Future<Either<Failure, String>> verifyResetCode({
-  required String email,
-  required String code,
-}) async {
-  return executeOnlineOperation<String>(
-    operation: () async {
-      // هنا الـ remoteDataSource لازم يرجع الـ String (التوكن)
-      final token = await remoteDataSource.verifyResetCode(email: email, code: code);
-      return token; 
-    },
-  );
-}
+  Future<Either<Failure, Unit>> verifyResetCode({
+    required String email,
+    required String code,
+  }) async {
+    return executeOnlineOperation<Unit>(
+      operation: () async {
+        await remoteDataSource.verifyResetCode(email: email, code: code);
+        return unit;
+      },
+    );
+  }
 
   // ════════════════════════════════════════════════════════
   // PASSWORD RESET
