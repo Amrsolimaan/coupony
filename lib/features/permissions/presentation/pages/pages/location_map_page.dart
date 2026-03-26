@@ -3,6 +3,7 @@ import 'package:coupony/core/localization/l10n/app_localizations.dart';
 import 'package:coupony/core/network/network_info.dart';
 import 'package:coupony/core/theme/app_colors.dart';
 import 'package:coupony/core/theme/app_text_styles.dart';
+import 'package:coupony/core/extensions/snackbar_extension.dart';
 import 'package:coupony/features/permissions/presentation/cubit/permission_flow_cubit.dart';
 import 'package:coupony/features/permissions/presentation/cubit/permission_flow_state.dart';
 import 'package:flutter/material.dart';
@@ -135,30 +136,14 @@ class _LocationMapPageState extends State<LocationMapPage> {
         // Show snackbar
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                l10n.location_map_no_results,
-                style: AppTextStyles.bodyMedium,
-              ),
-              backgroundColor: AppColors.error,
-            ),
-          );
+          context.showErrorSnackBar(l10n.location_map_no_results);
         }
       }
     } catch (e) {
       debugPrint('❌ Search error: $e');
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              l10n.location_map_search_error,
-              style: AppTextStyles.bodyMedium,
-            ),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        context.showErrorSnackBar(l10n.location_map_search_error);
       }
     }
   }
@@ -201,15 +186,7 @@ class _LocationMapPageState extends State<LocationMapPage> {
         debugPrint('⚠️ Speech recognition not available');
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                l10n.location_map_voice_unavailable,
-                style: AppTextStyles.bodyMedium,
-              ),
-              backgroundColor: AppColors.warning,
-            ),
-          );
+          context.showWarningSnackBar(l10n.location_map_voice_unavailable);
         }
       }
     } catch (e) {

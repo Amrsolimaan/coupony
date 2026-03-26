@@ -10,6 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/message_formatter.dart';
 import '../../../../core/widgets/buttons/app_primary_button.dart';
+import '../../../../core/extensions/snackbar_extension.dart';
 import '../cubit/reset_password_cubit.dart';
 import '../cubit/reset_password_state.dart';
 import '../widgets/auth_success_bottom_sheet.dart';
@@ -44,8 +45,8 @@ class ResetPasswordScreen extends HookWidget {
     // ── Real-time password strength update ─────────────────────────────────
     useEffect(() {
       context.read<ResetPasswordCubit>().updatePasswordStrength(
-            newPasswordValue.text,
-          );
+        newPasswordValue.text,
+      );
       return null;
     }, [newPasswordValue.text]);
 
@@ -53,22 +54,22 @@ class ResetPasswordScreen extends HookWidget {
       // ── Listener: side-effects only (snackbars + navigation) ──────────────
       listener: (context, state) {
         if (state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.getLocalizedMessage(state.errorMessage)),
-              backgroundColor: AppColors.error,
-            ),
-          );
+          context.showErrorSnackBar(context.getLocalizedMessage(state.errorMessage));
         }
         if (state.successMessage != null && !state.isLoading) {
-          _showSuccessModal(context, l10n, onContinue: () {
-            context.go(AppRouter.login);
-          });
+          _showSuccessModal(
+            context,
+            l10n,
+            onContinue: () {
+              context.go(AppRouter.login);
+            },
+          );
         }
       },
       // ── Builder: pure UI ───────────────────────────────────────────────────
       builder: (context, state) {
-        final hasContent = newPasswordValue.text.isNotEmpty &&
+        final hasContent =
+            newPasswordValue.text.isNotEmpty &&
             confirmPasswordValue.text.isNotEmpty &&
             state.passwordStrength.isStrong;
 
@@ -134,6 +135,7 @@ class ResetPasswordScreen extends HookWidget {
                       isPassword: true,
                       textInputAction: TextInputAction.next,
                     ),
+                    SizedBox(height: 3.h),
 
                     // ── Password Strength Meter ─────────────────────────────
                     // FIX: removed the SizedBox(height: 8) before it and let
@@ -152,7 +154,8 @@ class ResetPasswordScreen extends HookWidget {
                       controller: confirmPasswordController,
                       hint: l10n.reset_password_confirm_hint,
                       isPassword: true,
-                      hasError: confirmPasswordValue.text.isNotEmpty &&
+                      hasError:
+                          confirmPasswordValue.text.isNotEmpty &&
                           !passwordsMatch,
                       textInputAction: TextInputAction.done,
                     ),
@@ -180,15 +183,17 @@ class ResetPasswordScreen extends HookWidget {
                     AppPrimaryButton(
                       text: l10n.reset_password_submit_button,
                       isLoading: state.isLoading,
-                      onPressed: hasContent && passwordsMatch && !state.isLoading
-                          ? () =>
-                              context.read<ResetPasswordCubit>().resetPassword(
-                                    email: email,
-                                    token: token,
-                                    password: newPasswordController.text,
-                                    passwordConfirmation:
-                                        confirmPasswordController.text,
-                                  )
+                      onPressed:
+                          hasContent && passwordsMatch && !state.isLoading
+                          ? () => context
+                                .read<ResetPasswordCubit>()
+                                .resetPassword(
+                                  email: email,
+                                  token: token,
+                                  password: newPasswordController.text,
+                                  passwordConfirmation:
+                                      confirmPasswordController.text,
+                                )
                           : null,
                       height: 56.h,
                       backgroundColor: hasContent && passwordsMatch
@@ -273,10 +278,7 @@ class _PasswordStrengthMeter extends StatelessWidget {
   final PasswordStrength strength;
   final AppLocalizations l10n;
 
-  const _PasswordStrengthMeter({
-    required this.strength,
-    required this.l10n,
-  });
+  const _PasswordStrengthMeter({required this.strength, required this.l10n});
 
   @override
   Widget build(BuildContext context) {
@@ -285,16 +287,19 @@ class _PasswordStrengthMeter extends StatelessWidget {
       children: [
         // ── Progress Bar ────────────────────────────────────────────────────
         // FIX: sits directly under the field with no extra top gap
-        SizedBox(
-          height: 4.h,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(2.r),
-            child: LinearProgressIndicator(
-              value: strength.score / 4,
-              backgroundColor: AppColors.grey200,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                // FIX: all levels use primary (orange) — design never shows green
-                AppColors.primary,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(6, 0, 6, 0),
+          child: SizedBox(
+            height: 2.h,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(2.r),
+              child: LinearProgressIndicator(
+                value: strength.score / 4,
+                backgroundColor: AppColors.grey200,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  // FIX: all levels use primary (orange) — design never shows green
+                  AppColors.primary,
+                ),
               ),
             ),
           ),
@@ -318,7 +323,8 @@ class _PasswordStrengthMeter extends StatelessWidget {
         SizedBox(height: 6.h),
         // FIX: uppercase & lowercase merged into one row (matches design)
         _StrengthCheckItem(
-          label: l10n.reset_password_strength_uppercase, // e.g. "الأحرف الصغيرة (a-z) والأحرف الكبيرة (A-Z)"
+          label: l10n
+              .reset_password_strength_uppercase, // e.g. "الأحرف الصغيرة (a-z) والأحرف الكبيرة (A-Z)"
           isValid: strength.hasUppercase && strength.hasLowercase,
         ),
       ],
@@ -332,10 +338,7 @@ class _StrengthCheckItem extends StatelessWidget {
   final String label;
   final bool isValid;
 
-  const _StrengthCheckItem({
-    required this.label,
-    required this.isValid,
-  });
+  const _StrengthCheckItem({required this.label, required this.isValid});
 
   @override
   Widget build(BuildContext context) {
@@ -348,14 +351,14 @@ class _StrengthCheckItem extends StatelessWidget {
         //  invalid → grey bullet/dot   (Icons.circle, small, filled grey)
         if (isValid)
           Icon(
-            Icons.check,                 // simple ✓ — matches design
-            size: 16.w,
-            color: AppColors.primary,    // FIX: orange not green
+            Icons.check, // simple ✓ — matches design
+            size: 14.w,
+            color: AppColors.primary, // FIX: orange not green
           )
         else
           Icon(
-            Icons.circle,               // filled small dot
-            size: 8.w,                  // FIX: much smaller — just a bullet point
+            Icons.circle, // filled small dot
+            size: 8.w, // FIX: much smaller — just a bullet point
             color: AppColors.textDisabled,
           ),
 
@@ -367,10 +370,10 @@ class _StrengthCheckItem extends StatelessWidget {
             label,
             style: AppTextStyles.customStyle(
               context,
-              fontSize: 14.sp,
+              fontSize: 13.sp,
               // FIX: valid → orange (primary), invalid → grey (textSecondary)
               color: isValid ? AppColors.primary : AppColors.textSecondary,
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),

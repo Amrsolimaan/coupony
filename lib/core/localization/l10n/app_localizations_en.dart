@@ -549,8 +549,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reset_password_resend_code => 'Resend Code';
 
   @override
-  String get reset_password_success =>
-      'Password reset successfully. You can now log in';
+  String get reset_password_success => 'Password reset successfully';
 
   @override
   String get reset_password_error_invalid_token =>
@@ -565,7 +564,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reset_password_strength_digit =>
-      'At least one number (0-9) or symbol';
+      'At least one number (0-9) and symbol';
 
   @override
   String get reset_password_strength_uppercase =>

@@ -8,6 +8,7 @@ import '../../../../config/routes/app_router.dart';
 import '../../../../core/localization/locale_cubit.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/extensions/snackbar_extension.dart';
 
 /// Language Selection Page - Coupony
 ///
@@ -60,12 +61,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
         setState(() {
           _isLoading = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        context.showErrorSnackBar('Error: $e');
       }
     }
   }

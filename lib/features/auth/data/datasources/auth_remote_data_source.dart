@@ -39,7 +39,7 @@ abstract class AuthRemoteDataSource {
     required String code,
   });
 
-  /// POST /auth/otp/verify  body: { email, code, purpose: reset_password }
+  /// POST /auth/password/verify-otp  body: { email, code }
   /// Returns the server-generated reset_token from response.
   Future<String> verifyResetCode({
     required String email,

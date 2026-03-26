@@ -3,6 +3,7 @@ import 'package:coupony/features/onboarding/presentation/widgets/category_card.d
 import 'package:coupony/features/onboarding/presentation/widgets/onboarding_submit_button.dart';
 // import 'package:coupony/core/widgets/loading/loading.dart'; // Disabled - using inline button loading
 import 'package:coupony/core/utils/message_formatter.dart';
+import 'package:coupony/core/extensions/snackbar_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -54,30 +55,7 @@ class OnboardingCategorySelectionView extends StatelessWidget {
 
             // Show success message when saved (only if not null)
             if (state.successMessageKey != null && state.successMessageKey!.isNotEmpty) {
-              ScaffoldMessenger.of(context).hideCurrentSnackBar(); // Hide any existing snackbar
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    context.getLocalizedMessage(state.successMessageKey),
-                    style: AppTextStyles.customStyle(
-                      context,
-                      fontSize: 14,
-                      color: AppColors.surface,
-                    ),
-                  ),
-                  backgroundColor: AppColors.primary,
-                  behavior: SnackBarBehavior.floating,
-                  margin: EdgeInsetsDirectional.only(
-                    bottom: 100.h,
-                    start: 20.w,
-                    end: 20.w,
-                  ),
-                  duration: const Duration(seconds: 2),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                ),
-              );
+              context.showSuccessSnackBar(context.getLocalizedMessage(state.successMessageKey));
               // Clear message immediately after showing
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (context.mounted) {
@@ -88,12 +66,7 @@ class OnboardingCategorySelectionView extends StatelessWidget {
 
             // Show error message if save failed
             if (state.errorMessageKey != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(context.getLocalizedMessage(state.errorMessageKey)),
-                  backgroundColor: AppColors.error,
-                ),
-              );
+              context.showErrorSnackBar(context.getLocalizedMessage(state.errorMessageKey));
             }
           },
           builder: (context, state) {

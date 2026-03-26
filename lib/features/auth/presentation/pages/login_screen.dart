@@ -11,6 +11,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/message_formatter.dart';
 import '../../../../core/widgets/buttons/app_primary_button.dart';
+import '../../../../core/extensions/snackbar_extension.dart';
 import '../cubit/auth_state.dart';
 import '../cubit/login_cubit.dart';
 import '../widgets/auth_text_field.dart';
@@ -46,20 +47,10 @@ class LoginScreen extends HookWidget {
       // ── Listener: side-effects only (snackbars + navigation) ──────────────
       listener: (context, state) {
         if (state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.getLocalizedMessage(state.errorMessage)),
-              backgroundColor: AppColors.error,
-            ),
-          );
+          context.showErrorSnackBar(context.getLocalizedMessage(state.errorMessage));
         }
         if (state.successMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.getLocalizedMessage(state.successMessage)),
-              backgroundColor: AppColors.primary,
-            ),
-          );
+          context.showSuccessSnackBar(context.getLocalizedMessage(state.successMessage));
         }
         switch (state.navSignal) {
           case AuthNavigation.toHome:

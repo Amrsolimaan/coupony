@@ -12,11 +12,21 @@ class PasswordResetResponseModel extends Equatable {
   });
 
   /// Handles both flat and nested `{ data: {...} }` responses.
+  /// If expires_at is not provided, defaults to 5 minutes from now.
   factory PasswordResetResponseModel.fromJson(Map<String, dynamic> json) {
     final data = json['data'] as Map<String, dynamic>? ?? json;
+    
+    // Handle case where API doesn't return expiry info
+    final expiresAtStr = data['expires_at'] as String?;
+    final expiresInMins = (data['expires_in_minutes'] as num?)?.toDouble() ?? 5.0;
+    
+    final expiresAt = expiresAtStr != null
+        ? DateTime.parse(expiresAtStr)
+        : DateTime.now().add(Duration(minutes: expiresInMins.toInt()));
+    
     return PasswordResetResponseModel(
-      expiresAt:        DateTime.parse(data['expires_at'] as String),
-      expiresInMinutes: (data['expires_in_minutes'] as num?)?.toDouble() ?? 5.0,
+      expiresAt:        expiresAt,
+      expiresInMinutes: expiresInMins,
     );
   }
 

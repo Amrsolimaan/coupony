@@ -1103,7 +1103,7 @@ abstract class AppLocalizations {
   /// No description provided for @reset_password_success.
   ///
   /// In en, this message translates to:
-  /// **'Password reset successfully. You can now log in'**
+  /// **'Password reset successfully'**
   String get reset_password_success;
 
   /// No description provided for @reset_password_error_invalid_token.
@@ -1127,7 +1127,7 @@ abstract class AppLocalizations {
   /// No description provided for @reset_password_strength_digit.
   ///
   /// In en, this message translates to:
-  /// **'At least one number (0-9) or symbol'**
+  /// **'At least one number (0-9) and symbol'**
   String get reset_password_strength_digit;
 
   /// No description provided for @reset_password_strength_uppercase.

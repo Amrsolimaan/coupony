@@ -40,9 +40,9 @@ abstract class AuthRepository {
 
   Future<Either<Failure, Unit>> logout();
 
-  /// POST /auth/otp/verify (purpose: reset_password) — validates the code
-  /// server-side. The raw OTP code is used as reset_token for /password/reset.
-  Future<Either<Failure, Unit>> verifyResetCode({
+  /// POST /auth/password/verify-otp — validates the OTP code and returns
+  /// a reset_token that must be used in the /password/reset endpoint.
+  Future<Either<Failure, String>> verifyResetCode({
     required String email,
     required String code,
   });

@@ -545,8 +545,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reset_password_resend_code => 'إعادة إرسال الرمز';
 
   @override
-  String get reset_password_success =>
-      'تم إعادة تعيين كلمة المرور بنجاح. يمكنك تسجيل الدخول الآن';
+  String get reset_password_success => 'تم تحديث كلمة المرور بنجاح';
 
   @override
   String get reset_password_error_invalid_token =>
@@ -560,7 +559,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reset_password_strength_min_length => '8 أحرف على الأقل';
 
   @override
-  String get reset_password_strength_digit => 'رقم واحد على الأقل (0-9) أو رمز';
+  String get reset_password_strength_digit => 'رقم واحد على الأقل (0-9) و رمز';
 
   @override
   String get reset_password_strength_uppercase =>

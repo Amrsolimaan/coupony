@@ -5,7 +5,7 @@ class AppColors {
   AppColors._();
 
   // Primary Brand Colors (Updated to Main Orange)
-  static const Color primary = Color(0xFFFF5F01); // اللون الأساسي المطلوب
+  static const Color primary = Color.from(alpha: 1, red: 1, green: 0.373, blue: 0.004); // اللون الأساسي المطلوب
   static const Color primary_of_saller = Color(0xFF204F88); // اللون الأساسي المطلوب
   static const Color primaryDark = Color(0xFFD94E00);
   static const Color primaryLight = Color(0xFFFF8540);
