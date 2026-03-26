@@ -4,6 +4,7 @@ import '../constants/api_constants.dart';
 import 'interceptors/auth_interceptor.dart';
 import 'interceptors/logging_interceptor.dart';
 import 'interceptors/error_interceptor.dart';
+import 'network_interceptor.dart';
 
 class DioClient {
   late final Dio _dio;
@@ -29,6 +30,7 @@ class DioClient {
     _dio.interceptors.addAll([
       AuthInterceptor(secureStorage),
       ErrorInterceptor(),
+      NetworkMonitorInterceptor(),
       LoggingInterceptor(), // Only in debug mode
     ]);
   }

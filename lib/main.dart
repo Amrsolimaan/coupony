@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:coupony/app.dart';
 import 'package:coupony/core/storage/local_cache_service.dart';
+import 'package:coupony/core/network/network_monitor.dart';
 import 'package:coupony/features/onboarding/data/models/user_preferences_model.dart';
 import 'package:coupony/features/permissions/data/models/permission_status_model.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,9 @@ void main() async {
 
   // 4. تهيئة نسخة الـ Cache الموجودة داخل الحاوية (sl)
   await di.sl<LocalCacheService>().init();
+
+  // 5. Initialize Network Monitor for automatic slow network detection
+  await NetworkMonitor.instance.initialize();
 
   runApp(const MyApp());
 }

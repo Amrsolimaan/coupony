@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:ui';
 import '../../theme/app_colors.dart';
 
-enum SnackBarType { success, error, warning, info }
+enum SnackBarType { success, error, warning, info, networkSlow }
 
 class AppSnackBar {
   AppSnackBar._();
@@ -36,6 +36,7 @@ class AppSnackBar {
           break;
         case SnackBarType.warning:
         case SnackBarType.info:
+        case SnackBarType.networkSlow:
           HapticFeedback.selectionClick();
           break;
       }
@@ -112,6 +113,13 @@ class AppSnackBar {
           softColor: AppColors.infoSoft,
           icon: Icons.info_rounded,
           glowIntensity: 0.4,
+        );
+      case SnackBarType.networkSlow:
+        return _SnackBarConfig(
+          primaryColor: AppColors.networkSlow,
+          softColor: AppColors.networkSlowSoft,
+          icon: Icons.signal_wifi_bad,
+          glowIntensity: 0.5,
         );
     }
   }

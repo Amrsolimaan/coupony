@@ -37,4 +37,13 @@ extension SnackBarExtension on BuildContext {
       duration: duration ?? const Duration(seconds: 3),
     );
   }
+
+  void showNetworkSlowSnackBar(String message, {Duration? duration}) {
+    AppSnackBar.show(
+      this,
+      message: message,
+      type: SnackBarType.networkSlow,
+      duration: duration ?? const Duration(seconds: 5),
+    );
+  }
 }

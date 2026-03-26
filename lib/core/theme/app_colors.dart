@@ -47,6 +47,10 @@ class AppColors {
   // Location & Map Colors
   static const Color locationMarker = Color(0xFF7ED957); // Green marker for map
 
+  // Network Status Colors
+  static const Color networkSlow = Color(0xFFFF8C00);      // dark orange
+  static const Color networkSlowSoft = Color(0xFFFFAD33);  // soft orange
+
   // Merchant-Specific Colors
   static const Color merchantPrimary = Color(0xFF1976D2);
   static const Color merchantAccent = Color(0xFFFFA726);

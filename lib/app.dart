@@ -1,5 +1,6 @@
 import 'package:coupony/core/localization/l10n/app_localizations.dart';
 import 'package:coupony/core/localization/locale_cubit.dart';
+import 'package:coupony/core/network/global_network_listener.dart';
 import 'package:coupony/features/permissions/presentation/cubit/permission_flow_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // إضافة استيراد Bloc
@@ -32,7 +33,9 @@ class MyApp extends StatelessWidget {
               create: (context) => sl<PermissionFlowCubit>(),
             ),
           ],
-          child: const AppView(),
+          child: GlobalNetworkListener(
+            child: const AppView(),
+          ),
         );
       },
     );

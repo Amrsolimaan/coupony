@@ -579,4 +579,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reset_password_continue_login => 'Continue to Login';
+
+  @override
+  String get network_slow_warning => 'Slow internet connection detected';
+
+  @override
+  String get network_very_slow_warning =>
+      'Very slow internet — some features may be delayed';
 }

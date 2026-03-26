@@ -574,4 +574,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get reset_password_continue_login => 'متابعة تسجيل الدخول';
+
+  @override
+  String get network_slow_warning => 'تم اكتشاف اتصال إنترنت بطيء';
+
+  @override
+  String get network_very_slow_warning =>
+      'الإنترنت بطيء جداً — قد تتأخر بعض الميزات';
 }

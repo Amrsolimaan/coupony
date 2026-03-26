@@ -1153,6 +1153,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue to Login'**
   String get reset_password_continue_login;
+
+  /// In en: 'Slow internet connection detected'
+  String get network_slow_warning;
+
+  /// In en: 'Very slow internet — some features may be delayed'
+  String get network_very_slow_warning;
 }
 
 class _AppLocalizationsDelegate
