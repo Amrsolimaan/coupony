@@ -330,7 +330,7 @@ class LocalCacheService {
   // BASIC CACHE OPERATIONS (TEXT/JSON DATA)
   // ═══════════════════════════════════════════════════════════
 
-  /// Generic get with automatic TTL validation
+  /// Generic get with automatic TTL validation and type safety
   Future<T?> get<T>({
     required String boxName,
     required String key,
@@ -354,7 +354,23 @@ class LocalCacheService {
         }
       }
 
-      return box.get(key);
+      final value = box.get(key);
+      
+      // ✅ PHASE 1 FIX: Type safety validation
+      if (value != null) {
+        // Check if the value is of the expected type T
+        try {
+          final typedValue = value as T;
+          return typedValue;
+        } catch (e) {
+          _logger.w('⚠️ Type mismatch for key $key: expected $T, got ${value.runtimeType}');
+          // Clean up the invalid entry
+          await delete(boxName: boxName, key: key);
+          return null;
+        }
+      }
+
+      return value;
     } catch (e) {
       _logger.e('❌ Error getting cache for key $key: $e');
       return null;
@@ -385,15 +401,21 @@ class LocalCacheService {
     }
   }
 
-  /// Delete specific key
+  /// Delete specific key with timestamp cleanup
   Future<void> delete({required String boxName, required String key}) async {
     try {
       final box = await _getBox(boxName);
       await box.delete(key);
 
-      // Also delete timestamp
-      final timestampKey = '${key}_timestamp';
-      await box.delete(timestampKey);
+      // Also delete timestamp from separate timestamp box
+      try {
+        final timestampBox = await _getBox<String>('${boxName}_timestamps');
+        final timestampKey = '${key}_timestamp';
+        await timestampBox.delete(timestampKey);
+      } catch (e) {
+        // Timestamp deletion is not critical, just log
+        _logger.d('Note: Could not delete timestamp for $key: $e');
+      }
 
       _logger.d('🗑️ Deleted cache for key: $key');
     } catch (e) {
@@ -567,31 +589,33 @@ class LocalCacheService {
   // TTL MANAGEMENT (Time-To-Live)
   // ═══════════════════════════════════════════════════════════
 
-  /// Set timestamp for cache entry
+  /// Set timestamp for cache entry with type safety
   Future<void> _setCacheTimestamp(String boxName, String key) async {
     try {
-      final box = await _getBox(boxName);
+      // Use a separate timestamp box to avoid type conflicts
+      final timestampBox = await _getBox<String>('${boxName}_timestamps');
       final timestampKey = '${key}_timestamp';
-      await box.put(timestampKey, DateTime.now().toIso8601String());
+      await timestampBox.put(timestampKey, DateTime.now().toIso8601String());
     } catch (e) {
-      _logger.e('❌ Error setting cache timestamp: $e');
+      _logger.e('⛔ ❌ Error setting cache timestamp: $e');
     }
   }
 
-  /// Check if cache is still valid based on TTL
+  /// Check if cache is still valid based on TTL with type safety
   Future<bool> _isCacheValid(
     String boxName,
     String key,
     Duration maxAge,
   ) async {
     try {
-      final box = await _getBox(boxName);
+      // Use the separate timestamp box
+      final timestampBox = await _getBox<String>('${boxName}_timestamps');
       final timestampKey = '${key}_timestamp';
-      final timestampStr = box.get(timestampKey);
+      final timestampStr = timestampBox.get(timestampKey);
 
       if (timestampStr == null) return false;
 
-      final timestamp = DateTime.tryParse(timestampStr as String);
+      final timestamp = DateTime.tryParse(timestampStr);
       if (timestamp == null) return false;
 
       final age = DateTime.now().difference(timestamp);

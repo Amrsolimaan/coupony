@@ -10,6 +10,9 @@ class UserEntity extends Equatable {
   final String? accessToken;
   final String? refreshToken;
   final String? fcmToken;
+  /// Populated from the login/register API response.
+  /// true = backend already has the user's onboarding preferences.
+  final bool isOnboardingCompleted;
 
   const UserEntity({
     required this.id,
@@ -21,6 +24,7 @@ class UserEntity extends Equatable {
     this.accessToken,
     this.refreshToken,
     this.fcmToken,
+    this.isOnboardingCompleted = false,
   });
 
   /// Full display name
@@ -30,5 +34,6 @@ class UserEntity extends Equatable {
   List<Object?> get props => [
     id, firstName, lastName, email, phoneNumber,
     role, accessToken, refreshToken, fcmToken,
+    isOnboardingCompleted,
   ];
 }

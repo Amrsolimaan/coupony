@@ -4,13 +4,11 @@ import '../../../../core/repositories/base_repository.dart';
 import '../data_sources/onboarding_local_data_source.dart';
 import '../data_sources/onboarding_remote_data_source.dart';
 import '../models/user_preferences_model.dart';
+import '../../domain/entities/onboarding_user_type.dart';
 import '../../domain/repositories/onboarding_repository.dart';
 import '../../domain/entities/user_preferences_entity.dart';
+import '../../../../core/errors/exceptions.dart';
 
-/// Onboarding Repository Implementation
-/// 
-/// Extends BaseRepository for network/cache strategies and centralized error handling.
-/// Handles user preferences storage (local) and syncing (remote).
 class OnboardingRepositoryImpl extends BaseRepository
     implements OnboardingRepository {
   final OnboardingLocalDataSource localDataSource;
@@ -23,6 +21,8 @@ class OnboardingRepositoryImpl extends BaseRepository
     required super.cacheService,
   });
 
+  // ── Local persistence ──────────────────────────────────────────────────
+
   @override
   Future<Either<Failure, void>> savePreferencesLocally(
     List<String> selectedCategories, {
@@ -31,17 +31,14 @@ class OnboardingRepositoryImpl extends BaseRepository
     List<String>? shoppingStyles,
   }) async {
     try {
-      // Create preferences model with all data
       final preferences = UserPreferencesModel(
         selectedCategories: selectedCategories,
         budgetPreference: budgetPreference,
         budgetSliderValue: budgetSliderValue,
         shoppingStyles: shoppingStyles,
         timestamp: DateTime.now(),
-        isSynced: false, // Not synced yet (pre-auth)
+        isSynced: false,
       );
-
-      // Save to local storage
       return await localDataSource.savePreferences(preferences);
     } catch (e) {
       return Left(CacheFailure('Failed to save preferences: $e'));
@@ -67,51 +64,36 @@ class OnboardingRepositoryImpl extends BaseRepository
     return await localDataSource.hasPreferences();
   }
 
+  // ── Backend submission ─────────────────────────────────────────────────
+
   @override
-  Future<Either<Failure, void>> syncPreferencesToBackend(
-    String authToken,
-  ) {
+  Future<Either<Failure, void>> submitOnboardingToApi({
+    required OnboardingUserType userType,
+    required String authToken,
+  }) {
     return executeOnlineOperation(
       operation: () async {
-        // Get local preferences
-        final preferencesResult = await getLocalPreferences();
+        // 1. Read the locally saved preferences (must exist at this point)
+        final preferencesResult = await localDataSource.getPreferences();
 
-        return await preferencesResult.fold(
-          (failure) => throw failure,
-          (preferences) async {
-            if (preferences == null) {
-              throw const CacheFailure('No local preferences to sync');
-            }
-
-            // Already synced? Skip
-            if (preferences.isSynced) {
-              return;
-            }
-
-            // Sync to backend
-            // ══════════════════════════════════════════════════════
-            // TODO: Uncomment when API is available
-            // ══════════════════════════════════════════════════════
-            // final syncResult = await remoteDataSource.syncPreferences(
-            //   preferences,
-            //   authToken,
-            // );
-            //
-            // if (syncResult.isLeft()) {
-            //   throw syncResult.fold((f) => f, (_) => UnexpectedFailure(''));
-            // }
-            //
-            // // Mark as synced in local storage
-            // final updatedPreferences = preferences.copyWith(isSynced: true);
-            // await localDataSource.savePreferences(updatedPreferences);
-            // ══════════════════════════════════════════════════════
-
-            // Placeholder: Mark as synced without API call
-            final updatedEntity = preferences.copyWith(isSynced: true);
-            final updatedModel = UserPreferencesModel.fromEntity(updatedEntity);
-            await localDataSource.savePreferences(updatedModel);
+        final model = preferencesResult.fold(
+          (failure) => throw CacheException(failure.message),
+          (m) {
+            if (m == null) throw const CacheException('No local preferences to submit');
+            return m;
           },
         );
+
+        // 2. POST to backend — throws ServerException on failure,
+        //    which executeOnlineOperation maps via _handleError.
+        await remoteDataSource.submitOnboarding(
+          preferences: model,
+          userType: userType,
+        );
+
+        // 3. Mark as synced in Hive — cubit persists the account-level flag
+        final synced = model.copyWith(isSynced: true);
+        await localDataSource.savePreferences(synced);
       },
     );
   }

@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/network_info.dart';
 import '../../../../core/repositories/base_repository.dart';
@@ -139,16 +140,24 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
     try {
       // Best-effort API call — DioClient already has the token in headers
       await remoteDataSource.logout();
+    } catch (_) {
+      // Network failure is non-fatal for logout — always clear local state
+    } finally {
       // Delete FCM token from Firebase (non-blocking)
       notificationService.deleteFCMToken();
-      // Always clear local credentials
+
+      // 1. Clear SecureStorage (tokens, userId, role, fcmToken)
       await localDataSource.clearUser();
-      return const Right(unit);
-    } catch (e) {
-      // Even on unexpected error, clear local state
-      await localDataSource.clearUser();
-      return const Right(unit);
+
+      // 2. Clear SharedPreferences session flags (isGuest, onboardingCompleted)
+      await localDataSource.clearSessionFlags();
+
+      // 3. Clear Hive: onboarding preferences box
+      //    Without this, a second user logging in on the same device would
+      //    inherit the previous user's cached preferences.
+      await clearFeatureCache(StorageKeys.onboardingPreferencesBox);
     }
+    return const Right(unit);
   }
 
   // ════════════════════════════════════════════════════════

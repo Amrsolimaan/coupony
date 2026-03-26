@@ -41,12 +41,15 @@ class OnboardingFlowState extends Equatable {
   // ════════════════════════════════════════════════════════
   // FLOW STATE
   // ════════════════════════════════════════════════════════
-  final bool isSaving; // Loading state during save
-  final String? errorMessageKey; // Error message key for localization
-  final String? successMessageKey; // Success message key for localization
-  final bool isCompleted; // All steps completed and saved
-  final bool isSkipped; // User skipped onboarding
-  final bool hasChanges; // Track if user made any changes
+  final bool isSaving;           // Local Hive save in progress
+  final bool isSubmittingToApi;  // API call in progress (Step 3 submit)
+  final bool isApiSubmitted;     // API returned 200 OK
+  final String? errorMessageKey;   // Localized error key
+  final String? apiErrorKey;       // API-specific error (retryable)
+  final String? successMessageKey; // Localized success key
+  final bool isCompleted; // All steps completed and saved locally
+  final bool isSkipped;   // User skipped onboarding for this session
+  final bool hasChanges;  // Unsaved in-progress changes
 
   const OnboardingFlowState({
     this.currentStep = 1,
@@ -63,7 +66,10 @@ class OnboardingFlowState extends Equatable {
     this.isStep3Valid = false,
     // Flow
     this.isSaving = false,
+    this.isSubmittingToApi = false,
+    this.isApiSubmitted = false,
     this.errorMessageKey,
+    this.apiErrorKey,
     this.successMessageKey,
     this.isCompleted = false,
     this.isSkipped = false,
@@ -86,32 +92,38 @@ class OnboardingFlowState extends Equatable {
     bool? isStep3Valid,
     // Flow
     bool? isSaving,
+    bool? isSubmittingToApi,
+    bool? isApiSubmitted,
     String? errorMessageKey,
+    String? apiErrorKey,
     String? successMessageKey,
     bool? isCompleted,
     bool? isSkipped,
     bool? hasChanges,
   }) {
     return OnboardingFlowState(
-      currentStep: currentStep ?? this.currentStep,
+      currentStep:      currentStep      ?? this.currentStep,
       navigationSignal: navigationSignal ?? this.navigationSignal,
       // Step 1
       selectedCategories: selectedCategories ?? this.selectedCategories,
-      isStep1Valid: isStep1Valid ?? this.isStep1Valid,
+      isStep1Valid:       isStep1Valid       ?? this.isStep1Valid,
       // Step 2
-      budgetPreference: budgetPreference ?? this.budgetPreference,
+      budgetPreference:  budgetPreference  ?? this.budgetPreference,
       budgetSliderValue: budgetSliderValue ?? this.budgetSliderValue,
-      isStep2Valid: isStep2Valid ?? this.isStep2Valid,
+      isStep2Valid:      isStep2Valid      ?? this.isStep2Valid,
       // Step 3
       shoppingStyles: shoppingStyles ?? this.shoppingStyles,
-      isStep3Valid: isStep3Valid ?? this.isStep3Valid,
+      isStep3Valid:   isStep3Valid   ?? this.isStep3Valid,
       // Flow
-      isSaving: isSaving ?? this.isSaving,
-      errorMessageKey: errorMessageKey,
+      isSaving:          isSaving          ?? this.isSaving,
+      isSubmittingToApi: isSubmittingToApi ?? this.isSubmittingToApi,
+      isApiSubmitted:    isApiSubmitted    ?? this.isApiSubmitted,
+      errorMessageKey:   errorMessageKey,   // nullable — intentional passthrough
+      apiErrorKey:       apiErrorKey,
       successMessageKey: successMessageKey,
       isCompleted: isCompleted ?? this.isCompleted,
-      isSkipped: isSkipped ?? this.isSkipped,
-      hasChanges: hasChanges ?? this.hasChanges,
+      isSkipped:   isSkipped   ?? this.isSkipped,
+      hasChanges:  hasChanges  ?? this.hasChanges,
     );
   }
 
@@ -151,7 +163,7 @@ class OnboardingFlowState extends Equatable {
   @override
   List<Object?> get props => [
     currentStep,
-    navigationSignal, // ✅ Must be included so BlocConsumer detects signal changes
+    navigationSignal,
     selectedCategories,
     isStep1Valid,
     budgetPreference,
@@ -160,7 +172,10 @@ class OnboardingFlowState extends Equatable {
     shoppingStyles,
     isStep3Valid,
     isSaving,
+    isSubmittingToApi,
+    isApiSubmitted,
     errorMessageKey,
+    apiErrorKey,
     successMessageKey,
     isCompleted,
     isSkipped,

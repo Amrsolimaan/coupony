@@ -204,44 +204,53 @@ class OtpScreen extends HookWidget {
                     SizedBox(height: 28.h),
 
                     // ── Title ──────────────────────────────────────────────
-                    Text(
-                      screenTitle,
-                      style: TextStyle(
-                        fontFamily: AppTextStyles.Main_Font_arabic,
-                        fontSize: 26.sp,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                        height: 1.3,
-                        letterSpacing: -1,
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        screenTitle,
+                        style: TextStyle(
+                          fontFamily: AppTextStyles.Main_Font_arabic,
+                          fontSize: 26.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                          height: 1.3,
+                          letterSpacing: -1,
+                        ),
+                        textAlign: TextAlign.start,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 12.h),
 
                     // ── Subtitle ───────────────────────────────────────────
-                    Text(
-                      l10n.otp_screen_subtitle,
-                      style: TextStyle(
-                        fontFamily: AppTextStyles.Main_Font_arabic,
-                        fontSize: 14.sp,
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w400,
-                        height: 1.5,
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        l10n.otp_screen_subtitle,
+                        style: TextStyle(
+                          fontFamily: AppTextStyles.Main_Font_arabic,
+                          fontSize: 14.sp,
+                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w400,
+                          height: 1.5,
+                        ),
+                        textAlign: TextAlign.start,
                       ),
-                      textAlign: TextAlign.end,
                     ),
                     SizedBox(height: 4.h),
 
                     // ── Email address ──────────────────────────────────────
-                    Text(
-                      displayEmail,
-                      style: TextStyle(
-                        fontFamily: AppTextStyles.Main_Font_english,
-                        fontSize: 14.sp,
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w600,
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        displayEmail,
+                        style: TextStyle(
+                          fontFamily: AppTextStyles.Main_Font_english,
+                          fontSize: 14.sp,
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.start,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 32.h),
 

@@ -72,7 +72,22 @@ class UserPreferencesModel extends UserPreferencesEntity {
     );
   }
 
-  /// Convert to JSON (for API)
+  /// Serialize for the onboarding submission endpoints.
+  ///
+  /// Field names match the Postman contract exactly:
+  ///   POST /api/v1/on-boarding/customer  |  /api/v1/on-boarding/seller
+  ///   { "interesting_offers": [...], "shopping_style": [...], "budget": "..." }
+  ///
+  /// Do NOT confuse with [toJson()] which uses Hive-friendly field names.
+  Map<String, dynamic> toApiJson() {
+    return {
+      'interesting_offers': selectedCategories,
+      'shopping_style':     shoppingStyles ?? [],
+      'budget':             budgetPreference ?? '',
+    };
+  }
+
+  /// Convert to JSON (for Hive internal storage — not for API)
   Map<String, dynamic> toJson() {
     return {
       'selected_categories': selectedCategories,

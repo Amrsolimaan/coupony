@@ -1,92 +1,143 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'dart:ui';
 import '../../theme/app_colors.dart';
 
 enum SnackBarType { success, error, warning, info }
 
 class AppSnackBar {
   AppSnackBar._();
+  
+  // مدير مركزي للـ snackbars النشطة
+  static OverlayEntry? _currentOverlay;
+  static bool _isShowing = false;
 
   static void show(
     BuildContext context, {
     required String message,
     required SnackBarType type,
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 4),
+    bool enableHaptic = true,
   }) {
     final config = _getConfig(type);
     
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    // إخفاء أي snackbar حالي فوراً
+    _hideCurrentSnackBar();
     
+    // Haptic feedback for better UX
+    if (enableHaptic) {
+      switch (type) {
+        case SnackBarType.success:
+          HapticFeedback.lightImpact();
+          break;
+        case SnackBarType.error:
+          HapticFeedback.heavyImpact();
+          break;
+        case SnackBarType.warning:
+        case SnackBarType.info:
+          HapticFeedback.selectionClick();
+          break;
+      }
+    }
+    
+    // إنشاء snackbar جديد
+    _showNewSnackBar(context, message, config, duration);
+  }
+
+  // إخفاء الـ snackbar الحالي فوراً
+  static void _hideCurrentSnackBar() {
+    if (_currentOverlay != null && _isShowing) {
+      _currentOverlay!.remove();
+      _currentOverlay = null;
+      _isShowing = false;
+    }
+  }
+
+  // عرض snackbar جديد
+  static void _showNewSnackBar(
+    BuildContext context,
+    String message,
+    _SnackBarConfig config,
+    Duration duration,
+  ) {
     final overlay = Overlay.of(context);
-    late OverlayEntry overlayEntry;
     
-    overlayEntry = OverlayEntry(
-      builder: (context) => _AnimatedSnackBar(
+    _currentOverlay = OverlayEntry(
+      builder: (context) => _GlassmorphicSnackBar(
         message: message,
         config: config,
         duration: duration,
-        onDismiss: () => overlayEntry.remove(),
+        onDismiss: () {
+          _hideCurrentSnackBar();
+        },
       ),
     );
     
-    overlay.insert(overlayEntry);
+    _isShowing = true;
+    overlay.insert(_currentOverlay!);
+  }
+
+  // إخفاء جميع الـ snackbars (للاستخدام الخارجي)
+  static void hideAll() {
+    _hideCurrentSnackBar();
   }
 
   static _SnackBarConfig _getConfig(SnackBarType type) {
     switch (type) {
       case SnackBarType.success:
         return _SnackBarConfig(
-          backgroundColor: AppColors.success,
+          primaryColor: AppColors.success,
+          softColor: AppColors.successSoft,
           icon: Icons.check_circle_rounded,
-          iconColor: Colors.white,
-          textColor: Colors.white,
+          glowIntensity: 0.6,
         );
       case SnackBarType.error:
         return _SnackBarConfig(
-          backgroundColor: AppColors.error,
+          primaryColor: AppColors.error,
+          softColor: AppColors.errorSoft,
           icon: Icons.error_rounded,
-          iconColor: Colors.white,
-          textColor: Colors.white,
+          glowIntensity: 0.8,
         );
       case SnackBarType.warning:
         return _SnackBarConfig(
-          backgroundColor: AppColors.warning,
+          primaryColor: AppColors.warning,
+          softColor: AppColors.warningSoft,
           icon: Icons.warning_rounded,
-          iconColor: const Color(0xFF1A1A1A),
-          textColor: const Color(0xFF1A1A1A),
+          glowIntensity: 0.5,
         );
       case SnackBarType.info:
         return _SnackBarConfig(
-          backgroundColor: AppColors.info,
+          primaryColor: AppColors.info,
+          softColor: AppColors.infoSoft,
           icon: Icons.info_rounded,
-          iconColor: Colors.white,
-          textColor: Colors.white,
+          glowIntensity: 0.4,
         );
     }
   }
 }
 
 class _SnackBarConfig {
-  final Color backgroundColor;
+  final Color primaryColor;
+  final Color softColor;
   final IconData icon;
-  final Color iconColor;
-  final Color textColor;
+  final double glowIntensity;
 
   _SnackBarConfig({
-    required this.backgroundColor,
+    required this.primaryColor,
+    required this.softColor,
     required this.icon,
-    required this.iconColor,
-    required this.textColor,
+    required this.glowIntensity,
   });
 }
 
-class _AnimatedSnackBar extends StatefulWidget {
+class _GlassmorphicSnackBar extends StatefulWidget {
   final String message;
   final _SnackBarConfig config;
   final Duration duration;
   final VoidCallback onDismiss;
 
-  const _AnimatedSnackBar({
+  const _GlassmorphicSnackBar({
     required this.message,
     required this.config,
     required this.duration,
@@ -94,66 +145,115 @@ class _AnimatedSnackBar extends StatefulWidget {
   });
 
   @override
-  State<_AnimatedSnackBar> createState() => _AnimatedSnackBarState();
+  State<_GlassmorphicSnackBar> createState() => _GlassmorphicSnackBarState();
 }
 
-class _AnimatedSnackBarState extends State<_AnimatedSnackBar>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+class _GlassmorphicSnackBarState extends State<_GlassmorphicSnackBar>
+    with TickerProviderStateMixin {
+  late AnimationController _slideController;
+  late AnimationController _glowController;
+  late AnimationController _progressController;
+  
   late Animation<Offset> _slideAnimation;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+  late Animation<double> _glowAnimation;
+  late Animation<double> _progressAnimation;
 
   @override
   void initState() {
     super.initState();
     
-    _controller = AnimationController(
+    _slideController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 600), // أسرع قليلاً
     );
 
+    _glowController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500), // أبطأ للنبض
+    );
+
+    _progressController = AnimationController(
+      vsync: this,
+      duration: widget.duration,
+    );
+
+    // Slide animation with smooth curve
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 1),
+      begin: const Offset(0, 1.0), // أقل مبالغة
       end: Offset.zero,
     ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.elasticOut,
+      parent: _slideController,
+      curve: Curves.easeOutCubic, // منحنى أنعم
     ));
 
+    // Fade animation
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+      parent: _slideController,
+      curve: const Interval(0.0, 0.8, curve: Curves.easeOut),
     ));
 
+    // Scale animation with subtle bounce
     _scaleAnimation = Tween<double>(
-      begin: 0.8,
+      begin: 0.9, // أقل مبالغة
       end: 1.0,
     ).animate(CurvedAnimation(
-      parent: _controller,
+      parent: _slideController,
       curve: Curves.easeOutBack,
     ));
 
-    _controller.forward();
+    // Glow pulse animation
+    _glowAnimation = Tween<double>(
+      begin: 0.4,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _glowController,
+      curve: Curves.easeInOut,
+    ));
 
-    Future.delayed(widget.duration, () {
-      if (mounted) {
+    // Progress animation
+    _progressAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(
+      parent: _progressController,
+      curve: Curves.linear,
+    ));
+
+    // Start animations
+    _slideController.forward();
+    _glowController.repeat(reverse: true);
+    _progressController.forward();
+
+    // Auto dismiss
+    _progressController.addStatusListener((status) {
+      if (status == AnimationStatus.completed && mounted) {
         _dismiss();
       }
     });
   }
 
   Future<void> _dismiss() async {
-    await _controller.reverse();
-    widget.onDismiss();
+    _glowController.stop();
+    _progressController.stop();
+    
+    // إخفاء سريع وناعم
+    await _slideController.reverse();
+    
+    if (mounted) {
+      widget.onDismiss();
+    }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _slideController.dispose();
+    _glowController.dispose();
+    _progressController.dispose();
     super.dispose();
   }
 
@@ -162,99 +262,144 @@ class _AnimatedSnackBarState extends State<_AnimatedSnackBar>
     final bottomPadding = MediaQuery.of(context).padding.bottom;
     
     return Positioned(
-      left: 20.w,
-      right: 20.w,
-      bottom: bottomPadding + 20.h,
+      left: 16.w,
+      right: 16.w,
+      bottom: bottomPadding + 24.h,
       child: SlideTransition(
         position: _slideAnimation,
         child: FadeTransition(
           opacity: _fadeAnimation,
           child: ScaleTransition(
             scale: _scaleAnimation,
-            child: Material(
-              color: Colors.transparent,
-              child: GestureDetector(
-                onVerticalDragEnd: (details) {
-                  if (details.primaryVelocity! < -500) {
-                    _dismiss();
-                  }
-                },
+            child: _GlassContainer(
+              config: widget.config,
+              glowAnimation: _glowAnimation,
+              progressAnimation: _progressAnimation,
+              onDismiss: _dismiss,
+              child: _SnackBarContent(
+                message: widget.message,
+                config: widget.config,
+                onDismiss: _dismiss,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GlassContainer extends StatelessWidget {
+  final _SnackBarConfig config;
+  final Animation<double> glowAnimation;
+  final Animation<double> progressAnimation;
+  final VoidCallback onDismiss;
+  final Widget child;
+
+  const _GlassContainer({
+    required this.config,
+    required this.glowAnimation,
+    required this.progressAnimation,
+    required this.onDismiss,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([glowAnimation, progressAnimation]),
+      builder: (context, _) {
+        return GestureDetector(
+          onVerticalDragEnd: (details) {
+            // سحب لأعلى للإخفاء (أقل حساسية)
+            if (details.primaryVelocity! < -200) {
+              onDismiss();
+            }
+          },
+          onTap: () {
+            // لمسة للإخفاء (اختياري)
+            // onDismiss();
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20.r),
+              boxShadow: [
+                // Colored glow shadow
+                BoxShadow(
+                  color: config.primaryColor.withValues(
+                    alpha: 0.3 * config.glowIntensity * glowAnimation.value,
+                  ),
+                  blurRadius: 24 * glowAnimation.value,
+                  spreadRadius: 2 * glowAnimation.value,
+                  offset: const Offset(0, 8),
+                ),
+                // Depth shadow
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+                // Subtle inner glow
+                BoxShadow(
+                  color: Colors.white.withValues(alpha: 0.1),
+                  blurRadius: 1,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20.r),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
                 child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 14.h,
-                  ),
                   decoration: BoxDecoration(
-                    color: widget.config.backgroundColor,
-                    borderRadius: BorderRadius.circular(16.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: widget.config.backgroundColor.withOpacity(0.4),
-                        blurRadius: 20,
-                        offset: const Offset(0, 8),
-                        spreadRadius: 0,
-                      ),
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        AppColors.glassWhite,
+                        AppColors.glassWhite.withValues(alpha: 0.8),
+                      ],
+                    ),
+                    border: Border.all(
+                      color: AppColors.glassBorder,
+                      width: 1.5,
+                    ),
+                    borderRadius: BorderRadius.circular(20.r),
                   ),
-                  child: Row(
+                  child: Stack(
                     children: [
-                      // Icon with pulse animation
-                      TweenAnimationBuilder<double>(
-                        tween: Tween(begin: 0.0, end: 1.0),
-                        duration: const Duration(milliseconds: 800),
-                        curve: Curves.elasticOut,
-                        builder: (context, value, child) {
-                          return Transform.scale(
-                            scale: value,
-                            child: Container(
-                              padding: EdgeInsets.all(8.w),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                widget.config.icon,
-                                color: widget.config.iconColor,
-                                size: 24.sp,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      SizedBox(width: 12.w),
-                      // Message
-                      Expanded(
-                        child: Text(
-                          widget.message,
-                          style: TextStyle(
-                            color: widget.config.textColor,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
-                            height: 1.4,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                      // Close button
-                      GestureDetector(
-                        onTap: _dismiss,
+                      // Progress indicator
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
                         child: Container(
-                          padding: EdgeInsets.all(4.w),
+                          height: 3.h,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            shape: BoxShape.circle,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(20.r),
+                              bottomRight: Radius.circular(20.r),
+                            ),
                           ),
-                          child: Icon(
-                            Icons.close_rounded,
-                            color: widget.config.iconColor,
-                            size: 18.sp,
+                          child: LinearProgressIndicator(
+                            value: progressAnimation.value,
+                            backgroundColor: Colors.transparent,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              config.primaryColor.withValues(alpha: 0.6),
+                            ),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(20.r),
+                              bottomRight: Radius.circular(20.r),
+                            ),
                           ),
                         ),
+                      ),
+                      // Content
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(20.w, 16.h, 16.w, 19.h),
+                        child: child,
                       ),
                     ],
                   ),
@@ -262,8 +407,113 @@ class _AnimatedSnackBarState extends State<_AnimatedSnackBar>
               ),
             ),
           ),
+        );
+      },
+    );
+  }
+}
+
+class _SnackBarContent extends StatelessWidget {
+  final String message;
+  final _SnackBarConfig config;
+  final VoidCallback onDismiss;
+
+  const _SnackBarContent({
+    required this.message,
+    required this.config,
+    required this.onDismiss,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        // Animated icon with glassmorphic background
+        TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0.0, end: 1.0),
+          duration: const Duration(milliseconds: 1000),
+          curve: Curves.elasticOut,
+          builder: (context, value, child) {
+            return Transform.scale(
+              scale: value,
+              child: Container(
+                width: 44.w,
+                height: 44.w,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      config.primaryColor.withValues(alpha: 0.2),
+                      config.softColor.withValues(alpha: 0.1),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(
+                    color: config.primaryColor.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Icon(
+                  config.icon,
+                  color: config.primaryColor,
+                  size: 24.sp,
+                ),
+              ),
+            );
+          },
         ),
-      ),
+        SizedBox(width: 16.w),
+        // Message text with clean styling
+        Expanded(
+          child: Material(
+            color: Colors.transparent,
+            textStyle: TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w600,
+              height: 1.4,
+              letterSpacing: -0.2,
+              decoration: TextDecoration.none,
+              decorationColor: Colors.transparent,
+            ),
+            child: Text(
+              message,
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w600,
+                height: 1.4,
+                letterSpacing: -0.2,
+                decoration: TextDecoration.none,
+                decorationColor: Colors.transparent,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 12.w),
+        // Close button with glassmorphic effect
+        GestureDetector(
+          onTap: onDismiss,
+          child: Container(
+            width: 32.w,
+            height: 32.w,
+            decoration: BoxDecoration(
+              color: AppColors.glassOverlay,
+              borderRadius: BorderRadius.circular(8.r),
+              border: Border.all(
+                color: AppColors.glassBorder,
+                width: 1,
+              ),
+            ),
+            child: Icon(
+              Icons.close_rounded,
+              color: AppColors.textSecondary,
+              size: 18.sp,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

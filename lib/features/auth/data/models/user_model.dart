@@ -11,6 +11,7 @@ class UserModel extends UserEntity {
     super.accessToken,
     super.refreshToken,
     super.fcmToken,
+    super.isOnboardingCompleted,
   });
 
   /// Handles both flat { first_name, access_token } and nested { data: {...} }
@@ -31,19 +32,21 @@ class UserModel extends UserEntity {
       refreshToken: json['refresh_token'] as String?
                  ?? data['refresh_token'] as String?,
       fcmToken:     data['fcm_token'] as String?,
+      isOnboardingCompleted: data['is_onboarding_completed'] as bool? ?? false,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id':           id,
-    'first_name':   firstName,
-    'last_name':    lastName,
-    'email':        email,
-    'phone_number': phoneNumber,
-    'role':         role,
-    'access_token':  accessToken,
-    'refresh_token': refreshToken,
-    'fcm_token':     fcmToken,
+    'id':                     id,
+    'first_name':             firstName,
+    'last_name':              lastName,
+    'email':                  email,
+    'phone_number':           phoneNumber,
+    'role':                   role,
+    'access_token':           accessToken,
+    'refresh_token':          refreshToken,
+    'fcm_token':              fcmToken,
+    'is_onboarding_completed': isOnboardingCompleted,
   };
 
   UserModel copyWith({
@@ -56,17 +59,19 @@ class UserModel extends UserEntity {
     String? accessToken,
     String? refreshToken,
     String? fcmToken,
+    bool? isOnboardingCompleted,
   }) {
     return UserModel(
-      id:           id           ?? this.id,
-      firstName:    firstName    ?? this.firstName,
-      lastName:     lastName     ?? this.lastName,
-      email:        email        ?? this.email,
-      phoneNumber:  phoneNumber  ?? this.phoneNumber,
-      role:         role         ?? this.role,
-      accessToken:  accessToken  ?? this.accessToken,
-      refreshToken: refreshToken ?? this.refreshToken,
-      fcmToken:     fcmToken     ?? this.fcmToken,
+      id:                   id                   ?? this.id,
+      firstName:            firstName             ?? this.firstName,
+      lastName:             lastName              ?? this.lastName,
+      email:                email                 ?? this.email,
+      phoneNumber:          phoneNumber           ?? this.phoneNumber,
+      role:                 role                  ?? this.role,
+      accessToken:          accessToken           ?? this.accessToken,
+      refreshToken:         refreshToken          ?? this.refreshToken,
+      fcmToken:             fcmToken              ?? this.fcmToken,
+      isOnboardingCompleted: isOnboardingCompleted ?? this.isOnboardingCompleted,
     );
   }
 }

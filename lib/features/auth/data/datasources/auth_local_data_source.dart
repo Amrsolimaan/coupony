@@ -18,6 +18,18 @@ abstract class AuthLocalDataSource {
 
   /// Returns [true] if the user has explicitly entered as a guest.
   Future<bool> getGuestStatus();
+
+  /// Persist the onboarding-completed flag received from the backend.
+  /// Written after a successful POST /api/v1/on-boarding/{role} call.
+  Future<void> cacheOnboardingCompleted(bool completed);
+
+  /// Returns [true] if the backend has previously acknowledged this user's
+  /// onboarding preferences (i.e., the flag was cached after a 200 OK).
+  Future<bool> getOnboardingCompleted();
+
+  /// Wipe ALL non-secure session flags from SharedPreferences.
+  /// Call this during logout so the next login starts with a clean slate.
+  Future<void> clearSessionFlags();
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
@@ -96,5 +108,21 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<bool> getGuestStatus() async {
     return sharedPrefs.getBool(StorageKeys.isGuest) ?? false;
+  }
+
+  @override
+  Future<void> cacheOnboardingCompleted(bool completed) async {
+    await sharedPrefs.setBool(StorageKeys.onboardingCompletedKey, completed);
+  }
+
+  @override
+  Future<bool> getOnboardingCompleted() async {
+    return sharedPrefs.getBool(StorageKeys.onboardingCompletedKey) ?? false;
+  }
+
+  @override
+  Future<void> clearSessionFlags() async {
+    await sharedPrefs.remove(StorageKeys.isGuest);
+    await sharedPrefs.remove(StorageKeys.onboardingCompletedKey);
   }
 }

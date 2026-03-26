@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 import 'package:coupony/config/dependency_injection/injection_container.dart';
 import 'package:coupony/core/constants/storage_keys.dart';
 import 'package:coupony/core/storage/secure_storage_service.dart';
+import 'package:coupony/core/navigation/app_page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Auth screens
@@ -31,7 +32,6 @@ import 'package:coupony/features/auth/presentation/cubit/reset_password_cubit.da
 import 'package:coupony/features/auth/presentation/cubit/auth_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coupony/features/auth/presentation/pages/reset_password_screen.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Onboarding screens
 import 'package:coupony/features/onboarding/presentation/pages/language_selection_page.dart';
@@ -182,15 +182,12 @@ class MerchantDashboardScreen extends StatelessWidget {
   }
 }
 
-// ── Route paths that are always accessible without a token ──────────────────
+// ── Routes accessible WITHOUT an auth token ───────────────────────────────
+// Onboarding routes are intentionally excluded — they require a logged-in user.
+// The redirect guard will send unauthenticated users to /welcome-gateway.
 const _publicRoutes = {
   AppRouter.splash,
   AppRouter.languageSelection,
-  AppRouter.onboarding,
-  AppRouter.onboardingPreferences,
-  AppRouter.onboardingBudget,
-  AppRouter.onboardingShoppingStyle,
-  AppRouter.onboardingCompletionLoading,
   AppRouter.permissionFlow,
   AppRouter.permissionSplash,
   AppRouter.permissionLocationIntro,
@@ -263,96 +260,168 @@ class AppRouter {
     },
 
     routes: [
-      // 1. Splash
+      // 1. Splash (No transition - instant)
       GoRoute(
         path: splash,
-        builder: (context, state) => const AnimatedSplashScreen(),
+        pageBuilder: (context, state) => AppPageTransition.buildNoTransition(
+          context: context,
+          state: state,
+          child: const AnimatedSplashScreen(),
+        ),
       ),
 
       // 2. Language Selection
       GoRoute(
         path: languageSelection,
-        builder: (context, state) => const LanguageSelectionPage(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const LanguageSelectionPage(),
+        ),
       ),
 
       // 3. Onboarding flow
       GoRoute(
         path: onboarding,
-        builder: (context, state) => const OnboardingScreen(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const OnboardingScreen(),
+        ),
       ),
       GoRoute(
         path: onboardingPreferences,
-        builder: (context, state) => const OnboardingCategorySelectionScreen(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const OnboardingCategorySelectionScreen(),
+        ),
       ),
       GoRoute(
         path: onboardingBudget,
-        builder: (context, state) => const OnboardingBudgetScreen(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const OnboardingBudgetScreen(),
+        ),
       ),
       GoRoute(
         path: onboardingShoppingStyle,
-        builder: (context, state) => const OnboardingShoppingStyleScreen(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const OnboardingShoppingStyleScreen(),
+        ),
       ),
       GoRoute(
         path: onboardingCompletionLoading,
-        builder: (context, state) => const OnboardingCompletionLoadingPage(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const OnboardingCompletionLoadingPage(),
+        ),
       ),
 
       // 4. Permission flow
       GoRoute(
         path: permissionFlow,
-        builder: (context, state) => const PermissionFlowWrapper(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const PermissionFlowWrapper(),
+        ),
       ),
       GoRoute(
         path: permissionSplash,
-        builder: (context, state) => const PermissionSplashPage(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const PermissionSplashPage(),
+        ),
       ),
       GoRoute(
         path: permissionLocationIntro,
-        builder: (context, state) => const LocationIntroPage(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const LocationIntroPage(),
+        ),
       ),
       GoRoute(
         path: permissionLocationMap,
-        builder: (context, state) => const LocationMapPage(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const LocationMapPage(),
+        ),
       ),
       GoRoute(
         path: permissionLocationError,
-        builder: (context, state) => const LocationErrorPage(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const LocationErrorPage(),
+        ),
       ),
       GoRoute(
         path: permissionNotificationIntro,
-        builder: (context, state) => const NotificationIntroPage(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const NotificationIntroPage(),
+        ),
       ),
       GoRoute(
         path: permissionNotificationError,
-        builder: (context, state) => const NotificationErrorPage(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const NotificationErrorPage(),
+        ),
       ),
       GoRoute(
         path: permissionLoading,
-        builder: (context, state) => const PermissionLoadingPage(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const PermissionLoadingPage(),
+        ),
       ),
       GoRoute(
         path: welcomeGateway,
-        builder: (context, state) => const WelcomeGatewayPage(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const WelcomeGatewayPage(),
+        ),
       ),
 
       // 5. Auth screens
       GoRoute(
         path: login,
-        builder: (context, state) => BlocProvider(
-          create: (_) => sl<LoginCubit>(),
-          child: const auth_login.LoginScreen(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: BlocProvider(
+            create: (_) => sl<LoginCubit>(),
+            child: const auth_login.LoginScreen(),
+          ),
         ),
       ),
       GoRoute(
         path: register,
-        builder: (context, state) => BlocProvider(
-          create: (_) => sl<RegisterCubit>(),
-          child: const RegisterScreen(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: BlocProvider(
+            create: (_) => sl<RegisterCubit>(),
+            child: const RegisterScreen(),
+          ),
         ),
       ),
       GoRoute(
         path: otpVerification,
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           // extra can be:
           //   String  — legacy / register flow (email only, emailVerification mode)
           //   Map<String,String> — new flow: { 'email': ..., 'mode': 'forgotPassword' }
@@ -368,28 +437,40 @@ class AppRouter {
             email = extra as String? ?? '';
             mode  = OtpMode.emailVerification;
           }
-          return BlocProvider(
-            create: (_) => sl<OtpCubit>(),
-            child: OtpScreen(email: email, mode: mode),
+          return AppPageTransition.build(
+            context: context,
+            state: state,
+            child: BlocProvider(
+              create: (_) => sl<OtpCubit>(),
+              child: OtpScreen(email: email, mode: mode),
+            ),
           );
         },
       ),
       GoRoute(
         path: forgotPassword,
-        builder: (context, state) => BlocProvider(
-          create: (_) => sl<ForgotPasswordCubit>(),
-          child: const ForgotPasswordScreen(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: BlocProvider(
+            create: (_) => sl<ForgotPasswordCubit>(),
+            child: const ForgotPasswordScreen(),
+          ),
         ),
       ),
       GoRoute(
         path: resetPassword,
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final params = state.extra as Map<String, String>?;
-          return BlocProvider(
-            create: (_) => sl<ResetPasswordCubit>(),
-            child: ResetPasswordScreen(
-              email: params?['email'] ?? '',
-              token: params?['token'] ?? '',
+          return AppPageTransition.build(
+            context: context,
+            state: state,
+            child: BlocProvider(
+              create: (_) => sl<ResetPasswordCubit>(),
+              child: ResetPasswordScreen(
+                email: params?['email'] ?? '',
+                token: params?['token'] ?? '',
+              ),
             ),
           );
         },
@@ -398,11 +479,19 @@ class AppRouter {
       // 6. Protected app screens
       GoRoute(
         path: home,
-        builder: (context, state) => const UserHomeScreen(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const UserHomeScreen(),
+        ),
       ),
       GoRoute(
         path: merchantDashboard,
-        builder: (context, state) => const MerchantDashboardScreen(),
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const MerchantDashboardScreen(),
+        ),
       ),
     ],
   );

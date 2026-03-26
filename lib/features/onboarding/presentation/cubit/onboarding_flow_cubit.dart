@@ -1,11 +1,16 @@
 import 'package:coupony/core/storage/local_cache_service.dart';
+import 'package:coupony/core/constants/storage_keys.dart';
+import 'package:coupony/core/storage/secure_storage_service.dart';
 import 'package:logger/logger.dart';
 import '../../../../core/constants/category_constants.dart';
 import '../../../../core/constants/budget_constants.dart';
 import '../../../../core/constants/shopping_style_constants.dart';
+import '../../../../features/auth/data/datasources/auth_local_data_source.dart';
+import '../../domain/entities/onboarding_user_type.dart';
 import '../../domain/use_cases/save_onboarding_preferences_use_case.dart';
 import '../../domain/use_cases/get_onboarding_preferences_use_case.dart';
 import '../../domain/use_cases/init_interest_scores_use_case.dart';
+import '../../domain/use_cases/submit_onboarding_use_case.dart';
 import '../../domain/entities/user_preferences_entity.dart';
 import 'onboarding_flow_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +25,10 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
   final SaveOnboardingPreferencesUseCase savePreferencesUseCase;
   final GetOnboardingPreferencesUseCase getPreferencesUseCase;
   final InitInterestScoresUseCase initInterestScoresUseCase;
+  final SubmitOnboardingUseCase submitOnboardingUseCase;
   final LocalCacheService cacheService;
+  final SecureStorageService secureStorage;
+  final AuthLocalDataSource authLocalDataSource;
   final Logger logger;
 
   // Store original preferences to detect changes
@@ -33,7 +41,10 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
     required this.savePreferencesUseCase,
     required this.getPreferencesUseCase,
     required this.initInterestScoresUseCase,
+    required this.submitOnboardingUseCase,
     required this.cacheService,
+    required this.secureStorage,
+    required this.authLocalDataSource,
     required this.logger,
   }) : super(const OnboardingFlowState()) {
     _loadExistingPreferences();
@@ -353,81 +364,120 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
     );
   }
 
-  /// Submit complete onboarding (all steps completed)
+  /// Submit complete onboarding (all steps completed).
+  /// ✅ PHASE 2: Bulletproof onboarding submission with offline-first approach
+  ///
+  /// Flow:
+  ///   1. Validate all 3 steps.
+  ///   2. Save draft to Hive (local backup).
+  ///   3. Initialize interest scores.
+  ///   4. POST to backend (/api/v1/on-boarding/{role}).
+  ///   5. On local save success: navigate to loading (offline-first).
+  ///   6. On API failure: show non-blocking error but still proceed.
   Future<void> submitOnboarding() async {
-    // Validate all steps
     if (!state.isStep1Valid) {
-      logger.w('Cannot submit: Step 1 incomplete');
       _safeEmit(state.copyWith(errorMessageKey: 'error_onboarding_step1_incomplete'));
       return;
     }
-
     if (!state.isStep2Valid) {
-      logger.w('Cannot submit: Step 2 incomplete');
       _safeEmit(state.copyWith(errorMessageKey: 'error_onboarding_step2_incomplete'));
       return;
     }
-
     if (!state.isStep3Valid) {
-      logger.w('Cannot submit: Step 3 incomplete');
-      _safeEmit(
-        state.copyWith(errorMessageKey: 'error_onboarding_step3_incomplete'),
-      );
+      _safeEmit(state.copyWith(errorMessageKey: 'error_onboarding_step3_incomplete'));
       return;
     }
 
-    logger.i('Submitting complete onboarding...');
+    logger.i('Submitting onboarding — Step 1: local save');
+    _safeEmit(state.copyWith(isSaving: true, errorMessageKey: null, apiErrorKey: null));
 
-    _safeEmit(state.copyWith(isSaving: true, errorMessageKey: null));
+    bool localSaveSuccess = false;
+    bool shouldNavigate = false;
 
-    final result = await savePreferencesUseCase(
-      selectedCategories: state.selectedCategories,
-      budgetPreference: state.budgetPreference,
-      budgetSliderValue: state.budgetSliderValue,
-      shoppingStyles: state.shoppingStyles,
-    );
+    try {
+      // ── STEP 1: Save draft locally ────────────────────────────────────────
+      final saveResult = await savePreferencesUseCase(
+        selectedCategories: state.selectedCategories,
+        budgetPreference: state.budgetPreference,
+        budgetSliderValue: state.budgetSliderValue,
+        shoppingStyles: state.shoppingStyles,
+      );
 
-    result.fold(
-      (failure) {
-        logger.e('Failed to submit onboarding: ${failure.message}');
-        _safeEmit(state.copyWith(isSaving: false, errorMessageKey: failure.message));
-      },
-      (_) async {
-        // Initialize category scores with +50 for each selected category
-        await _initializeInterestScores();
+      if (saveResult.isLeft()) {
+        final msg = saveResult.fold((f) => f.message, (_) => '');
+        logger.e('Local save failed: $msg');
+        _safeEmit(state.copyWith(isSaving: false, errorMessageKey: msg));
+        return;
+      }
 
-        // Update original values after successful save
-        _originalCategories = List<String>.from(state.selectedCategories);
-        _originalBudgetPreference = state.budgetPreference;
-        _originalBudgetSliderValue = state.budgetSliderValue;
-        _originalShoppingStyles = List<String>.from(state.shoppingStyles);
+      localSaveSuccess = true;
+      await _initializeInterestScores();
 
-        final changes = _detectChanges();
-        final successMessageKey = _generateSuccessMessageKey(
-          changes,
-          changes.isNotEmpty,
-        );
+      // ── STEP 2: POST to backend (non-blocking) ───────────────────────────
+      logger.i('Onboarding saved locally — Step 2: API submission');
+      _safeEmit(state.copyWith(isSaving: false, isSubmittingToApi: true));
 
-        logger.i('Onboarding submitted successfully');
+      final role = await secureStorage.read(StorageKeys.userRole);
+      final userType = OnboardingUserType.fromRole(role);
 
-        // 1. Emit success message first
-        _safeEmit(
-          state.copyWith(
-            isSaving: false,
-            isCompleted: true,
-            errorMessageKey: null,
-            successMessageKey: successMessageKey,
-            hasChanges: false, // Reset after save
-            navigationSignal: OnboardingNavigation.none,
-          ),
-        );
+      final apiResult = await submitOnboardingUseCase(
+        userType: userType,
+      );
 
-        // 2. Emit Navigation Signal to loading page (UI will handle delay)
-        _safeEmit(
-          state.copyWith(navigationSignal: OnboardingNavigation.toLoading),
-        );
-      },
-    );
+      await apiResult.fold(
+        (failure) async {
+          logger.e('API submission failed: ${failure.message}');
+          // ✅ PHASE 3: Show non-blocking error but still navigate (offline-first)
+          _safeEmit(state.copyWith(
+            apiErrorKey: 'API sync failed - will retry later', // Non-blocking message
+          ));
+          shouldNavigate = true; // Still proceed with navigation
+        },
+        (_) async {
+          // ── STEP 3: Persist completed flag (account-level) ────────────────
+          await authLocalDataSource.cacheOnboardingCompleted(true);
+
+          _originalCategories      = List<String>.from(state.selectedCategories);
+          _originalBudgetPreference = state.budgetPreference;
+          _originalBudgetSliderValue = state.budgetSliderValue;
+          _originalShoppingStyles   = List<String>.from(state.shoppingStyles);
+
+          logger.i('Onboarding submitted successfully ✅');
+          shouldNavigate = true;
+        },
+      );
+
+    } catch (e) {
+      // ✅ PHASE 2: Catch any unexpected errors
+      logger.e('Unexpected error during onboarding submission: $e');
+      _safeEmit(state.copyWith(
+        errorMessageKey: 'Unexpected error occurred',
+        apiErrorKey: null,
+      ));
+      
+      // If local save was successful, still allow navigation
+      if (localSaveSuccess) {
+        shouldNavigate = true;
+      }
+    } finally {
+      // ✅ PHASE 2: ALWAYS clear loading states in finally block
+      _safeEmit(state.copyWith(
+        isSaving: false,
+        isSubmittingToApi: false,
+      ));
+
+      // ✅ PHASE 3: Navigate if local save was successful (offline-first)
+      if (shouldNavigate && localSaveSuccess) {
+        _safeEmit(state.copyWith(
+          isApiSubmitted: true,
+          isCompleted: true,
+          hasChanges: false,
+          errorMessageKey: null,
+          successMessageKey: 'success_onboarding_all_updated',
+          navigationSignal: OnboardingNavigation.toLoading,
+        ));
+      }
+    }
   }
 
   /// Initialize interest scores for selected categories
@@ -448,15 +498,17 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
     );
   }
 
-  /// Skip onboarding
+  /// Skip onboarding for the current session.
+  ///
+  /// This does NOT call the API and does NOT persist a "completed" flag.
+  /// On next cold start the user will be shown onboarding again unless they
+  /// complete it. This is intentional — skipping is session-scoped only.
   void skipOnboarding() {
     logger.i('User skipped onboarding');
-    _safeEmit(
-      state.copyWith(
-        isSkipped: true,
-        navigationSignal: OnboardingNavigation.toLogin,
-      ),
-    );
+    _safeEmit(state.copyWith(
+      isSkipped: true,
+      navigationSignal: OnboardingNavigation.toLogin,
+    ));
   }
 
   // ════════════════════════════════════════════════════════

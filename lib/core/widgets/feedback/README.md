@@ -1,129 +1,125 @@
-# App SnackBar 🎨
+# Glassmorphic SnackBar System
 
-Custom animated snackbar system with beautiful design and smooth animations.
+نظام إشعارات متقدم بتصميم glassmorphism احترافي مستوحى من iOS.
 
-## Features ✨
+## ✨ المميزات الجديدة
 
-- 🎯 **4 Types**: Success, Error, Warning, Info
-- 🎨 **Beautiful Design**: Modern UI with shadows and rounded corners
-- ⚡ **Smooth Animations**: Elastic slide-in, fade, and scale effects
-- 📱 **SafeArea Aware**: Respects navigation bars and notches
-- 👆 **Swipe to Dismiss**: Swipe down to close
-- ⏱️ **Auto Dismiss**: Configurable duration
-- 🎭 **Icon Animations**: Pulse effect on icons
-- 🌈 **Theme Independent**: Works with both customer and seller themes
+### � تصميم Glassmorphism
+- **تأثير الزجاج**: خلفية شفافة مع blur effect
+- **ألوان ناعمة**: ألوان iOS الأصلية بدلاً من Material Design الحادة
+- **حدود شفافة**: borders ناعمة مع شفافية متدرجة
+- **ظلال متقدمة**: ظلال ملونة مع glow effect
 
-## Usage 📝
+### 🎭 الرسوم المتحركة
+- **انزلاق مرن**: elastic slide animation من الأسفل
+- **تأثير النبض**: glow pulsing للألوان
+- **شريط التقدم**: progress indicator مدمج
+- **تفاعل اللمس**: haptic feedback حسب نوع الرسالة
 
-### Simple Usage (Recommended)
+### 🎯 تحسينات UX
+- **سحب للإغلاق**: swipe up gesture للإخفاء
+- **إغلاق تلقائي**: مع progress indicator
+- **ردود فعل لمسية**: مختلفة لكل نوع رسالة
+- **تصميم متجاوب**: يتكيف مع أحجام الشاشات
+
+## 🎨 الألوان الجديدة
 
 ```dart
-import 'package:coupony/core/extensions/snackbar_extension.dart';
+// iOS Inspired Colors
+static const Color success = Color(0xFF34C759);      // iOS Green
+static const Color error = Color(0xFFFF3B30);        // iOS Red  
+static const Color warning = Color(0xFFFF9500);      // iOS Orange
+static const Color info = Color(0xFF007AFF);         // iOS Blue
 
-// Show success message
-context.showSuccessSnackBar('تم الحفظ بنجاح');
-
-// Show error message
-context.showErrorSnackBar('حدث خطأ ما');
-
-// Show warning message
-context.showWarningSnackBar('تحذير: تحقق من البيانات');
-
-// Show info message
-context.showInfoSnackBar('معلومة مفيدة');
-
-// Custom duration
-context.showSuccessSnackBar(
-  'تم الحفظ',
-  duration: Duration(seconds: 5),
-);
+// Glassmorphism Support
+static const Color glassWhite = Color(0xCCFFFFFF);   // شفاف أبيض
+static const Color glassBorder = Color(0x33FFFFFF);  // حدود شفافة
+static const Color glassOverlay = Color(0x1AFFFFFF); // طبقة علوية
 ```
 
-### Advanced Usage
+## 🚀 الاستخدام
 
+### الطريقة الأساسية
 ```dart
-import 'package:coupony/core/widgets/feedback/app_snackbar.dart';
-
 AppSnackBar.show(
   context,
-  message: 'Custom message',
+  message: 'تم تحديث جميع اختياراتك بنجاح',
   type: SnackBarType.success,
-  duration: Duration(seconds: 3),
+  duration: Duration(seconds: 4),
+  enableHaptic: true,
 );
 ```
 
-## Design Specs 🎨
+### الأنواع المتاحة
+```dart
+// نجاح - أخضر iOS مع haptic خفيف
+SnackBarType.success
 
-### Colors
+// خطأ - أحمر iOS مع haptic قوي  
+SnackBarType.error
 
-- **Success**: `#4CAF50` (Green) - White text
-- **Error**: `#E53935` (Red) - White text
-- **Warning**: `#FFC107` (Amber) - Dark text
-- **Info**: `#2196F3` (Blue) - White text
+// تحذير - برتقالي iOS مع haptic متوسط
+SnackBarType.warning
 
-### Animations
+// معلومات - أزرق iOS مع haptic خفيف
+SnackBarType.info
+```
 
-1. **Slide In**: Elastic curve from bottom
-2. **Fade In**: Smooth opacity transition
-3. **Scale**: Bounce effect on entry
-4. **Icon Pulse**: Elastic scale animation
+## 🎪 التجربة التفاعلية
 
-### Positioning
-
-- Bottom: `SafeArea.bottom + 20.h`
-- Horizontal: `20.w` from edges
-- Rounded corners: `16.r`
-
-## Migration Guide 🔄
-
-### Before (Old SnackBar)
+استخدم `SnackBarDemo` لاختبار جميع الأنواع:
 
 ```dart
-ScaffoldMessenger.of(context).showSnackBar(
-  SnackBar(
-    content: Text('Message'),
-    backgroundColor: AppColors.error,
-  ),
+Navigator.push(
+  context,
+  MaterialPageRoute(builder: (context) => SnackBarDemo()),
 );
 ```
 
-### After (New SnackBar)
+## 🔧 التخصيص المتقدم
 
+### تعديل شدة التوهج
 ```dart
-context.showErrorSnackBar('Message');
+_SnackBarConfig(
+  primaryColor: AppColors.success,
+  softColor: AppColors.successSoft,
+  icon: Icons.check_circle_rounded,
+  glowIntensity: 0.8, // 0.0 - 1.0
+);
 ```
 
-## Examples 📸
-
-### Success
+### تخصيص الرسوم المتحركة
 ```dart
-context.showSuccessSnackBar('تم إنشاء الحساب بنجاح');
+// مدة الانزلاق
+duration: const Duration(milliseconds: 800)
+
+// منحنى الحركة  
+curve: Curves.elasticOut
+
+// شدة الـ blur
+ImageFilter.blur(sigmaX: 20, sigmaY: 20)
 ```
 
-### Error
-```dart
-context.showErrorSnackBar('البريد الإلكتروني مستخدم بالفعل');
-```
+## 🎨 مقارنة التصميم
 
-### Warning
-```dart
-context.showWarningSnackBar('كلمة المرور ضعيفة');
-```
+### قبل (Material Design)
+- ألوان حادة ومشبعة
+- خلفية صلبة
+- حدود حادة
+- ظلال بسيطة
 
-### Info
-```dart
-context.showInfoSnackBar('يمكنك تغيير اللغة من الإعدادات');
-```
+### بعد (Glassmorphism)
+- ألوان iOS ناعمة
+- خلفية شفافة مع blur
+- حدود شفافة متدرجة
+- ظلال ملونة مع glow
+- تأثيرات تفاعلية متقدمة
 
-## Technical Details 🔧
+## 📱 الدعم
 
-- Uses `OverlayEntry` for custom positioning
-- Respects `MediaQuery.padding.bottom` for safe area
-- Auto-removes from overlay after duration
-- Supports swipe-to-dismiss gesture
-- Smooth animations with `AnimationController`
-
-## Files 📁
-
-- `lib/core/widgets/feedback/app_snackbar.dart` - Main widget
-- `lib/core/extensions/snackbar_extension.dart` - Extension methods
+- ✅ iOS Style Colors
+- ✅ Glassmorphism Effects  
+- ✅ Haptic Feedback
+- ✅ RTL Support
+- ✅ Responsive Design
+- ✅ Accessibility Ready

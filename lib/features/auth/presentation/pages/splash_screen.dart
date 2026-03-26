@@ -8,7 +8,6 @@ import '../../../../core/localization/locale_cubit.dart';
 import '../../../../config/routes/app_router.dart';
 import '../../../../config/dependency_injection/injection_container.dart' as di;
 import '../../../permissions/domain/repositories/permission_repository.dart';
-import '../../../onboarding/domain/repositories/onboarding_repository.dart';
 import '../../data/datasources/auth_local_data_source.dart';
 
 class AnimatedSplashScreen extends StatefulWidget {
@@ -96,55 +95,49 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
     });
   }
 
-  /// STEP 3 in the startup chain: check onboarding completion.
-  /// Delegates to [_checkAuthToken] if onboarding is done.
+  /// STEP 3: Determine session type, then route accordingly.
+  ///
+  /// Decision tree:
+  ///   Guest session          → /home  (guests bypass onboarding)
+  ///   Auth token + onboarding done   → /home
+  ///   Auth token + onboarding pending → /onboarding  (wizard, post-auth)
+  ///   No session             → /welcome-gateway
   Future<void> _checkOnboardingStatus() async {
-    try {
-      final onboardingRepository = di.sl<OnboardingRepository>();
-      final onboardingResult = await onboardingRepository.getLocalPreferences();
-
-      onboardingResult.fold(
-        (failure) {
-          if (mounted) context.go(AppRouter.onboarding);
-        },
-        (preferences) {
-          if (preferences != null && preferences.isOnboardingCompleted) {
-            // Onboarding done — token check is the final gate
-            _checkAuthToken();
-          } else {
-            if (mounted) context.go(AppRouter.onboarding);
-          }
-        },
-      );
-    } catch (_) {
-      if (mounted) context.go(AppRouter.onboarding);
-    }
-  }
-
-  /// STEP 4: Check token (authenticated user) AND guest flag.
-  ///
-  /// - Token present & non-empty → authenticated → HomeScreen.
-  /// - isGuest == true           → visitor session → HomeScreen.
-  /// - Neither                   → no session at all → WelcomeGateway.
-  ///
-  /// Runs on EVERY cold start — no "one-time skip" flag.
-  Future<void> _checkAuthToken() async {
     try {
       final authLocalDs = di.sl<AuthLocalDataSource>();
 
-      // Both reads can race in parallel
       final results = await Future.wait([
         authLocalDs.getAccessToken(),
         authLocalDs.getGuestStatus(),
+        authLocalDs.getOnboardingCompleted(),
       ]);
 
       if (!mounted) return;
 
-      final token   = results[0] as String?;
-      final isGuest = results[1] as bool;
+      final token                = results[0] as String?;
+      final isGuest              = results[1] as bool;
+      final isOnboardingCompleted = results[2] as bool;
 
-      final hasSession = (token != null && token.isNotEmpty) || isGuest;
-      context.go(hasSession ? AppRouter.home : AppRouter.welcomeGateway);
+      if (isGuest) {
+        // Guest users skip onboarding entirely
+        context.go(AppRouter.home);
+        return;
+      }
+
+      if (token != null && token.isNotEmpty) {
+        // Authenticated user — check whether they have completed onboarding
+        // The flag was written by OnboardingFlowCubit after a 200 OK from
+        // POST /api/v1/on-boarding/{role}.
+        if (isOnboardingCompleted) {
+          context.go(AppRouter.home);
+        } else {
+          context.go(AppRouter.onboarding);
+        }
+        return;
+      }
+
+      // No session at all
+      context.go(AppRouter.welcomeGateway);
     } catch (_) {
       if (mounted) context.go(AppRouter.welcomeGateway);
     }

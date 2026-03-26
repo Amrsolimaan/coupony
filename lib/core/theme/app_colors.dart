@@ -28,11 +28,21 @@ class AppColors {
   static const Color textSecondary = Color(0xFF6B6B6B);
   static const Color textDisabled = Color(0xFFAAB2BB);
 
-  // Status Colors
-  static const Color success = Color(0xFF4CAF50);
-  static const Color error = Color(0xFFE53935);
-  static const Color warning = Color(0xFFFFC107);
-  static const Color info = Color(0xFF2196F3);
+  // Status Colors - iOS Inspired with Glassmorphism Support
+  static const Color success = Color(0xFF34C759);
+  static const Color successSoft = Color(0xFF30D158);
+  static const Color error = Color(0xFFFF3B30);
+  static const Color errorSoft = Color(0xFFFF453A);
+  static const Color warning = Color(0xFFFF9500);
+  static const Color warningSoft = Color(0xFFFF9F0A);
+  static const Color info = Color(0xFF007AFF);
+  static const Color infoSoft = Color(0xFF0A84FF);
+
+  // Glassmorphism Colors
+  static const Color glassWhite = Color(0xCCFFFFFF);
+  static const Color glassBorder = Color(0x33FFFFFF);
+  static const Color glassOverlay = Color(0x1AFFFFFF);
+  static const Color glassShadow = Color(0x1A000000);
 
   // Location & Map Colors
   static const Color locationMarker = Color(0xFF7ED957); // Green marker for map

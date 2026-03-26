@@ -45,6 +45,10 @@ class StorageKeys {
   /// ⭐ NEW: Key for storing permission status inside the box
   static const String permissionStatusKey = 'permission_status';
 
+  /// Flag persisted after a successful onboarding API submission.
+  /// Stored in Hive settingsBox — true means the backend acknowledged completion.
+  static const String onboardingCompletedKey = 'onboarding_completed';
+
   /// ⭐ INTEREST TRACKING KEYS
   static const String categoryScoresKey = 'category_scores';
   static const String seenProductsListKey = 'seen_products_list';

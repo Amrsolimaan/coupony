@@ -1,15 +1,13 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failures.dart';
+import '../entities/onboarding_user_type.dart';
 import '../entities/user_preferences_entity.dart';
 
 /// Repository interface for onboarding preferences
 abstract class OnboardingRepository {
-  /// Save preferences locally (before authentication)
-  ///
-  /// [selectedCategories] - Required: Categories from Step 1
-  /// [budgetPreference] - Optional: Budget option from Step 2
-  /// [budgetSliderValue] - Optional: Slider value from Step 2
-  /// [shoppingStyles] - Optional: Shopping styles from Step 3
+  // ── Local persistence ───────────────────────────────────────────────────
+
+  /// Save all 3 wizard steps locally (used as in-progress draft before API call).
   Future<Either<Failure, void>> savePreferencesLocally(
     List<String> selectedCategories, {
     String? budgetPreference,
@@ -17,16 +15,27 @@ abstract class OnboardingRepository {
     List<String>? shoppingStyles,
   });
 
-  /// Get local preferences
+  /// Get locally cached preferences (may be incomplete/un-synced).
   Future<Either<Failure, UserPreferencesEntity?>> getLocalPreferences();
 
-  /// Clear local preferences
+  /// Delete all local preferences (e.g. on logout).
   Future<Either<Failure, void>> clearLocalPreferences();
 
-  /// Check if preferences exist locally
+  /// Quick existence check — does not deserialize the model.
   Future<bool> hasLocalPreferences();
 
-  /// Sync preferences to backend (after authentication)
-  /// ⚠️ TODO: Implement when API is available
-  Future<Either<Failure, void>> syncPreferencesToBackend(String authToken);
+  // ── Backend submission ───────────────────────────────────────────────────
+
+  /// POST the completed onboarding to the correct role-based endpoint.
+  ///
+  /// Reads the locally saved [UserPreferencesModel], serializes it with
+  /// [toApiJson()], and sends it to `/api/v1/on-boarding/{customer|seller}`.
+  ///
+  /// On success: marks the local model as `isSynced: true`.
+  /// The caller ([OnboardingFlowCubit]) is responsible for persisting the
+  /// account-level "completed" flag via [AuthLocalDataSource].
+  Future<Either<Failure, void>> submitOnboardingToApi({
+    required OnboardingUserType userType,
+    required String authToken,
+  });
 }
