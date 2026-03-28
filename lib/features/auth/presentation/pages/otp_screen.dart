@@ -160,14 +160,16 @@ class OtpScreen extends HookWidget {
 
         // ── CASE A: email verification success → bottom sheet ──────────────
         if (state.navSignal == AuthNavigation.toHome ||
+            state.navSignal == AuthNavigation.toOnboarding ||
             state.navSignal == AuthNavigation.toMerchantDash) {
           HapticFeedback.mediumImpact();
           _showSuccessModal(context, l10n, onContinue: () {
-            context.go(
-              state.navSignal == AuthNavigation.toMerchantDash
-                  ? AppRouter.merchantDashboard
-                  : AppRouter.onboarding,
-            );
+            final route = switch (state.navSignal) {
+              AuthNavigation.toMerchantDash => AppRouter.merchantDashboard,
+              AuthNavigation.toOnboarding   => AppRouter.onboarding,
+              _                             => AppRouter.home,
+            };
+            context.go(route);
           });
         }
 

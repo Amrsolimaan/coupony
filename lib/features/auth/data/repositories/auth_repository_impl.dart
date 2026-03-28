@@ -1,12 +1,16 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/constants/storage_keys.dart';
+import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/network_info.dart';
 import '../../../../core/repositories/base_repository.dart';
 import '../../../../core/services/notification_service.dart';
+import '../../../../core/services/google_sign_in_service.dart';
 import '../../../../core/storage/local_cache_service.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../../onboarding/domain/entities/onboarding_user_type.dart';
+import '../../../onboarding/domain/repositories/onboarding_repository.dart';
 import '../../domain/use_cases/reset_password_params.dart';
 import '../datasources/auth_local_data_source.dart';
 import '../datasources/auth_remote_data_source.dart';
@@ -17,14 +21,17 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
   final AuthLocalDataSource localDataSource;
   final NotificationService notificationService;
+  final OnboardingRepository _onboardingRepository;
 
   AuthRepositoryImpl({
     required this.remoteDataSource,
     required this.localDataSource,
     required this.notificationService,
+    required OnboardingRepository onboardingRepository,
     required NetworkInfo networkInfo,
     required LocalCacheService cacheService,
-  }) : super(networkInfo: networkInfo, cacheService: cacheService);
+  })  : _onboardingRepository = onboardingRepository,
+        super(networkInfo: networkInfo, cacheService: cacheService);
 
   // ════════════════════════════════════════════════════════
   // AUTH OPERATIONS
@@ -156,6 +163,10 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
       //    Without this, a second user logging in on the same device would
       //    inherit the previous user's cached preferences.
       await clearFeatureCache(StorageKeys.onboardingPreferencesBox);
+
+      // 4. Revoke Google OAuth grant so the account picker appears on the
+      //    next Google Sign-In instead of silently reusing the cached session.
+      await GoogleSignInService().signOut();
     }
     return const Right(unit);
   }
@@ -210,6 +221,151 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
     );
   }
 
+  @override
+  Future<Either<Failure, UserEntity>> googleSignIn({
+    required String role,
+  }) async {
+    print('🔐 [REPOSITORY] Starting Google Sign-In for role: $role');
+
+    final isConnected = await networkInfo.isConnected;
+    if (!isConnected) return const Left(NetworkFailure('No internet connection'));
+
+    try {
+      final googleUserData =
+          await GoogleSignInService().signInWithGoogleAndGetUserData();
+
+      if (googleUserData == null) {
+        print('❌ [REPOSITORY] Google Sign-In was cancelled');
+        return const Left(UnexpectedFailure('Google Sign-In was cancelled'));
+      }
+
+      print('✅ [REPOSITORY] Got Google user data: ${googleUserData['email']}');
+
+      final email    = googleUserData['email']!;
+      final password = 'google_auth_${googleUserData['id']}';
+
+      // ── Step 1: try login ──────────────────────────────────────────────────
+      try {
+        print('🔐 [REPOSITORY] Trying login for: $email');
+        final user = await remoteDataSource.login(
+          email: email, password: password, role: role,
+        );
+        print('✅ [REPOSITORY] Login succeeded');
+        await _persistUserAndRegisterFcm(user);
+        return Right(user);
+      } catch (loginError) {
+        final msg = _exceptionMessage(loginError).toLowerCase();
+        print('⚠️ [REPOSITORY] Login failed — "$msg"');
+
+        // Account exists but email is not yet verified → go to OTP
+        if (_isUnverifiedError(msg)) {
+          print('🔐 [REPOSITORY] Account unverified → OTP required');
+          return Left(OtpRequiredFailure(email: email, password: password));
+        }
+
+        // Account not found → attempt registration
+        if (_isNotFoundError(msg)) {
+          print('🔐 [REPOSITORY] Account not found → attempting registration');
+          return await _registerGoogleUser(
+            email: email, password: password, role: role,
+            firstName:   googleUserData['firstName']   ?? 'مستخدم',
+            lastName:    googleUserData['lastName']    ?? 'جديد',
+            phoneNumber: googleUserData['phoneNumber'] ?? '+1234567890',
+          );
+        }
+
+        // Any other login error → surface it
+        return Left(_mapException(loginError));
+      }
+    } catch (e, st) {
+      print('❌ [REPOSITORY] Unexpected error in googleSignIn: $e\n$st');
+      return Left(_mapException(e));
+    }
+  }
+
+  /// Registers a new Google-authenticated user.
+  /// If registration fails with "already registered" the account exists but is
+  /// unverified, so we redirect to OTP instead of surfacing the error.
+  Future<Either<Failure, UserEntity>> _registerGoogleUser({
+    required String email,
+    required String password,
+    required String role,
+    required String firstName,
+    required String lastName,
+    required String phoneNumber,
+  }) async {
+    try {
+      final user = await remoteDataSource.register(
+        firstName:            firstName,
+        lastName:             lastName,
+        email:                email,
+        phoneNumber:          phoneNumber,
+        password:             password,
+        passwordConfirmation: password,
+        role:                 role,
+      );
+      print('✅ [REPOSITORY] Registration succeeded');
+      if (user.accessToken == null) {
+        print('🔐 [REPOSITORY] No token received -> OTP Verification required');
+        return Left(OtpRequiredFailure(email: email, password: password));
+      }
+      await _persistUserAndRegisterFcm(user);
+      return Right(user);
+    } catch (registerError) {
+      final msg = _exceptionMessage(registerError).toLowerCase();
+      print('⚠️ [REPOSITORY] Registration failed — "$msg"');
+
+      // Email already exists but is unverified → go to OTP
+      if (_isAlreadyRegisteredError(msg)) {
+        print('🔐 [REPOSITORY] Email exists (unverified) → OTP required');
+        return Left(OtpRequiredFailure(email: email, password: password));
+      }
+
+      return Left(_mapException(registerError));
+    }
+  }
+
+  // ── Error-message helpers ────────────────────────────────────────────────
+
+  /// Extracts the human-readable message from an exception thrown by the
+  /// remote data source.
+  String _exceptionMessage(Object error) {
+    if (error is ServerException) return error.message;
+    if (error is InvalidTokenException) return error.message;
+    if (error is UnauthorizedException) return error.message;
+    if (error is NetworkException) return error.message;
+    return error.toString();
+  }
+
+  /// Maps a data-source exception to the corresponding [Failure] type.
+  Failure _mapException(Object error) {
+    if (error is InvalidTokenException) return InvalidTokenFailure(error.message);
+    if (error is UnauthorizedException) return UnauthorizedFailure(error.message);
+    if (error is ServerException)       return ServerFailure(error.message);
+    if (error is NetworkException)      return NetworkFailure(error.message);
+    if (error is CacheException)        return CacheFailure(error.message);
+    return UnexpectedFailure(error.toString());
+  }
+
+  bool _isUnverifiedError(String msg) =>
+      msg.contains('not verified') ||
+      msg.contains('unverified')   ||
+      msg.contains('not activated')||
+      msg.contains('verification code has been sent');
+
+bool _isNotFoundError(String msg) =>
+    msg.contains('not found')                 ||
+    msg.contains('no account')                ||
+    msg.contains('invalid credentials')       ||
+    msg.contains('wrong credentials')         ||
+    msg.contains('selected email is invalid');
+
+  bool _isAlreadyRegisteredError(String msg) =>
+      msg.contains('already registered') ||
+      msg.contains('already taken')      ||
+      msg.contains('already exists')     ||
+      msg.contains('email taken');
+
   // ════════════════════════════════════════════════════════
   // PRIVATE HELPERS
   // ════════════════════════════════════════════════════════
@@ -220,17 +376,34 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
   /// Also clears the guest flag so the user is treated as authenticated on
   /// the next cold start, not as a visitor.
   Future<void> _persistUserAndRegisterFcm(UserModel user) async {
+    print('💾 _persistUserAndRegisterFcm - Starting persistence for user:');
+    print('  - ID: ${user.id}');
+    print('  - Email: ${user.email}');
+    print('  - Role: ${user.role}');
+    print('  - isOnboardingCompleted: ${user.isOnboardingCompleted}');
+    print('  - Has Access Token: ${user.accessToken != null}');
+    
     await localDataSource.cacheUser(user);
+    print('✅ User cached successfully');
+    
     // A real session supersedes guest mode.
     await localDataSource.cacheGuestStatus(false);
+    print('✅ Guest status cleared');
 
     if (user.accessToken != null) {
       // Non-blocking: fetch FCM token and send to backend
       notificationService.getFCMToken().then((fcmToken) {
         if (fcmToken != null) {
+          print('📱 FCM Token obtained, sending to backend: ${fcmToken.substring(0, 20)}...');
           remoteDataSource.updateFcmToken(fcmToken: fcmToken);
         }
       });
+    }
+    
+    print('💾 _persistUserAndRegisterFcm - Completed successfully');
+
+    if (user.isOnboardingCompleted) {
+      _onboardingRepository.fetchAndCacheFromServer(userType: user.role == 'merchant' ? OnboardingUserType.seller : OnboardingUserType.customer);
     }
   }
 }

@@ -422,6 +422,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get login_success => 'Logged in successfully';
 
   @override
+  String get continue_button => 'Continue';
+
+  @override
   String get register_success => 'Account created successfully';
 
   @override
@@ -586,4 +589,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get network_very_slow_warning =>
       'Very slow internet — some features may be delayed';
+
+  @override
+  String get login_success_title => 'Login Successful!';
 }

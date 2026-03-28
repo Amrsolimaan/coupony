@@ -69,10 +69,12 @@ class LoginCubit extends Cubit<AuthState> {
         ));
       },
       (user) {
-        logger.i('Login successful — role: ${user.role}');
+        logger.i('Login successful — role: ${user.role}, onboardingCompleted: ${user.isOnboardingCompleted}');
         final nav = user.role == 'merchant'
             ? AuthNavigation.toMerchantDash
-            : AuthNavigation.toHome;
+            : user.isOnboardingCompleted
+                ? AuthNavigation.toHome
+                : AuthNavigation.toOnboarding;
         _safeEmit(state.copyWith(
           isLoading: false,
           user: user,

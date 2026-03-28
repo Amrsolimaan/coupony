@@ -72,6 +72,37 @@ class UserPreferencesModel extends UserPreferencesEntity {
     );
   }
 
+  /// Parse the response from GET /on-boarding/{customer|seller}.
+  ///
+  /// The server echoes back the same field names used in the POST body:
+  ///   { "interesting_offers": [...], "shopping_style": [...], "budget": "..." }
+  /// optionally wrapped in a `data` envelope.
+  ///
+  /// [existingScores], [existingSeenIds], and [existingLastDecayDate] are
+  /// local-only interest-tracking values the server does not store — pass
+  /// them in so they are preserved when the model is written back to Hive.
+  factory UserPreferencesModel.fromApiGetJson(
+    Map<String, dynamic> json, {
+    Map<String, int> existingScores = const {},
+    List<String> existingSeenIds = const [],
+    DateTime? existingLastDecayDate,
+  }) {
+    final data = json['data'] as Map<String, dynamic>? ?? json;
+    return UserPreferencesModel(
+      selectedCategories: List<String>.from(data['interesting_offers'] ?? []),
+      shoppingStyles: data['shopping_style'] != null
+          ? List<String>.from(data['shopping_style'] as List)
+          : null,
+      budgetPreference:  data['budget'] as String?,
+      budgetSliderValue: null, // server does not store the slider position
+      categoryScores:    existingScores,
+      seenProductIds:    existingSeenIds,
+      lastDecayDate:     existingLastDecayDate,
+      timestamp:         DateTime.now(),
+      isSynced:          true,
+    );
+  }
+
   /// Serialize for the onboarding submission endpoints.
   ///
   /// Field names match the Postman contract exactly:

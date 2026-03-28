@@ -9,7 +9,8 @@ import '../../domain/entities/user_entity.dart';
 /// UI listens via BlocConsumer.listener and calls context.go(...)
 enum AuthNavigation {
   none,
-  toHome,             // Successful login/verify → user home
+  toHome,             // Authenticated + onboarding already done → user home
+  toOnboarding,       // Authenticated + onboarding NOT yet done → onboarding wizard
   toMerchantDash,     // Successful login/verify → merchant dashboard
   toOtpVerification,  // After register → OTP screen
   toResetPassword,    // OTP verified (forgotPassword mode) → reset password screen
@@ -33,6 +34,9 @@ class AuthState extends Equatable {
   final bool isOtpSent;
   /// Email address the OTP was dispatched to
   final String? otpEmail;
+  /// Password carried to the OTP screen (used by the Google Sign-In flow to
+  /// identify the account after email verification).
+  final String? otpPassword;
   /// The entered OTP code — carried to the next screen in forgotPassword flow
   final String? otpCode;
   /// The reset token returned by the server after verifying reset OTP
@@ -50,6 +54,7 @@ class AuthState extends Equatable {
     this.isLoading = false,
     this.isOtpSent = false,
     this.otpEmail,
+    this.otpPassword,
     this.otpCode,
     this.resetToken,
     this.errorMessage,
@@ -62,6 +67,7 @@ class AuthState extends Equatable {
     bool? isLoading,
     bool? isOtpSent,
     String? otpEmail,
+    String? otpPassword,
     String? otpCode,
     String? resetToken,
     String? errorMessage,
@@ -73,6 +79,7 @@ class AuthState extends Equatable {
       isLoading:      isLoading      ?? this.isLoading,
       isOtpSent:      isOtpSent      ?? this.isOtpSent,
       otpEmail:       otpEmail       ?? this.otpEmail,
+      otpPassword:    otpPassword    ?? this.otpPassword,
       otpCode:        otpCode        ?? this.otpCode,
       resetToken:     resetToken     ?? this.resetToken,
       errorMessage:   errorMessage,   // nullable — pass null to clear
@@ -89,7 +96,7 @@ class AuthState extends Equatable {
 
   @override
   List<Object?> get props => [
-    user, isLoading, isOtpSent, otpEmail, otpCode, resetToken,
+    user, isLoading, isOtpSent, otpEmail, otpPassword, otpCode, resetToken,
     errorMessage, successMessage, navSignal,
   ];
 

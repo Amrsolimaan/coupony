@@ -13,6 +13,7 @@ import '../../../features/onboarding/domain/repositories/onboarding_repository.d
 import '../../../features/onboarding/domain/use_cases/get_onboarding_preferences_use_case.dart';
 import '../../../features/onboarding/domain/use_cases/init_interest_scores_use_case.dart';
 import '../../../features/onboarding/domain/use_cases/save_onboarding_preferences_use_case.dart';
+import '../../../features/onboarding/domain/use_cases/fetch_server_preferences_use_case.dart';
 import '../../../features/onboarding/domain/use_cases/submit_onboarding_use_case.dart';
 import '../../../features/onboarding/presentation/cubit/onboarding_flow_cubit.dart';
 
@@ -51,6 +52,10 @@ void registerOnboardingDependencies(GetIt sl) {
 
   sl.registerLazySingleton<SubmitOnboardingUseCase>(
     () => SubmitOnboardingUseCase(sl<OnboardingRepository>()),
+  );
+
+  sl.registerLazySingleton<FetchServerPreferencesUseCase>(
+    () => FetchServerPreferencesUseCase(sl<OnboardingRepository>()),
   );
 
   // Cubit (Factory - new instance each time)

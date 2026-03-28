@@ -854,6 +854,12 @@ abstract class AppLocalizations {
   /// **'Logged in successfully'**
   String get login_success;
 
+  /// No description provided for @continue_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continue_button;
+
   /// No description provided for @register_success.
   ///
   /// In en, this message translates to:
@@ -1154,11 +1160,23 @@ abstract class AppLocalizations {
   /// **'Continue to Login'**
   String get reset_password_continue_login;
 
-  /// In en: 'Slow internet connection detected'
+  /// No description provided for @network_slow_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow internet connection detected'**
   String get network_slow_warning;
 
-  /// In en: 'Very slow internet — some features may be delayed'
+  /// No description provided for @network_very_slow_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'Very slow internet — some features may be delayed'**
   String get network_very_slow_warning;
+
+  /// No description provided for @login_success_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Login Successful!'**
+  String get login_success_title;
 }
 
 class _AppLocalizationsDelegate

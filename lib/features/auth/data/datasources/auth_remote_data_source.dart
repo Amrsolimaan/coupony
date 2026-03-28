@@ -94,6 +94,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String role,
   }) async {
     try {
+      logger.i('🔐 LOGIN REQUEST - Email: $email, Role: $role');
+      
       final response = await client.post(
         ApiConstants.login,
         data: {
@@ -102,11 +104,39 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'role':     role,
         },
       );
+      
       final data = response.data as Map<String, dynamic>? ?? {};
-      return UserModel.fromJson(data);
+      
+      // 🔍 DETAILED LOGGING للتأكد من وجود is_onboarding_completed
+      logger.i('📥 LOGIN RESPONSE - Full Response:');
+      logger.i('Raw Response Data: $data');
+      
+      // فحص البيانات المتداخلة
+      final nestedData = data['data'] as Map<String, dynamic>? ?? data;
+      logger.i('Nested Data: $nestedData');
+      
+      // فحص وجود is_onboarding_completed بالتفصيل
+      final onboardingCompleted = nestedData['is_onboarding_completed'];
+      logger.i('🎯 is_onboarding_completed field:');
+      logger.i('  - Value: $onboardingCompleted');
+      logger.i('  - Type: ${onboardingCompleted.runtimeType}');
+      logger.i('  - Is null: ${onboardingCompleted == null}');
+      
+      // عرض جميع المفاتيح الموجودة
+      logger.i('📋 All available keys in response:');
+      nestedData.keys.forEach((key) {
+        logger.i('  - $key: ${nestedData[key]} (${nestedData[key].runtimeType})');
+      });
+      
+      final userModel = UserModel.fromJson(data);
+      logger.i('✅ UserModel created - isOnboardingCompleted: ${userModel.isOnboardingCompleted}');
+      
+      return userModel;
     } on DioException catch (e) {
+      logger.e('❌ LOGIN ERROR - DioException: ${e.response?.statusCode} - ${e.response?.data}');
       _rethrowAs422Or(e);
     } catch (e) {
+      logger.e('❌ LOGIN ERROR - General Exception: $e');
       throw ServerException(e.toString());
     }
   }
@@ -122,6 +152,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String role,
   }) async {
     try {
+      logger.i('📝 REGISTER REQUEST - Email: $email, Role: $role');
+      
       final response = await client.post(
         ApiConstants.register,
         data: {
@@ -134,11 +166,39 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'role':                  role,
         },
       );
+      
       final data = response.data as Map<String, dynamic>? ?? {};
-      return UserModel.fromJson(data);
+      
+      // 🔍 DETAILED LOGGING للتأكد من وجود is_onboarding_completed
+      logger.i('📥 REGISTER RESPONSE - Full Response:');
+      logger.i('Raw Response Data: $data');
+      
+      // فحص البيانات المتداخلة
+      final nestedData = data['data'] as Map<String, dynamic>? ?? data;
+      logger.i('Nested Data: $nestedData');
+      
+      // فحص وجود is_onboarding_completed بالتفصيل
+      final onboardingCompleted = nestedData['is_onboarding_completed'];
+      logger.i('🎯 is_onboarding_completed field:');
+      logger.i('  - Value: $onboardingCompleted');
+      logger.i('  - Type: ${onboardingCompleted.runtimeType}');
+      logger.i('  - Is null: ${onboardingCompleted == null}');
+      
+      // عرض جميع المفاتيح الموجودة
+      logger.i('📋 All available keys in response:');
+      nestedData.keys.forEach((key) {
+        logger.i('  - $key: ${nestedData[key]} (${nestedData[key].runtimeType})');
+      });
+      
+      final userModel = UserModel.fromJson(data);
+      logger.i('✅ UserModel created - isOnboardingCompleted: ${userModel.isOnboardingCompleted}');
+      
+      return userModel;
     } on DioException catch (e) {
+      logger.e('❌ REGISTER ERROR - DioException: ${e.response?.statusCode} - ${e.response?.data}');
       _rethrowAs422Or(e);
     } catch (e) {
+      logger.e('❌ REGISTER ERROR - General Exception: $e');
       throw ServerException(e.toString());
     }
   }
@@ -152,7 +212,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       await client.post(
         ApiConstants.sendOtp,
-        data: {'email': email},
+        data: {
+          'email': email,
+          'purpose': 'verify_email',
+        },
       );
     } on DioException catch (e) {
       _rethrowAs422Or(e);
@@ -333,16 +396,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   // ══════════════════════════════════════════════════════════════════════════
 
   /// Rethrows DioException as InvalidTokenFailure if status is 422,
-  /// otherwise throws ServerException.
+  /// otherwise throws ServerException with the backend's message field
+  /// (falls back to Dio's own message when the body has no 'message' key).
   Never _rethrowAs422Or(DioException e) {
-    if (e.response?.statusCode == 422) {
-      final data = e.response?.data;
-      String message = 'Invalid or expired reset token';
+    final data = e.response?.data;
+    String backendMessage(String fallback) {
       if (data is Map<String, dynamic>) {
-        message = data['message'] as String? ?? message;
+        return data['message'] as String? ?? fallback;
       }
-      throw InvalidTokenException(message);
+      return fallback;
     }
-    throw ServerException(e.message ?? 'Network error');
+
+    if (e.response?.statusCode == 422) {
+      throw InvalidTokenException(
+        backendMessage('Invalid or expired reset token'),
+      );
+    }
+    throw ServerException(backendMessage(e.message ?? 'Network error'));
   }
 }

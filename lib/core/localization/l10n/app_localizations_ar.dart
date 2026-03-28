@@ -416,6 +416,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get login_success => 'تم تسجيل الدخول بنجاح';
 
   @override
+  String get continue_button => 'متابعة';
+
+  @override
   String get register_success => 'تم إنشاء الحساب بنجاح';
 
   @override
@@ -581,4 +584,7 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get network_very_slow_warning =>
       'الإنترنت بطيء جداً — قد تتأخر بعض الميزات';
+
+  @override
+  String get login_success_title => 'تم تسجيل الدخول بنجاح!';
 }

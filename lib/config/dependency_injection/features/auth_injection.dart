@@ -20,11 +20,14 @@ import '../../../features/auth/domain/use_cases/send_otp_use_case.dart';
 import '../../../features/auth/domain/use_cases/send_reset_code_use_case.dart';
 import '../../../features/auth/domain/use_cases/verify_otp_use_case.dart';
 import '../../../features/auth/domain/use_cases/verify_reset_code_use_case.dart';
+import '../../../features/auth/domain/use_cases/google_sign_in_use_case.dart';
 import '../../../features/auth/presentation/cubit/forgot_password_cubit.dart';
 import '../../../features/auth/presentation/cubit/login_cubit.dart';
 import '../../../features/auth/presentation/cubit/otp_cubit.dart';
 import '../../../features/auth/presentation/cubit/register_cubit.dart';
 import '../../../features/auth/presentation/cubit/reset_password_cubit.dart';
+import '../../../features/auth/presentation/cubit/google_sign_in_cubit.dart';
+import '../../../features/onboarding/domain/repositories/onboarding_repository.dart';
 
 void registerAuthDependencies(GetIt sl) {
   // ════════════════════════════════════════════════════════
@@ -54,6 +57,7 @@ void registerAuthDependencies(GetIt sl) {
       remoteDataSource:    sl<AuthRemoteDataSource>(),
       localDataSource:     sl<AuthLocalDataSource>(),
       notificationService: sl<NotificationService>(),
+      onboardingRepository: sl<OnboardingRepository>(),
       networkInfo:         sl<NetworkInfo>(),
       cacheService:        sl<LocalCacheService>(),
     ),
@@ -72,6 +76,7 @@ void registerAuthDependencies(GetIt sl) {
   sl.registerLazySingleton(() => ResendResetCodeUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => ResetPasswordUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => VerifyResetCodeUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => GoogleSignInUseCase(sl<AuthRepository>()));
 
   // ════════════════════════════════════════════════════════
   // CUBITS  (Factory — new instance per screen)
@@ -115,6 +120,13 @@ void registerAuthDependencies(GetIt sl) {
       resetPasswordUseCase:  sl<ResetPasswordUseCase>(),
       resendResetCodeUseCase: sl<ResendResetCodeUseCase>(),
       logger:                sl<Logger>(),
+    ),
+  );
+
+  sl.registerFactory<GoogleSignInCubit>(
+    () => GoogleSignInCubit(
+      googleSignInUseCase: sl<GoogleSignInUseCase>(),
+      logger:              sl<Logger>(),
     ),
   );
 }

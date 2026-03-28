@@ -59,4 +59,9 @@ abstract class AuthRepository {
 
   /// POST /auth/password/reset — resets the password using the OTP token.
   Future<Either<Failure, Unit>> resetPassword(ResetPasswordParams params);
+
+  /// Google Sign-In — authenticates with Google and registers/logs in user
+  Future<Either<Failure, UserEntity>> googleSignIn({
+    required String role,
+  });
 }

@@ -44,18 +44,35 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<void> cacheUser(UserModel user) async {
     try {
+      print('💾 AuthLocalDataSource.cacheUser - Starting cache for user:');
+      print('  - ID: ${user.id}');
+      print('  - Email: ${user.email}');
+      print('  - Role: ${user.role}');
+      print('  - isOnboardingCompleted: ${user.isOnboardingCompleted}');
+      print('  - Has Access Token: ${user.accessToken != null}');
+      
       if (user.accessToken != null) {
         await secureStorage.write(StorageKeys.authToken, user.accessToken!);
+        print('✅ Access token cached');
       }
       if (user.refreshToken != null) {
         await secureStorage.write(StorageKeys.refreshToken, user.refreshToken!);
+        print('✅ Refresh token cached');
       }
       if (user.fcmToken != null) {
         await secureStorage.write(StorageKeys.fcmToken, user.fcmToken!);
+        print('✅ FCM token cached');
       }
       await secureStorage.write(StorageKeys.userId, user.id.toString());
       await secureStorage.write(StorageKeys.userRole, user.role);
+      
+      // ⚠️ IMPORTANT: Cache the onboarding completion status!
+      print('💾 Caching onboarding completion status: ${user.isOnboardingCompleted}');
+      await cacheOnboardingCompleted(user.isOnboardingCompleted);
+      
+      print('✅ AuthLocalDataSource.cacheUser - All data cached successfully');
     } catch (e) {
+      print('❌ AuthLocalDataSource.cacheUser - Error: $e');
       throw CacheException('Failed to cache user: ${e.toString()}');
     }
   }

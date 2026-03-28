@@ -37,3 +37,17 @@ class UnexpectedFailure extends Failure {
 class InvalidTokenFailure extends Failure {
   const InvalidTokenFailure(super.message);
 }
+
+/// Returned by [AuthRepository.googleSignIn] when the account exists but the
+/// email has not been verified yet.  The cubit should navigate to the OTP
+/// screen and pass [email] / [password] so verification can proceed.
+class OtpRequiredFailure extends Failure {
+  final String email;
+  final String password;
+
+  const OtpRequiredFailure({required this.email, required this.password})
+      : super('Account requires OTP verification');
+
+  @override
+  List<Object> get props => [message, email, password];
+}

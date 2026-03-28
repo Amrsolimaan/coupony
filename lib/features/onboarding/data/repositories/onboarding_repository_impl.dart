@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/repositories/base_repository.dart';
 import '../data_sources/onboarding_local_data_source.dart';
@@ -7,7 +8,6 @@ import '../models/user_preferences_model.dart';
 import '../../domain/entities/onboarding_user_type.dart';
 import '../../domain/repositories/onboarding_repository.dart';
 import '../../domain/entities/user_preferences_entity.dart';
-import '../../../../core/errors/exceptions.dart';
 
 class OnboardingRepositoryImpl extends BaseRepository
     implements OnboardingRepository {
@@ -94,6 +94,40 @@ class OnboardingRepositoryImpl extends BaseRepository
         // 3. Mark as synced in Hive — cubit persists the account-level flag
         final synced = model.copyWith(isSynced: true);
         await localDataSource.savePreferences(synced);
+      },
+    );
+  }
+
+  // ── Server sync ─────────────────────────────────────────────────────────
+
+  @override
+  Future<Either<Failure, void>> fetchAndCacheFromServer({
+    required OnboardingUserType userType,
+  }) {
+    return executeOnlineOperation(
+      operation: () async {
+        // 1. GET preferences from server
+        final json = await remoteDataSource.fetchPreferences(
+          userType: userType,
+        );
+
+        // 2. Read existing local data so we can preserve interest-tracking
+        //    fields (categoryScores, seenProductIds, lastDecayDate) that the
+        //    server does not store.
+        final localResult = await localDataSource.getPreferences();
+        final existing = localResult.fold((_) => null, (m) => m);
+
+        // 3. Build merged model: server owns the preference fields,
+        //    the device owns the behavioural tracking fields.
+        final merged = UserPreferencesModel.fromApiGetJson(
+          json,
+          existingScores:       existing?.categoryScores   ?? const {},
+          existingSeenIds:      existing?.seenProductIds   ?? const [],
+          existingLastDecayDate: existing?.lastDecayDate,
+        );
+
+        // 4. Persist to Hive
+        await localDataSource.savePreferences(merged);
       },
     );
   }

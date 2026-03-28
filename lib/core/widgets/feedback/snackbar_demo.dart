@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'app_snackbar.dart';
+import '../../network/network_test_utils.dart';
 
 class SnackBarDemo extends StatelessWidget {
   const SnackBarDemo({super.key});
@@ -98,6 +99,100 @@ class SnackBarDemo extends StatelessWidget {
                   context,
                   message: 'تم حفظ التغييرات تلقائياً في السحابة',
                   type: SnackBarType.info,
+                ),
+              ),
+              
+              SizedBox(height: 16.h),
+              
+              // Network Slow Button
+              _DemoButton(
+                title: 'تحذير الشبكة البطيئة',
+                subtitle: 'تم اكتشاف اتصال إنترنت بطيء',
+                color: const Color(0xFFFF8C00),
+                onPressed: () => AppSnackBar.show(
+                  context,
+                  message: 'تم اكتشاف اتصال إنترنت بطيء',
+                  type: SnackBarType.networkSlow,
+                ),
+              ),
+              
+              SizedBox(height: 24.h),
+              
+              // Test Network Monitoring
+              Container(
+                width: double.infinity,
+                margin: EdgeInsets.symmetric(horizontal: 24.w),
+                padding: EdgeInsets.all(16.w),
+                decoration: BoxDecoration(
+                  color: Colors.grey.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(
+                    color: Colors.grey.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'اختبار مراقبة الشبكة',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF1A1A1A),
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      'محاكاة طلبات بطيئة لاختبار النظام التلقائي',
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        color: const Color(0xFF6B6B6B),
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              await NetworkTestUtils.simulateSlowRequest();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFFF8C00),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                            ),
+                            child: Text(
+                              'طلب بطيء واحد',
+                              style: TextStyle(fontSize: 12.sp),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              await NetworkTestUtils.simulateMultipleSlowRequests();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFFF3B30),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                            ),
+                            child: Text(
+                              'عدة طلبات بطيئة',
+                              style: TextStyle(fontSize: 12.sp),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ],

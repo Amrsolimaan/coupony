@@ -1,8 +1,9 @@
+import 'package:coupony/config/dependency_injection/injection_container.dart' as di;
+import 'package:coupony/features/auth/presentation/cubit/google_sign_in_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../config/routes/app_router.dart';
@@ -16,6 +17,8 @@ import '../cubit/auth_state.dart';
 import '../cubit/login_cubit.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/role_toggle.dart';
+import '../widgets/google_sign_in_button.dart';
+import '../widgets/auth_success_bottom_sheet.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // LOGIN SCREEN
@@ -35,156 +38,223 @@ class LoginScreen extends HookWidget {
     final rememberMe         = useValueNotifier<bool>(false);
 
     // ── Reactive derivations (inline — no extra ValueNotifier) ─────────────
-    // useValueListenable subscribes to TextEditingValue changes, rebuilding
-    // the widget on every keystroke. This replaces the old addListener pattern.
     final emailValue    = useValueListenable(emailController);
     final passwordValue = useValueListenable(passwordController);
 
     final hasContent = emailValue.text.trim().isNotEmpty &&
                        passwordValue.text.isNotEmpty;
 
-    return BlocConsumer<LoginCubit, AuthState>(
-      // ── Listener: side-effects only (snackbars + navigation) ──────────────
-      listener: (context, state) {
-        if (state.errorMessage != null) {
-          context.showErrorSnackBar(context.getLocalizedMessage(state.errorMessage));
-        }
-        if (state.successMessage != null) {
-          context.showSuccessSnackBar(context.getLocalizedMessage(state.successMessage));
-        }
-        switch (state.navSignal) {
-          case AuthNavigation.toHome:
-            context.go(AppRouter.onboarding);
-          case AuthNavigation.toMerchantDash:
-            context.go(AppRouter.merchantDashboard);
-          case AuthNavigation.toRegister:
-            context.push(AppRouter.register);
-          default:
-            break;
-        }
-      },
-      // ── Builder: pure UI — reads state, emits nothing ────────────────────
-      builder: (context, state) {
-        return Scaffold(
-          backgroundColor: AppColors.surface,
-          body: GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            behavior: HitTestBehavior.opaque,
-            child: SafeArea(
-              child: SingleChildScrollView(
-                padding: EdgeInsetsDirectional.symmetric(horizontal: 24.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 16.h),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<LoginCubit>(
+          create: (context) => di.sl<LoginCubit>(),
+        ),
+        BlocProvider<GoogleSignInCubit>(
+          create: (context) => di.sl<GoogleSignInCubit>(),
+        ),
+      ],
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<LoginCubit, AuthState>(
+            listener: (context, state) {
+              if (state.errorMessage != null) {
+                context.showErrorSnackBar(context.getLocalizedMessage(state.errorMessage));
+              }
+              if (state.successMessage != null) {
+                context.showSuccessSnackBar(context.getLocalizedMessage(state.successMessage));
+              }
+              switch (state.navSignal) {
+                case AuthNavigation.toHome:
+                  context.go(AppRouter.home);
+                case AuthNavigation.toOnboarding:
+                  context.go(AppRouter.onboarding);
+                case AuthNavigation.toMerchantDash:
+                  context.go(AppRouter.merchantDashboard);
+                case AuthNavigation.toRegister:
+                  context.push(AppRouter.register);
+                default:
+                  break;
+              }
+            },
+          ),
+          BlocListener<GoogleSignInCubit, AuthState>(
+            listener: (context, state) {
+              if (state.errorMessage != null) {
+                context.showErrorSnackBar(context.getLocalizedMessage(state.errorMessage));
+              }
 
-                    // ── Top bar: back (start) · skip (end) ──────────────────
-                    _TopBar(l10n: l10n),
-                    SizedBox(height: 28.h),
+              // OTP required (unverified account) — navigate immediately, no bottom sheet
+              if (state.navSignal == AuthNavigation.toOtpVerification) {
+                context.push(
+                  AppRouter.otpVerification,
+                  extra: <String, String>{
+                    'email':    state.otpEmail    ?? '',
+                    'password': state.otpPassword ?? '',
+                  },
+                );
+                return;
+              }
 
-                    // ── Title ──────────────────────────────────────────────
-                    Text(
-                      l10n.login_welcome_back,
-                      style: AppTextStyles.customStyle(
-                        context,
-                        fontSize: 26,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                        height: 1.3,
-                        letterSpacing: -1,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 20.h),
+              if (state.successMessage != null && state.navSignal != AuthNavigation.none) {
+                // عرض AuthSuccessBottomSheet عند نجاح تسجيل الدخول بـ Google
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) => AuthSuccessBottomSheet(
+                    title: l10n.login_success_title,
+                    buttonText: l10n.continue_button,
+                    onContinue: () {
+                      Navigator.of(context).pop();
+                      switch (state.navSignal) {
+                        case AuthNavigation.toHome:
+                          context.go(AppRouter.home);
+                        case AuthNavigation.toOnboarding:
+                          context.go(AppRouter.onboarding);
+                        case AuthNavigation.toMerchantDash:
+                          context.go(AppRouter.merchantDashboard);
+                        default:
+                          break;
+                      }
+                    },
+                  ),
+                );
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<LoginCubit, AuthState>(
+          builder: (context, state) {
+            return Scaffold(
+              backgroundColor: AppColors.surface,
+              body: GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                behavior: HitTestBehavior.opaque,
+                child: SafeArea(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsetsDirectional.symmetric(horizontal: 24.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 16.h),
 
-                    // ── Role toggle ─────────────────────────────────────────
-                    RoleToggle(
-                      roleNotifier: roleNotifier,
-                      userLabel: l10n.login_user_role,
-                      merchantLabel: l10n.login_merchant_role,
-                    ),
-                    SizedBox(height: 20.h),
+                        // ── Top bar: back (start) · skip (end) ──────────────────
+                        _TopBar(l10n: l10n),
+                        SizedBox(height: 28.h),
 
-                    // ── Email field ─────────────────────────────────────────
-                    AuthTextField(
-                      controller: emailController,
-                      hint: l10n.email,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                    ),
-                    SizedBox(height: 12.h),
-
-                    // ── Password field ──────────────────────────────────────
-                    AuthTextField(
-                      controller: passwordController,
-                      hint: l10n.password,
-                      isPassword: true,
-                      hasError: state.errorMessage != null,
-                      textInputAction: TextInputAction.done,
-                    ),
-
-                    // ── Error text ──────────────────────────────────────────
-                    if (state.errorMessage != null) ...[
-                      SizedBox(height: 6.h),
-                      Align(
-                        alignment: AlignmentDirectional.centerStart,
-                        child: Text(
-                          context.getLocalizedMessage(state.errorMessage),
+                        // ── Title ──────────────────────────────────────────────
+                        Text(
+                          l10n.login_welcome_back,
                           style: AppTextStyles.customStyle(
                             context,
-                            fontSize: 12,
-                            color: AppColors.error,
+                            fontSize: 26,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                            height: 1.3,
+                            letterSpacing: -1,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 20.h),
+
+                        // ── Role toggle ─────────────────────────────────────────
+                        RoleToggle(
+                          roleNotifier: roleNotifier,
+                          userLabel: l10n.login_user_role,
+                          merchantLabel: l10n.login_merchant_role,
+                        ),
+                        SizedBox(height: 20.h),
+
+                        // ── Email field ─────────────────────────────────────────
+                        AuthTextField(
+                          controller: emailController,
+                          hint: l10n.email,
+                          keyboardType: TextInputType.emailAddress,
+                          textInputAction: TextInputAction.next,
+                        ),
+                        SizedBox(height: 12.h),
+
+                        // ── Password field ──────────────────────────────────────
+                        AuthTextField(
+                          controller: passwordController,
+                          hint: l10n.password,
+                          isPassword: true,
+                          hasError: state.errorMessage != null,
+                          textInputAction: TextInputAction.done,
+                        ),
+
+                        // ── Error text ──────────────────────────────────────────
+                        if (state.errorMessage != null) ...[
+                          SizedBox(height: 6.h),
+                          Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            child: Text(
+                              context.getLocalizedMessage(state.errorMessage),
+                              style: AppTextStyles.customStyle(
+                                context,
+                                fontSize: 12,
+                                color: AppColors.error,
+                              ),
+                            ),
+                          ),
+                        ],
+                        SizedBox(height: 12.h),
+
+                        // ── Remember me · Forgot password ───────────────────────
+                        _RememberForgotRow(rememberMe: rememberMe, l10n: l10n),
+                        SizedBox(height: 24.h),
+
+                        // ── Login button ────────────────────────────────────────
+                        AppPrimaryButton(
+                          text: l10n.login,
+                          isLoading: state.isLoading,
+                          onPressed: hasContent && !state.isLoading
+                              ? () => context.read<LoginCubit>().login(
+                                    email:    emailController.text.trim(),
+                                    password: passwordController.text,
+                                    role:     roleNotifier.value,
+                                  )
+                              : null,
+                          height: 56.h,
+                          backgroundColor:
+                              hasContent ? AppColors.primary : AppColors.textDisabled,
+                          textStyle: AppTextStyles.customStyle(
+                            context,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.surface,
                           ),
                         ),
-                      ),
-                    ],
-                    SizedBox(height: 12.h),
+                        SizedBox(height: 20.h),
 
-                    // ── Remember me · Forgot password ───────────────────────
-                    _RememberForgotRow(rememberMe: rememberMe, l10n: l10n),
-                    SizedBox(height: 24.h),
+                        // ── "Or continue with" divider ───────────────────────────
+                        _OrDivider(label: l10n.login_or_divider),
+                        SizedBox(height: 16.h),
 
-                    // ── Login button ────────────────────────────────────────
-                    AppPrimaryButton(
-                      text: l10n.login,
-                      isLoading: state.isLoading,
-                      onPressed: hasContent && !state.isLoading
-                          ? () => context.read<LoginCubit>().login(
-                                email:    emailController.text.trim(),
-                                password: passwordController.text,
-                                role:     roleNotifier.value,
-                              )
-                          : null,
-                      height: 56.h,
-                      backgroundColor:
-                          hasContent ? AppColors.primary : AppColors.textDisabled,
-                      textStyle: AppTextStyles.customStyle(
-                        context,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.surface,
-                      ),
+                        // ── Google sign-in button ────────────────────────────────
+                        ValueListenableBuilder<String>(
+                          valueListenable: roleNotifier,
+                          builder: (context, role, _) {
+                            return GoogleSignInButton(
+                              label: l10n.login_google_button,
+                              role: role,
+                            );
+                          },
+                        ),
+                        SizedBox(height: 70.h),
+
+                        // ── Register link ────────────────────────────────────────
+                        _NoAccountRow(l10n: l10n),
+                        SizedBox(height: 24.h),
+                      ],
                     ),
-                    SizedBox(height: 20.h),
-
-                    // ── "Or continue with" divider ───────────────────────────
-                    _OrDivider(label: l10n.login_or_divider),
-                    SizedBox(height: 16.h),
-
-                    // ── Google sign-in button ────────────────────────────────
-                    _GoogleButton(label: l10n.login_google_button),
-                    SizedBox(height: 70.h),
-
-                    // ── Register link ────────────────────────────────────────
-                    _NoAccountRow(l10n: l10n),
-                    SizedBox(height: 24.h),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
-        );
-      },
+            );
+          },
+        ),
+      ),
     );
   }
 }
@@ -348,58 +418,6 @@ class _OrDivider extends StatelessWidget {
           child: Divider(color: AppColors.borderField, height: 1.r, thickness: 1.r),
         ),
       ],
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Google button
-//
-// AppOutlinedButton only accepts IconData for its icon slot, which cannot host
-// an SVG asset. This widget replicates AppOutlinedButton.medium styling specs
-// (height 56.h · radius 12.r · border 1.5.w) while embedding the SVG directly.
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _GoogleButton extends StatelessWidget {
-  final String label;
-  const _GoogleButton({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 56.h,
-      width:  double.infinity,
-      child: OutlinedButton(
-        onPressed: () {}, // TODO: wire Google sign-in
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(color: AppColors.borderField, width: 1.5.w),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          padding: EdgeInsetsDirectional.symmetric(horizontal: 16.w),
-          backgroundColor: AppColors.surface,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              'assets/icons/google_ic.svg',
-              width:  24.w,
-              height: 24.h,
-            ),
-            SizedBox(width: 12.w),
-            Text(
-              label,
-              style: AppTextStyles.customStyle(
-                context,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

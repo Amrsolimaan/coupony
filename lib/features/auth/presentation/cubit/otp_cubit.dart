@@ -242,10 +242,12 @@ class OtpCubit extends Cubit<AuthState> {
         ));
       },
       (user) {
-        logger.i('OTP verified — role: ${user.role}');
+        logger.i('OTP verified — role: ${user.role}, onboardingCompleted: ${user.isOnboardingCompleted}');
         final nav = user.role == 'merchant'
             ? AuthNavigation.toMerchantDash
-            : AuthNavigation.toHome;
+            : user.isOnboardingCompleted
+                ? AuthNavigation.toHome
+                : AuthNavigation.toOnboarding;
 
         _safeEmit(state.copyWith(
           isLoading:      false,

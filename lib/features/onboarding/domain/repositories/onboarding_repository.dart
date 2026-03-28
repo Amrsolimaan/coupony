@@ -29,7 +29,7 @@ abstract class OnboardingRepository {
   /// POST the completed onboarding to the correct role-based endpoint.
   ///
   /// Reads the locally saved [UserPreferencesModel], serializes it with
-  /// [toApiJson()], and sends it to `/api/v1/on-boarding/{customer|seller}`.
+  /// [toApiJson()], and sends it to `/on-boarding/{customer|seller}`.
   ///
   /// On success: marks the local model as `isSynced: true`.
   /// The caller ([OnboardingFlowCubit]) is responsible for persisting the
@@ -37,5 +37,19 @@ abstract class OnboardingRepository {
   Future<Either<Failure, void>> submitOnboardingToApi({
     required OnboardingUserType userType,
     required String authToken,
+  });
+
+  // ── Server sync ─────────────────────────────────────────────────────────
+
+  /// GET the user's server-stored preferences and write them to Hive.
+  ///
+  /// Merges server values (categories, shopping styles, budget) with any
+  /// existing local interest-tracking data (categoryScores, seenProductIds)
+  /// so behavioural signals accumulated on this device are not lost.
+  ///
+  /// Returns [Right(unit)] on success or [Left(Failure)] if the network
+  /// call fails.  Callers may treat this as fire-and-forget.
+  Future<Either<Failure, void>> fetchAndCacheFromServer({
+    required OnboardingUserType userType,
   });
 }

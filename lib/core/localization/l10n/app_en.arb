@@ -137,6 +137,7 @@
   "login_or_divider": "Or continue with",
   "login_google_button": "Continue with Google",
   "login_success": "Logged in successfully",
+  "continue_button": "Continue",
   "register_success": "Account created successfully",
   "register_otp_sent": "Verification code sent to your email",
   "otp_sent_success": "Verification code sent successfully",
@@ -190,5 +191,11 @@
   "reset_password_strength_uppercase": "Lowercase (a-z) and uppercase (A-Z) letters",
   "reset_password_strength_lowercase": "Contains a lowercase letter",
   "reset_password_error_mismatch": "Passwords do not match. Please try again",
-  "reset_password_continue_login": "Continue to Login"
+  "reset_password_continue_login": "Continue to Login",
+  
+  "network_slow_warning": "Slow internet connection detected",
+  "network_very_slow_warning": "Very slow internet — some features may be delayed",
+  
+  "login_success_title": "Login Successful!",
+  "continue_button": "Continue"
 }

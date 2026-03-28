@@ -18,22 +18,43 @@ class UserModel extends UserEntity {
   /// responses, as indicated by the Login Postman test script:
   ///   jsonData.data.access_token  OR  jsonData.access_token
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    print('🔍 UserModel.fromJson - Raw JSON: $json');
+    
     final data = json['data'] as Map<String, dynamic>? ?? json;
-    return UserModel(
-      id:           data['id'] as int? ?? 0,
-      firstName:    data['first_name'] as String? ?? '',
-      lastName:     data['last_name']  as String? ?? '',
-      email:        data['email']      as String? ?? '',
-      phoneNumber:  data['phone_number'] as String? ?? '',
-      role:         data['role']       as String? ?? 'user',
+    print('🔍 UserModel.fromJson - Processed data: $data');
+    
+    // فحص is_onboarding_completed في المكانين (root level و data level)
+    final onboardingFromRoot = json['is_onboarding_completed'] as bool?;
+    final onboardingFromData = data['is_onboarding_completed'] as bool?;
+    final finalOnboardingStatus = onboardingFromRoot ?? onboardingFromData ?? false;
+    
+    print('🎯 UserModel.fromJson - is_onboarding_completed:');
+    print('  - From root: $onboardingFromRoot');
+    print('  - From data: $onboardingFromData');
+    print('  - Final value: $finalOnboardingStatus');
+    
+    // استخراج بيانات المستخدم من user object إذا كان موجود
+    final userObject = data['user'] as Map<String, dynamic>?;
+    final userInfo = userObject ?? data;
+    
+    final userModel = UserModel(
+      id:           0, // Backend uses UUID, we'll keep as 0 for now
+      firstName:    userInfo['profile']?['first_name'] as String? ?? '',
+      lastName:     userInfo['profile']?['last_name'] as String? ?? '',
+      email:        userInfo['email'] as String? ?? '',
+      phoneNumber:  userInfo['phone_number'] as String? ?? '',
+      role:         json['role'] as String? ?? data['role'] as String? ?? 'user',
       // Token can be at root or nested under data
       accessToken:  json['access_token']  as String?
                  ?? data['access_token']  as String?,
       refreshToken: json['refresh_token'] as String?
                  ?? data['refresh_token'] as String?,
       fcmToken:     data['fcm_token'] as String?,
-      isOnboardingCompleted: data['is_onboarding_completed'] as bool? ?? false,
+      isOnboardingCompleted: finalOnboardingStatus,
     );
+    
+    print('✅ UserModel created successfully - Final isOnboardingCompleted: ${userModel.isOnboardingCompleted}');
+    return userModel;
   }
 
   Map<String, dynamic> toJson() => {

@@ -427,11 +427,12 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
       await apiResult.fold(
         (failure) async {
           logger.e('API submission failed: ${failure.message}');
-          // ✅ PHASE 3: Show non-blocking error but still navigate (offline-first)
+          // Server did not confirm with 200 OK — do NOT set the flag and do NOT
+          // navigate.  The user stays on the final onboarding step and can retry.
           _safeEmit(state.copyWith(
-            apiErrorKey: 'API sync failed - will retry later', // Non-blocking message
+            apiErrorKey: failure.message,
           ));
-          shouldNavigate = true; // Still proceed with navigation
+          shouldNavigate = false;
         },
         (_) async {
           // ── STEP 3: Persist completed flag (account-level) ────────────────
@@ -448,17 +449,13 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
       );
 
     } catch (e) {
-      // ✅ PHASE 2: Catch any unexpected errors
       logger.e('Unexpected error during onboarding submission: $e');
       _safeEmit(state.copyWith(
         errorMessageKey: 'Unexpected error occurred',
         apiErrorKey: null,
       ));
-      
-      // If local save was successful, still allow navigation
-      if (localSaveSuccess) {
-        shouldNavigate = true;
-      }
+      // Never navigate without a 200 OK — flag would not be set.
+      shouldNavigate = false;
     } finally {
       // ✅ PHASE 2: ALWAYS clear loading states in finally block
       _safeEmit(state.copyWith(

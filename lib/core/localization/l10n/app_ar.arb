@@ -138,6 +138,9 @@
   "login_remember_me": "تذكرني",
   "login_or_divider": "أو باستخدام",
   "login_google_button": "المتابعة بواسطة Google",
+  "network_very_slow_warning": "الإنترنت بطيء جداً — قد تتأخر بعض الميزات",
+  "login_success_title": "تم تسجيل الدخول بنجاح!",
+  "continue_button": "متابعة",
   "login_success": "تم تسجيل الدخول بنجاح",
   "register_success": "تم إنشاء الحساب بنجاح",
   "register_otp_sent": "تم إرسال رمز التحقق إلى بريدك الإلكتروني",
@@ -192,5 +195,8 @@
   "reset_password_strength_uppercase": "الأحرف الصغيرة (a-z) والأحرف الكبيرة (A-Z)",
   "reset_password_strength_lowercase": "يحتوي على حرف صغير",
   "reset_password_error_mismatch": "كلمة المرور غير متطابقة. يرجى إعادة المحاولة",
-  "reset_password_continue_login": "متابعة تسجيل الدخول"
+  "reset_password_continue_login": "متابعة تسجيل الدخول",
+  
+  "network_slow_warning": "تم اكتشاف اتصال إنترنت بطيء",
+  "network_very_slow_warning": "الإنترنت بطيء جداً — قد تتأخر بعض الميزات"
 }
