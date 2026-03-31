@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- اسم التطبيق -->
+    <string name="app_name">كوبوني</string>
+    
+    <!-- أوصاف الأذونات - الكاميرا والمعرض لشعار المتجر -->
+    <string name="permission_camera_description">نحتاج للوصول إلى الكاميرا لالتقاط صورة لشعار متجرك</string>
+    <string name="permission_gallery_description">نحتاج للوصول إلى مكتبة الصور لاختيار شعار متجرك</string>
+    
+    <!-- أوصاف الأذونات - الموقع -->
+    <string name="permission_location_description">نحتاج للوصول إلى موقعك لعرض المتاجر والعروض القريبة منك</string>
+    
+    <!-- أوصاف الأذونات - الميكروفون للبحث الصوتي -->
+    <string name="permission_microphone_description">نحتاج للوصول إلى الميكروفون للبحث الصوتي</string>
+</resources>

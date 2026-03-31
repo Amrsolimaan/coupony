@@ -5,17 +5,21 @@ import 'package:go_router/go_router.dart';
 import 'dart:ui' as ui;
 
 import '../../../../config/routes/app_router.dart';
+import '../../../../core/localization/l10n/app_localizations.dart';
 import '../../../../core/localization/locale_cubit.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/extensions/snackbar_extension.dart';
 
-/// Language Selection Page - Coupony
-///
+// ─────────────────────────────────────────────────────────────────────────────
+// LANGUAGE SELECTION PAGE
+// ─────────────────────────────────────────────────────────────────────────────
 /// Modern, minimalist design with smart language switching
-/// - Title changes based on selected language (Arabic or English only)
+/// - Title changes based on selected language (Arabic or English)
 /// - Pre-selects device locale
+/// - Uses BlocBuilder to rebuild UI when locale changes
 /// - Clean typography and spacing
+
 class LanguageSelectionPage extends StatefulWidget {
   const LanguageSelectionPage({super.key});
 
@@ -40,6 +44,8 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
     setState(() {
       _selectedLanguage = languageCode;
     });
+    // Immediately change locale to update UI
+    context.read<LocaleCubit>().changeLocale(languageCode);
   }
 
   Future<void> _onContinue() async {
@@ -50,7 +56,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
     });
 
     try {
-      // Save language preference and trigger locale rebuild
+      // Save language preference (already saved by _onLanguageTapped)
       await context.read<LocaleCubit>().changeLocale(_selectedLanguage);
 
       if (mounted) {
@@ -68,66 +74,72 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      body: Stack(
-        children: [
-          SafeArea(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 32.w),
-              child: Column(
-                children: [
-                  SizedBox(height: 80.h),
+    return BlocBuilder<LocaleCubit, Locale>(
+      builder: (context, locale) {
+        final l10n = AppLocalizations.of(context)!;
 
-                  // Logo
-                  _buildLogo(),
+        return Scaffold(
+          backgroundColor: AppColors.surface,
+          body: Stack(
+            children: [
+              SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 32.w),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 80.h),
 
-                  SizedBox(height: 60.h),
+                      // ── Logo ────────────────────────────────────────────
+                      _buildLogo(),
 
-                  // Title (changes based on selected language)
-                  _buildTitle(),
+                      SizedBox(height: 60.h),
 
-                  SizedBox(height: 48.h),
+                      // ── Title (changes based on selected language) ──────
+                      _buildTitle(l10n),
 
-                  // Language Options
-                  _buildLanguageOption(
-                    languageCode: 'ar',
-                    languageName: 'العربية',
-                    isSelected: _selectedLanguage == 'ar',
+                      SizedBox(height: 48.h),
+
+                      // ── Language Options ────────────────────────────────
+                      _buildLanguageOption(
+                        languageCode: 'ar',
+                        languageName: l10n.language_arabic,
+                        isSelected: _selectedLanguage == 'ar',
+                      ),
+
+                      SizedBox(height: 16.h),
+
+                      _buildLanguageOption(
+                        languageCode: 'en',
+                        languageName: l10n.language_english,
+                        isSelected: _selectedLanguage == 'en',
+                      ),
+
+                      const Spacer(),
+
+                      // ── Continue Button ─────────────────────────────────
+                      _buildContinueButton(l10n),
+
+                      SizedBox(height: 40.h),
+                    ],
                   ),
-
-                  SizedBox(height: 16.h),
-
-                  _buildLanguageOption(
-                    languageCode: 'en',
-                    languageName: 'English',
-                    isSelected: _selectedLanguage == 'en',
-                  ),
-
-                  const Spacer(),
-
-                  // Continue Button
-                  _buildContinueButton(),
-
-                  SizedBox(height: 40.h),
-                ],
-              ),
-            ),
-          ),
-
-          // Full-screen loading overlay
-          if (_isLoading)
-            Container(
-              color: AppColors.surface.withValues(alpha: 0.75),
-              child: Center(
-                child: CircularProgressIndicator(
-                  color: AppColors.primary,
-                  strokeWidth: 3.w,
                 ),
               ),
-            ),
-        ],
-      ),
+
+              // ── Full-screen loading overlay ─────────────────────────────
+              if (_isLoading)
+                Container(
+                  color: AppColors.surface.withValues(alpha: 0.75),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.primary,
+                      strokeWidth: 3.w,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -145,10 +157,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
     );
   }
 
-  Widget _buildTitle() {
-    // Smart title: Shows ONLY the selected language
-    final title = _selectedLanguage == 'ar' ? 'اختر لغتك' : 'Choose Your Language';
-
+  Widget _buildTitle(AppLocalizations l10n) {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       transitionBuilder: (child, animation) {
@@ -164,7 +173,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
         );
       },
       child: Text(
-        title,
+        l10n.language_selection_title,
         key: ValueKey(_selectedLanguage),
         style: AppTextStyles.customStyle(
           context,
@@ -242,7 +251,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
     );
   }
 
-  Widget _buildContinueButton() {
+  Widget _buildContinueButton(AppLocalizations l10n) {
     return SizedBox(
       width: double.infinity,
       height: 56.h,
@@ -267,7 +276,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
                 ),
               )
             : Text(
-                _selectedLanguage == 'ar' ? 'متابعة' : 'Continue',
+                l10n.language_continue,
                 style: AppTextStyles.customStyle(
                   context,
                   fontSize: 16,
@@ -280,3 +289,4 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
     );
   }
 }
+ 

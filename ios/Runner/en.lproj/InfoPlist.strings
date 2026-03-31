@@ -1,4 +1,12 @@
+/* Location Permissions */
 "NSLocationWhenInUseUsageDescription" = "We need your location to show nearby stores and offers";
 "NSLocationAlwaysAndWhenInUseUsageDescription" = "We need your location to provide you with the best offers even when the app is in the background";
 "NSLocationAlwaysUsageDescription" = "We need your location to provide you with the best offers even when the app is in the background";
-"NSNotificationUsageDescription" = "Please enable notifications to receive updates and reminders about the latest offers";
+
+/* Camera & Photo Library Permissions - Store Logo Selection */
+"NSPhotoLibraryUsageDescription" = "We need access to your photo library to select a logo for your store";
+"NSPhotoLibraryAddUsageDescription" = "We need access to save photos to your library";
+"NSCameraUsageDescription" = "We need access to your camera to take a photo for your store logo";
+
+/* Microphone Permission - Voice Search */
+"NSMicrophoneUsageDescription" = "We need access to your microphone for voice search";

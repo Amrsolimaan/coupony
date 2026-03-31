@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../constants/api_constants.dart';
+import '../localization/locale_cubit.dart';
 import 'interceptors/auth_interceptor.dart';
+import 'interceptors/locale_interceptor.dart';
 import 'interceptors/logging_interceptor.dart';
 import 'interceptors/error_interceptor.dart';
 import 'network_interceptor.dart';
@@ -9,8 +11,9 @@ import 'network_interceptor.dart';
 class DioClient {
   late final Dio _dio;
   final FlutterSecureStorage secureStorage;
+  final LocaleCubit localeCubit;
 
-  DioClient(this.secureStorage) {
+  DioClient(this.secureStorage, this.localeCubit) {
     _dio = Dio(
       BaseOptions(
         baseUrl: ApiConstants.baseUrl,
@@ -28,6 +31,7 @@ class DioClient {
     );
 
     _dio.interceptors.addAll([
+      LocaleInterceptor(localeCubit), // Add locale header first
       AuthInterceptor(secureStorage),
       ErrorInterceptor(),
       NetworkMonitorInterceptor(),

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/buttons/buttons.dart';
+import '../providers/onboarding_theme_provider.dart';
 
+/// Role-aware Action Buttons
+/// Dynamically changes color based on OnboardingUserType
 class OnboardingActionButtons extends StatelessWidget {
   final VoidCallback onNext;
   final VoidCallback onSkip;
@@ -10,6 +13,7 @@ class OnboardingActionButtons extends StatelessWidget {
   final String skipLabel;
   final bool isNextEnabled;
   final bool isLoading;
+  final OnboardingThemeProvider theme;
 
   const OnboardingActionButtons({
     super.key,
@@ -17,6 +21,7 @@ class OnboardingActionButtons extends StatelessWidget {
     required this.onSkip,
     required this.nextLabel,
     required this.skipLabel,
+    required this.theme,
     this.isNextEnabled = true,
     this.isLoading = false,
   });
@@ -32,14 +37,13 @@ class OnboardingActionButtons extends StatelessWidget {
             child: AppOutlinedButton(
               text: skipLabel,
               onPressed: isLoading ? null : onSkip,
-              isLoading: false, // Skip button doesn't show loading
-              // Maintain exact same UI as before (padding: vertical 8.h)
+              isLoading: false,
               size: AppButtonSize.medium,
               borderRadius: 12.r,
-              borderWidth: 1.5.w, // Same as before
-              borderColor: AppColors.primary,
-              textColor: AppColors.primary,
-              padding: EdgeInsets.symmetric(vertical: 8.h), // Same as original
+              borderWidth: 1.5.w,
+              borderColor: theme.primaryColor,
+              textColor: theme.primaryColor,
+              padding: EdgeInsets.symmetric(vertical: 8.h),
             ),
           ),
           SizedBox(width: 12.w),
@@ -49,12 +53,11 @@ class OnboardingActionButtons extends StatelessWidget {
               text: nextLabel,
               onPressed: (isNextEnabled && !isLoading) ? onNext : null,
               isLoading: isLoading,
-              // Maintain exact same UI as before (padding: vertical 8.h)
               size: AppButtonSize.medium,
               borderRadius: 12.r,
-              backgroundColor: AppColors.primary,
+              backgroundColor: theme.primaryColor,
               disabledBackgroundColor: AppColors.divider,
-              padding: EdgeInsets.symmetric(vertical: 8.h), // Same as original
+              padding: EdgeInsets.symmetric(vertical: 8.h),
             ),
           ),
         ],

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">Coupony</string>
+    
+    <!-- Permission Descriptions - Camera & Gallery for Store Logo -->
+    <string name="permission_camera_description">We need access to your camera to take a photo for your store logo</string>
+    <string name="permission_gallery_description">We need access to your photo library to select a logo for your store</string>
+    
+    <!-- Permission Descriptions - Location -->
+    <string name="permission_location_description">We need your location to show nearby stores and offers</string>
+    
+    <!-- Permission Descriptions - Microphone for Voice Search -->
+    <string name="permission_microphone_description">We need access to your microphone for voice search</string>
+</resources>

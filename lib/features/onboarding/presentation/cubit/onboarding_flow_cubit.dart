@@ -47,7 +47,7 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
     required this.authLocalDataSource,
     required this.logger,
   }) : super(const OnboardingFlowState()) {
-    _loadExistingPreferences();
+    _loadUserTypeAndPreferences();
   }
 
   /// Safe emit wrapper to prevent emitting after cubit is closed
@@ -60,6 +60,18 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
   // ════════════════════════════════════════════════════════
   // INITIALIZATION
   // ════════════════════════════════════════════════════════
+
+  /// Load user type from secure storage and existing preferences
+  Future<void> _loadUserTypeAndPreferences() async {
+    // 1. Load user type first (SOURCE OF TRUTH)
+    final role = await secureStorage.read(StorageKeys.userRole);
+    final userType = OnboardingUserType.fromRole(role);
+    
+    _safeEmit(state.copyWith(userType: userType));
+    
+    // 2. Then load existing preferences
+    await _loadExistingPreferences();
+  }
 
   /// Load existing preferences (if user returns to onboarding)
   Future<void> _loadExistingPreferences() async {

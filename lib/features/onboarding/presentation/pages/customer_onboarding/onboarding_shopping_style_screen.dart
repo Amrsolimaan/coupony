@@ -1,39 +1,37 @@
-// lib/features/onboarding/presentation/pages/onboarding_shopping_style_screen.dart
+// lib/features/onboarding/presentation/pages/customer_onboarding/onboarding_shopping_style_screen.dart
 
 import 'package:coupony/config/routes/app_router.dart';
 import 'package:coupony/features/onboarding/presentation/widgets/onboarding_action_buttons.dart';
 import 'package:coupony/features/onboarding/presentation/widgets/category_card.dart';
 import 'package:coupony/features/onboarding/presentation/widgets/onboarding_submit_button.dart';
-// import 'package:coupony/core/widgets/loading/loading.dart'; // Disabled - using inline button loading
 import 'package:coupony/core/utils/message_formatter.dart';
 import 'package:coupony/core/extensions/snackbar_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/constants/shopping_style_constants.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/localization/l10n/app_localizations.dart';
-import '../cubit/onboarding_flow_cubit.dart';
-import '../cubit/onboarding_flow_state.dart';
+import 'package:coupony/core/constants/shopping_style_constants.dart';
+import 'package:coupony/core/theme/app_colors.dart';
+import 'package:coupony/core/theme/app_text_styles.dart';
+import 'package:coupony/core/localization/l10n/app_localizations.dart';
+import 'package:coupony/features/onboarding/presentation/cubit/onboarding_flow_cubit.dart';
+import 'package:coupony/features/onboarding/presentation/cubit/onboarding_flow_state.dart';
+import 'package:coupony/features/onboarding/presentation/providers/onboarding_theme_provider.dart';
 
 class OnboardingShoppingStyleScreen extends StatelessWidget {
   const OnboardingShoppingStyleScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final cubit = context.read<OnboardingFlowCubit>();
 
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
         child: BlocConsumer<OnboardingFlowCubit, OnboardingFlowState>(
-          // Listener to monitor navigation signals
           listener: (context, state) {
             if (state.navigationSignal == OnboardingNavigation.toLoading) {
-              // Capture router before any async gap to avoid stale context assertion
               final router = GoRouter.of(context);
               cubit.clearNavigationSignal();
               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -46,37 +44,39 @@ class OnboardingShoppingStyleScreen extends StatelessWidget {
               cubit.clearNavigationSignal();
             }
 
-            // Show success message when saved (only if not null)
-            if (state.successMessageKey != null && state.successMessageKey!.isNotEmpty) {
-              context.showSuccessSnackBar(context.getLocalizedMessage(state.successMessageKey));
-              // Clear message immediately after showing
+            if (state.successMessageKey != null &&
+                state.successMessageKey!.isNotEmpty) {
+              context.showSuccessSnackBar(
+                context.getLocalizedMessage(state.successMessageKey),
+              );
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (context.mounted) {
                   context.read<OnboardingFlowCubit>().clearSuccessMessage();
                 }
               });
             }
-            // Show error if save failed
+
             if (state.errorMessageKey != null) {
-              context.showErrorSnackBar(context.getLocalizedMessage(state.errorMessageKey));
+              context.showErrorSnackBar(
+                context.getLocalizedMessage(state.errorMessageKey),
+              );
             }
           },
           builder: (context, state) {
-            // Full-screen loader disabled - using inline button loading instead
-            // return LoadingOverlay(
-            //   isLoading: state.isSaving,
-            //   message: 'Saving preferences...',
-            //   icon: LoadingIcons.saving,
-            //   child: Column(
+            final theme = OnboardingThemeProvider(state.userType);
+
             return Column(
               children: [
                 SizedBox(height: 24.h),
-                // الـ Indicator يظهر الخطوات 1 و 2 كمكتملة (Checked)
-                const OnboardingStepIndicator(currentStep: 3, totalSteps: 3),
+                OnboardingStepIndicator(
+                  currentStep: 3,
+                  totalSteps: 3,
+                  theme: theme,
+                ),
                 SizedBox(height: 32.h),
 
                 Text(
-                  l10n?.shoppingStyleTitle ?? 'أسلوبك في الشوبينج؟',
+                  l10n.shoppingStyleTitle,
                   style: AppTextStyles.customStyle(
                     context,
                     fontSize: 22,
@@ -89,8 +89,7 @@ class OnboardingShoppingStyleScreen extends StatelessWidget {
                     vertical: 12.h,
                   ),
                   child: Text(
-                    l10n?.shoppingStyleSubtitle ??
-                        'قوليلنا بتشتري إزاي عشان ترشيحاتنا تبقى أدق',
+                    l10n.shoppingStyleSubtitle,
                     textAlign: TextAlign.center,
                     style: AppTextStyles.customStyle(
                       context,
@@ -105,36 +104,36 @@ class OnboardingShoppingStyleScreen extends StatelessWidget {
                 Expanded(
                   child: ListView.separated(
                     padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    itemCount: ShoppingStyleConstants.allShoppingStyles.length,
+                    itemCount:
+                        ShoppingStyleConstants.allShoppingStyles.length,
                     separatorBuilder: (context, index) =>
                         SizedBox(height: 12.h),
                     itemBuilder: (context, index) {
                       final styleKey =
                           ShoppingStyleConstants.allShoppingStyles[index];
-                      final isSelected = state.shoppingStyles.contains(
-                        styleKey,
-                      );
+                      final isSelected =
+                          state.shoppingStyles.contains(styleKey);
 
                       return SelectionOptionCard(
                         title: _getLocalizedStyleName(styleKey, context),
                         isSelected: isSelected,
                         onTap: () => cubit.toggleShoppingStyle(styleKey),
+                        theme: theme,
                       );
                     },
                   ),
                 ),
 
-                // أزرار التحكم السفلية المشتركة
                 OnboardingActionButtons(
-                  nextLabel: l10n?.finish ?? 'إنهاء',
-                  skipLabel: l10n?.skip ?? 'تخطي',
+                  nextLabel: l10n.finish,
+                  skipLabel: l10n.skip,
                   isNextEnabled: state.isStep3Valid,
                   isLoading: state.isSaving,
                   onNext: () => cubit.submitOnboarding(),
                   onSkip: () => cubit.skipOnboarding(),
+                  theme: theme,
                 ),
               ],
-            // ), // Closing for LoadingOverlay - commented out
             );
           },
         ),
@@ -143,16 +142,16 @@ class OnboardingShoppingStyleScreen extends StatelessWidget {
   }
 
   String _getLocalizedStyleName(String key, BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     switch (key) {
       case ShoppingStyleConstants.online:
-        return l10n?.shoppingOnline ?? 'بشتري Online أغلب الوقت';
+        return l10n.shoppingOnline;
       case ShoppingStyleConstants.basedOnOffer:
-        return l10n?.shoppingBasedOnOffer ?? 'حسب العرض';
+        return l10n.shoppingBasedOnOffer;
       case ShoppingStyleConstants.inStore:
-        return l10n?.shoppingInStore ?? 'بفضّل المحلات (In-Store)';
+        return l10n.shoppingInStore;
       case ShoppingStyleConstants.bestDiscount:
-        return l10n?.shoppingBestDiscount ?? 'بدور على أقوى خصم';
+        return l10n.shoppingBestDiscount;
       default:
         return key;
     }

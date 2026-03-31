@@ -22,6 +22,10 @@ class ErrorInterceptor extends Interceptor {
           exception = const UnauthorizedException('Unauthorized access');
         } else if (statusCode == 404) {
           exception = const NotFoundException('Resource not found');
+        } else if (statusCode == 422) {
+          // Handle validation errors - extract all error messages
+          final validationMessage = _extractValidationErrors(data);
+          exception = ValidationException(validationMessage);
         } else if (statusCode != null && statusCode >= 500) {
           exception = const ServerException('Internal server error');
         } else {
@@ -34,7 +38,7 @@ class ErrorInterceptor extends Interceptor {
         break;
       
       case DioExceptionType.connectionError:
-        exception = const ServerException('No internet connection. Please check your network.');
+        exception = const ServerException('error_no_internet_check_network');
         break;
       
       case DioExceptionType.unknown:
@@ -66,5 +70,41 @@ class ErrorInterceptor extends Interceptor {
         response: err.response,
       ),
     );
+  }
+
+  /// Extracts all validation error messages from the response data
+  /// and combines them into a single localized message.
+  /// 
+  /// This removes the English "(and X more error)" text that Laravel adds
+  /// and shows all errors in the user's language.
+  String _extractValidationErrors(dynamic data) {
+    if (data is! Map<String, dynamic>) {
+      return data.toString();
+    }
+
+    // Try to get the errors object
+    final errors = data['errors'];
+    if (errors is Map<String, dynamic> && errors.isNotEmpty) {
+      // Collect all error messages from all fields
+      final List<String> allErrors = [];
+      
+      for (final fieldErrors in errors.values) {
+        if (fieldErrors is List) {
+          for (final error in fieldErrors) {
+            if (error is String && error.isNotEmpty) {
+              allErrors.add(error);
+            }
+          }
+        }
+      }
+      
+      // If we have multiple errors, join them with newlines
+      if (allErrors.isNotEmpty) {
+        return allErrors.join('\n');
+      }
+    }
+    
+    // Fallback to the message field if no errors object
+    return data['message'] as String? ?? 'Validation error';
   }
 }

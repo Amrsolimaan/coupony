@@ -181,7 +181,7 @@ abstract class BaseRepository {
       final isConnected = await networkInfo.isConnected;
 
       if (!isConnected) {
-        return const Left(NetworkFailure('No internet connection'));
+        return const Left(NetworkFailure('error_no_internet'));
       }
 
       final result = await operation();
@@ -208,8 +208,10 @@ abstract class BaseRepository {
     if (error is NetworkFailure) return error;
     if (error is CacheFailure) return error;
     if (error is UnauthorizedFailure) return error;
+    if (error is ValidationFailure) return error;
 
     // Exception types thrown by the error interceptor
+    if (error is ValidationException) return ValidationFailure(error.message);
     if (error is InvalidTokenException) return InvalidTokenFailure(error.message);
     if (error is UnauthorizedException) return UnauthorizedFailure(error.message);
     if (error is ServerException) return ServerFailure(error.message);

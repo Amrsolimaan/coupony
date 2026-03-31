@@ -51,6 +51,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unexpectedError => 'An unexpected error occurred';
 
   @override
+  String get language_selection_title => 'Choose Your Language';
+
+  @override
+  String get language_arabic => 'العربية';
+
+  @override
+  String get language_english => 'English';
+
+  @override
+  String get language_continue => 'Continue';
+
+  @override
   String get onboardingTitle => 'Your interests shape your experience';
 
   @override
@@ -419,6 +431,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get login_google_button => 'Continue with Google';
 
   @override
+  String get login_google_cancelled => 'Google Sign-In was cancelled';
+
+  @override
+  String get error_no_internet => 'No internet connection';
+
+  @override
+  String get error_no_internet_check_network =>
+      'No internet connection. Please check your network.';
+
+  @override
   String get login_success => 'Logged in successfully';
 
   @override
@@ -592,4 +614,173 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get login_success_title => 'Login Successful!';
+
+  @override
+  String get create_store_title => 'Create Store';
+
+  @override
+  String get create_store_logo_label => 'Store Logo';
+
+  @override
+  String get create_store_logo_hint =>
+      'Choose a clear and appropriate image for your store logo';
+
+  @override
+  String get create_store_logo_format => 'PNG or JPG, max size 5MB';
+
+  @override
+  String get create_store_name_hint => 'Store Name';
+
+  @override
+  String get create_store_category_hint => 'Choose the appropriate category';
+
+  @override
+  String get create_store_description_hint =>
+      'Write a brief description of your store and services';
+
+  @override
+  String get create_store_description_error => 'Maximum allowed limit exceeded';
+
+  @override
+  String get create_store_city_hint => 'Choose the city';
+
+  @override
+  String get create_store_area_hint => 'Area';
+
+  @override
+  String get create_store_branches_hint => 'Number of branches';
+
+  @override
+  String get create_store_terms_agree => 'Agree to Terms & Conditions';
+
+  @override
+  String get create_store_button => 'Create Store';
+
+  @override
+  String get category_toys => 'Toys';
+
+  @override
+  String get category_games => 'Games';
+
+  @override
+  String get city_fayoum => 'Fayoum';
+
+  @override
+  String get city_giza => 'Giza';
+
+  @override
+  String get area_lutf_allah => 'Lutf Allah';
+
+  @override
+  String get seller_store_info_title => 'Store Information';
+
+  @override
+  String get seller_store_name_hint => 'Store Name';
+
+  @override
+  String get seller_store_description_hint =>
+      'Write a brief description of your store and services';
+
+  @override
+  String seller_store_description_counter(Object current, Object max) {
+    return '$current/$max characters';
+  }
+
+  @override
+  String get seller_store_logo_label => 'Store Logo';
+
+  @override
+  String get seller_store_logo_hint =>
+      'Choose a clear image for your store logo';
+
+  @override
+  String get seller_price_range_title =>
+      'Classify your prices so we can reach the right audience';
+
+  @override
+  String get seller_price_range_economic => 'Economic Prices';
+
+  @override
+  String get seller_price_range_economic_subtitle =>
+      'Offers that suit everyone and are very affordable';
+
+  @override
+  String get seller_price_range_medium => 'Medium Category';
+
+  @override
+  String get seller_price_range_medium_subtitle =>
+      'Good quality and moderate price';
+
+  @override
+  String get seller_price_range_premium => 'Premium Category';
+
+  @override
+  String get seller_price_range_premium_subtitle =>
+      'Luxurious products and high-end products';
+
+  @override
+  String get seller_price_range_all_levels => 'All Levels';
+
+  @override
+  String get seller_price_range_all_levels_subtitle =>
+      'Offers covering all price categories';
+
+  @override
+  String get seller_delivery_method_title =>
+      'How do customers reach your products?';
+
+  @override
+  String get seller_delivery_method_physical =>
+      'I have a physical store to receive customers.';
+
+  @override
+  String get seller_delivery_method_online => 'We are fully online.';
+
+  @override
+  String get seller_target_audience_title => 'Who do your offers target more?';
+
+  @override
+  String get seller_target_audience_youth => 'Youth';
+
+  @override
+  String get seller_target_audience_youth_subtitle =>
+      'Social Media generation and trends';
+
+  @override
+  String get seller_target_audience_families => 'Families & Households';
+
+  @override
+  String get seller_target_audience_families_subtitle =>
+      'Home seekers and children';
+
+  @override
+  String get seller_target_audience_everyone => 'Everyone';
+
+  @override
+  String get seller_target_audience_everyone_subtitle =>
+      'General offers for all ages';
+
+  @override
+  String get onboarding_time_most_active_title =>
+      'When are you most active with offers?';
+
+  @override
+  String get onboarding_time_all_week => 'All Week Long';
+
+  @override
+  String get onboarding_time_all_week_subtitle => 'Always active store';
+
+  @override
+  String get onboarding_time_weekends_occasions => 'Weekends and Occasions';
+
+  @override
+  String get onboarding_time_weekends_occasions_subtitle =>
+      'Outings and leisure';
+
+  @override
+  String get onboarding_time_off_peak => 'Off-peak Times';
+
+  @override
+  String get onboarding_time_off_peak_subtitle =>
+      'Offers to increase sales during quiet times';
 }

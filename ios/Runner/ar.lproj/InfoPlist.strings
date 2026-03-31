@@ -1,4 +1,12 @@
-"NSLocationWhenInUseUsageDescription" = "نحتاج للوصول إلى موقعك لعرض الملحات  والعروض القريبة منك";
+/* أذونات الموقع */
+"NSLocationWhenInUseUsageDescription" = "نحتاج للوصول إلى موقعك لعرض المتاجر والعروض القريبة منك";
 "NSLocationAlwaysAndWhenInUseUsageDescription" = "نحتاج للوصول إلى موقعك لتزويدك بأفضل العروض حتى عند تشغيل التطبيق في الخلفية";
 "NSLocationAlwaysUsageDescription" = "نحتاج للوصول إلى موقعك لتزويدك بأفضل العروض حتى عند تشغيل التطبيق في الخلفية";
-"NSNotificationUsageDescription" = "يرجى تمكين الإشعارات لتلقى التحديثات والتذكيرات بأحدث العروض";
+
+/* أذونات الكاميرا ومكتبة الصور - اختيار شعار المتجر */
+"NSPhotoLibraryUsageDescription" = "نحتاج للوصول إلى مكتبة الصور لاختيار شعار متجرك";
+"NSPhotoLibraryAddUsageDescription" = "نحتاج للوصول لحفظ الصور في مكتبتك";
+"NSCameraUsageDescription" = "نحتاج للوصول إلى الكاميرا لالتقاط صورة لشعار متجرك";
+
+/* إذن الميكروفون - البحث الصوتي */
+"NSMicrophoneUsageDescription" = "نحتاج للوصول إلى الميكروفون للبحث الصوتي";

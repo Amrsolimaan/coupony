@@ -1,11 +1,13 @@
 import 'package:coupony/config/dependency_injection/injection_container.dart' as di;
 import 'package:coupony/config/routes/app_router.dart';
+import 'package:coupony/core/constants/storage_keys.dart';
 import 'package:coupony/core/localization/l10n/app_localizations.dart';
 import 'package:coupony/core/theme/app_colors.dart';
 import 'package:coupony/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../auth/data/datasources/auth_local_data_source.dart';
 
@@ -79,7 +81,14 @@ class WelcomeGatewayPage extends StatelessWidget {
                 width: double.infinity,
                 height: 56.h,
                 child: ElevatedButton(
-                  onPressed: () => context.go(AppRouter.login),
+                  onPressed: () async {
+                    // Mark that user has passed welcome gateway
+                    await di.sl<SharedPreferences>().setBool(
+                      StorageKeys.hasPassedWelcomeGateway, 
+                      true,
+                    );
+                    if (context.mounted) context.go(AppRouter.login);
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
@@ -118,6 +127,11 @@ class WelcomeGatewayPage extends StatelessWidget {
                 ),
                 child: OutlinedButton(
                   onPressed: () async {
+                    // Mark that user has passed welcome gateway
+                    await di.sl<SharedPreferences>().setBool(
+                      StorageKeys.hasPassedWelcomeGateway, 
+                      true,
+                    );
                     await di.sl<AuthLocalDataSource>().cacheGuestStatus(true);
                     if (context.mounted) context.go(AppRouter.home);
                   },

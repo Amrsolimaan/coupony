@@ -193,7 +193,7 @@ class LoginScreen extends HookWidget {
                               style: AppTextStyles.customStyle(
                                 context,
                                 fontSize: 12,
-                                color: AppColors.error,
+                                color: AppColors.success,
                               ),
                             ),
                           ),

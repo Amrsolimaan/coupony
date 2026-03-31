@@ -51,6 +51,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unexpectedError => 'حدث خطأ غير متوقع';
 
   @override
+  String get language_selection_title => 'اختر لغتك';
+
+  @override
+  String get language_arabic => 'العربية';
+
+  @override
+  String get language_english => 'English';
+
+  @override
+  String get language_continue => 'متابعة';
+
+  @override
   String get onboardingTitle => 'اهتماماتك تشكل تجربتك';
 
   @override
@@ -413,6 +425,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get login_google_button => 'المتابعة بواسطة Google';
 
   @override
+  String get login_google_cancelled => 'تم إلغاء تسجيل الدخول بواسطة Google';
+
+  @override
+  String get error_no_internet => 'لا يوجد اتصال بالإنترنت';
+
+  @override
+  String get error_no_internet_check_network =>
+      'لا يوجد اتصال بالإنترنت. يرجى التحقق من الشبكة.';
+
+  @override
   String get login_success => 'تم تسجيل الدخول بنجاح';
 
   @override
@@ -587,4 +609,165 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get login_success_title => 'تم تسجيل الدخول بنجاح!';
+
+  @override
+  String get create_store_title => 'إنشاء المتجر';
+
+  @override
+  String get create_store_logo_label => 'شعار المتجر';
+
+  @override
+  String get create_store_logo_hint => 'اختر صورة واضحة لشعار متجرك';
+
+  @override
+  String get create_store_logo_format => 'PNG أو JPG حجم أقصى 5MB';
+
+  @override
+  String get create_store_name_hint => 'اسم متجرك التجاري';
+
+  @override
+  String get create_store_category_hint => 'اختر التصنيف المناسب';
+
+  @override
+  String get create_store_description_hint =>
+      'اكتب وصفاً مختصراً عن متجرك و الخدمات';
+
+  @override
+  String get create_store_description_error => 'تم تجاوز الحد المسموح للأحرف';
+
+  @override
+  String get create_store_city_hint => 'اختر المدينة';
+
+  @override
+  String get create_store_area_hint => 'المنطقة';
+
+  @override
+  String get create_store_branches_hint => 'عدد الفروع';
+
+  @override
+  String get create_store_terms_agree => 'موافق على الشروط و الأحكام';
+
+  @override
+  String get create_store_button => 'انشاء المتجر';
+
+  @override
+  String get category_toys => 'ألعاب';
+
+  @override
+  String get category_games => 'ألعاب';
+
+  @override
+  String get city_fayoum => 'الفيوم';
+
+  @override
+  String get city_giza => 'الجيزة';
+
+  @override
+  String get area_lutf_allah => 'لطف الله';
+
+  @override
+  String get seller_store_info_title => 'معلومات المتجر';
+
+  @override
+  String get seller_store_name_hint => 'اسم متجرك التجاري';
+
+  @override
+  String get seller_store_description_hint =>
+      'اكتب وصفاً مختصراً عن متجرك و الخدمات';
+
+  @override
+  String seller_store_description_counter(Object current, Object max) {
+    return '$current/$max حرف';
+  }
+
+  @override
+  String get seller_store_logo_label => 'شعار المتجر';
+
+  @override
+  String get seller_store_logo_hint => 'اختر صورة واضحة لشعار متجرك';
+
+  @override
+  String get seller_price_range_title => 'صنف أسعارك عشان نوصلك للجمهور الصح';
+
+  @override
+  String get seller_price_range_economic => 'أسعار اقتصادية';
+
+  @override
+  String get seller_price_range_economic_subtitle =>
+      'عروض تناسب الكل وموفرة جداً';
+
+  @override
+  String get seller_price_range_medium => 'فئة متوسطة';
+
+  @override
+  String get seller_price_range_medium_subtitle => 'جودة كويسة وسعر متوازن';
+
+  @override
+  String get seller_price_range_premium => 'فئة مميزة (Premium)';
+
+  @override
+  String get seller_price_range_premium_subtitle => 'براندات ومنتجات فاخرة';
+
+  @override
+  String get seller_price_range_all_levels => 'كل المستويات';
+
+  @override
+  String get seller_price_range_all_levels_subtitle =>
+      'عروض بتغطي كل الفئات السعرية';
+
+  @override
+  String get seller_delivery_method_title => 'إزاي العملاء يوصلوا لمنتجاتك؟';
+
+  @override
+  String get seller_delivery_method_physical => 'عندي محل لاستقبال العملاء.';
+
+  @override
+  String get seller_delivery_method_online => 'نشاطي أونلاين بالكامل.';
+
+  @override
+  String get seller_target_audience_title => 'عروضك بتخاطب مين أكتر؟';
+
+  @override
+  String get seller_target_audience_youth => 'الشباب';
+
+  @override
+  String get seller_target_audience_youth_subtitle =>
+      'جيل الـ Social Media والتريندات';
+
+  @override
+  String get seller_target_audience_families => 'الأهالي والعائلات';
+
+  @override
+  String get seller_target_audience_families_subtitle =>
+      'مستلزمات البيت والأطفال';
+
+  @override
+  String get seller_target_audience_everyone => 'الجميع';
+
+  @override
+  String get seller_target_audience_everyone_subtitle =>
+      'عروض عامة لكل الأعمار';
+
+  @override
+  String get onboarding_time_most_active_title =>
+      'إيه أكثر وقت بتعمل فيه عروض ؟';
+
+  @override
+  String get onboarding_time_all_week => 'طوال الأسبوع';
+
+  @override
+  String get onboarding_time_all_week_subtitle => 'محل نشط دايماً';
+
+  @override
+  String get onboarding_time_weekends_occasions => 'الويك إند والمناسبات';
+
+  @override
+  String get onboarding_time_weekends_occasions_subtitle => 'خروجات وفسح';
+
+  @override
+  String get onboarding_time_off_peak => 'أوقات الروقان (Off-peak)';
+
+  @override
+  String get onboarding_time_off_peak_subtitle =>
+      'عروض لزيادة المبيعات في الأوقات الهادية';
 }

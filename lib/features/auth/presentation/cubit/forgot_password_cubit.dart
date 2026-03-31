@@ -82,6 +82,9 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
   // ════════════════════════════════════════════════════════
 
   String _mapFailureToKey(Failure failure) {
+    // Validation errors - show backend message directly
+    if (failure is ValidationFailure) return failure.message;
+    
     if (failure is NetworkFailure) return 'auth_error_network';
     if (failure is ServerFailure)  return 'auth_error_server';
     return 'auth_error_unexpected';

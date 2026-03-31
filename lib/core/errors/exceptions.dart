@@ -23,7 +23,13 @@ class NetworkException implements Exception {
   const NetworkException(this.message);
 }
 
-/// Thrown when the server returns HTTP 422 for an invalid/expired reset token.
+/// Thrown when the server returns HTTP 422 for validation errors (invalid input data).
+class ValidationException implements Exception {
+  final String message;
+  const ValidationException(this.message);
+}
+
+/// Thrown when the server returns an invalid/expired reset token error.
 class InvalidTokenException implements Exception {
   final String message;
   const InvalidTokenException(this.message);

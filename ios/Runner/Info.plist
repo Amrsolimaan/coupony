@@ -58,16 +58,28 @@
 		<string>نحتاج للوصول إلى موقعك لتزويدك بأفضل العروض حتى عند تشغيل التطبيق في الخلفية</string>
 		<key>NSLocationAlwaysUsageDescription</key>
 		<string>نحتاج للوصول إلى موقعك لتزويدك بأفضل العروض حتى عند تشغيل التطبيق في الخلفية</string>
+		
+		<!-- ════════════════════════════════════════════════════════ -->
+		<!-- CAMERA & PHOTO LIBRARY PERMISSIONS (iOS 10+) -->
+		<!-- ════════════════════════════════════════════════════════ -->
+		<!-- These keys reference InfoPlist.strings for localization -->
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>We need access to your photo library to select a logo for your store</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>We need access to save photos to your library</string>
+		<key>NSCameraUsageDescription</key>
+		<string>We need access to your camera to take a photo for your store logo</string>
+		
+		<!-- ════════════════════════════════════════════════════════ -->
+		<!-- MICROPHONE PERMISSION (iOS 10+) -->
+		<!-- ════════════════════════════════════════════════════════ -->
+		<key>NSMicrophoneUsageDescription</key>
+		<string>We need access to your microphone for voice search</string>
+		
 		<!-- ════════════════════════════════════════════════════════ -->
 		<!-- NOTIFICATION PERMISSION (iOS 10+) -->
 		<!-- ════════════════════════════════════════════════════════ -->
-	
-		<!-- ════════════════════════════════════════════════════════ -->
-		<!-- Microphone PERMISSION (iOS 10+) -->
-		<!-- ════════════════════════════════════════════════════════ -->
-	
-		<key>NSMicrophoneUsageDescription</key>
-		<string>للبحث الصوتي</string>
+		
 		<!-- Enable background modes for notifications -->
 		<key>UIBackgroundModes</key>
 		<array>

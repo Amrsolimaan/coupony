@@ -228,7 +228,7 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
     print('🔐 [REPOSITORY] Starting Google Sign-In for role: $role');
 
     final isConnected = await networkInfo.isConnected;
-    if (!isConnected) return const Left(NetworkFailure('No internet connection'));
+    if (!isConnected) return const Left(NetworkFailure('error_no_internet'));
 
     try {
       final googleUserData =
@@ -236,7 +236,7 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
 
       if (googleUserData == null) {
         print('❌ [REPOSITORY] Google Sign-In was cancelled');
-        return const Left(UnexpectedFailure('Google Sign-In was cancelled'));
+        return const Left(UnexpectedFailure('login_google_cancelled'));
       }
 
       print('✅ [REPOSITORY] Got Google user data: ${googleUserData['email']}');
@@ -340,6 +340,7 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
   /// Maps a data-source exception to the corresponding [Failure] type.
   Failure _mapException(Object error) {
     if (error is InvalidTokenException) return InvalidTokenFailure(error.message);
+    if (error is ValidationException) return ValidationFailure(error.message);
     if (error is UnauthorizedException) return UnauthorizedFailure(error.message);
     if (error is ServerException)       return ServerFailure(error.message);
     if (error is NetworkException)      return NetworkFailure(error.message);

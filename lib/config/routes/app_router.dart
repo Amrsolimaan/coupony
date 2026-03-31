@@ -1,6 +1,9 @@
 import 'package:coupony/features/auth/presentation/pages/forgot_password_screen.dart';
 import 'package:coupony/features/auth/presentation/pages/register_screen.dart';
-import 'package:coupony/features/onboarding/presentation/pages/onboarding_completion_loading_page.dart';
+import 'package:coupony/features/onboarding/presentation/pages/customer_onboarding/onboarding_budget_screen.dart';
+import 'package:coupony/features/onboarding/presentation/pages/customer_onboarding/onboarding_completion_loading_page.dart';
+import 'package:coupony/features/onboarding/presentation/pages/customer_onboarding/onboarding_preferences_screen.dart';
+import 'package:coupony/features/onboarding/presentation/pages/customer_onboarding/onboarding_shopping_style_screen.dart';
 import 'package:coupony/features/permissions/presentation/pages/permission_flow_wrapper.dart';
 import 'package:coupony/features/permissions/presentation/pages/pages/location_error_page.dart';
 import 'package:coupony/features/permissions/presentation/pages/pages/location_intro_page.dart';
@@ -36,9 +39,6 @@ import 'package:coupony/features/auth/presentation/pages/reset_password_screen.d
 // Onboarding screens
 import 'package:coupony/features/onboarding/presentation/pages/language_selection_page.dart';
 import 'package:coupony/features/permissions/presentation/pages/pages/welcome_gateway_page.dart';
-import 'package:coupony/features/onboarding/presentation/pages/onboarding_preferences_screen.dart';
-import 'package:coupony/features/onboarding/presentation/pages/onboarding_budget_screen.dart';
-import 'package:coupony/features/onboarding/presentation/pages/onboarding_shopping_style_screen.dart';
 
 // ── Placeholder screens (replace with real screens when built) ──────────────
 

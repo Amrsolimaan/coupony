@@ -63,6 +63,11 @@ class StorageKeys {
   /// false → user is logged in (or has never chosen guest mode).
   static const String isGuest = 'is_guest';
 
+  /// Flag to track if user has passed the welcome gateway at least once.
+  /// true → user has seen welcome gateway and chose login/guest before.
+  /// Used to skip welcome gateway on subsequent app launches after logout.
+  static const String hasPassedWelcomeGateway = 'has_passed_welcome_gateway';
+
   static const String isDarkMode = 'is_dark_mode';
   static const String language = 'app_locale';
   static const String notificationsEnabled = 'notifications_enabled';

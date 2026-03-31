@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../providers/onboarding_theme_provider.dart';
 
+/// Role-aware Step Indicator
+/// Dynamically changes color based on OnboardingUserType
 class OnboardingStepIndicator extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
+  final OnboardingThemeProvider theme;
 
   const OnboardingStepIndicator({
     super.key,
     required this.currentStep,
     required this.totalSteps,
+    required this.theme,
   });
 
   @override
@@ -41,10 +46,10 @@ class OnboardingStepIndicator extends StatelessWidget {
       height: 40.h,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isActive || isCompleted ? AppColors.primary : AppColors.surface,
+        color: isActive || isCompleted ? theme.primaryColor : AppColors.surface,
         border: Border.all(
           color: isActive || isCompleted
-              ? AppColors.primary
+              ? theme.primaryColor
               : AppColors.grey200,
           width: 2.w,
         ),
@@ -55,13 +60,13 @@ class OnboardingStepIndicator extends StatelessWidget {
                 Icons.check,
                 color: AppColors.surface,
                 size: 20.w,
-              ) // Add checkmark for completed steps as per design
+              )
             : Text(
                 '$stepNumber',
                 style: AppTextStyles.customStyle(
                   context,
                   fontSize: 16,
-                  color: isActive ? AppColors.surface : AppColors.primary,
+                  color: isActive ? AppColors.surface : theme.primaryColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -74,7 +79,7 @@ class OnboardingStepIndicator extends StatelessWidget {
     return Expanded(
       child: Container(
         height: 2.h,
-        color: isCompleted ? AppColors.primary : AppColors.grey200,
+        color: isCompleted ? theme.primaryColor : AppColors.grey200,
       ),
     );
   }

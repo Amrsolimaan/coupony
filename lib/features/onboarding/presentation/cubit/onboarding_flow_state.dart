@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../../../core/constants/budget_constants.dart';
+import '../../domain/entities/onboarding_user_type.dart';
 
 /// Navigation signals for onboarding flow
 enum OnboardingNavigation {
@@ -13,6 +14,11 @@ enum OnboardingNavigation {
 
 /// Unified state for onboarding flow (Steps 1, 2, 3)
 class OnboardingFlowState extends Equatable {
+  // ════════════════════════════════════════════════════════
+  // USER TYPE (SOURCE OF TRUTH FOR THEMING)
+  // ════════════════════════════════════════════════════════
+  final OnboardingUserType userType;
+  
   // ════════════════════════════════════════════════════════
   // CURRENT STEP TRACKING
   // ════════════════════════════════════════════════════════
@@ -52,6 +58,7 @@ class OnboardingFlowState extends Equatable {
   final bool hasChanges;  // Unsaved in-progress changes
 
   const OnboardingFlowState({
+    this.userType = OnboardingUserType.customer, // Default to customer
     this.currentStep = 1,
     this.navigationSignal = OnboardingNavigation.none,
     // Step 1
@@ -78,6 +85,7 @@ class OnboardingFlowState extends Equatable {
 
   /// Copy with method for immutable state updates
   OnboardingFlowState copyWith({
+    OnboardingUserType? userType,
     int? currentStep,
     OnboardingNavigation? navigationSignal,
     // Step 1
@@ -102,6 +110,7 @@ class OnboardingFlowState extends Equatable {
     bool? hasChanges,
   }) {
     return OnboardingFlowState(
+      userType:         userType         ?? this.userType,
       currentStep:      currentStep      ?? this.currentStep,
       navigationSignal: navigationSignal ?? this.navigationSignal,
       // Step 1
@@ -162,6 +171,7 @@ class OnboardingFlowState extends Equatable {
 
   @override
   List<Object?> get props => [
+    userType,
     currentStep,
     navigationSignal,
     selectedCategories,

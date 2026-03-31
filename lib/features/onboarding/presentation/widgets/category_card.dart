@@ -2,18 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../providers/onboarding_theme_provider.dart';
 
+/// Role-aware Selection Option Card
+/// Dynamically changes color based on OnboardingUserType
 class SelectionOptionCard extends StatelessWidget {
   final String title;
-  final IconData? icon; // Optional
+  final String? subtitle;
+  final IconData? icon;
   final bool isSelected;
   final VoidCallback onTap;
+  final OnboardingThemeProvider theme;
 
   const SelectionOptionCard({
     super.key,
     required this.title,
     required this.isSelected,
     required this.onTap,
+    required this.theme,
+    this.subtitle,
     this.icon,
   });
 
@@ -28,13 +35,13 @@ class SelectionOptionCard extends StatelessWidget {
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.grey200,
+            color: isSelected ? theme.primaryColor : AppColors.grey200,
             width: isSelected ? 2.w : 1.w,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.1),
+                    color: theme.primaryWithOpacity(0.1),
                     blurRadius: 8.r,
                     offset: Offset(0, 2.h),
                   ),
@@ -46,20 +53,44 @@ class SelectionOptionCard extends StatelessWidget {
             // Radio Indicator
             _buildRadioIndicator(),
             const Spacer(),
-            // Title
-            Text(
-              title,
-              style: AppTextStyles.customStyle(
-                context,
-                fontSize: 16,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                color: isSelected
-                    ? AppColors.textPrimary
-                    : AppColors.textSecondary,
+            // Content
+            Expanded(
+              flex: 8,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    title,
+                    textAlign: TextAlign.right,
+                    style: AppTextStyles.customStyle(
+                      context,
+                      fontSize: 16,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      color: isSelected
+                          ? AppColors.textPrimary
+                          : AppColors.textSecondary,
+                    ),
+                  ),
+                  if (subtitle != null) ...[
+                    SizedBox(height: 4.h),
+                    Text(
+                      subtitle!,
+                      textAlign: TextAlign.right,
+                      style: AppTextStyles.customStyle(
+                        context,
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
             // Icon (If provided)
-            if (icon != null) ...[SizedBox(width: 12.w), _buildIconContainer()],
+            if (icon != null) ...[
+              SizedBox(width: 12.w),
+              _buildIconContainer(),
+            ],
           ],
         ),
       ),
@@ -73,9 +104,9 @@ class SelectionOptionCard extends StatelessWidget {
       height: 20.h,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isSelected ? AppColors.primary : AppColors.surface,
+        color: isSelected ? theme.primaryColor : AppColors.surface,
         border: Border.all(
-          color: isSelected ? AppColors.primary : AppColors.textDisabled,
+          color: isSelected ? theme.primaryColor : AppColors.textDisabled,
           width: 2.w,
         ),
       ),
@@ -99,14 +130,14 @@ class SelectionOptionCard extends StatelessWidget {
       padding: EdgeInsets.all(8.w),
       decoration: BoxDecoration(
         color: isSelected
-            ? AppColors.primary.withValues(alpha: 0.1)
+            ? theme.primaryWithOpacity(0.1)
             : AppColors.grey200,
         borderRadius: BorderRadius.circular(10.r),
       ),
       child: Icon(
         icon,
         size: 24.w,
-        color: isSelected ? AppColors.primary : AppColors.grey600,
+        color: isSelected ? theme.primaryColor : AppColors.grey600,
       ),
     );
   }

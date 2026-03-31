@@ -131,6 +131,10 @@ class LoginCubit extends Cubit<AuthState> {
   String _mapFailureToKey(Failure failure) {
     if (failure is NetworkFailure) return 'auth_error_network';
     if (failure is UnauthorizedFailure) return 'auth_error_invalid_credentials';
+    
+    // Validation errors - show backend message directly (not a localization key)
+    if (failure is ValidationFailure) return failure.message;
+    
     if (failure is ServerFailure) {
       final msg = failure.message.toLowerCase();
       if (msg.contains('invalid') || msg.contains('credentials') || msg.contains('password') || msg.contains('email')) {

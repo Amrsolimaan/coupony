@@ -79,20 +79,24 @@ Future<void> init() async {
     () => NetworkInfoImpl(sl<Connectivity>()),
   );
 
-  // DioClient - HTTP client with interceptors
-  // IMPORTANT: DioClient creates its own interceptors internally,
-  // so we only pass FlutterSecureStorage
-  sl.registerLazySingleton<DioClient>(
-    () => DioClient(sl<FlutterSecureStorage>()),
-  );
-
   // ═══════════════════════════════════════════════════════════
   // 2.5. LOCALIZATION
   // ═══════════════════════════════════════════════════════════
 
   // LocaleCubit - Manages app language (Singleton to persist across app)
+  // IMPORTANT: Must be registered before DioClient because DioClient depends on it
   sl.registerLazySingleton<LocaleCubit>(
     () => LocaleCubit(sl<FlutterSecureStorage>()),
+  );
+
+  // DioClient - HTTP client with interceptors
+  // IMPORTANT: DioClient creates its own interceptors internally,
+  // including LocaleInterceptor which needs LocaleCubit
+  sl.registerLazySingleton<DioClient>(
+    () => DioClient(
+      sl<FlutterSecureStorage>(),
+      sl<LocaleCubit>(),
+    ),
   );
 
   // ═══════════════════════════════════════════════════════════

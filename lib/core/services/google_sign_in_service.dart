@@ -20,6 +20,11 @@ class GoogleSignInService {
     try {
       _logger.i('🔐 [SERVICE] Starting Google Sign-In process...');
 
+      // إجبار تسجيل الخروج أولاً لضمان ظهور قائمة اختيار الحساب
+      // هذا يحل مشكلة الدخول التلقائي على آخر حساب
+      _logger.i('🔐 [SERVICE] Signing out first to force account picker...');
+      await _googleSignIn.signOut();
+
       // تسجيل الدخول بواسطة Google
       _logger.i('🔐 [SERVICE] Calling _googleSignIn.signIn()...');
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();

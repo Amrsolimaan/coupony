@@ -43,6 +43,12 @@ class MessageFormatter {
     AppLocalizations l10n,
     String messageKey,
   ) {
+    // If the message doesn't look like a key (no underscores or starts with uppercase),
+    // it's likely a direct backend message - return as-is
+    if (!messageKey.contains('_') || messageKey[0] == messageKey[0].toUpperCase()) {
+      return messageKey;
+    }
+
     // Map of all possible message keys to their getters
     // This ensures type-safe access to localized strings
     switch (messageKey) {
@@ -107,6 +113,12 @@ class MessageFormatter {
       // Auth messages
       case 'login_success':
         return l10n.login_success;
+      case 'login_google_cancelled':
+        return l10n.login_google_cancelled;
+      case 'error_no_internet':
+        return l10n.error_no_internet;
+      case 'error_no_internet_check_network':
+        return l10n.error_no_internet_check_network;
       case 'register_success':
         return l10n.register_success;
       case 'register_otp_sent':
@@ -130,9 +142,12 @@ class MessageFormatter {
       case 'auth_error_unexpected':
         return l10n.auth_error_unexpected;
 
-      // Fallback: Format key to human-readable
+      // Fallback: If it looks like a key, format it. Otherwise return as-is.
       default:
-        return _formatKeyToHumanReadable(messageKey);
+        if (messageKey.contains('_')) {
+          return _formatKeyToHumanReadable(messageKey);
+        }
+        return messageKey;
     }
   }
 

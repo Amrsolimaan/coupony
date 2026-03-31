@@ -182,6 +182,30 @@ abstract class AppLocalizations {
   /// **'An unexpected error occurred'**
   String get unexpectedError;
 
+  /// No description provided for @language_selection_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Your Language'**
+  String get language_selection_title;
+
+  /// No description provided for @language_arabic.
+  ///
+  /// In en, this message translates to:
+  /// **'العربية'**
+  String get language_arabic;
+
+  /// No description provided for @language_english.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get language_english;
+
+  /// No description provided for @language_continue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get language_continue;
+
   /// No description provided for @onboardingTitle.
   ///
   /// In en, this message translates to:
@@ -848,6 +872,24 @@ abstract class AppLocalizations {
   /// **'Continue with Google'**
   String get login_google_button;
 
+  /// No description provided for @login_google_cancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Sign-In was cancelled'**
+  String get login_google_cancelled;
+
+  /// No description provided for @error_no_internet.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get error_no_internet;
+
+  /// No description provided for @error_no_internet_check_network.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Please check your network.'**
+  String get error_no_internet_check_network;
+
   /// No description provided for @login_success.
   ///
   /// In en, this message translates to:
@@ -1177,6 +1219,306 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Login Successful!'**
   String get login_success_title;
+
+  /// No description provided for @create_store_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Store'**
+  String get create_store_title;
+
+  /// No description provided for @create_store_logo_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Store Logo'**
+  String get create_store_logo_label;
+
+  /// No description provided for @create_store_logo_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a clear and appropriate image for your store logo'**
+  String get create_store_logo_hint;
+
+  /// No description provided for @create_store_logo_format.
+  ///
+  /// In en, this message translates to:
+  /// **'PNG or JPG, max size 5MB'**
+  String get create_store_logo_format;
+
+  /// No description provided for @create_store_name_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Store Name'**
+  String get create_store_name_hint;
+
+  /// No description provided for @create_store_category_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the appropriate category'**
+  String get create_store_category_hint;
+
+  /// No description provided for @create_store_description_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a brief description of your store and services'**
+  String get create_store_description_hint;
+
+  /// No description provided for @create_store_description_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum allowed limit exceeded'**
+  String get create_store_description_error;
+
+  /// No description provided for @create_store_city_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the city'**
+  String get create_store_city_hint;
+
+  /// No description provided for @create_store_area_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Area'**
+  String get create_store_area_hint;
+
+  /// No description provided for @create_store_branches_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of branches'**
+  String get create_store_branches_hint;
+
+  /// No description provided for @create_store_terms_agree.
+  ///
+  /// In en, this message translates to:
+  /// **'Agree to Terms & Conditions'**
+  String get create_store_terms_agree;
+
+  /// No description provided for @create_store_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Store'**
+  String get create_store_button;
+
+  /// No description provided for @category_toys.
+  ///
+  /// In en, this message translates to:
+  /// **'Toys'**
+  String get category_toys;
+
+  /// No description provided for @category_games.
+  ///
+  /// In en, this message translates to:
+  /// **'Games'**
+  String get category_games;
+
+  /// No description provided for @city_fayoum.
+  ///
+  /// In en, this message translates to:
+  /// **'Fayoum'**
+  String get city_fayoum;
+
+  /// No description provided for @city_giza.
+  ///
+  /// In en, this message translates to:
+  /// **'Giza'**
+  String get city_giza;
+
+  /// No description provided for @area_lutf_allah.
+  ///
+  /// In en, this message translates to:
+  /// **'Lutf Allah'**
+  String get area_lutf_allah;
+
+  /// No description provided for @seller_store_info_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Store Information'**
+  String get seller_store_info_title;
+
+  /// No description provided for @seller_store_name_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Store Name'**
+  String get seller_store_name_hint;
+
+  /// No description provided for @seller_store_description_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a brief description of your store and services'**
+  String get seller_store_description_hint;
+
+  /// No description provided for @seller_store_description_counter.
+  ///
+  /// In en, this message translates to:
+  /// **'{current}/{max} characters'**
+  String seller_store_description_counter(Object current, Object max);
+
+  /// No description provided for @seller_store_logo_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Store Logo'**
+  String get seller_store_logo_label;
+
+  /// No description provided for @seller_store_logo_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a clear image for your store logo'**
+  String get seller_store_logo_hint;
+
+  /// No description provided for @seller_price_range_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Classify your prices so we can reach the right audience'**
+  String get seller_price_range_title;
+
+  /// No description provided for @seller_price_range_economic.
+  ///
+  /// In en, this message translates to:
+  /// **'Economic Prices'**
+  String get seller_price_range_economic;
+
+  /// No description provided for @seller_price_range_economic_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers that suit everyone and are very affordable'**
+  String get seller_price_range_economic_subtitle;
+
+  /// No description provided for @seller_price_range_medium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium Category'**
+  String get seller_price_range_medium;
+
+  /// No description provided for @seller_price_range_medium_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Good quality and moderate price'**
+  String get seller_price_range_medium_subtitle;
+
+  /// No description provided for @seller_price_range_premium.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium Category'**
+  String get seller_price_range_premium;
+
+  /// No description provided for @seller_price_range_premium_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Luxurious products and high-end products'**
+  String get seller_price_range_premium_subtitle;
+
+  /// No description provided for @seller_price_range_all_levels.
+  ///
+  /// In en, this message translates to:
+  /// **'All Levels'**
+  String get seller_price_range_all_levels;
+
+  /// No description provided for @seller_price_range_all_levels_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers covering all price categories'**
+  String get seller_price_range_all_levels_subtitle;
+
+  /// No description provided for @seller_delivery_method_title.
+  ///
+  /// In en, this message translates to:
+  /// **'How do customers reach your products?'**
+  String get seller_delivery_method_title;
+
+  /// No description provided for @seller_delivery_method_physical.
+  ///
+  /// In en, this message translates to:
+  /// **'I have a physical store to receive customers.'**
+  String get seller_delivery_method_physical;
+
+  /// No description provided for @seller_delivery_method_online.
+  ///
+  /// In en, this message translates to:
+  /// **'We are fully online.'**
+  String get seller_delivery_method_online;
+
+  /// No description provided for @seller_target_audience_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Who do your offers target more?'**
+  String get seller_target_audience_title;
+
+  /// No description provided for @seller_target_audience_youth.
+  ///
+  /// In en, this message translates to:
+  /// **'Youth'**
+  String get seller_target_audience_youth;
+
+  /// No description provided for @seller_target_audience_youth_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Social Media generation and trends'**
+  String get seller_target_audience_youth_subtitle;
+
+  /// No description provided for @seller_target_audience_families.
+  ///
+  /// In en, this message translates to:
+  /// **'Families & Households'**
+  String get seller_target_audience_families;
+
+  /// No description provided for @seller_target_audience_families_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Home seekers and children'**
+  String get seller_target_audience_families_subtitle;
+
+  /// No description provided for @seller_target_audience_everyone.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone'**
+  String get seller_target_audience_everyone;
+
+  /// No description provided for @seller_target_audience_everyone_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'General offers for all ages'**
+  String get seller_target_audience_everyone_subtitle;
+
+  /// No description provided for @onboarding_time_most_active_title.
+  ///
+  /// In en, this message translates to:
+  /// **'When are you most active with offers?'**
+  String get onboarding_time_most_active_title;
+
+  /// No description provided for @onboarding_time_all_week.
+  ///
+  /// In en, this message translates to:
+  /// **'All Week Long'**
+  String get onboarding_time_all_week;
+
+  /// No description provided for @onboarding_time_all_week_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Always active store'**
+  String get onboarding_time_all_week_subtitle;
+
+  /// No description provided for @onboarding_time_weekends_occasions.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekends and Occasions'**
+  String get onboarding_time_weekends_occasions;
+
+  /// No description provided for @onboarding_time_weekends_occasions_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Outings and leisure'**
+  String get onboarding_time_weekends_occasions_subtitle;
+
+  /// No description provided for @onboarding_time_off_peak.
+  ///
+  /// In en, this message translates to:
+  /// **'Off-peak Times'**
+  String get onboarding_time_off_peak;
+
+  /// No description provided for @onboarding_time_off_peak_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers to increase sales during quiet times'**
+  String get onboarding_time_off_peak_subtitle;
 }
 
 class _AppLocalizationsDelegate

@@ -395,10 +395,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   // PRIVATE HELPERS
   // ══════════════════════════════════════════════════════════════════════════
 
-  /// Rethrows DioException as InvalidTokenFailure if status is 422,
-  /// otherwise throws ServerException with the backend's message field
-  /// (falls back to Dio's own message when the body has no 'message' key).
+  /// Rethrows DioException based on status code:
+  /// - 422 with token-related message → InvalidTokenException
+  /// - Other 422 errors are already handled by ErrorInterceptor as ValidationException
+  /// - Other errors → ServerException
   Never _rethrowAs422Or(DioException e) {
+    // Check if ErrorInterceptor already wrapped this as ValidationException
+    if (e.error is ValidationException) {
+      throw e.error as ValidationException;
+    }
+    
     final data = e.response?.data;
     String backendMessage(String fallback) {
       if (data is Map<String, dynamic>) {
@@ -407,11 +413,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return fallback;
     }
 
-    if (e.response?.statusCode == 422) {
-      throw InvalidTokenException(
-        backendMessage('Invalid or expired reset token'),
-      );
+    final statusCode = e.response?.statusCode;
+    final message = backendMessage(e.message ?? 'Network error');
+
+    // Handle 422 - check if it's a token-related error
+    if (statusCode == 422) {
+      final lowerMsg = message.toLowerCase();
+      if (lowerMsg.contains('token') && 
+          (lowerMsg.contains('invalid') || lowerMsg.contains('expired'))) {
+        throw InvalidTokenException(message);
+      }
     }
-    throw ServerException(backendMessage(e.message ?? 'Network error'));
+    
+    // All other errors
+    throw ServerException(message);
   }
 }

@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/localization/locale_cubit.dart';
 import '../../../../config/routes/app_router.dart';
+import '../../../../core/constants/storage_keys.dart';
 import '../../../../config/dependency_injection/injection_container.dart' as di;
 import '../../../permissions/domain/repositories/permission_repository.dart';
 import '../../data/datasources/auth_local_data_source.dart';
@@ -80,8 +82,8 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
           },
           (permissionStatus) {
             if (permissionStatus != null && permissionStatus.hasCompletedFlow) {
-              // ✅ Permissions completed, check onboarding
-              _checkOnboardingStatus();
+              // ✅ Permissions completed, check if user has passed welcome gateway before
+              _checkWelcomeGatewayStatus();
             } else {
               // Permissions not completed - start permission flow
               if (mounted) context.go(AppRouter.permissionSplash);
@@ -95,13 +97,35 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
     });
   }
 
-  /// STEP 3: Determine session type, then route accordingly.
+  /// STEP 3: Check if user has passed welcome gateway before.
+  /// If yes → go to login directly
+  /// If no → go to welcome gateway (first time after permissions)
+  Future<void> _checkWelcomeGatewayStatus() async {
+    try {
+      final prefs = di.sl<SharedPreferences>();
+      final hasPassedGateway = prefs.getBool(StorageKeys.hasPassedWelcomeGateway) ?? false;
+
+      if (!mounted) return;
+
+      if (hasPassedGateway) {
+        // User has seen welcome gateway before - check session directly
+        _checkOnboardingStatus();
+      } else {
+        // First time after permissions - show welcome gateway
+        context.go(AppRouter.welcomeGateway);
+      }
+    } catch (_) {
+      if (mounted) context.go(AppRouter.welcomeGateway);
+    }
+  }
+
+  /// STEP 4: Determine session type, then route accordingly.
   ///
   /// Decision tree:
   ///   Guest session          → /home  (guests bypass onboarding)
   ///   Auth token + onboarding done   → /home
   ///   Auth token + onboarding pending → /onboarding  (wizard, post-auth)
-  ///   No session             → /welcome-gateway
+  ///   No session             → /login (not welcome gateway - user has passed it before)
   Future<void> _checkOnboardingStatus() async {
     try {
       final authLocalDs = di.sl<AuthLocalDataSource>();
@@ -137,9 +161,9 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
       }
 
       // No session at all
-      context.go(AppRouter.welcomeGateway);
+      context.go(AppRouter.login);
     } catch (_) {
-      if (mounted) context.go(AppRouter.welcomeGateway);
+      if (mounted) context.go(AppRouter.login);
     }
   }
 
