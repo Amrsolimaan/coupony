@@ -475,12 +475,17 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
       logger.e('❌ Native geocoding also failed: $e');
     }
 
-    // Method 3: Last resort - show coordinates
-    logger.w('⚠️ All geocoding methods failed, showing coordinates');
+    // Method 3: Last resort - show coordinates with proper formatting
+    logger.w('⚠️ All geocoding methods failed, showing formatted coordinates');
+    
+    final latDirection = lat >= 0 ? 'شمالاً' : 'جنوباً';
+    final lngDirection = lng >= 0 ? 'شرقاً' : 'غرباً';
+    
     _safeEmit(
       state.copyWith(
         currentAddress:
-            'الموقع: ${lat.toStringAsFixed(6)}, ${lng.toStringAsFixed(6)}',
+            'الموقع: ${lat.abs().toStringAsFixed(4)}° $latDirection، '
+            '${lng.abs().toStringAsFixed(4)}° $lngDirection',
       ),
     );
   }

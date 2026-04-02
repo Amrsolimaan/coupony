@@ -1,3 +1,4 @@
+import 'package:coupony/features/user_flow/CustomerOnboarding/domain/repositories/onboarding_repository.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,7 +28,7 @@ import '../../../features/auth/presentation/cubit/otp_cubit.dart';
 import '../../../features/auth/presentation/cubit/register_cubit.dart';
 import '../../../features/auth/presentation/cubit/reset_password_cubit.dart';
 import '../../../features/auth/presentation/cubit/google_sign_in_cubit.dart';
-import '../../../features/onboarding/domain/repositories/onboarding_repository.dart';
+import '../../../features/auth/presentation/cubit/auth_role_cubit.dart';
 
 void registerAuthDependencies(GetIt sl) {
   // ════════════════════════════════════════════════════════
@@ -35,16 +36,14 @@ void registerAuthDependencies(GetIt sl) {
   // ════════════════════════════════════════════════════════
 
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(
-      client: sl<DioClient>(),
-      logger: sl<Logger>(),
-    ),
+    () =>
+        AuthRemoteDataSourceImpl(client: sl<DioClient>(), logger: sl<Logger>()),
   );
 
   sl.registerLazySingleton<AuthLocalDataSource>(
     () => AuthLocalDataSourceImpl(
       secureStorage: sl<SecureStorageService>(),
-      sharedPrefs:   sl<SharedPreferences>(),
+      sharedPrefs: sl<SharedPreferences>(),
     ),
   );
 
@@ -54,12 +53,12 @@ void registerAuthDependencies(GetIt sl) {
 
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
-      remoteDataSource:    sl<AuthRemoteDataSource>(),
-      localDataSource:     sl<AuthLocalDataSource>(),
+      remoteDataSource: sl<AuthRemoteDataSource>(),
+      localDataSource: sl<AuthLocalDataSource>(),
       notificationService: sl<NotificationService>(),
       onboardingRepository: sl<OnboardingRepository>(),
-      networkInfo:         sl<NetworkInfo>(),
-      cacheService:        sl<LocalCacheService>(),
+      networkInfo: sl<NetworkInfo>(),
+      cacheService: sl<LocalCacheService>(),
     ),
   );
 
@@ -79,54 +78,60 @@ void registerAuthDependencies(GetIt sl) {
   sl.registerLazySingleton(() => GoogleSignInUseCase(sl<AuthRepository>()));
 
   // ════════════════════════════════════════════════════════
-  // CUBITS  (Factory — new instance per screen)
+  // CUBITS
   // ════════════════════════════════════════════════════════
 
+  // AuthRoleCubit - Singleton to persist role across all auth screens
+  sl.registerLazySingleton<AuthRoleCubit>(
+    () => AuthRoleCubit(sl<SecureStorageService>()),
+  );
+
+  // Other Cubits - Factory (new instance per screen)
   sl.registerFactory<LoginCubit>(
     () => LoginCubit(
-      loginUseCase:  sl<LoginUseCase>(),
+      loginUseCase: sl<LoginUseCase>(),
       logoutUseCase: sl<LogoutUseCase>(),
-      repository:    sl<AuthRepository>(),
-      logger:        sl<Logger>(),
+      repository: sl<AuthRepository>(),
+      logger: sl<Logger>(),
     ),
   );
 
   sl.registerFactory<RegisterCubit>(
     () => RegisterCubit(
       registerUseCase: sl<RegisterUseCase>(),
-      logger:          sl<Logger>(),
+      logger: sl<Logger>(),
     ),
   );
 
   sl.registerFactory<OtpCubit>(
     () => OtpCubit(
-      sendOtpUseCase:         sl<SendOtpUseCase>(),
-      verifyOtpUseCase:       sl<VerifyOtpUseCase>(),
+      sendOtpUseCase: sl<SendOtpUseCase>(),
+      verifyOtpUseCase: sl<VerifyOtpUseCase>(),
       verifyResetCodeUseCase: sl<VerifyResetCodeUseCase>(),
       resendResetCodeUseCase: sl<ResendResetCodeUseCase>(),
-      logger:                 sl<Logger>(),
+      logger: sl<Logger>(),
     ),
   );
 
   sl.registerFactory<ForgotPasswordCubit>(
     () => ForgotPasswordCubit(
       sendResetCodeUseCase: sl<SendResetCodeUseCase>(),
-      logger:               sl<Logger>(),
+      logger: sl<Logger>(),
     ),
   );
 
   sl.registerFactory<ResetPasswordCubit>(
     () => ResetPasswordCubit(
-      resetPasswordUseCase:  sl<ResetPasswordUseCase>(),
+      resetPasswordUseCase: sl<ResetPasswordUseCase>(),
       resendResetCodeUseCase: sl<ResendResetCodeUseCase>(),
-      logger:                sl<Logger>(),
+      logger: sl<Logger>(),
     ),
   );
 
   sl.registerFactory<GoogleSignInCubit>(
     () => GoogleSignInCubit(
       googleSignInUseCase: sl<GoogleSignInUseCase>(),
-      logger:              sl<Logger>(),
+      logger: sl<Logger>(),
     ),
   );
 }

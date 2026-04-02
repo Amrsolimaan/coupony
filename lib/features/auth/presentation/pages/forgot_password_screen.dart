@@ -120,7 +120,7 @@ class ForgotPasswordScreen extends HookWidget {
                           : null,
                       height:          56.h,
                       backgroundColor: hasContent
-                          ? AppColors.primary
+                          ? Theme.of(context).primaryColor
                           : AppColors.textDisabled,
                       textStyle: TextStyle(
                         fontFamily: AppTextStyles.Main_Font_arabic,
@@ -192,7 +192,7 @@ class _BackToLoginRow extends StatelessWidget {
           style: TextStyle(
             fontFamily: AppTextStyles.Main_Font_arabic,
             fontSize:   14.sp,
-            color:      AppColors.primary,
+            color:      Theme.of(context).primaryColor,
             fontWeight: FontWeight.w600,
           ),
         ),

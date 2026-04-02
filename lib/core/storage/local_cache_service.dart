@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:coupony/core/errors/failures.dart';
-import 'package:coupony/features/onboarding/data/models/user_preferences_model.dart';
+import 'package:coupony/features/user_flow/CustomerOnboarding/data/models/user_preferences_model.dart';
 import 'package:crypto/crypto.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -355,7 +355,7 @@ class LocalCacheService {
       }
 
       final value = box.get(key);
-      
+
       // ✅ PHASE 1 FIX: Type safety validation
       if (value != null) {
         // Check if the value is of the expected type T
@@ -363,7 +363,9 @@ class LocalCacheService {
           final typedValue = value as T;
           return typedValue;
         } catch (e) {
-          _logger.w('⚠️ Type mismatch for key $key: expected $T, got ${value.runtimeType}');
+          _logger.w(
+            '⚠️ Type mismatch for key $key: expected $T, got ${value.runtimeType}',
+          );
           // Clean up the invalid entry
           await delete(boxName: boxName, key: key);
           return null;

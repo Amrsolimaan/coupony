@@ -232,6 +232,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboarding_loading_complete => 'Almost there...';
 
   @override
+  String get onboarding_loading_preparing_seller => 'Preparing your store...';
+
+  @override
+  String get onboarding_loading_saving_seller => 'Saving your store data...';
+
+  @override
+  String get onboarding_loading_preparing_experience_seller =>
+      'Setting up your dashboard...';
+
+  @override
+  String get onboarding_loading_complete_seller =>
+      'Your store is almost ready...';
+
+  @override
   String get permissions_location_checking => 'Checking location...';
 
   @override
@@ -783,4 +797,138 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get onboarding_time_off_peak_subtitle =>
       'Offers to increase sales during quiet times';
+
+  @override
+  String get sellerOnboardingTitle =>
+      'Let\'s understand your business better\nto connect you with the right customers';
+
+  @override
+  String get sellerOnboardingSubTitle => 'Continue';
+
+  @override
+  String get customerOnboardingTitle =>
+      'Let\'s get to know you better...\nand offer you more';
+
+  @override
+  String get customerOnboardingSubTitle => 'Continue';
+
+  @override
+  String get success_seller_onboarding_completed => 'Store setup completed!';
+
+  @override
+  String get success_seller_price_category_updated =>
+      'Price category updated successfully';
+
+  @override
+  String get success_seller_reach_method_updated =>
+      'Reach method updated successfully';
+
+  @override
+  String get success_seller_offer_time_updated =>
+      'Offer time updated successfully';
+
+  @override
+  String get success_seller_audience_updated =>
+      'Target audience updated successfully';
+
+  @override
+  String get success_seller_onboarding_all_updated =>
+      'All settings updated successfully';
+
+  @override
+  String get error_seller_onboarding_step1_incomplete =>
+      'Please select your price category';
+
+  @override
+  String get error_seller_onboarding_step2_incomplete =>
+      'Please select how customers reach you';
+
+  @override
+  String get error_seller_onboarding_step3_incomplete =>
+      'Please select your most active offer time';
+
+  @override
+  String get error_seller_onboarding_step4_incomplete =>
+      'Please select your target audience';
+
+  @override
+  String get error_unexpected => 'An unexpected error occurred';
+
+  @override
+  String get create_store_phone_hint => 'Phone Number';
+
+  @override
+  String get create_store_verification_docs_label => 'Verification Documents';
+
+  @override
+  String get create_store_commercial_register_hint => 'Commercial Register';
+
+  @override
+  String get create_store_tax_card_hint => 'Tax Card';
+
+  @override
+  String get create_store_id_front_hint => 'ID Card (Front)';
+
+  @override
+  String get create_store_id_back_hint => 'ID Card (Back)';
+
+  @override
+  String get create_store_socials_label => 'Social Media Links';
+
+  @override
+  String get create_store_socials_empty => 'No social links added yet';
+
+  @override
+  String get create_store_add_social => 'Add Link';
+
+  @override
+  String get create_store_social_id_hint => 'Platform ID (e.g. 1)';
+
+  @override
+  String get create_store_social_link_hint =>
+      'Link (e.g. https://facebook.com/...)';
+
+  @override
+  String get create_store_cancel => 'Cancel';
+
+  @override
+  String get success_create_store => 'Store created successfully!';
+
+  @override
+  String get error_create_store_name_required => 'Store name is required';
+
+  @override
+  String get error_create_store_phone_required => 'Phone number is required';
+
+  @override
+  String get error_create_store_address_required => 'Address is required';
+
+  @override
+  String get error_create_store_category_required =>
+      'Please select at least one category';
+
+  @override
+  String get error_create_store_server =>
+      'Could not create store. Please try again';
+
+  @override
+  String get create_store_location_section_label => 'Store Location';
+
+  @override
+  String get create_store_locate_button => 'Detect My Location';
+
+  @override
+  String get create_store_location_fetched => 'Location detected';
+
+  @override
+  String get error_create_store_location_denied =>
+      'Location permission denied. Please enable it in settings.';
+
+  @override
+  String get error_create_store_location_gps_off =>
+      'GPS is disabled. Please enable location services.';
+
+  @override
+  String get error_create_store_location_failed =>
+      'Could not determine location. Please try again.';
 }

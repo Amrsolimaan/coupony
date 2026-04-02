@@ -230,6 +230,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get onboarding_loading_complete => 'أوشكنا على الانتهاء...';
 
   @override
+  String get onboarding_loading_preparing_seller => 'جاري تحضير متجرك...';
+
+  @override
+  String get onboarding_loading_saving_seller => 'جاري حفظ بيانات متجرك...';
+
+  @override
+  String get onboarding_loading_preparing_experience_seller =>
+      'جاري تجهيز لوحة التحكم الخاصة بك...';
+
+  @override
+  String get onboarding_loading_complete_seller => 'متجرك جاهز تقريباً...';
+
+  @override
   String get permissions_location_checking => 'جاري التحقق من الموقع...';
 
   @override
@@ -770,4 +783,136 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get onboarding_time_off_peak_subtitle =>
       'عروض لزيادة المبيعات في الأوقات الهادية';
+
+  @override
+  String get sellerOnboardingTitle =>
+      'خلّينا نعرف نشاطك أكتر\nعشان نوصلك للعملاء المناسبين';
+
+  @override
+  String get sellerOnboardingSubTitle => 'متابعة';
+
+  @override
+  String get customerOnboardingTitle => 'خلّينا نعرفك أكتر...\nوهنوفرلك أكتر';
+
+  @override
+  String get customerOnboardingSubTitle => 'متابعة';
+
+  @override
+  String get success_seller_onboarding_completed => 'تم إعداد المتجر بنجاح!';
+
+  @override
+  String get success_seller_price_category_updated =>
+      'تم تحديث فئة الأسعار بنجاح';
+
+  @override
+  String get success_seller_reach_method_updated =>
+      'تم تحديث طريقة الوصول بنجاح';
+
+  @override
+  String get success_seller_offer_time_updated => 'تم تحديث وقت العروض بنجاح';
+
+  @override
+  String get success_seller_audience_updated =>
+      'تم تحديث الجمهور المستهدف بنجاح';
+
+  @override
+  String get success_seller_onboarding_all_updated =>
+      'تم تحديث جميع الإعدادات بنجاح';
+
+  @override
+  String get error_seller_onboarding_step1_incomplete =>
+      'يرجى اختيار فئة الأسعار';
+
+  @override
+  String get error_seller_onboarding_step2_incomplete =>
+      'يرجى اختيار طريقة وصول العملاء';
+
+  @override
+  String get error_seller_onboarding_step3_incomplete =>
+      'يرجى اختيار وقت العروض الأكثر نشاطاً';
+
+  @override
+  String get error_seller_onboarding_step4_incomplete =>
+      'يرجى اختيار جمهورك المستهدف';
+
+  @override
+  String get error_unexpected => 'حدث خطأ غير متوقع';
+
+  @override
+  String get create_store_phone_hint => 'رقم الهاتف';
+
+  @override
+  String get create_store_verification_docs_label => 'وثائق التحقق';
+
+  @override
+  String get create_store_commercial_register_hint => 'السجل التجاري';
+
+  @override
+  String get create_store_tax_card_hint => 'البطاقة الضريبية';
+
+  @override
+  String get create_store_id_front_hint => 'بطاقة الهوية (الأمام)';
+
+  @override
+  String get create_store_id_back_hint => 'بطاقة الهوية (الخلف)';
+
+  @override
+  String get create_store_socials_label => 'روابط التواصل الاجتماعي';
+
+  @override
+  String get create_store_socials_empty => 'لم تتم إضافة روابط بعد';
+
+  @override
+  String get create_store_add_social => 'إضافة رابط';
+
+  @override
+  String get create_store_social_id_hint => 'رقم المنصة (مثال: 1)';
+
+  @override
+  String get create_store_social_link_hint =>
+      'الرابط (مثال: https://facebook.com/...)';
+
+  @override
+  String get create_store_cancel => 'إلغاء';
+
+  @override
+  String get success_create_store => 'تم إنشاء المتجر بنجاح!';
+
+  @override
+  String get error_create_store_name_required => 'اسم المتجر مطلوب';
+
+  @override
+  String get error_create_store_phone_required => 'رقم الهاتف مطلوب';
+
+  @override
+  String get error_create_store_address_required => 'العنوان مطلوب';
+
+  @override
+  String get error_create_store_category_required =>
+      'يرجى اختيار تصنيف واحد على الأقل';
+
+  @override
+  String get error_create_store_server =>
+      'تعذر إنشاء المتجر. يرجى المحاولة مرة أخرى';
+
+  @override
+  String get create_store_location_section_label => 'موقع المتجر';
+
+  @override
+  String get create_store_locate_button => 'تحديد موقعي';
+
+  @override
+  String get create_store_location_fetched => 'تم تحديد الموقع';
+
+  @override
+  String get error_create_store_location_denied =>
+      'تم رفض إذن الموقع. يرجى تفعيله من الإعدادات.';
+
+  @override
+  String get error_create_store_location_gps_off =>
+      'خدمة GPS مغلقة. يرجى تفعيل خدمة الموقع.';
+
+  @override
+  String get error_create_store_location_failed =>
+      'تعذر تحديد الموقع. يرجى المحاولة مرة أخرى.';
 }

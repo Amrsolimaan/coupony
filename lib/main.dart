@@ -1,9 +1,10 @@
+import 'package:coupony/features/seller_flow/SellerOnboarding/data/models/seller_preferences_model.dart';
+import 'package:coupony/features/user_flow/CustomerOnboarding/data/models/user_preferences_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:coupony/app.dart';
 import 'package:coupony/core/storage/local_cache_service.dart';
 import 'package:coupony/core/network/network_monitor.dart';
-import 'package:coupony/features/onboarding/data/models/user_preferences_model.dart';
 import 'package:coupony/features/permissions/data/models/permission_status_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,9 +15,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // 1. Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Set preferred orientations
   await SystemChrome.setPreferredOrientations([
@@ -29,6 +28,7 @@ void main() async {
 
   // 2. Register Hive Adapters
   Hive.registerAdapter(UserPreferencesModelAdapter());
+  Hive.registerAdapter(SellerPreferencesModelAdapter());
   Hive.registerAdapter(PermissionStatusModelAdapter());
   // Hive.registerAdapter(CouponModelAdapter()); // ✅ Uncomment after running build_runner
 

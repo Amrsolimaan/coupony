@@ -15,10 +15,13 @@ import '../../../../core/widgets/buttons/app_primary_button.dart';
 import '../../../../core/extensions/snackbar_extension.dart';
 import '../cubit/auth_state.dart';
 import '../cubit/login_cubit.dart';
+import '../cubit/auth_role_cubit.dart';
+import '../cubit/auth_role_state.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/role_toggle.dart';
 import '../widgets/google_sign_in_button.dart';
 import '../widgets/auth_success_bottom_sheet.dart';
+import '../widgets/role_animation_wrapper.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // LOGIN SCREEN
@@ -34,7 +37,6 @@ class LoginScreen extends HookWidget {
     // ── Hook declarations ──────────────────────────────────────────────────
     final emailController    = useTextEditingController();
     final passwordController = useTextEditingController();
-    final roleNotifier       = useValueNotifier<String>('customer');
     final rememberMe         = useValueNotifier<bool>(false);
 
     // ── Reactive derivations (inline — no extra ValueNotifier) ─────────────
@@ -46,6 +48,9 @@ class LoginScreen extends HookWidget {
 
     return MultiBlocProvider(
       providers: [
+        BlocProvider<AuthRoleCubit>.value(
+          value: di.sl<AuthRoleCubit>(),
+        ),
         BlocProvider<LoginCubit>(
           create: (context) => di.sl<LoginCubit>(),
         ),
@@ -131,122 +136,146 @@ class LoginScreen extends HookWidget {
                 onTap: () => FocusScope.of(context).unfocus(),
                 behavior: HitTestBehavior.opaque,
                 child: SafeArea(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsetsDirectional.symmetric(horizontal: 24.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(height: 16.h),
+                  child: RoleAnimationWrapper(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsetsDirectional.symmetric(horizontal: 24.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(height: 16.h),
 
-                        // ── Top bar: back (start) · skip (end) ──────────────────
-                        _TopBar(l10n: l10n),
-                        SizedBox(height: 28.h),
+                          // ── Top bar: back (start) · skip (end) ──────────────────
+                          _TopBar(l10n: l10n),
+                          SizedBox(height: 10.h),
 
-                        // ── Title ──────────────────────────────────────────────
-                        Text(
-                          l10n.login_welcome_back,
-                          style: AppTextStyles.customStyle(
-                            context,
-                            fontSize: 26,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
-                            height: 1.3,
-                            letterSpacing: -1,
+                          // ── Animated Logo ───────────────────────────────────────
+                          AnimatedLogoSwitcher(
+                            size: 100,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 20.h),
+                          SizedBox(height: 20.h),
 
-                        // ── Role toggle ─────────────────────────────────────────
-                        RoleToggle(
-                          roleNotifier: roleNotifier,
-                          userLabel: l10n.login_user_role,
-                          merchantLabel: l10n.login_merchant_role,
-                        ),
-                        SizedBox(height: 20.h),
+                          // ── Title ──────────────────────────────────────────────
+                          Text(
+                            l10n.login_welcome_back,
+                            style: AppTextStyles.customStyle(
+                              context,
+                              fontSize: 26,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary,
+                              height: 1.3,
+                              letterSpacing: -1,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 20.h),
 
-                        // ── Email field ─────────────────────────────────────────
-                        AuthTextField(
-                          controller: emailController,
-                          hint: l10n.email,
-                          keyboardType: TextInputType.emailAddress,
-                          textInputAction: TextInputAction.next,
-                        ),
-                        SizedBox(height: 12.h),
+                          // ── Role toggle ─────────────────────────────────────────
+                          RoleToggle(
+                            userLabel: l10n.login_user_role,
+                            merchantLabel: l10n.login_merchant_role,
+                          ),
+                          SizedBox(height: 20.h),
 
-                        // ── Password field ──────────────────────────────────────
-                        AuthTextField(
-                          controller: passwordController,
-                          hint: l10n.password,
-                          isPassword: true,
-                          hasError: state.errorMessage != null,
-                          textInputAction: TextInputAction.done,
-                        ),
+                          // ── Email field ─────────────────────────────────────────
+                          AuthTextField(
+                            controller: emailController,
+                            hint: l10n.email,
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
+                          ),
+                          SizedBox(height: 12.h),
 
-                        // ── Error text ──────────────────────────────────────────
-                        if (state.errorMessage != null) ...[
-                          SizedBox(height: 6.h),
-                          Align(
-                            alignment: AlignmentDirectional.centerStart,
-                            child: Text(
-                              context.getLocalizedMessage(state.errorMessage),
-                              style: AppTextStyles.customStyle(
-                                context,
-                                fontSize: 12,
-                                color: AppColors.success,
+                          // ── Password field ──────────────────────────────────────
+                          AuthTextField(
+                            controller: passwordController,
+                            hint: l10n.password,
+                            isPassword: true,
+                            hasError: state.errorMessage != null,
+                            textInputAction: TextInputAction.done,
+                          ),
+
+                          // ── Error text ──────────────────────────────────────────
+                          if (state.errorMessage != null) ...[
+                            SizedBox(height: 6.h),
+                            Align(
+                              alignment: AlignmentDirectional.centerStart,
+                              child: Text(
+                                context.getLocalizedMessage(state.errorMessage),
+                                style: AppTextStyles.customStyle(
+                                  context,
+                                  fontSize: 12,
+                                  color: AppColors.success,
+                                ),
                               ),
                             ),
+                          ],
+                          SizedBox(height: 12.h),
+
+                          // ── Remember me · Forgot password ───────────────────────
+                          _RememberForgotRow(
+                            rememberMe: rememberMe,
+                            l10n: l10n,
                           ),
+                          SizedBox(height: 24.h),
+
+                          // ── Login button (with animated color) ─────────────────
+                          AnimatedPrimaryColor(
+                            builder: (context, primaryColor) {
+                              return BlocBuilder<AuthRoleCubit, AuthRoleState>(
+                                builder: (context, roleState) {
+                                  return AppPrimaryButton(
+                                    text: l10n.login,
+                                    isLoading: state.isLoading,
+                                    onPressed: hasContent && !state.isLoading
+                                        ? () => context.read<LoginCubit>().login(
+                                              email:    emailController.text.trim(),
+                                              password: passwordController.text,
+                                              role:     roleState.role,
+                                            )
+                                        : null,
+                                    height: 56.h,
+                                    backgroundColor:
+                                        hasContent ? primaryColor : AppColors.textDisabled,
+                                    textStyle: AppTextStyles.customStyle(
+                                      context,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.surface,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                          SizedBox(height: 20.h),
+
+                          // ── "Or continue with" divider ───────────────────────────
+                          _OrDivider(label: l10n.login_or_divider),
+                          SizedBox(height: 16.h),
+
+                          // ── Google sign-in button ────────────────────────────────
+                          BlocBuilder<AuthRoleCubit, AuthRoleState>(
+                            builder: (context, roleState) {
+                              return GoogleSignInButton(
+                                label: l10n.login_google_button,
+                                role: roleState.role,
+                              );
+                            },
+                          ),
+                          SizedBox(height: 20.h),
+
+                          // ── Register link (with animated color) ─────────────────
+                          AnimatedPrimaryColor(
+                            builder: (context, primaryColor) {
+                              return _NoAccountRow(
+                                l10n: l10n,
+                                primaryColor: primaryColor,
+                              );
+                            },
+                          ),
+                          SizedBox(height: 24.h),
                         ],
-                        SizedBox(height: 12.h),
-
-                        // ── Remember me · Forgot password ───────────────────────
-                        _RememberForgotRow(rememberMe: rememberMe, l10n: l10n),
-                        SizedBox(height: 24.h),
-
-                        // ── Login button ────────────────────────────────────────
-                        AppPrimaryButton(
-                          text: l10n.login,
-                          isLoading: state.isLoading,
-                          onPressed: hasContent && !state.isLoading
-                              ? () => context.read<LoginCubit>().login(
-                                    email:    emailController.text.trim(),
-                                    password: passwordController.text,
-                                    role:     roleNotifier.value,
-                                  )
-                              : null,
-                          height: 56.h,
-                          backgroundColor:
-                              hasContent ? AppColors.primary : AppColors.textDisabled,
-                          textStyle: AppTextStyles.customStyle(
-                            context,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.surface,
-                          ),
-                        ),
-                        SizedBox(height: 20.h),
-
-                        // ── "Or continue with" divider ───────────────────────────
-                        _OrDivider(label: l10n.login_or_divider),
-                        SizedBox(height: 16.h),
-
-                        // ── Google sign-in button ────────────────────────────────
-                        ValueListenableBuilder<String>(
-                          valueListenable: roleNotifier,
-                          builder: (context, role, _) {
-                            return GoogleSignInButton(
-                              label: l10n.login_google_button,
-                              role: role,
-                            );
-                          },
-                        ),
-                        SizedBox(height: 70.h),
-
-                        // ── Register link ────────────────────────────────────────
-                        _NoAccountRow(l10n: l10n),
-                        SizedBox(height: 24.h),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -322,7 +351,10 @@ class _RememberForgotRow extends StatelessWidget {
   final ValueNotifier<bool> rememberMe;
   final AppLocalizations l10n;
 
-  const _RememberForgotRow({required this.rememberMe, required this.l10n});
+  const _RememberForgotRow({
+    required this.rememberMe,
+    required this.l10n,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -338,21 +370,23 @@ class _RememberForgotRow extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
-                    width:  20.w,
-                    height: 20.w,
-                    child: Checkbox(
-                      value:     checked,
-                      onChanged: (v) => rememberMe.value = v ?? false,
-                      activeColor: AppColors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4.r),
+                  AnimatedPrimaryColor(
+                    builder: (context, primaryColor) => SizedBox(
+                      width:  20.w,
+                      height: 20.w,
+                      child: Checkbox(
+                        value:     checked,
+                        onChanged: (v) => rememberMe.value = v ?? false,
+                        activeColor: primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4.r),
+                        ),
+                        side: BorderSide(
+                          color: AppColors.divider,
+                          width: 1.5.w,
+                        ),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      side: BorderSide(
-                        color: AppColors.divider,
-                        width: 1.5.w,
-                      ),
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                   ),
                   SizedBox(width: 8.w),
@@ -426,7 +460,12 @@ class _OrDivider extends StatelessWidget {
 
 class _NoAccountRow extends StatelessWidget {
   final AppLocalizations l10n;
-  const _NoAccountRow({required this.l10n});
+  final Color primaryColor;
+
+  const _NoAccountRow({
+    required this.l10n,
+    required this.primaryColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -448,7 +487,7 @@ class _NoAccountRow extends StatelessWidget {
                 style: AppTextStyles.customStyle(
                   context,
                   fontSize: 14,
-                  color: AppColors.primary,
+                  color: primaryColor,
                   fontWeight: FontWeight.w700,
                 ),
               ),

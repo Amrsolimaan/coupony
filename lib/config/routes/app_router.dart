@@ -1,9 +1,8 @@
+import 'package:coupony/core/widgets/Shared_Onboarding/onboarding_completion_loading_page.dart';
+
 import 'package:coupony/features/auth/presentation/pages/forgot_password_screen.dart';
+import 'package:coupony/features/auth/presentation/pages/language_selection_page.dart';
 import 'package:coupony/features/auth/presentation/pages/register_screen.dart';
-import 'package:coupony/features/onboarding/presentation/pages/customer_onboarding/onboarding_budget_screen.dart';
-import 'package:coupony/features/onboarding/presentation/pages/customer_onboarding/onboarding_completion_loading_page.dart';
-import 'package:coupony/features/onboarding/presentation/pages/customer_onboarding/onboarding_preferences_screen.dart';
-import 'package:coupony/features/onboarding/presentation/pages/customer_onboarding/onboarding_shopping_style_screen.dart';
 import 'package:coupony/features/permissions/presentation/pages/permission_flow_wrapper.dart';
 import 'package:coupony/features/permissions/presentation/pages/pages/location_error_page.dart';
 import 'package:coupony/features/permissions/presentation/pages/pages/location_intro_page.dart';
@@ -12,9 +11,15 @@ import 'package:coupony/features/permissions/presentation/pages/pages/notificati
 import 'package:coupony/features/permissions/presentation/pages/pages/notification_intro_page.dart';
 import 'package:coupony/features/permissions/presentation/pages/pages/permission_loading_page.dart';
 import 'package:coupony/features/permissions/presentation/pages/pages/permission_splash_page.dart';
+import 'package:coupony/features/seller_flow/CreateStore/presentation/cubit/create_store_cubit.dart';
+import 'package:coupony/features/seller_flow/CreateStore/presentation/pages/create_store_screen.dart';
+import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/pages/onboarding_seller_screen.dart';
+import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_budget_screen.dart';
+import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_preferences_screen.dart';
+import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_screen.dart';
+import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_shopping_style_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 // Core
 import 'package:coupony/config/dependency_injection/injection_container.dart';
 import 'package:coupony/core/constants/storage_keys.dart';
@@ -24,8 +29,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // Auth screens
 import 'package:coupony/features/auth/presentation/pages/splash_screen.dart';
-import 'package:coupony/features/auth/presentation/pages/onboarding_screen.dart';
-import 'package:coupony/features/auth/presentation/pages/login_screen.dart' as auth_login;
+import 'package:coupony/features/auth/presentation/pages/login_screen.dart'
+    as auth_login;
 import 'package:coupony/features/auth/presentation/pages/otp_screen.dart';
 import 'package:coupony/features/auth/presentation/cubit/forgot_password_cubit.dart';
 import 'package:coupony/features/auth/presentation/cubit/login_cubit.dart';
@@ -36,15 +41,13 @@ import 'package:coupony/features/auth/presentation/cubit/auth_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coupony/features/auth/presentation/pages/reset_password_screen.dart';
 
-// Onboarding screens
-import 'package:coupony/features/onboarding/presentation/pages/language_selection_page.dart';
 import 'package:coupony/features/permissions/presentation/pages/pages/welcome_gateway_page.dart';
 
 // ── Placeholder screens (replace with real screens when built) ──────────────
 
 class UserHomeScreen extends StatelessWidget {
   const UserHomeScreen({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -97,7 +100,10 @@ class UserHomeScreen extends StatelessWidget {
                   children: [
                     Text(
                       'User Home Screen',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     SizedBox(height: 16),
                     Text('مرحباً! تم تسجيل الدخول بنجاح'),
@@ -114,7 +120,7 @@ class UserHomeScreen extends StatelessWidget {
 
 class MerchantDashboardScreen extends StatelessWidget {
   const MerchantDashboardScreen({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -167,7 +173,10 @@ class MerchantDashboardScreen extends StatelessWidget {
                   children: [
                     Text(
                       'Merchant Dashboard',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     SizedBox(height: 16),
                     Text('مرحباً! لوحة تحكم التاجر'),
@@ -206,31 +215,36 @@ const _publicRoutes = {
 
 class AppRouter {
   // ── Route paths ───────────────────────────────────────────────────────────
-  static const String splash                    = '/';
-  static const String languageSelection         = '/language-selection';
-  static const String onboarding                = '/onboarding';
-  static const String onboardingPreferences     = '/onboarding-preferences';
-  static const String onboardingBudget          = '/onboarding-budget';
-  static const String onboardingShoppingStyle   = '/onboarding-shopping-style';
-  static const String onboardingCompletionLoading = '/onboarding-completion-loading';
-  static const String login                     = '/login';
-  static const String register                  = '/register';
-  static const String otpVerification           = '/otp-verification';
-  static const String forgotPassword            = '/forgot-password';
-  static const String resetPassword             = '/reset-password';
-  static const String home                      = '/home';
-  static const String merchantDashboard         = '/merchant-dashboard';
+  static const String splash = '/';
+  static const String languageSelection = '/language-selection';
+  static const String onboarding = '/onboarding';
+  static const String onboardingPreferences = '/onboarding-preferences';
+  static const String onboardingBudget = '/onboarding-budget';
+  static const String onboardingShoppingStyle = '/onboarding-shopping-style';
+  static const String onboardingCompletionLoading =
+      '/onboarding-completion-loading';
+  static const String sellerOnboarding = '/seller-onboarding';
+  static const String createStore      = '/create-store';
+  static const String login = '/login';
+  static const String register = '/register';
+  static const String otpVerification = '/otp-verification';
+  static const String forgotPassword = '/forgot-password';
+  static const String resetPassword = '/reset-password';
+  static const String home = '/home';
+  static const String merchantDashboard = '/merchant-dashboard';
 
   // Permission flow
-  static const String permissionFlow            = '/permission-flow';
-  static const String permissionSplash          = '/permission-splash';
-  static const String permissionLocationIntro   = '/permission-location-intro';
-  static const String permissionLocationMap     = '/permission-location-map';
-  static const String permissionLocationError   = '/permission-location-error';
-  static const String permissionNotificationIntro  = '/permission-notification-intro';
-  static const String permissionNotificationError  = '/permission-notification-error';
-  static const String permissionLoading         = '/permission-loading';
-  static const String welcomeGateway            = '/welcome-gateway';
+  static const String permissionFlow = '/permission-flow';
+  static const String permissionSplash = '/permission-splash';
+  static const String permissionLocationIntro = '/permission-location-intro';
+  static const String permissionLocationMap = '/permission-location-map';
+  static const String permissionLocationError = '/permission-location-error';
+  static const String permissionNotificationIntro =
+      '/permission-notification-intro';
+  static const String permissionNotificationError =
+      '/permission-notification-error';
+  static const String permissionLoading = '/permission-loading';
+  static const String welcomeGateway = '/welcome-gateway';
 
   // ── Router ────────────────────────────────────────────────────────────────
   static final GoRouter router = GoRouter(
@@ -246,12 +260,15 @@ class AppRouter {
       if (_publicRoutes.contains(location)) return null;
 
       // 1. Authenticated user — token present and non-empty.
-      final token = await sl<SecureStorageService>().read(StorageKeys.authToken);
+      final token = await sl<SecureStorageService>().read(
+        StorageKeys.authToken,
+      );
       if (token != null && token.isNotEmpty) return null;
 
       // 2. Guest user — explicit visitor session persisted in SharedPreferences.
       //    getBool() is synchronous once SharedPreferences is initialised.
-      final isGuest = sl<SharedPreferences>().getBool(StorageKeys.isGuest) ?? false;
+      final isGuest =
+          sl<SharedPreferences>().getBool(StorageKeys.isGuest) ?? false;
       if (isGuest) return null;
 
       // 3. No session — redirect to the gateway so the user can sign in or
@@ -319,6 +336,25 @@ class AppRouter {
           context: context,
           state: state,
           child: const OnboardingCompletionLoadingPage(),
+        ),
+      ),
+      GoRoute(
+        path: sellerOnboarding,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const SellerOnboardingPage(),
+        ),
+      ),
+      GoRoute(
+        path: createStore,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: BlocProvider(
+            create: (_) => sl<CreateStoreCubit>(),
+            child: const CreateStoreScreen(),
+          ),
         ),
       ),
 
@@ -430,12 +466,12 @@ class AppRouter {
           final OtpMode mode;
           if (extra is Map<String, String>) {
             email = extra['email'] ?? '';
-            mode  = extra['mode'] == 'forgotPassword'
+            mode = extra['mode'] == 'forgotPassword'
                 ? OtpMode.forgotPassword
                 : OtpMode.emailVerification;
           } else {
             email = extra as String? ?? '';
-            mode  = OtpMode.emailVerification;
+            mode = OtpMode.emailVerification;
           }
           return AppPageTransition.build(
             context: context,

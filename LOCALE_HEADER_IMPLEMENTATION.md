@@ -1,91 +1,43 @@
-# Accept-Language Header Implementation
+**ACT AS: Senior Lead Flutter Architect**
+**OBJECTIVE: COMPLETE 1:1 Mirroring of Data Layer for SellerOnboarding.**
 
-## Problem
-The backend sends localized error messages based on the `Accept-Language` HTTP header, but the app wasn't sending this header. This caused validation errors to always appear in English, even when the app was set to Arabic.
+**CONTEXT:** Domain layer is done. Now, populate the empty files in `lib/features/SellerOnboarding/data/` by mirroring `lib/features/CustomerOnboarding/data/`.
 
-## Solution
-Implemented a clean, centralized solution using the interceptor pattern.
+**SELLER API DATA 
+- Base Endpoint: /api/v1/on-boarding/seller
+- POST Body & GET Response Keys:
+price_category: [budget, mid_range, premium]
 
-## Implementation Details
+customer_reach_method: [physical_store, online_only]
 
-### 1. Created LocaleInterceptor
-**File**: `lib/core/network/interceptors/locale_interceptor.dart`
+best_offer_time: [all_week, weekends_occasions, off_peak]
 
-A dedicated Dio interceptor that:
-- Reads the current locale from `LocaleCubit`
-- Adds the `Accept-Language` header to every outgoing request
-- Follows the same pattern as existing interceptors (AuthInterceptor, ErrorInterceptor)
+target_audience: [youth, families, all]
 
-```dart
-class LocaleInterceptor extends Interceptor {
-  final LocaleCubit localeCubit;
+**TASK: POPULATE THESE 4 KEY FILES:**
 
-  LocaleInterceptor(this.localeCubit);
+1. **Model (`models/seller_preferences_model.dart`):**
+   - Read `user_preferences_model.dart` from Customer.
+   - Mirror it, but replace all Customer fields with the 4 Seller fields.
+   - Ensure it extends `SellerPreferencesEntity`.
+   - Update `fromJson` and `toJson` to use the snake_case keys from the API.
 
-  @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    final languageCode = localeCubit.state.languageCode;
-    options.headers['Accept-Language'] = languageCode;
-    handler.next(options);
-  }
-}
-```
+2. **Remote Data Source (`data_sources/seller_onboarding_remote_data_source.dart`):**
+   - Mirror `onboarding_remote_data_source.dart`.
+   - Update endpoint to: `/api/v1/on-boarding/seller`.
+   - Ensure POST and GET methods use the new `SellerPreferencesModel`.
 
-### 2. Updated DioClient
-**File**: `lib/core/network/dio_client.dart`
+3. **Local Data Source (`data_sources/seller_onboarding_local_data_source.dart`):**
+   - Mirror `onboarding_local_data_source.dart`.
+   - Change the storage key to something unique like: `CACHED_SELLER_ONBOARDING`.
 
-- Added `LocaleCubit` as a constructor parameter
-- Registered `LocaleInterceptor` in the interceptor chain (first position)
+4. **Repository Implementation (`repositories/seller_onboarding_repository_impl.dart`):**
+   - Mirror `onboarding_repository_impl.dart`.
+   - Update it to inject the 2 NEW Seller Data Sources.
+   - Link all 5 Use Cases logic to the new Seller Remote and Local sources.
 
-### 3. Updated Dependency Injection
-**File**: `lib/config/dependency_injection/injection_container.dart`
+**STRICT RULES:**
+- NO imports from CustomerOnboarding. All imports must point to the Seller feature.
+- Use the same error handling pattern (DioException -> Failure).
 
-- Moved `LocaleCubit` registration before `DioClient` (dependency order)
-- Updated `DioClient` instantiation to pass `LocaleCubit`
-
-## Benefits
-
-✅ **Zero Code Duplication**: Locale header is added automatically to ALL requests
-✅ **Clean Architecture**: Solution stays in the network layer
-✅ **Single Responsibility**: One interceptor handles one concern
-✅ **No Repository Changes**: Existing code continues to work without modification
-✅ **Automatic**: Works for all features (auth, stores, coupons, etc.)
-✅ **Easy to Test**: Interceptor can be tested independently
-✅ **Easy to Maintain**: If backend changes locale handling, only one file needs updating
-
-## How It Works
-
-1. User changes app language → `LocaleCubit` updates its state
-2. App makes any API request → `LocaleInterceptor` runs first
-3. Interceptor reads current locale from `LocaleCubit.state.languageCode`
-4. Interceptor adds `Accept-Language: ar` or `Accept-Language: en` header
-5. Backend receives the header and returns localized error messages
-6. Existing validation error handling displays the backend message as-is
-
-## Testing
-
-To verify it's working:
-
-1. Set app language to Arabic
-2. Try to login with invalid credentials (e.g., short password)
-3. Backend should return Arabic error message
-4. App should display: "يرجى إدخال بريد إلكتروني صالح" (or similar)
-
-Check the network logs to confirm the header is being sent:
-```
-Accept-Language: ar
-```
-
-## Files Modified
-
-- ✨ **Created**: `lib/core/network/interceptors/locale_interceptor.dart`
-- 🔧 **Modified**: `lib/core/network/dio_client.dart`
-- 🔧 **Modified**: `lib/config/dependency_injection/injection_container.dart`
-
-## Architecture Compliance
-
-This solution follows Clean Architecture principles:
-- **Network Layer**: Interceptor lives in the network layer where it belongs
-- **Dependency Injection**: Proper dependency management through GetIt
-- **Single Responsibility**: Each class has one clear purpose
-- **Open/Closed**: Can add more interceptors without modifying existing code
+**GO: Populate these 4 Data layer files now.**

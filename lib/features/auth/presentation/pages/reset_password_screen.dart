@@ -68,6 +68,8 @@ class ResetPasswordScreen extends HookWidget {
       },
       // ── Builder: pure UI ───────────────────────────────────────────────────
       builder: (context, state) {
+        final primaryColor = Theme.of(context).primaryColor;
+
         final hasContent =
             newPasswordValue.text.isNotEmpty &&
             confirmPasswordValue.text.isNotEmpty &&
@@ -145,6 +147,7 @@ class ResetPasswordScreen extends HookWidget {
                       _PasswordStrengthMeter(
                         strength: state.passwordStrength,
                         l10n: l10n,
+                        primaryColor: primaryColor,
                       ),
 
                     SizedBox(height: 12.h),
@@ -197,7 +200,7 @@ class ResetPasswordScreen extends HookWidget {
                           : null,
                       height: 56.h,
                       backgroundColor: hasContent && passwordsMatch
-                          ? AppColors.primary
+                          ? primaryColor
                           : AppColors.textDisabled,
                       textStyle: AppTextStyles.customStyle(
                         context,
@@ -277,8 +280,13 @@ class _TopBar extends StatelessWidget {
 class _PasswordStrengthMeter extends StatelessWidget {
   final PasswordStrength strength;
   final AppLocalizations l10n;
+  final Color primaryColor;
 
-  const _PasswordStrengthMeter({required this.strength, required this.l10n});
+  const _PasswordStrengthMeter({
+    required this.strength,
+    required this.l10n,
+    required this.primaryColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -296,10 +304,7 @@ class _PasswordStrengthMeter extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: strength.score / 4,
                 backgroundColor: AppColors.grey200,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  // FIX: all levels use primary (orange) — design never shows green
-                  AppColors.primary,
-                ),
+                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
               ),
             ),
           ),
@@ -314,18 +319,20 @@ class _PasswordStrengthMeter extends StatelessWidget {
         _StrengthCheckItem(
           label: l10n.reset_password_strength_min_length,
           isValid: strength.hasMinLength,
+          primaryColor: primaryColor,
         ),
         SizedBox(height: 6.h),
         _StrengthCheckItem(
           label: l10n.reset_password_strength_digit,
           isValid: strength.hasDigit,
+          primaryColor: primaryColor,
         ),
         SizedBox(height: 6.h),
         // FIX: uppercase & lowercase merged into one row (matches design)
         _StrengthCheckItem(
-          label: l10n
-              .reset_password_strength_uppercase, // e.g. "الأحرف الصغيرة (a-z) والأحرف الكبيرة (A-Z)"
+          label: l10n.reset_password_strength_uppercase,
           isValid: strength.hasUppercase && strength.hasLowercase,
+          primaryColor: primaryColor,
         ),
       ],
     );
@@ -337,8 +344,13 @@ class _PasswordStrengthMeter extends StatelessWidget {
 class _StrengthCheckItem extends StatelessWidget {
   final String label;
   final bool isValid;
+  final Color primaryColor;
 
-  const _StrengthCheckItem({required this.label, required this.isValid});
+  const _StrengthCheckItem({
+    required this.label,
+    required this.isValid,
+    required this.primaryColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -351,9 +363,9 @@ class _StrengthCheckItem extends StatelessWidget {
         //  invalid → grey bullet/dot   (Icons.circle, small, filled grey)
         if (isValid)
           Icon(
-            Icons.check, // simple ✓ — matches design
+            Icons.check,
             size: 14.w,
-            color: AppColors.primary, // FIX: orange not green
+            color: primaryColor,
           )
         else
           Icon(
@@ -371,8 +383,7 @@ class _StrengthCheckItem extends StatelessWidget {
             style: AppTextStyles.customStyle(
               context,
               fontSize: 13.sp,
-              // FIX: valid → orange (primary), invalid → grey (textSecondary)
-              color: isValid ? AppColors.primary : AppColors.textSecondary,
+              color: isValid ? primaryColor : AppColors.textSecondary,
               fontWeight: FontWeight.w600,
             ),
           ),

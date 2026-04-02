@@ -142,6 +142,54 @@ class MessageFormatter {
       case 'auth_error_unexpected':
         return l10n.auth_error_unexpected;
 
+      // Seller onboarding success keys
+      case 'success_seller_onboarding_completed':
+        return l10n.success_seller_onboarding_completed;
+      case 'success_seller_price_category_updated':
+        return l10n.success_seller_price_category_updated;
+      case 'success_seller_reach_method_updated':
+        return l10n.success_seller_reach_method_updated;
+      case 'success_seller_offer_time_updated':
+        return l10n.success_seller_offer_time_updated;
+      case 'success_seller_audience_updated':
+        return l10n.success_seller_audience_updated;
+      case 'success_seller_onboarding_all_updated':
+        return l10n.success_seller_onboarding_all_updated;
+
+      // Seller onboarding error keys
+      case 'error_seller_onboarding_step1_incomplete':
+        return l10n.error_seller_onboarding_step1_incomplete;
+      case 'error_seller_onboarding_step2_incomplete':
+        return l10n.error_seller_onboarding_step2_incomplete;
+      case 'error_seller_onboarding_step3_incomplete':
+        return l10n.error_seller_onboarding_step3_incomplete;
+      case 'error_seller_onboarding_step4_incomplete':
+        return l10n.error_seller_onboarding_step4_incomplete;
+      case 'error_unexpected':
+        return l10n.error_unexpected;
+
+      // Create store success/error keys
+      case 'success_create_store':
+        return l10n.success_create_store;
+      case 'error_create_store_name_required':
+        return l10n.error_create_store_name_required;
+      case 'error_create_store_phone_required':
+        return l10n.error_create_store_phone_required;
+      case 'error_create_store_address_required':
+        return l10n.error_create_store_address_required;
+      case 'error_create_store_category_required':
+        return l10n.error_create_store_category_required;
+      case 'error_create_store_server':
+        return l10n.error_create_store_server;
+
+      // Create store location keys
+      case 'error_create_store_location_denied':
+        return l10n.error_create_store_location_denied;
+      case 'error_create_store_location_gps_off':
+        return l10n.error_create_store_location_gps_off;
+      case 'error_create_store_location_failed':
+        return l10n.error_create_store_location_failed;
+
       // Fallback: If it looks like a key, format it. Otherwise return as-is.
       default:
         if (messageKey.contains('_')) {

@@ -14,6 +14,7 @@ import '../../core/storage/secure_storage_service.dart';
 
 // Feature Modules
 import 'features/auth_injection.dart';
+import 'features/create_store_injection.dart';
 import 'features/onboarding_injection.dart';
 import 'features/permissions_injection.dart';
 
@@ -113,6 +114,11 @@ Future<void> init() async {
   // 5. FEATURES - AUTH
   // ═══════════════════════════════════════════════════════════
   registerAuthDependencies(sl);
+
+  // ═══════════════════════════════════════════════════════════
+  // 6. FEATURES - CREATE STORE
+  // ═══════════════════════════════════════════════════════════
+  registerCreateStoreDependencies(sl);
 
   // Coupons Feature
   // ─────────────────

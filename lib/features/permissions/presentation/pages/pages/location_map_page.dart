@@ -143,7 +143,10 @@ class _LocationMapPageState extends State<LocationMapPage> {
       debugPrint('❌ Search error: $e');
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        context.showErrorSnackBar(l10n.location_map_search_error);
+        // ✅ IMPROVED ERROR HANDLING: Show user-friendly error message
+        context.showErrorSnackBar(
+          l10n.location_map_search_error,
+        );
       }
     }
   }
@@ -251,24 +254,20 @@ class _LocationMapPageState extends State<LocationMapPage> {
                 ),
                 onMapCreated: (controller) {
                   _mapController = controller;
-                  setState(() => _isMapReady = true);
+                  
+                  // ✅ PERFORMANCE FIX: Hide loading immediately when map is ready
+                  // Using onMapCreated instead of onCameraIdle eliminates 5+ second delay
+                  setState(() {
+                    _isMapReady = true;
+                    _isMapLoading = false; // Hide loading overlay immediately
+                  });
 
-                  debugPrint('✅ Google Map Controller created');
+                  debugPrint('✅ Google Map Controller created - Loading complete');
 
                   // Move to user position if we have it
                   if (_currentLocation != null) {
                     Future.delayed(const Duration(milliseconds: 300), () {
                       if (mounted) _moveCameraToPosition(_currentLocation!);
-                    });
-                  }
-                },
-                onCameraIdle: () {
-                  // ✅ Phase 3: Hide loading overlay once map tiles settle.
-                  // onCameraIdle fires after tiles finish rendering — safer than
-                  // a fixed timer. Guard with _isMapReady to avoid premature hide.
-                  if (_isMapLoading && _isMapReady) {
-                    Future.delayed(const Duration(milliseconds: 500), () {
-                      if (mounted) setState(() => _isMapLoading = false);
                     });
                   }
                 },

@@ -4,7 +4,7 @@ import '../../domain/entities/permission_entity.dart';
 
 part 'permission_status_model.g.dart';
 
-@HiveType(typeId: 2)
+@HiveType(typeId: 3) // typeId 2 is reserved for SellerPreferencesModel
 class PermissionStatusModel extends PermissionEntity {
   // ════════════════════════════════════════════════════════
   // SENTINEL — used to detect "not passed" in copyWith
@@ -12,17 +12,59 @@ class PermissionStatusModel extends PermissionEntity {
   static const Object _sentinel = Object();
 
   // ════════════════════════════════════════════════════════
+  // HIVE FIELDS
+  // ════════════════════════════════════════════════════════
+  @override
+  @HiveField(0)
+  final String locationStatus;
+  
+  @override
+  @HiveField(1)
+  final String notificationStatus;
+  
+  @override
+  @HiveField(2)
+  final double? latitude;
+  
+  @override
+  @HiveField(3)
+  final double? longitude;
+  
+  @override
+  @HiveField(4)
+  final String? fcmToken;
+  
+  @override
+  @HiveField(5)
+  final DateTime timestamp;
+  
+  @override
+  @HiveField(6)
+  final bool hasCompletedFlow;
+
+  // ════════════════════════════════════════════════════════
   // CONSTRUCTOR
   // ════════════════════════════════════════════════════════
-  const PermissionStatusModel({
-    @HiveField(0) required super.locationStatus,
-    @HiveField(1) required super.notificationStatus,
-    @HiveField(2) super.latitude,
-    @HiveField(3) super.longitude,
-    @HiveField(4) super.fcmToken,
-    @HiveField(5) required super.timestamp,
-    @HiveField(6) super.hasCompletedFlow = false,
-  });
+  PermissionStatusModel({
+    String? locationStatus,
+    String? notificationStatus,
+    this.latitude,
+    this.longitude,
+    this.fcmToken,
+    DateTime? timestamp,
+    this.hasCompletedFlow = false,
+  })  : locationStatus = locationStatus ?? '',
+        notificationStatus = notificationStatus ?? '',
+        timestamp = timestamp ?? DateTime.utc(1970),
+        super(
+          locationStatus: locationStatus ?? '',
+          notificationStatus: notificationStatus ?? '',
+          latitude: latitude,
+          longitude: longitude,
+          fcmToken: fcmToken,
+          timestamp: timestamp ?? DateTime.utc(1970),
+          hasCompletedFlow: hasCompletedFlow,
+        );
 
   // ════════════════════════════════════════════════════════
   // FACTORY CONSTRUCTORS

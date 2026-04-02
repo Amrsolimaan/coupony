@@ -1,0 +1,44 @@
+import 'package:equatable/equatable.dart';
+
+/// Auth Role State
+/// Manages the global role selection across all auth screens
+class AuthRoleState extends Equatable {
+  /// Current selected role: 'customer' or 'merchant'
+  final String role;
+
+  /// Whether the role is being loaded from storage
+  final bool isLoading;
+
+  const AuthRoleState({
+    required this.role,
+    this.isLoading = false,
+  });
+
+  /// Initial state with customer role
+  factory AuthRoleState.initial() {
+    return const AuthRoleState(
+      role: 'customer',
+      isLoading: true,
+    );
+  }
+
+  /// Check if current role is merchant
+  bool get isMerchant => role == 'merchant';
+
+  /// Check if current role is customer
+  bool get isCustomer => role == 'customer';
+
+  /// Copy with method for state updates
+  AuthRoleState copyWith({
+    String? role,
+    bool? isLoading,
+  }) {
+    return AuthRoleState(
+      role: role ?? this.role,
+      isLoading: isLoading ?? this.isLoading,
+    );
+  }
+
+  @override
+  List<Object?> get props => [role, isLoading];
+}

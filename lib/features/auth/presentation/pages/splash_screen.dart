@@ -9,8 +9,11 @@ import '../../../../core/localization/locale_cubit.dart';
 import '../../../../config/routes/app_router.dart';
 import '../../../../core/constants/storage_keys.dart';
 import '../../../../config/dependency_injection/injection_container.dart' as di;
+import '../../../../core/storage/secure_storage_service.dart';
 import '../../../permissions/domain/repositories/permission_repository.dart';
 import '../../data/datasources/auth_local_data_source.dart';
+import '../cubit/auth_role_cubit.dart';
+import '../cubit/auth_role_state.dart';
 
 class AnimatedSplashScreen extends StatefulWidget {
   const AnimatedSplashScreen({super.key});
@@ -26,16 +29,19 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
   late Animation<double> _expandAnimation;
   late Animation<double> _logoOpacityAnimation;
 
+  // Role-based branding — resolved from SecureStorage before animation starts
+  bool _isSeller = false;
+
   @override
   void initState() {
     super.initState();
+
     _controller = AnimationController(
       duration: const Duration(milliseconds: 2500),
       vsync: this,
     );
 
-    // 1. حركة السقوط من الأعلى للمنتصف (من -0.5 إلى 0.0)
-    // -0.5 معناها نصف الشاشة فوق، و 0.0 معناها المنتصف بالضبط
+    // 1. Drop from top to center
     _dropAnimation = Tween<double>(begin: -0.5, end: 0.0).animate(
       CurvedAnimation(
         parent: _controller,
@@ -43,7 +49,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
       ),
     );
 
-    // 2. حركة الانفجار لتغطية الشاشة
+    // 2. Expand ball to fill screen
     _expandAnimation = Tween<double>(begin: 1.0, end: 30.0).animate(
       CurvedAnimation(
         parent: _controller,
@@ -51,7 +57,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
       ),
     );
 
-    // 3. ظهور اللوجو
+    // 3. Logo fade-in
     _logoOpacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
@@ -59,59 +65,71 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
       ),
     );
 
+    _loadRoleAndStart();
+  }
+
+  /// Reads the persisted role from AuthRoleCubit, updates branding flag,
+  /// then starts the animation and navigation flow.
+  Future<void> _loadRoleAndStart() async {
+    try {
+      // Load persisted role from AuthRoleCubit
+      final authRoleCubit = di.sl<AuthRoleCubit>();
+      await authRoleCubit.loadPersistedRole();
+      
+      if (mounted) {
+        final roleState = authRoleCubit.state;
+        setState(() => _isSeller = roleState.isMerchant);
+      }
+    } catch (_) {
+      // Fallback: default customer branding
+    }
+
+    if (!mounted) return;
+
     _controller.forward().then((_) async {
-      // ✅ STEP 1: Check if language has been selected (First-time check)
+      // ✅ STEP 1: Check if language has been selected (first-time check)
       try {
         final localeCubit = context.read<LocaleCubit>();
         final hasLanguagePreference = await localeCubit.hasManualPreference();
 
         if (!hasLanguagePreference) {
-          // First time run - Navigate to Language Selection
           if (mounted) context.go(AppRouter.languageSelection);
           return;
         }
 
-        // ✅ STEP 2: Check Permission status first (NEW FLOW: Permissions → Onboarding)
+        // ✅ STEP 2: Check permission status
         final permissionRepository = di.sl<PermissionRepository>();
         final permissionResult = await permissionRepository.getPermissionStatus();
-        
+
         permissionResult.fold(
           (failure) {
-            // No permission data - start permission flow
             if (mounted) context.go(AppRouter.permissionSplash);
           },
           (permissionStatus) {
             if (permissionStatus != null && permissionStatus.hasCompletedFlow) {
-              // ✅ Permissions completed, check if user has passed welcome gateway before
               _checkWelcomeGatewayStatus();
             } else {
-              // Permissions not completed - start permission flow
               if (mounted) context.go(AppRouter.permissionSplash);
             }
           },
         );
       } catch (e) {
-        // Fallback safety - go to language selection
         if (mounted) context.go(AppRouter.languageSelection);
       }
     });
   }
 
-  /// STEP 3: Check if user has passed welcome gateway before.
-  /// If yes → go to login directly
-  /// If no → go to welcome gateway (first time after permissions)
   Future<void> _checkWelcomeGatewayStatus() async {
     try {
       final prefs = di.sl<SharedPreferences>();
-      final hasPassedGateway = prefs.getBool(StorageKeys.hasPassedWelcomeGateway) ?? false;
+      final hasPassedGateway =
+          prefs.getBool(StorageKeys.hasPassedWelcomeGateway) ?? false;
 
       if (!mounted) return;
 
       if (hasPassedGateway) {
-        // User has seen welcome gateway before - check session directly
         _checkOnboardingStatus();
       } else {
-        // First time after permissions - show welcome gateway
         context.go(AppRouter.welcomeGateway);
       }
     } catch (_) {
@@ -119,13 +137,6 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
     }
   }
 
-  /// STEP 4: Determine session type, then route accordingly.
-  ///
-  /// Decision tree:
-  ///   Guest session          → /home  (guests bypass onboarding)
-  ///   Auth token + onboarding done   → /home
-  ///   Auth token + onboarding pending → /onboarding  (wizard, post-auth)
-  ///   No session             → /login (not welcome gateway - user has passed it before)
   Future<void> _checkOnboardingStatus() async {
     try {
       final authLocalDs = di.sl<AuthLocalDataSource>();
@@ -138,20 +149,16 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
 
       if (!mounted) return;
 
-      final token                = results[0] as String?;
-      final isGuest              = results[1] as bool;
+      final token = results[0] as String?;
+      final isGuest = results[1] as bool;
       final isOnboardingCompleted = results[2] as bool;
 
       if (isGuest) {
-        // Guest users skip onboarding entirely
         context.go(AppRouter.home);
         return;
       }
 
       if (token != null && token.isNotEmpty) {
-        // Authenticated user — check whether they have completed onboarding
-        // The flag was written by OnboardingFlowCubit after a 200 OK from
-        // POST /api/v1/on-boarding/{role}.
         if (isOnboardingCompleted) {
           context.go(AppRouter.home);
         } else {
@@ -160,7 +167,6 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
         return;
       }
 
-      // No session at all
       context.go(AppRouter.login);
     } catch (_) {
       if (mounted) context.go(AppRouter.login);
@@ -173,47 +179,44 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
     super.dispose();
   }
 
+  // Role-resolved gradient colors
+  Color get _gradientColor =>
+      _isSeller ? AppColors.primaryOfSeller : AppColors.splashGradientStart;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // الكرة الساقطة والمتمددة
+          // Animated ball: drops then expands to fill screen
           AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
               return Align(
-                alignment: Alignment(
-                  0.0, // المحور الأفقي: 0 يعني المنتصف
-                  _dropAnimation.value, // المحور الرأسي: من -0.5 إلى 0.0
-                ),
+                alignment: Alignment(0.0, _dropAnimation.value),
                 child: Transform.scale(
                   scale: _expandAnimation.value,
                   child: Container(
-                    width: 80.w, // استخدام ScreenUtil
+                    width: 80.w,
                     height: 80.h,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColors.splashGradientStart,
-                          AppColors.splashGradientEnd,
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                      color: _gradientColor,
                     ),
                   ),
                 ),
               );
             },
           ),
-          // ظهور اللوجو في النهاية
+          // Logo fades in at the end of the animation
           Center(
             child: FadeTransition(
               opacity: _logoOpacityAnimation,
-              child: Text('Coupony', style: AppTextStyles.logoStyle),
+              child: Text(
+                'Coupony',
+                style: AppTextStyles.logoStyle.copyWith(color: Colors.white),
+              ),
             ),
           ),
         ],

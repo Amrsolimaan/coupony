@@ -184,6 +184,7 @@ class OtpScreen extends HookWidget {
       },
       builder: (context, state) {
         final displayEmail = maskedRecipient ?? email;
+        final primaryColor = Theme.of(context).primaryColor;
 
         // Dynamic title based on mode
         final screenTitle = mode == OtpMode.forgotPassword
@@ -277,6 +278,7 @@ class OtpScreen extends HookWidget {
                         activeIndexNotifier:  activeIndexNotifier,
                         isEnabled:            !state.isLoading,
                         email:                email,
+                        primaryColor:         primaryColor,
                       ),
                     ),
                     SizedBox(height: 8.h),
@@ -310,7 +312,7 @@ class OtpScreen extends HookWidget {
                           : null,
                       height:          56.h,
                       backgroundColor: hasFullCode
-                          ? AppColors.primary
+                          ? primaryColor
                           : AppColors.textDisabled,
                       textStyle: TextStyle(
                         fontFamily:  AppTextStyles.Main_Font_arabic,
@@ -368,8 +370,8 @@ class OtpScreen extends HookWidget {
                                       TextSpan(text: '${l10n.otp_resend_prefix} '),
                                       TextSpan(
                                         text: l10n.otp_resend_button,
-                                        style: const TextStyle(
-                                          color:      AppColors.primary,
+                                        style: TextStyle(
+                                          color:      primaryColor,
                                           fontWeight: FontWeight.w700,
                                         ),
                                       ),
@@ -455,6 +457,7 @@ class _OtpInputRow extends HookWidget {
   final ValueNotifier<int> activeIndexNotifier;
   final bool isEnabled;
   final String email;
+  final Color primaryColor;
 
   const _OtpInputRow({
     required this.controllers,
@@ -462,6 +465,7 @@ class _OtpInputRow extends HookWidget {
     required this.activeIndexNotifier,
     required this.isEnabled,
     required this.email,
+    required this.primaryColor,
   });
 
   @override
@@ -480,6 +484,7 @@ class _OtpInputRow extends HookWidget {
                 activeIndexNotifier: activeIndexNotifier,
                 index:               index,
                 isEnabled:           isEnabled,
+                primaryColor:        primaryColor,
                 onChanged:           (value) => _handleDigitChange(context, index, value),
                 onPaste:             () => _handlePaste(context),
               ),
@@ -529,6 +534,7 @@ class _OtpDigitBox extends HookWidget {
   final ValueNotifier<int> activeIndexNotifier;
   final int index;
   final bool isEnabled;
+  final Color primaryColor;
   final ValueChanged<String> onChanged;
   final VoidCallback onPaste;
 
@@ -538,6 +544,7 @@ class _OtpDigitBox extends HookWidget {
     required this.activeIndexNotifier,
     required this.index,
     required this.isEnabled,
+    required this.primaryColor,
     required this.onChanged,
     required this.onPaste,
   });
@@ -562,7 +569,7 @@ class _OtpDigitBox extends HookWidget {
             fontFamily: AppTextStyles.Main_Font_english,
             fontSize:   24.sp,
             fontWeight: FontWeight.w700,
-            color:      AppColors.primary,
+            color:      primaryColor,
           ),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           decoration: InputDecoration(
@@ -573,12 +580,12 @@ class _OtpDigitBox extends HookWidget {
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: hasValue
-                  ? BorderSide(color: AppColors.primary, width: 2.w)
+                  ? BorderSide(color: primaryColor, width: 2.w)
                   : BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide:   BorderSide(color: AppColors.primary, width: 2.w),
+              borderSide:   BorderSide(color: primaryColor, width: 2.w),
             ),
             filled:          true,
             fillColor:       hasValue ? AppColors.surface : const Color(0xFFF5F5F5),

@@ -22,6 +22,10 @@ class StorageKeys {
   /// Onboarding user preferences (selected categories before auth)
   static const String onboardingPreferencesBox = 'onboarding_preferences_box';
 
+  /// Seller onboarding preferences box
+  static const String sellerOnboardingPreferencesBox =
+      'seller_onboarding_preferences_box';
+
   /// ⭐ NEW: Permission status (location, notification)
   static const String permissionsBox = 'permissions_box';
 
@@ -85,4 +89,6 @@ class StorageKeys {
 
   @Deprecated('Use userData instead')
   static const String user = 'user_data';
+
+  static const String sellerOnboardingPreferencesKey = 'seller_onboarding_preferences';
 }

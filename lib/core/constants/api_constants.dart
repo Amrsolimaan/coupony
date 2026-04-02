@@ -12,6 +12,10 @@ class ApiConstants {
   static const String refreshToken   = '/auth/refresh';
   static const String updateFcmToken = '/auth/fcm-token';
 
+  // ── Stores ────────────────────────────────────────────
+  static const String createStore    = '/stores';
+  static const String getCategories  = '/categories';
+
   // ── Password Reset ─────────────────────────────────────
   static const String forgotPassword    = '/auth/password/forgot';
   static const String verifyResetOtp    = '/auth/password/verify-otp';

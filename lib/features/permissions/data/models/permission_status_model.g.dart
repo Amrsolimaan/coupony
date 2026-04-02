@@ -8,7 +8,7 @@ part of 'permission_status_model.dart';
 
 class PermissionStatusModelAdapter extends TypeAdapter<PermissionStatusModel> {
   @override
-  final int typeId = 2;
+  final int typeId = 3;
 
   @override
   PermissionStatusModel read(BinaryReader reader) {
@@ -17,12 +17,12 @@ class PermissionStatusModelAdapter extends TypeAdapter<PermissionStatusModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PermissionStatusModel(
-      locationStatus: fields[0] as String,
-      notificationStatus: fields[1] as String,
+      locationStatus: fields[0] as String?,
+      notificationStatus: fields[1] as String?,
       latitude: fields[2] as double?,
       longitude: fields[3] as double?,
       fcmToken: fields[4] as String?,
-      timestamp: fields[5] as DateTime,
+      timestamp: fields[5] as DateTime?,
       hasCompletedFlow: fields[6] as bool,
     );
   }

@@ -524,6 +524,30 @@ abstract class AppLocalizations {
   /// **'Almost there...'**
   String get onboarding_loading_complete;
 
+  /// No description provided for @onboarding_loading_preparing_seller.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing your store...'**
+  String get onboarding_loading_preparing_seller;
+
+  /// No description provided for @onboarding_loading_saving_seller.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving your store data...'**
+  String get onboarding_loading_saving_seller;
+
+  /// No description provided for @onboarding_loading_preparing_experience_seller.
+  ///
+  /// In en, this message translates to:
+  /// **'Setting up your dashboard...'**
+  String get onboarding_loading_preparing_experience_seller;
+
+  /// No description provided for @onboarding_loading_complete_seller.
+  ///
+  /// In en, this message translates to:
+  /// **'Your store is almost ready...'**
+  String get onboarding_loading_complete_seller;
+
   /// No description provided for @permissions_location_checking.
   ///
   /// In en, this message translates to:
@@ -1519,6 +1543,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Offers to increase sales during quiet times'**
   String get onboarding_time_off_peak_subtitle;
+
+  /// No description provided for @sellerOnboardingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s understand your business better\nto connect you with the right customers'**
+  String get sellerOnboardingTitle;
+
+  /// No description provided for @sellerOnboardingSubTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get sellerOnboardingSubTitle;
+
+  /// No description provided for @customerOnboardingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s get to know you better...\nand offer you more'**
+  String get customerOnboardingTitle;
+
+  /// No description provided for @customerOnboardingSubTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get customerOnboardingSubTitle;
+
+  /// No description provided for @success_seller_onboarding_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Store setup completed!'**
+  String get success_seller_onboarding_completed;
+
+  /// No description provided for @success_seller_price_category_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Price category updated successfully'**
+  String get success_seller_price_category_updated;
+
+  /// No description provided for @success_seller_reach_method_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Reach method updated successfully'**
+  String get success_seller_reach_method_updated;
+
+  /// No description provided for @success_seller_offer_time_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer time updated successfully'**
+  String get success_seller_offer_time_updated;
+
+  /// No description provided for @success_seller_audience_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Target audience updated successfully'**
+  String get success_seller_audience_updated;
+
+  /// No description provided for @success_seller_onboarding_all_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'All settings updated successfully'**
+  String get success_seller_onboarding_all_updated;
+
+  /// No description provided for @error_seller_onboarding_step1_incomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select your price category'**
+  String get error_seller_onboarding_step1_incomplete;
+
+  /// No description provided for @error_seller_onboarding_step2_incomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select how customers reach you'**
+  String get error_seller_onboarding_step2_incomplete;
+
+  /// No description provided for @error_seller_onboarding_step3_incomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select your most active offer time'**
+  String get error_seller_onboarding_step3_incomplete;
+
+  /// No description provided for @error_seller_onboarding_step4_incomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select your target audience'**
+  String get error_seller_onboarding_step4_incomplete;
+
+  /// No description provided for @error_unexpected.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred'**
+  String get error_unexpected;
+
+  /// No description provided for @create_store_phone_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get create_store_phone_hint;
+
+  /// No description provided for @create_store_verification_docs_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification Documents'**
+  String get create_store_verification_docs_label;
+
+  /// No description provided for @create_store_commercial_register_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Commercial Register'**
+  String get create_store_commercial_register_hint;
+
+  /// No description provided for @create_store_tax_card_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax Card'**
+  String get create_store_tax_card_hint;
+
+  /// No description provided for @create_store_id_front_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'ID Card (Front)'**
+  String get create_store_id_front_hint;
+
+  /// No description provided for @create_store_id_back_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'ID Card (Back)'**
+  String get create_store_id_back_hint;
+
+  /// No description provided for @create_store_socials_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Social Media Links'**
+  String get create_store_socials_label;
+
+  /// No description provided for @create_store_socials_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No social links added yet'**
+  String get create_store_socials_empty;
+
+  /// No description provided for @create_store_add_social.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Link'**
+  String get create_store_add_social;
+
+  /// No description provided for @create_store_social_id_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Platform ID (e.g. 1)'**
+  String get create_store_social_id_hint;
+
+  /// No description provided for @create_store_social_link_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Link (e.g. https://facebook.com/...)'**
+  String get create_store_social_link_hint;
+
+  /// No description provided for @create_store_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get create_store_cancel;
+
+  /// No description provided for @success_create_store.
+  ///
+  /// In en, this message translates to:
+  /// **'Store created successfully!'**
+  String get success_create_store;
+
+  /// No description provided for @error_create_store_name_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Store name is required'**
+  String get error_create_store_name_required;
+
+  /// No description provided for @error_create_store_phone_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number is required'**
+  String get error_create_store_phone_required;
+
+  /// No description provided for @error_create_store_address_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Address is required'**
+  String get error_create_store_address_required;
+
+  /// No description provided for @error_create_store_category_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one category'**
+  String get error_create_store_category_required;
+
+  /// No description provided for @error_create_store_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not create store. Please try again'**
+  String get error_create_store_server;
+
+  /// No description provided for @create_store_location_section_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Store Location'**
+  String get create_store_location_section_label;
+
+  /// No description provided for @create_store_locate_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Detect My Location'**
+  String get create_store_locate_button;
+
+  /// No description provided for @create_store_location_fetched.
+  ///
+  /// In en, this message translates to:
+  /// **'Location detected'**
+  String get create_store_location_fetched;
+
+  /// No description provided for @error_create_store_location_denied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission denied. Please enable it in settings.'**
+  String get error_create_store_location_denied;
+
+  /// No description provided for @error_create_store_location_gps_off.
+  ///
+  /// In en, this message translates to:
+  /// **'GPS is disabled. Please enable location services.'**
+  String get error_create_store_location_gps_off;
+
+  /// No description provided for @error_create_store_location_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not determine location. Please try again.'**
+  String get error_create_store_location_failed;
 }
 
 class _AppLocalizationsDelegate

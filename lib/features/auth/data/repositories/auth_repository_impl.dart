@@ -1,3 +1,5 @@
+import 'package:coupony/features/user_flow/CustomerOnboarding/domain/entities/onboarding_user_type.dart';
+import 'package:coupony/features/user_flow/CustomerOnboarding/domain/repositories/onboarding_repository.dart';
 import 'package:dartz/dartz.dart';
 import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/errors/exceptions.dart';
@@ -9,8 +11,6 @@ import '../../../../core/services/google_sign_in_service.dart';
 import '../../../../core/storage/local_cache_service.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
-import '../../../onboarding/domain/entities/onboarding_user_type.dart';
-import '../../../onboarding/domain/repositories/onboarding_repository.dart';
 import '../../domain/use_cases/reset_password_params.dart';
 import '../datasources/auth_local_data_source.dart';
 import '../datasources/auth_remote_data_source.dart';
@@ -30,8 +30,8 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
     required OnboardingRepository onboardingRepository,
     required NetworkInfo networkInfo,
     required LocalCacheService cacheService,
-  })  : _onboardingRepository = onboardingRepository,
-        super(networkInfo: networkInfo, cacheService: cacheService);
+  }) : _onboardingRepository = onboardingRepository,
+       super(networkInfo: networkInfo, cacheService: cacheService);
 
   // ════════════════════════════════════════════════════════
   // AUTH OPERATIONS
@@ -69,13 +69,13 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
     return executeOnlineOperation<UserEntity>(
       operation: () async {
         final user = await remoteDataSource.register(
-          firstName:            firstName,
-          lastName:             lastName,
-          email:                email,
-          phoneNumber:          phoneNumber,
-          password:             password,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          phoneNumber: phoneNumber,
+          password: password,
           passwordConfirmation: passwordConfirmation,
-          role:                 role,
+          role: role,
         );
         // Only persist if backend returned an access_token (auto-login after register)
         if (user.accessToken != null) {
@@ -103,10 +103,7 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
   }) async {
     return executeOnlineOperation<UserEntity>(
       operation: () async {
-        final user = await remoteDataSource.verifyOtp(
-          email: email,
-          code:  code,
-        );
+        final user = await remoteDataSource.verifyOtp(email: email, code: code);
         await _persistUserAndRegisterFcm(user);
         return user;
       },
@@ -182,7 +179,10 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
   }) async {
     return executeOnlineOperation<String>(
       operation: () async {
-        final resetToken = await remoteDataSource.verifyResetCode(email: email, code: code);
+        final resetToken = await remoteDataSource.verifyResetCode(
+          email: email,
+          code: code,
+        );
         return resetToken;
       },
     );
@@ -193,27 +193,33 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
   // ════════════════════════════════════════════════════════
 
   @override
-  Future<Either<Failure, PasswordResetResponseModel>> sendResetCode(String email) async {
+  Future<Either<Failure, PasswordResetResponseModel>> sendResetCode(
+    String email,
+  ) async {
     return executeOnlineOperation<PasswordResetResponseModel>(
       operation: () => remoteDataSource.sendResetCode(email: email),
     );
   }
 
   @override
-  Future<Either<Failure, PasswordResetResponseModel>> resendResetCode(String email) async {
+  Future<Either<Failure, PasswordResetResponseModel>> resendResetCode(
+    String email,
+  ) async {
     return executeOnlineOperation<PasswordResetResponseModel>(
       operation: () => remoteDataSource.resendResetCode(email: email),
     );
   }
 
   @override
-  Future<Either<Failure, Unit>> resetPassword(ResetPasswordParams params) async {
+  Future<Either<Failure, Unit>> resetPassword(
+    ResetPasswordParams params,
+  ) async {
     return executeOnlineOperation<Unit>(
       operation: () async {
         await remoteDataSource.resetPassword(
-          email:                params.email,
-          token:                params.token,
-          password:             params.password,
+          email: params.email,
+          token: params.token,
+          password: params.password,
           passwordConfirmation: params.passwordConfirmation,
         );
         return unit;
@@ -231,8 +237,8 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
     if (!isConnected) return const Left(NetworkFailure('error_no_internet'));
 
     try {
-      final googleUserData =
-          await GoogleSignInService().signInWithGoogleAndGetUserData();
+      final googleUserData = await GoogleSignInService()
+          .signInWithGoogleAndGetUserData();
 
       if (googleUserData == null) {
         print('❌ [REPOSITORY] Google Sign-In was cancelled');
@@ -241,14 +247,16 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
 
       print('✅ [REPOSITORY] Got Google user data: ${googleUserData['email']}');
 
-      final email    = googleUserData['email']!;
+      final email = googleUserData['email']!;
       final password = 'google_auth_${googleUserData['id']}';
 
       // ── Step 1: try login ──────────────────────────────────────────────────
       try {
         print('🔐 [REPOSITORY] Trying login for: $email');
         final user = await remoteDataSource.login(
-          email: email, password: password, role: role,
+          email: email,
+          password: password,
+          role: role,
         );
         print('✅ [REPOSITORY] Login succeeded');
         await _persistUserAndRegisterFcm(user);
@@ -267,9 +275,11 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
         if (_isNotFoundError(msg)) {
           print('🔐 [REPOSITORY] Account not found → attempting registration');
           return await _registerGoogleUser(
-            email: email, password: password, role: role,
-            firstName:   googleUserData['firstName']   ?? 'مستخدم',
-            lastName:    googleUserData['lastName']    ?? 'جديد',
+            email: email,
+            password: password,
+            role: role,
+            firstName: googleUserData['firstName'] ?? 'مستخدم',
+            lastName: googleUserData['lastName'] ?? 'جديد',
             phoneNumber: googleUserData['phoneNumber'] ?? '+1234567890',
           );
         }
@@ -296,13 +306,13 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
   }) async {
     try {
       final user = await remoteDataSource.register(
-        firstName:            firstName,
-        lastName:             lastName,
-        email:                email,
-        phoneNumber:          phoneNumber,
-        password:             password,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        phoneNumber: phoneNumber,
+        password: password,
         passwordConfirmation: password,
-        role:                 role,
+        role: role,
       );
       print('✅ [REPOSITORY] Registration succeeded');
       if (user.accessToken == null) {
@@ -339,32 +349,34 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
 
   /// Maps a data-source exception to the corresponding [Failure] type.
   Failure _mapException(Object error) {
-    if (error is InvalidTokenException) return InvalidTokenFailure(error.message);
+    if (error is InvalidTokenException)
+      return InvalidTokenFailure(error.message);
     if (error is ValidationException) return ValidationFailure(error.message);
-    if (error is UnauthorizedException) return UnauthorizedFailure(error.message);
-    if (error is ServerException)       return ServerFailure(error.message);
-    if (error is NetworkException)      return NetworkFailure(error.message);
-    if (error is CacheException)        return CacheFailure(error.message);
+    if (error is UnauthorizedException)
+      return UnauthorizedFailure(error.message);
+    if (error is ServerException) return ServerFailure(error.message);
+    if (error is NetworkException) return NetworkFailure(error.message);
+    if (error is CacheException) return CacheFailure(error.message);
     return UnexpectedFailure(error.toString());
   }
 
   bool _isUnverifiedError(String msg) =>
       msg.contains('not verified') ||
-      msg.contains('unverified')   ||
-      msg.contains('not activated')||
+      msg.contains('unverified') ||
+      msg.contains('not activated') ||
       msg.contains('verification code has been sent');
 
-bool _isNotFoundError(String msg) =>
-    msg.contains('not found')                 ||
-    msg.contains('no account')                ||
-    msg.contains('invalid credentials')       ||
-    msg.contains('wrong credentials')         ||
-    msg.contains('selected email is invalid');
+  bool _isNotFoundError(String msg) =>
+      msg.contains('not found') ||
+      msg.contains('no account') ||
+      msg.contains('invalid credentials') ||
+      msg.contains('wrong credentials') ||
+      msg.contains('selected email is invalid');
 
   bool _isAlreadyRegisteredError(String msg) =>
       msg.contains('already registered') ||
-      msg.contains('already taken')      ||
-      msg.contains('already exists')     ||
+      msg.contains('already taken') ||
+      msg.contains('already exists') ||
       msg.contains('email taken');
 
   // ════════════════════════════════════════════════════════
@@ -383,10 +395,10 @@ bool _isNotFoundError(String msg) =>
     print('  - Role: ${user.role}');
     print('  - isOnboardingCompleted: ${user.isOnboardingCompleted}');
     print('  - Has Access Token: ${user.accessToken != null}');
-    
+
     await localDataSource.cacheUser(user);
     print('✅ User cached successfully');
-    
+
     // A real session supersedes guest mode.
     await localDataSource.cacheGuestStatus(false);
     print('✅ Guest status cleared');
@@ -395,16 +407,22 @@ bool _isNotFoundError(String msg) =>
       // Non-blocking: fetch FCM token and send to backend
       notificationService.getFCMToken().then((fcmToken) {
         if (fcmToken != null) {
-          print('📱 FCM Token obtained, sending to backend: ${fcmToken.substring(0, 20)}...');
+          print(
+            '📱 FCM Token obtained, sending to backend: ${fcmToken.substring(0, 20)}...',
+          );
           remoteDataSource.updateFcmToken(fcmToken: fcmToken);
         }
       });
     }
-    
+
     print('💾 _persistUserAndRegisterFcm - Completed successfully');
 
     if (user.isOnboardingCompleted) {
-      _onboardingRepository.fetchAndCacheFromServer(userType: user.role == 'merchant' ? OnboardingUserType.seller : OnboardingUserType.customer);
+      _onboardingRepository.fetchAndCacheFromServer(
+        userType: user.role == 'merchant'
+            ? OnboardingUserType.seller
+            : OnboardingUserType.customer,
+      );
     }
   }
 }

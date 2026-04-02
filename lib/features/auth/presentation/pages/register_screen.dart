@@ -15,10 +15,13 @@ import '../../../../core/widgets/buttons/app_primary_button.dart';
 import '../../../../core/extensions/snackbar_extension.dart';
 import '../cubit/auth_state.dart';
 import '../cubit/register_cubit.dart';
+import '../cubit/auth_role_cubit.dart';
+import '../cubit/auth_role_state.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/role_toggle.dart';
 import '../widgets/google_sign_in_button.dart';
 import '../widgets/auth_success_bottom_sheet.dart';
+import '../widgets/role_animation_wrapper.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // REGISTER SCREEN
@@ -38,7 +41,6 @@ class RegisterScreen extends HookWidget {
     final phoneController           = useTextEditingController();
     final passwordController        = useTextEditingController();
     final confirmPasswordController = useTextEditingController();
-    final roleNotifier              = useValueNotifier<String>('customer');
     final agreeToTerms              = useValueNotifier<bool>(false);
 
     // ── Reactive derivations ───────────────────────────────────────────────
@@ -58,8 +60,15 @@ class RegisterScreen extends HookWidget {
         confirmPasswordValue.text.isNotEmpty &&
         termsValue;
 
-    return BlocProvider<GoogleSignInCubit>(
-      create: (context) => di.sl<GoogleSignInCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthRoleCubit>.value(
+          value: di.sl<AuthRoleCubit>(),
+        ),
+        BlocProvider<GoogleSignInCubit>(
+          create: (context) => di.sl<GoogleSignInCubit>(),
+        ),
+      ],
       child: MultiBlocListener(
         listeners: [
           // ── RegisterCubit listener ───────────────────────────────────────
@@ -126,7 +135,8 @@ class RegisterScreen extends HookWidget {
                 onTap: () => FocusScope.of(context).unfocus(),
                 behavior: HitTestBehavior.opaque,
                 child: SafeArea(
-                  child: SingleChildScrollView(
+                  child: RoleAnimationWrapper(
+                    child: SingleChildScrollView(
                     padding: EdgeInsetsDirectional.symmetric(horizontal: 24.w),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -135,7 +145,13 @@ class RegisterScreen extends HookWidget {
 
                         // ── Top bar ─────────────────────────────────────────
                         _TopBar(l10n: l10n),
-                        SizedBox(height: 28.h),
+                        SizedBox(height: 10.h),
+
+                        // ── Animated Logo ───────────────────────────────────
+                        AnimatedLogoSwitcher(
+                          size: 100,
+                        ),
+                        SizedBox(height: 20.h),
 
                         // ── Title ───────────────────────────────────────────
                         Text(
@@ -154,7 +170,6 @@ class RegisterScreen extends HookWidget {
 
                         // ── Role toggle ─────────────────────────────────────
                         RoleToggle(
-                          roleNotifier: roleNotifier,
                           userLabel: l10n.login_user_role,
                           merchantLabel: l10n.login_merchant_role,
                         ),
@@ -241,34 +256,41 @@ class RegisterScreen extends HookWidget {
                         SizedBox(height: 12.h),
 
                         // ── Terms & Conditions checkbox ─────────────────────
-                        _TermsCheckbox(agreeToTerms: agreeToTerms, l10n: l10n),
+                        _TermsCheckbox(
+                          agreeToTerms: agreeToTerms,
+                          l10n: l10n,
+                        ),
                         SizedBox(height: 24.h),
 
-                        // ── Register button ─────────────────────────────────
-                        AppPrimaryButton(
-                          text: l10n.register,
-                          isLoading: state.isLoading,
-                          onPressed: hasContent && !state.isLoading
-                              ? () => context.read<RegisterCubit>().register(
-                                    firstName: firstNameController.text.trim(),
-                                    lastName: lastNameController.text.trim(),
-                                    email: emailController.text.trim(),
-                                    phoneNumber: phoneController.text.trim(),
-                                    password: passwordController.text,
-                                    passwordConfirmation:
-                                        confirmPasswordController.text,
-                                    role: roleNotifier.value,
-                                  )
-                              : null,
-                          height: 56.h,
-                          backgroundColor:
-                              hasContent ? AppColors.primary : AppColors.textDisabled,
-                          textStyle: AppTextStyles.customStyle(
-                            context,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.surface,
-                          ),
+                        // ── Register button (with animated color) ──────────
+                        AnimatedPrimaryColor(
+                          builder: (context, primaryColor) {
+                            return AppPrimaryButton(
+                              text: l10n.register,
+                              isLoading: state.isLoading,
+                              onPressed: hasContent && !state.isLoading
+                                  ? () => context.read<RegisterCubit>().register(
+                                        firstName: firstNameController.text.trim(),
+                                        lastName: lastNameController.text.trim(),
+                                        email: emailController.text.trim(),
+                                        phoneNumber: phoneController.text.trim(),
+                                        password: passwordController.text,
+                                        passwordConfirmation:
+                                            confirmPasswordController.text,
+                                        role: context.read<AuthRoleCubit>().state.role,
+                                      )
+                                  : null,
+                              height: 56.h,
+                              backgroundColor:
+                                  hasContent ? primaryColor : AppColors.textDisabled,
+                              textStyle: AppTextStyles.customStyle(
+                                context,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.surface,
+                              ),
+                            );
+                          },
                         ),
                         SizedBox(height: 20.h),
 
@@ -277,22 +299,29 @@ class RegisterScreen extends HookWidget {
                         SizedBox(height: 16.h),
 
                         // ── Google sign-in button ────────────────────────────
-                        ValueListenableBuilder<String>(
-                          valueListenable: roleNotifier,
-                          builder: (context, role, _) {
+                        BlocBuilder<AuthRoleCubit, AuthRoleState>(
+                          builder: (context, roleState) {
                             return GoogleSignInButton(
                               label: l10n.login_google_button,
-                              role: role,
+                              role: roleState.role,
                             );
                           },
                         ),
                         SizedBox(height: 24.h),
 
-                        // ── Login link ───────────────────────────────────────
-                        _HaveAccountRow(l10n: l10n),
+                        // ── Login link (with animated color) ────────────────
+                        AnimatedPrimaryColor(
+                          builder: (context, primaryColor) {
+                            return _HaveAccountRow(
+                              l10n: l10n,
+                              primaryColor: primaryColor,
+                            );
+                          },
+                        ),
                         SizedBox(height: 24.h),
                       ],
                     ),
+                  ),
                   ),
                 ),
               ),
@@ -367,7 +396,10 @@ class _TermsCheckbox extends StatelessWidget {
   final ValueNotifier<bool> agreeToTerms;
   final AppLocalizations l10n;
 
-  const _TermsCheckbox({required this.agreeToTerms, required this.l10n});
+  const _TermsCheckbox({
+    required this.agreeToTerms,
+    required this.l10n,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -381,21 +413,23 @@ class _TermsCheckbox extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(
-                  width: 20.w,
-                  height: 20.w,
-                  child: Checkbox(
-                    value: checked,
-                    onChanged: (v) => agreeToTerms.value = v ?? false,
-                    activeColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4.r),
+                AnimatedPrimaryColor(
+                  builder: (context, primaryColor) => SizedBox(
+                    width: 20.w,
+                    height: 20.w,
+                    child: Checkbox(
+                      value: checked,
+                      onChanged: (v) => agreeToTerms.value = v ?? false,
+                      activeColor: primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.r),
+                      ),
+                      side: BorderSide(
+                        color: AppColors.divider,
+                        width: 1.5.w,
+                      ),
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    side: BorderSide(
-                      color: AppColors.divider,
-                      width: 1.5.w,
-                    ),
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
                 ),
                 SizedBox(width: 8.w),
@@ -456,7 +490,12 @@ class _OrDivider extends StatelessWidget {
 
 class _HaveAccountRow extends StatelessWidget {
   final AppLocalizations l10n;
-  const _HaveAccountRow({required this.l10n});
+  final Color primaryColor;
+
+  const _HaveAccountRow({
+    required this.l10n,
+    required this.primaryColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -487,7 +526,7 @@ class _HaveAccountRow extends StatelessWidget {
                     style: AppTextStyles.customStyle(
                       context,
                       fontSize: 14,
-                      color: AppColors.primary,
+                      color: primaryColor,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
