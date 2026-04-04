@@ -82,7 +82,11 @@ class RegisterScreen extends HookWidget {
               }
               switch (state.navSignal) {
                 case AuthNavigation.toHome:
+                  context.go(AppRouter.home);
+                case AuthNavigation.toOnboarding:
                   context.go(AppRouter.onboarding);
+                case AuthNavigation.toSellerOnboarding:
+                  context.go(AppRouter.sellerOnboarding);
                 case AuthNavigation.toMerchantDash:
                   context.go(AppRouter.merchantDashboard);
                 case AuthNavigation.toOtpVerification:
@@ -115,6 +119,8 @@ class RegisterScreen extends HookWidget {
                           context.go(AppRouter.home);
                         case AuthNavigation.toOnboarding:
                           context.go(AppRouter.onboarding);
+                        case AuthNavigation.toSellerOnboarding:
+                          context.go(AppRouter.sellerOnboarding);
                         case AuthNavigation.toMerchantDash:
                           context.go(AppRouter.merchantDashboard);
                         default:

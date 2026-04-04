@@ -14,6 +14,7 @@ import 'package:coupony/features/permissions/presentation/pages/pages/permission
 import 'package:coupony/features/seller_flow/CreateStore/presentation/cubit/create_store_cubit.dart';
 import 'package:coupony/features/seller_flow/CreateStore/presentation/pages/create_store_screen.dart';
 import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/pages/onboarding_seller_screen.dart';
+import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/pages/seller_onboarding_start_screen.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_budget_screen.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_preferences_screen.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_screen.dart';
@@ -224,6 +225,7 @@ class AppRouter {
   static const String onboardingCompletionLoading =
       '/onboarding-completion-loading';
   static const String sellerOnboarding = '/seller-onboarding';
+  static const String sellerOnboardingFlow = '/seller-onboarding-flow';
   static const String createStore      = '/create-store';
   static const String login = '/login';
   static const String register = '/register';
@@ -340,6 +342,14 @@ class AppRouter {
       ),
       GoRoute(
         path: sellerOnboarding,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const SellerOnboardingStartScreen(),
+        ),
+      ),
+      GoRoute(
+        path: sellerOnboardingFlow,
         pageBuilder: (context, state) => AppPageTransition.build(
           context: context,
           state: state,

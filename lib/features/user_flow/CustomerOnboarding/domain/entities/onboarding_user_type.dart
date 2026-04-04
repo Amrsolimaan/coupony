@@ -9,7 +9,7 @@ enum OnboardingUserType {
 
   /// Map a raw role string (from SecureStorage / API) to the correct type.
   static OnboardingUserType fromRole(String? role) {
-    return role == 'merchant' ? seller : customer;
+    return role == 'seller' ? seller : customer;
   }
 
   /// The path segment used in the API endpoint URL.

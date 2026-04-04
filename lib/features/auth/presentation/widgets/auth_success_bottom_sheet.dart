@@ -78,6 +78,8 @@ class _AuthSuccessBottomSheetState extends State<AuthSuccessBottomSheet>
     final rng = math.Random(42);
 
     // Wave 1 — 48 particles, sharp burst outward
+    // 🎨 Note: Confetti uses a mix of vibrant colors for visual appeal
+    // The main circle will use the dynamic theme color
     _particles = List.generate(48, (i) {
       final color = i % 3 == 0
           ? AppColors.primary
@@ -255,6 +257,9 @@ class _AuthSuccessBottomSheetState extends State<AuthSuccessBottomSheet>
 
   @override
   Widget build(BuildContext context) {
+    // 🎨 Dynamic theme color based on active role (Customer=Green, Seller=Blue)
+    final primaryColor = Theme.of(context).primaryColor;
+    
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -352,6 +357,7 @@ class _AuthSuccessBottomSheetState extends State<AuthSuccessBottomSheet>
                           shimmerProgress: _shimmerProgress.value,
                           repeatShimmerProgress: _repeatShimmerProgress.value,
                           checkProgress: _checkProgress.value,
+                          primaryColor: primaryColor,
                         ),
                       ),
                     ],
@@ -386,7 +392,7 @@ class _AuthSuccessBottomSheetState extends State<AuthSuccessBottomSheet>
                       text: widget.buttonText,
                       onPressed: widget.onContinue,
                       height: 52.h,
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: primaryColor,
                       textStyle: TextStyle(
                         fontFamily: AppTextStyles.Main_Font_arabic,
                         fontSize: 16.sp,
@@ -415,12 +421,14 @@ class _CircleCore extends StatelessWidget {
   final double shimmerProgress;
   final double repeatShimmerProgress;
   final double checkProgress;
+  final Color primaryColor;
 
   const _CircleCore({
     required this.size,
     required this.shimmerProgress,
     required this.repeatShimmerProgress,
     required this.checkProgress,
+    required this.primaryColor,
   });
 
   @override
@@ -445,8 +453,8 @@ class _CircleCore extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  AppColors.primary,
-                  Color.lerp(AppColors.primary, Colors.black, 0.22)!,
+                  primaryColor,
+                  Color.lerp(primaryColor, Colors.black, 0.22)!,
                 ],
               ),
             ),

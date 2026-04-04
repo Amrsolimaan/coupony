@@ -73,6 +73,8 @@ class LoginScreen extends HookWidget {
                   context.go(AppRouter.home);
                 case AuthNavigation.toOnboarding:
                   context.go(AppRouter.onboarding);
+                case AuthNavigation.toSellerOnboarding:
+                  context.go(AppRouter.sellerOnboarding);
                 case AuthNavigation.toMerchantDash:
                   context.go(AppRouter.merchantDashboard);
                 case AuthNavigation.toRegister:
@@ -116,6 +118,8 @@ class LoginScreen extends HookWidget {
                           context.go(AppRouter.home);
                         case AuthNavigation.toOnboarding:
                           context.go(AppRouter.onboarding);
+                        case AuthNavigation.toSellerOnboarding:
+                          context.go(AppRouter.sellerOnboarding);
                         case AuthNavigation.toMerchantDash:
                           context.go(AppRouter.merchantDashboard);
                         default:
@@ -204,7 +208,7 @@ class LoginScreen extends HookWidget {
                                 style: AppTextStyles.customStyle(
                                   context,
                                   fontSize: 12,
-                                  color: AppColors.success,
+                                  color: AppColors.error,
                                 ),
                               ),
                             ),

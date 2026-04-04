@@ -1,7 +1,9 @@
 import 'package:coupony/config/dependency_injection/injection_container.dart' as di;
 import 'package:coupony/config/routes/app_router.dart';
 import 'package:coupony/core/extensions/snackbar_extension.dart';
+import 'package:coupony/core/localization/l10n/app_localizations.dart';
 import 'package:coupony/core/utils/message_formatter.dart';
+import 'package:coupony/features/auth/presentation/widgets/auth_success_bottom_sheet.dart';
 import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/cubit/onboarding_Seller_flow_cubit.dart';
 import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/cubit/onboarding_Seller_flow_state.dart';
 import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/pages/seller_delivery_method_screen.dart';
@@ -33,6 +35,28 @@ class SellerOnboardingPage extends StatelessWidget {
       create: (_) => di.sl<SellerOnboardingFlowCubit>(),
       child: BlocListener<SellerOnboardingFlowCubit, SellerOnboardingFlowState>(
         listener: (context, state) {
+          // ── Show Success Bottom Sheet ──────────────────────────────────────
+          if (state.navigationSignal == SellerOnboardingNavigation.showSuccessBottomSheet) {
+            final l10n = AppLocalizations.of(context)!;
+            context.read<SellerOnboardingFlowCubit>().clearNavigationSignal();
+            
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              isDismissible: false,
+              enableDrag: false,
+              builder: (context) => AuthSuccessBottomSheet(
+                title: l10n.seller_onboarding_success_title,
+                buttonText: l10n.continue_button,
+                onContinue: () {
+                  Navigator.of(context).pop();
+                  context.go(AppRouter.createStore);
+                },
+              ),
+            );
+          }
+
           // ── Navigation signals ────────────────────────────────────────────
           if (state.navigationSignal == SellerOnboardingNavigation.toCreateStore) {
             final router = GoRouter.of(context);

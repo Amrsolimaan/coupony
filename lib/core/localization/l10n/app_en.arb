@@ -236,6 +236,15 @@
   "seller_store_description_counter": "{current}/{max} characters",
   "seller_store_logo_label": "Store Logo",
   "seller_store_logo_hint": "Choose a clear image for your store logo",
+  
+  "seller_best_offer_time_title": "When are you most active with offers?",
+  "seller_best_offer_time_all_week": "All Week Long",
+  "seller_best_offer_time_all_week_subtitle": "Always active store",
+  "seller_best_offer_time_weekends": "Weekends and Occasions",
+  "seller_best_offer_time_weekends_subtitle": "Outings and leisure",
+  "seller_best_offer_time_off_peak": "Off-peak Times",
+  "seller_best_offer_time_off_peak_subtitle": "Offers to increase sales during quiet times",
+  
   "seller_price_range_title": "Classify your prices so we can reach the right audience",
   "seller_price_range_economic": "Economic Prices",
   "seller_price_range_economic_subtitle": "Offers that suit everyone and are very affordable",
@@ -255,6 +264,11 @@
   "seller_target_audience_families_subtitle": "Home seekers and children",
   "seller_target_audience_everyone": "Everyone",
   "seller_target_audience_everyone_subtitle": "General offers for all ages",
+  "seller_onboarding_success_title": "Onboarding Completed Successfully!",
+  
+  "seller_onboarding_start_title": "Let's understand your business better\nto connect you with the right customers",
+  "seller_onboarding_start_subtitle": "4 simple steps will help us understand your business",
+  "seller_onboarding_start_button": "Get Started",
   
   "onboarding_time_most_active_title": "When are you most active with offers?",
   "onboarding_time_all_week": "All Week Long",

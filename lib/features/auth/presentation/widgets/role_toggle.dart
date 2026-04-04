@@ -7,7 +7,7 @@ import '../cubit/auth_role_cubit.dart';
 import '../cubit/auth_role_state.dart';
 import 'role_animation_wrapper.dart';
 
-/// Role toggle widget — user / merchant selector.
+/// Role toggle widget — user / seller selector.
 /// NOW USES GLOBAL AuthRoleCubit FOR PERSISTENCE
 /// 
 /// Now with magical color animation when switching roles!
@@ -57,10 +57,10 @@ class RoleToggle extends StatelessWidget {
                   Expanded(
                     child: _Segment(
                       label: merchantLabel,
-                      value: 'merchant',
-                      selected: selectedRole == 'merchant',
+                      value: 'seller',
+                      selected: selectedRole == 'seller',
                       primaryColor: primaryColor,
-                      onTap: () => context.read<AuthRoleCubit>().setRole('merchant'),
+                      onTap: () => context.read<AuthRoleCubit>().setRole('seller'),
                     ),
                   ),
                 ],

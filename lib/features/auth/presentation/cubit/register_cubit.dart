@@ -68,9 +68,16 @@ class RegisterCubit extends Cubit<AuthState> {
 
         if (user.accessToken != null) {
           // Backend auto-logged-in the user
-          final nav = user.role == 'merchant'
-              ? AuthNavigation.toMerchantDash
-              : AuthNavigation.toHome;
+          // Determine navigation based on role
+          final AuthNavigation nav;
+          if (user.role == 'seller') {
+            // Sellers always go to onboarding first (new accounts)
+            nav = AuthNavigation.toSellerOnboarding;
+          } else {
+            // Customers go to customer onboarding
+            nav = AuthNavigation.toOnboarding;
+          }
+          
           _safeEmit(state.copyWith(
             isLoading: false,
             user: user,

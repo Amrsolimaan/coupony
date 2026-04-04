@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import 'role_animation_wrapper.dart';
 
 /// Reusable auth text field.
 /// For password fields, pass [isPassword: true] — visibility is managed
@@ -35,15 +36,20 @@ class AuthTextField extends StatelessWidget {
       );
     }
 
-    return _buildField(
-      context: context,
-      controller: controller,
-      hint: hint,
-      hasError: hasError,
-      obscure: false,
-      suffixIcon: null,
-      keyboardType: keyboardType,
-      textInputAction: textInputAction,
+    return AnimatedPrimaryColor(
+      builder: (context, primaryColor) {
+        return _buildField(
+          context: context,
+          controller: controller,
+          hint: hint,
+          hasError: hasError,
+          obscure: false,
+          suffixIcon: null,
+          keyboardType: keyboardType,
+          textInputAction: textInputAction,
+          primaryColor: primaryColor,
+        );
+      },
     );
   }
 }
@@ -76,25 +82,30 @@ class _PasswordFieldState extends State<_PasswordField> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: _obscure,
-      builder: (context, obscure, _) {
-        return _buildField(
-          context: context,
-          controller: widget.controller,
-          hint: widget.hint,
-          hasError: widget.hasError,
-          obscure: obscure,
-          keyboardType: TextInputType.visiblePassword,
-          textInputAction: widget.textInputAction,
-          suffixIcon: GestureDetector(
-            onTap: () => _obscure.value = !obscure,
-            child: Icon(
-              obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-              color: AppColors.textSecondary,
-              size: 20.w,
-            ),
-          ),
+    return AnimatedPrimaryColor(
+      builder: (context, primaryColor) {
+        return ValueListenableBuilder<bool>(
+          valueListenable: _obscure,
+          builder: (context, obscure, _) {
+            return _buildField(
+              context: context,
+              controller: widget.controller,
+              hint: widget.hint,
+              hasError: widget.hasError,
+              obscure: obscure,
+              keyboardType: TextInputType.visiblePassword,
+              textInputAction: widget.textInputAction,
+              primaryColor: primaryColor,
+              suffixIcon: GestureDetector(
+                onTap: () => _obscure.value = !obscure,
+                child: Icon(
+                  obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                  color: AppColors.textSecondary,
+                  size: 20.w,
+                ),
+              ),
+            );
+          },
         );
       },
     );
@@ -110,9 +121,10 @@ Widget _buildField({
   required Widget? suffixIcon,
   required TextInputType keyboardType,
   required TextInputAction textInputAction,
+  required Color primaryColor,
 }) {
   final borderColor        = hasError ? AppColors.error : AppColors.divider;
-  final focusedBorderColor = hasError ? AppColors.error : AppColors.primary;
+  final focusedBorderColor = hasError ? AppColors.error : primaryColor;
 
   final border = OutlineInputBorder(
     borderRadius: BorderRadius.circular(12.r),

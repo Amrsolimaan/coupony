@@ -1388,6 +1388,48 @@ abstract class AppLocalizations {
   /// **'Choose a clear image for your store logo'**
   String get seller_store_logo_hint;
 
+  /// No description provided for @seller_best_offer_time_title.
+  ///
+  /// In en, this message translates to:
+  /// **'When are you most active with offers?'**
+  String get seller_best_offer_time_title;
+
+  /// No description provided for @seller_best_offer_time_all_week.
+  ///
+  /// In en, this message translates to:
+  /// **'All Week Long'**
+  String get seller_best_offer_time_all_week;
+
+  /// No description provided for @seller_best_offer_time_all_week_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Always active store'**
+  String get seller_best_offer_time_all_week_subtitle;
+
+  /// No description provided for @seller_best_offer_time_weekends.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekends and Occasions'**
+  String get seller_best_offer_time_weekends;
+
+  /// No description provided for @seller_best_offer_time_weekends_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Outings and leisure'**
+  String get seller_best_offer_time_weekends_subtitle;
+
+  /// No description provided for @seller_best_offer_time_off_peak.
+  ///
+  /// In en, this message translates to:
+  /// **'Off-peak Times'**
+  String get seller_best_offer_time_off_peak;
+
+  /// No description provided for @seller_best_offer_time_off_peak_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers to increase sales during quiet times'**
+  String get seller_best_offer_time_off_peak_subtitle;
+
   /// No description provided for @seller_price_range_title.
   ///
   /// In en, this message translates to:
@@ -1501,6 +1543,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'General offers for all ages'**
   String get seller_target_audience_everyone_subtitle;
+
+  /// No description provided for @seller_onboarding_success_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Onboarding Completed Successfully!'**
+  String get seller_onboarding_success_title;
+
+  /// No description provided for @seller_onboarding_start_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s understand your business better\nto connect you with the right customers'**
+  String get seller_onboarding_start_title;
+
+  /// No description provided for @seller_onboarding_start_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'4 simple steps will help us understand your business'**
+  String get seller_onboarding_start_subtitle;
+
+  /// No description provided for @seller_onboarding_start_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get seller_onboarding_start_button;
 
   /// No description provided for @onboarding_time_most_active_title.
   ///

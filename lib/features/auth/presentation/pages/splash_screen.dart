@@ -78,7 +78,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
       
       if (mounted) {
         final roleState = authRoleCubit.state;
-        setState(() => _isSeller = roleState.isMerchant);
+        setState(() => _isSeller = roleState.isSeller);
       }
     } catch (_) {
       // Fallback: default customer branding

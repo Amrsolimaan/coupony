@@ -29,6 +29,9 @@ class GoogleSignInButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 🎨 Dynamic theme color based on active role (Customer=Green, Seller=Blue)
+    final primaryColor = Theme.of(context).primaryColor;
+    
     return BlocBuilder<GoogleSignInCubit, AuthState>(
       builder: (context, state) {
         return SizedBox(
@@ -52,7 +55,7 @@ class GoogleSignInButton extends StatelessWidget {
                     height: 24.h,
                     child: CircularProgressIndicator(
                       strokeWidth: 2.0,
-                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                      valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
                     ),
                   )
                 : Row(

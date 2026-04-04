@@ -708,6 +708,29 @@ class AppLocalizationsEn extends AppLocalizations {
       'Choose a clear image for your store logo';
 
   @override
+  String get seller_best_offer_time_title =>
+      'When are you most active with offers?';
+
+  @override
+  String get seller_best_offer_time_all_week => 'All Week Long';
+
+  @override
+  String get seller_best_offer_time_all_week_subtitle => 'Always active store';
+
+  @override
+  String get seller_best_offer_time_weekends => 'Weekends and Occasions';
+
+  @override
+  String get seller_best_offer_time_weekends_subtitle => 'Outings and leisure';
+
+  @override
+  String get seller_best_offer_time_off_peak => 'Off-peak Times';
+
+  @override
+  String get seller_best_offer_time_off_peak_subtitle =>
+      'Offers to increase sales during quiet times';
+
+  @override
   String get seller_price_range_title =>
       'Classify your prices so we can reach the right audience';
 
@@ -773,6 +796,21 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get seller_target_audience_everyone_subtitle =>
       'General offers for all ages';
+
+  @override
+  String get seller_onboarding_success_title =>
+      'Onboarding Completed Successfully!';
+
+  @override
+  String get seller_onboarding_start_title =>
+      'Let\'s understand your business better\nto connect you with the right customers';
+
+  @override
+  String get seller_onboarding_start_subtitle =>
+      '4 simple steps will help us understand your business';
+
+  @override
+  String get seller_onboarding_start_button => 'Get Started';
 
   @override
   String get onboarding_time_most_active_title =>

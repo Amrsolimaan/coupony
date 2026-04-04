@@ -173,7 +173,7 @@ class CreateStoreCubit extends Cubit<CreateStoreState> {
         _safeEmit(state.copyWith(
           isSubmitting: false,
           successKey: 'success_create_store',
-          navigationSignal: CreateStoreNavigation.toMerchantDashboard,
+          navigationSignal: CreateStoreNavigation.toHome,
         ));
       },
     );

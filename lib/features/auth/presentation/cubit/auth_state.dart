@@ -10,8 +10,9 @@ import '../../domain/entities/user_entity.dart';
 enum AuthNavigation {
   none,
   toHome,             // Authenticated + onboarding already done → user home
-  toOnboarding,       // Authenticated + onboarding NOT yet done → onboarding wizard
-  toMerchantDash,     // Successful login/verify → merchant dashboard
+  toOnboarding,       // Authenticated + onboarding NOT yet done → customer onboarding wizard
+  toSellerOnboarding, // Authenticated seller → seller onboarding wizard
+  toMerchantDash,     // Seller with completed onboarding → merchant dashboard
   toOtpVerification,  // After register → OTP screen
   toResetPassword,    // OTP verified (forgotPassword mode) → reset password screen
   toLogin,            // After logout or session expiry
@@ -92,7 +93,7 @@ class AuthState extends Equatable {
 
   bool get isAuthenticated => user != null && user!.accessToken != null;
 
-  bool get isMerchant => user?.role == 'merchant';
+  bool get isSeller => user?.role == 'seller';
 
   @override
   List<Object?> get props => [

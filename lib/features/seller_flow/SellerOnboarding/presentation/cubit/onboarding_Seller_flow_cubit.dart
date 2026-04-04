@@ -364,7 +364,7 @@ class SellerOnboardingFlowCubit extends Cubit<SellerOnboardingFlowState> {
           _originalBestOfferTime      = state.bestOfferTime;
           _originalTargetAudience     = state.targetAudience;
 
-          logger.i('Seller onboarding submitted successfully — navigating to Create Store ✅');
+          logger.i('Seller onboarding submitted successfully — showing success bottom sheet ✅');
           shouldNavigate = true;
         },
       );
@@ -381,7 +381,7 @@ class SellerOnboardingFlowCubit extends Cubit<SellerOnboardingFlowState> {
       // Always clear loading states
       _safeEmit(state.copyWith(isSaving: false, isSubmittingToApi: false));
 
-      // Navigate only after a confirmed 200 OK
+      // Show success bottom sheet after a confirmed 200 OK
       if (shouldNavigate && localSaveSuccess) {
         _safeEmit(
           state.copyWith(
@@ -390,7 +390,7 @@ class SellerOnboardingFlowCubit extends Cubit<SellerOnboardingFlowState> {
             hasChanges: false,
             errorMessageKey: null,
             successMessageKey: 'success_seller_onboarding_completed',
-            navigationSignal: SellerOnboardingNavigation.toCreateStore,
+            navigationSignal: SellerOnboardingNavigation.showSuccessBottomSheet,
           ),
         );
       }

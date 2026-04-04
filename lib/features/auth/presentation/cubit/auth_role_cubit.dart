@@ -20,7 +20,8 @@ class AuthRoleCubit extends Cubit<AuthRoleState> {
       final savedRole = await _secureStorage.read(StorageKeys.userRole);
       
       // If no saved role, default to customer
-      final role = (savedRole == 'merchant') ? 'merchant' : 'customer';
+      // Backend expects 'seller' not 'merchant'
+      final role = (savedRole == 'seller') ? 'seller' : 'customer';
       
       emit(state.copyWith(
         role: role,
@@ -36,11 +37,11 @@ class AuthRoleCubit extends Cubit<AuthRoleState> {
   }
 
   /// Set role and persist to storage
-  /// Called when user toggles between customer/merchant
+  /// Called when user toggles between customer/seller
   Future<void> setRole(String role) async {
     try {
-      // Validate role
-      final validRole = (role == 'merchant') ? 'merchant' : 'customer';
+      // Validate role - backend expects 'seller' not 'merchant'
+      final validRole = (role == 'seller') ? 'seller' : 'customer';
       
       // Update state immediately for instant UI feedback
       emit(state.copyWith(role: validRole));

@@ -84,7 +84,7 @@ class _RoleAnimationWrapperState extends State<RoleAnimationWrapper>
     // Initialize from current role on first build without animation
     if (!_isInitialized) {
       final roleState = context.read<AuthRoleCubit>().state;
-      _isSeller = roleState.isMerchant;
+      _isSeller = roleState.isSeller;
       
       // Set controller to correct position without animating
       _controller.value = _isSeller ? 1.0 : 0.0;
@@ -118,7 +118,7 @@ class _RoleAnimationWrapperState extends State<RoleAnimationWrapper>
       builder: (context, roleState) {
         // Schedule animation update after build completes
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _updateRoleAnimation(roleState.isMerchant);
+          _updateRoleAnimation(roleState.isSeller);
         });
         
         return AnimatedBuilder(
@@ -162,7 +162,7 @@ class AnimatedLogoSwitcher extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthRoleCubit, AuthRoleState>(
       builder: (context, roleState) {
-        final isSeller = roleState.isMerchant;
+        final isSeller = roleState.isSeller;
         
         return SizedBox(
           width: size.w,
@@ -264,16 +264,16 @@ class _AnimatedPrimaryColorState extends State<AnimatedPrimaryColor>
       final roleState = context.read<AuthRoleCubit>().state;
       
       // Set controller to correct position without animating
-      _controller.value = roleState.isMerchant ? 1.0 : 0.0;
+      _controller.value = roleState.isSeller ? 1.0 : 0.0;
       
       _isInitialized = true;
     }
   }
 
-  void _updateColorAnimation(bool isMerchant) {
+  void _updateColorAnimation(bool isSeller) {
     // Only animate if initialized
     if (_isInitialized) {
-      if (isMerchant) {
+      if (isSeller) {
         _controller.forward();
       } else {
         _controller.reverse();
@@ -293,7 +293,7 @@ class _AnimatedPrimaryColorState extends State<AnimatedPrimaryColor>
       builder: (context, roleState) {
         // Schedule animation update after build completes
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _updateColorAnimation(roleState.isMerchant);
+          _updateColorAnimation(roleState.isSeller);
         });
         
         return AnimatedBuilder(

@@ -700,6 +700,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get seller_store_logo_hint => 'اختر صورة واضحة لشعار متجرك';
 
   @override
+  String get seller_best_offer_time_title => 'إيه أكثر وقت بتعمل فيه عروض ؟';
+
+  @override
+  String get seller_best_offer_time_all_week => 'طوال الأسبوع';
+
+  @override
+  String get seller_best_offer_time_all_week_subtitle => 'محل نشط دايماً';
+
+  @override
+  String get seller_best_offer_time_weekends => 'الويك إند والمناسبات';
+
+  @override
+  String get seller_best_offer_time_weekends_subtitle => 'خروجات وفسح';
+
+  @override
+  String get seller_best_offer_time_off_peak => 'أوقات الروقان (Off-peak)';
+
+  @override
+  String get seller_best_offer_time_off_peak_subtitle =>
+      'عروض لزيادة المبيعات في الأوقات الهادية';
+
+  @override
   String get seller_price_range_title => 'صنف أسعارك عشان نوصلك للجمهور الصح';
 
   @override
@@ -760,6 +782,20 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get seller_target_audience_everyone_subtitle =>
       'عروض عامة لكل الأعمار';
+
+  @override
+  String get seller_onboarding_success_title => 'تم إكمال التسجيل بنجاح!';
+
+  @override
+  String get seller_onboarding_start_title =>
+      'خلّينا نعرف نشاطك أكتر\nعشان نوصلك للعملاء المناسبين';
+
+  @override
+  String get seller_onboarding_start_subtitle =>
+      '4 خطوات بسيطة هتساعدنا نفهم نشاطك التجاري';
+
+  @override
+  String get seller_onboarding_start_button => 'ابدأ الآن';
 
   @override
   String get onboarding_time_most_active_title =>

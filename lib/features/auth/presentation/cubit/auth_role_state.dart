@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 /// Auth Role State
 /// Manages the global role selection across all auth screens
 class AuthRoleState extends Equatable {
-  /// Current selected role: 'customer' or 'merchant'
+  /// Current selected role: 'customer' or 'seller'
   final String role;
 
   /// Whether the role is being loaded from storage
@@ -22,8 +22,8 @@ class AuthRoleState extends Equatable {
     );
   }
 
-  /// Check if current role is merchant
-  bool get isMerchant => role == 'merchant';
+  /// Check if current role is seller (backend expects 'seller' not 'merchant')
+  bool get isSeller => role == 'seller';
 
   /// Check if current role is customer
   bool get isCustomer => role == 'customer';

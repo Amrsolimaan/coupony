@@ -74,6 +74,12 @@ class CreateStoreScreen extends HookWidget {
     // ── BlocListener for side-effects ──────────────────────────────────────
     return BlocListener<CreateStoreCubit, CreateStoreState>(
       listener: (context, state) {
+        if (state.navigationSignal == CreateStoreNavigation.toHome) {
+          context.read<CreateStoreCubit>().clearNavigationSignal();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) context.go(AppRouter.home);
+          });
+        }
         if (state.navigationSignal == CreateStoreNavigation.toMerchantDashboard) {
           context.read<CreateStoreCubit>().clearNavigationSignal();
           WidgetsBinding.instance.addPostFrameCallback((_) {

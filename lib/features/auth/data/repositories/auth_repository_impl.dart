@@ -419,7 +419,7 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
 
     if (user.isOnboardingCompleted) {
       _onboardingRepository.fetchAndCacheFromServer(
-        userType: user.role == 'merchant'
+        userType: user.role == 'seller'
             ? OnboardingUserType.seller
             : OnboardingUserType.customer,
       );

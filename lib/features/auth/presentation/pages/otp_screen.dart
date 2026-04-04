@@ -104,16 +104,17 @@ class OtpScreen extends HookWidget {
       };
     }, const []);
 
-    // ── Initialize email in cubit state + auto-send OTP ───────────────────
+    // ── Initialize email in cubit state (NO auto-send) ────────────────────
+    // 🔧 FIX: Removed auto-send to prevent double OTP issue.
+    // The backend already sends OTP during registration when no access_token
+    // is returned. Auto-sending here would invalidate the first code.
+    // Users can still manually trigger resend via the "Resend" button.
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final cubit = context.read<OtpCubit>();
-        // CRITICAL: Set email in state first so resend works
+        // Set email in state so resend functionality works correctly
         cubit.setEmail(email);
-        // Then send OTP for emailVerification mode
-        if (mode == OtpMode.emailVerification) {
-          cubit.sendOtp(email);
-        }
+        // ❌ REMOVED: cubit.sendOtp(email) - Backend already sent OTP
       });
       return null;
     }, []);
@@ -165,9 +166,10 @@ class OtpScreen extends HookWidget {
           HapticFeedback.mediumImpact();
           _showSuccessModal(context, l10n, onContinue: () {
             final route = switch (state.navSignal) {
-              AuthNavigation.toMerchantDash => AppRouter.merchantDashboard,
-              AuthNavigation.toOnboarding   => AppRouter.onboarding,
-              _                             => AppRouter.home,
+              AuthNavigation.toMerchantDash      => AppRouter.merchantDashboard,
+              AuthNavigation.toSellerOnboarding  => AppRouter.sellerOnboarding,
+              AuthNavigation.toOnboarding        => AppRouter.onboarding,
+              _                                  => AppRouter.home,
             };
             context.go(route);
           });

@@ -7,6 +7,7 @@ enum SellerOnboardingNavigation {
   toCustomerReachMethod, // Step 1 → Step 2
   toBestOfferTime,       // Step 2 → Step 3
   toTargetAudience,      // Step 3 → Step 4
+  showSuccessBottomSheet, // Show success bottom sheet after API submission
   toCreateStore,         // Navigate directly to Create Store after completion
   toLogin,               // User skipped onboarding
 }

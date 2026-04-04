@@ -237,6 +237,15 @@
   "seller_store_description_counter": "{current}/{max} حرف",
   "seller_store_logo_label": "شعار المتجر",
   "seller_store_logo_hint": "اختر صورة واضحة لشعار متجرك",
+  
+  "seller_best_offer_time_title": "إيه أكثر وقت بتعمل فيه عروض ؟",
+  "seller_best_offer_time_all_week": "طوال الأسبوع",
+  "seller_best_offer_time_all_week_subtitle": "محل نشط دايماً",
+  "seller_best_offer_time_weekends": "الويك إند والمناسبات",
+  "seller_best_offer_time_weekends_subtitle": "خروجات وفسح",
+  "seller_best_offer_time_off_peak": "أوقات الروقان (Off-peak)",
+  "seller_best_offer_time_off_peak_subtitle": "عروض لزيادة المبيعات في الأوقات الهادية",
+  
   "seller_price_range_title": "صنف أسعارك عشان نوصلك للجمهور الصح",
   "seller_price_range_economic": "أسعار اقتصادية",
   "seller_price_range_economic_subtitle": "عروض تناسب الكل وموفرة جداً",
@@ -256,6 +265,11 @@
   "seller_target_audience_families_subtitle": "مستلزمات البيت والأطفال",
   "seller_target_audience_everyone": "الجميع",
   "seller_target_audience_everyone_subtitle": "عروض عامة لكل الأعمار",
+  "seller_onboarding_success_title": "تم إكمال التسجيل بنجاح!",
+  
+  "seller_onboarding_start_title": "خلّينا نعرف نشاطك أكتر\nعشان نوصلك للعملاء المناسبين",
+  "seller_onboarding_start_subtitle": "4 خطوات بسيطة هتساعدنا نفهم نشاطك التجاري",
+  "seller_onboarding_start_button": "ابدأ الآن",
   
   "onboarding_time_most_active_title": "إيه أكثر وقت بتعمل فيه عروض ؟",
   "onboarding_time_all_week": "طوال الأسبوع",
