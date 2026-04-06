@@ -119,5 +119,15 @@
 		<false/>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
+
+		<!-- ════════════════════════════════════════════════════════ -->
+		<!-- GOOGLE MAPS API KEY                                      -->
+		<!-- Value is supplied by $(MAPS_API_KEY_IOS) Xcode build    -->
+		<!-- variable, set in ios/Flutter/Local.xcconfig (local) or  -->
+		<!-- as a User-Defined build setting in CI/CD.               -->
+		<!-- Read at runtime by AppDelegate.swift via Bundle.main.   -->
+		<!-- ════════════════════════════════════════════════════════ -->
+		<key>MapsApiKey</key>
+		<string>$(MAPS_API_KEY_IOS)</string>
 	</dict>
 </plist>

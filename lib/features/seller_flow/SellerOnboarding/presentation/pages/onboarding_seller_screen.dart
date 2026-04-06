@@ -40,6 +40,9 @@ class SellerOnboardingPage extends StatelessWidget {
             final l10n = AppLocalizations.of(context)!;
             context.read<SellerOnboardingFlowCubit>().clearNavigationSignal();
             
+            // ✅ Capture current theme color explicitly (should be Seller Blue)
+            final primaryColor = Theme.of(context).primaryColor;
+            
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,
@@ -49,6 +52,7 @@ class SellerOnboardingPage extends StatelessWidget {
               builder: (context) => AuthSuccessBottomSheet(
                 title: l10n.seller_onboarding_success_title,
                 buttonText: l10n.continue_button,
+                primaryColor: primaryColor, // ✅ Explicit color injection
                 onContinue: () {
                   Navigator.of(context).pop();
                   context.go(AppRouter.createStore);

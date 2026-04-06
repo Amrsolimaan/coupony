@@ -9,17 +9,19 @@ import '../repositories/create_store_repository.dart';
 class CreateStoreParams {
   final String name;
   final String description;
-  final String email;
   final String phone;
-  final String addressLine1;
+  /// Single category integer ID — serialised as `categories[]` array in the API.
+  final int categoryId;
+  /// Free-text city name — sent as `city`.
   final String city;
+  /// Address detail (street / district) — sent as `address_line1`.
+  final String addressLine1;
   final String latitude;
   final String longitude;
-  final List<int> categoryIds;
   final List<SocialLinkEntity> socials;
 
   // Optional files
-  final File? logoUrl;
+  final File? logo;
   final File? commercialRegister;
   final File? taxCard;
   final File? idCardFront;
@@ -28,15 +30,14 @@ class CreateStoreParams {
   const CreateStoreParams({
     required this.name,
     required this.description,
-    required this.email,
     required this.phone,
-    required this.addressLine1,
+    required this.categoryId,
     required this.city,
+    required this.addressLine1,
     required this.latitude,
     required this.longitude,
-    required this.categoryIds,
     this.socials = const [],
-    this.logoUrl,
+    this.logo,
     this.commercialRegister,
     this.taxCard,
     this.idCardFront,

@@ -50,6 +50,7 @@ class SellerStoreInfoScreen extends StatelessWidget {
                       context,
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
+                      color: _theme.primaryColor, // ✅ Seller Blue color
                     ),
                   ),
                 ),

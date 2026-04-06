@@ -53,6 +53,11 @@ class StorageKeys {
   /// Stored in Hive settingsBox — true means the backend acknowledged completion.
   static const String onboardingCompletedKey = 'onboarding_completed';
 
+  /// Flag persisted after a seller successfully creates their store via the API.
+  /// true  → store has been created and submitted for review.
+  /// false → seller must complete store creation before accessing the dashboard.
+  static const String storeCreatedKey = 'is_store_created';
+
   /// ⭐ INTEREST TRACKING KEYS
   static const String categoryScoresKey = 'category_scores';
   static const String seenProductsListKey = 'seen_products_list';

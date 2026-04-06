@@ -133,7 +133,7 @@
   "error_onboarding_step1_incomplete": "يرجى اختيار تصنيف واحد على الأقل",
   "error_onboarding_step2_incomplete": "يرجى اختيار تفضيل الميزانية",
   "error_onboarding_step3_incomplete": "يرجى اختيار أسلوب تسوق واحد على الأقل",
-  "onboarding_intro_title": "...خلّينا نعرفك أكتر\nوهنوفرلك أكتر ",
+  "onboarding_intro_title": "خلّينا نعرفك أكتر...\nوهنوفرلك أكتر",
   "onboarding_intro_continue": "متابعه",
 
   "welcome_gateway_title": "مرحبًا بك",
@@ -306,6 +306,9 @@
   "create_store_socials_label": "روابط التواصل الاجتماعي",
   "create_store_socials_empty": "لم تتم إضافة روابط بعد",
   "create_store_add_social": "إضافة رابط",
+  "create_store_select_platform": "اختر المنصة",
+  "create_store_choose_platform": "اختر منصة التواصل",
+  "create_store_no_platforms": "لا توجد منصات متاحة",
   "create_store_social_id_hint": "رقم المنصة (مثال: 1)",
   "create_store_social_link_hint": "الرابط (مثال: https://facebook.com/...)",
   "create_store_cancel": "إلغاء",
@@ -319,7 +322,21 @@
   "create_store_location_section_label": "موقع المتجر",
   "create_store_locate_button": "تحديد موقعي",
   "create_store_location_fetched": "تم تحديد الموقع",
+  "create_store_map_search_placeholder": "ابحث عن موقع المحل",
+  "create_store_map_your_location": "موقعك",
+  "create_store_map_confirm_button": "تأكيد الموقع",
+  "create_store_map_use_current": "استخدم موقعي الحالي",
+  "create_store_map_no_results": "لا توجد نتائج للبحث",
+  "create_store_map_search_error": "خطأ في البحث، حاول مرة أخرى",
+  "create_store_map_voice_unavailable": "البحث الصوتي غير متاح",
+  "create_store_map_tap_to_select": "اسحب الخريطة لتحديد الموقع",
+  "create_store_map_coordinates_format": "الإحداثيات: {lat}, {lng}",
   "error_create_store_location_denied": "تم رفض إذن الموقع. يرجى تفعيله من الإعدادات.",
   "error_create_store_location_gps_off": "خدمة GPS مغلقة. يرجى تفعيل خدمة الموقع.",
-  "error_create_store_location_failed": "تعذر تحديد الموقع. يرجى المحاولة مرة أخرى."
+  "error_create_store_location_failed": "تعذر تحديد الموقع. يرجى المحاولة مرة أخرى.",
+
+  "store_under_review_title": "طلبك قيد المراجعة",
+  "store_under_review_subtitle": "طلبك قيد المراجعة حاليًا سيتم إشعارك فور الانتهاء",
+  "store_under_review_home_button": "الرئيسية",
+  "store_under_review_contact_button": "تواصل معنا"
 }

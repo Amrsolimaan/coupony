@@ -1,14 +1,20 @@
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/category_entity.dart';
 import '../../domain/entities/social_link_entity.dart';
+import '../../domain/entities/social_platform_entity.dart';
 
-enum CreateStoreNavigation { none, toMerchantDashboard, toHome }
+enum CreateStoreNavigation { none, toMerchantDashboard, toStoreUnderReview }
 
 class CreateStoreState extends Equatable {
   // ── Categories (fetched from API) ──────────────────────────────────────
   final List<CategoryEntity> categories;
   final bool isCategoriesLoading;
   final String? categoriesErrorKey;
+
+  // ── Social Platforms (fetched from API) ───────────────────────────────
+  final List<SocialPlatformEntity> socialPlatforms;
+  final bool isSocialPlatformsLoading;
+  final String? socialPlatformsErrorKey;
 
   // ── Social links (managed dynamically) ────────────────────────────────
   final List<SocialLinkEntity> socialLinks;
@@ -30,6 +36,9 @@ class CreateStoreState extends Equatable {
     this.categories = const [],
     this.isCategoriesLoading = false,
     this.categoriesErrorKey,
+    this.socialPlatforms = const [],
+    this.isSocialPlatformsLoading = false,
+    this.socialPlatformsErrorKey,
     this.socialLinks = const [],
     this.isLocationLoading = false,
     this.latitude = '',
@@ -44,6 +53,9 @@ class CreateStoreState extends Equatable {
     List<CategoryEntity>? categories,
     bool? isCategoriesLoading,
     String? categoriesErrorKey,
+    List<SocialPlatformEntity>? socialPlatforms,
+    bool? isSocialPlatformsLoading,
+    String? socialPlatformsErrorKey,
     List<SocialLinkEntity>? socialLinks,
     bool? isLocationLoading,
     String? latitude,
@@ -57,6 +69,9 @@ class CreateStoreState extends Equatable {
       categories: categories ?? this.categories,
       isCategoriesLoading: isCategoriesLoading ?? this.isCategoriesLoading,
       categoriesErrorKey: categoriesErrorKey,
+      socialPlatforms: socialPlatforms ?? this.socialPlatforms,
+      isSocialPlatformsLoading: isSocialPlatformsLoading ?? this.isSocialPlatformsLoading,
+      socialPlatformsErrorKey: socialPlatformsErrorKey,
       socialLinks: socialLinks ?? this.socialLinks,
       isLocationLoading: isLocationLoading ?? this.isLocationLoading,
       latitude: latitude ?? this.latitude,
@@ -73,6 +88,9 @@ class CreateStoreState extends Equatable {
         categories,
         isCategoriesLoading,
         categoriesErrorKey,
+        socialPlatforms,
+        isSocialPlatformsLoading,
+        socialPlatformsErrorKey,
         socialLinks,
         isLocationLoading,
         latitude,

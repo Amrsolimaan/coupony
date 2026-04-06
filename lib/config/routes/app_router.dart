@@ -13,11 +13,12 @@ import 'package:coupony/features/permissions/presentation/pages/pages/permission
 import 'package:coupony/features/permissions/presentation/pages/pages/permission_splash_page.dart';
 import 'package:coupony/features/seller_flow/CreateStore/presentation/cubit/create_store_cubit.dart';
 import 'package:coupony/features/seller_flow/CreateStore/presentation/pages/create_store_screen.dart';
+import 'package:coupony/features/seller_flow/CreateStore/presentation/pages/store_under_review_page.dart';
 import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/pages/onboarding_seller_screen.dart';
 import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/pages/seller_onboarding_start_screen.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_budget_screen.dart';
+import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_customer_screen.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_preferences_screen.dart';
-import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_screen.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_shopping_style_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -226,7 +227,8 @@ class AppRouter {
       '/onboarding-completion-loading';
   static const String sellerOnboarding = '/seller-onboarding';
   static const String sellerOnboardingFlow = '/seller-onboarding-flow';
-  static const String createStore      = '/create-store';
+  static const String createStore = '/create-store';
+  static const String storeUnderReview = '/store-under-review';
   static const String login = '/login';
   static const String register = '/register';
   static const String otpVerification = '/otp-verification';
@@ -365,6 +367,14 @@ class AppRouter {
             create: (_) => sl<CreateStoreCubit>(),
             child: const CreateStoreScreen(),
           ),
+        ),
+      ),
+      GoRoute(
+        path: storeUnderReview,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const StoreUnderReviewPage(),
         ),
       ),
 

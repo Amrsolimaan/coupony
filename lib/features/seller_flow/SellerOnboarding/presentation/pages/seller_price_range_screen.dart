@@ -13,7 +13,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Seller Price Range Screen — Cubit Step 1 (priceCategory)
-/// API values: budget | mid_range | premium | all
+/// API values: budget | mid_range | premium
+/// Note: 'all' is NOT accepted by the backend API
 class SellerPriceRangeScreen extends StatelessWidget {
   const SellerPriceRangeScreen({super.key});
 
@@ -51,6 +52,7 @@ class SellerPriceRangeScreen extends StatelessWidget {
                       context,
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
+                      color: _theme.primaryColor, // ✅ Seller Blue color
                     ),
                   ),
                 ),
@@ -88,14 +90,16 @@ class SellerPriceRangeScreen extends StatelessWidget {
                         theme: _theme,
                       ),
                       SizedBox(height: 12.h),
-                      SelectionOptionCard(
-                        title: l10n.seller_price_range_all_levels,
-                        subtitle: l10n.seller_price_range_all_levels_subtitle,
-                        icon: Icons.layers,
-                        isSelected: state.priceCategory == 'all',
-                        onTap: () => cubit.selectPriceCategory('all'),
-                        theme: _theme,
-                      ),
+                      // Note: 'all' is not accepted by the API
+                      // Only budget, mid_range, and premium are valid values
+                      // SelectionOptionCard(
+                      //   title: l10n.seller_price_range_all_levels,
+                      //   subtitle: l10n.seller_price_range_all_levels_subtitle,
+                      //   icon: Icons.layers,
+                      //   isSelected: state.priceCategory == 'all',
+                      //   onTap: () => cubit.selectPriceCategory('all'),
+                      //   theme: _theme,
+                      // ),
                     ],
                   ),
                 ),

@@ -16,13 +16,14 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../../../../../core/widgets/buttons/buttons.dart';
 import '../../../../../../config/dependency_injection/injection_container.dart';
 
-/// Location Map Page
-/// Shows map with user's current location
-/// Allows confirming or updating location
+/// Location Map Page — Center-Pin / Crosshair UX
 ///
-/// ✅ Works with PermissionFlowWrapper for navigation
-/// ✅ No manual navigation - Wrapper handles it
-/// ✅ Properly loads and displays user position
+/// Architecture guarantees:
+///   • GoogleMap is NOT inside any BlocBuilder — platform view never recreates.
+///   • Camera movements drive geocoding via onCameraIdle.
+///   • A static center-pin overlay replaces tap-to-place markers.
+///   • Bottom sheet and "use location" button use tight buildWhen predicates.
+///   • Navigation to map is immediate after permission grant (async gate fix).
 class LocationMapPage extends StatefulWidget {
   const LocationMapPage({super.key});
 
@@ -36,13 +37,24 @@ class _LocationMapPageState extends State<LocationMapPage> {
   late stt.SpeechToText _speech;
   bool _isListening = false;
 
-  // Default location (Cairo - will be replaced with actual location)
-  static const LatLng _defaultLocation = LatLng(30.0444, 31.2357);
+  static const LatLng _defaultLocation = LatLng(30.0444, 31.2357); // Cairo
 
-  LatLng? _currentLocation;
   bool _isMapReady = false;
   bool _isMapLoading = true;
   bool _hasNetwork = true;
+
+  /// Tracks the camera's current center — updated on every onCameraMove.
+  LatLng _lastCameraCenter = _defaultLocation;
+
+  /// The confirmed camera-center when the camera becomes idle.
+  LatLng? _selectedLatLng;
+
+  /// True while the camera is moving OR while a geocoding request is in-flight.
+  /// Used to show an address-loading shimmer in the bottom sheet.
+  bool _isAddressLoading = false;
+
+  /// Prevents animating to GPS position more than once on first arrival.
+  bool _hasCenteredOnGps = false;
 
   @override
   void initState() {
@@ -57,43 +69,20 @@ class _LocationMapPageState extends State<LocationMapPage> {
     if (mounted) {
       setState(() {
         _hasNetwork = connected;
-        // No network → no tiles → no onCameraIdle → stop loading immediately
         if (!connected) _isMapLoading = false;
       });
     }
-    // Load user position regardless of network
+
+    // If state already has a GPS position (edge-case: position arrived before
+    // the map page mounted), center on it immediately.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadUserPosition();
+      final position = context.read<PermissionFlowCubit>().state.userPosition;
+      if (position != null) {
+        _lastCameraCenter = LatLng(position.latitude, position.longitude);
+      }
     });
   }
 
-  /// Load user's actual position from Cubit state
-  void _loadUserPosition() {
-    final state = context.read<PermissionFlowCubit>().state;
-
-    if (state.userPosition != null) {
-      final position = state.userPosition!;
-
-      setState(() {
-        _currentLocation = LatLng(position.latitude, position.longitude);
-      });
-
-      // Move camera to user's location when map is ready
-      if (_isMapReady && _mapController != null) {
-        _moveCameraToPosition(_currentLocation!);
-      }
-
-      debugPrint(
-        '📍 User position loaded: ${position.latitude}, ${position.longitude}',
-      );
-    } else {
-      debugPrint('⚠️ No user position in state - using default location');
-      // Try to fetch position
-      context.read<PermissionFlowCubit>().useCurrentLocation();
-    }
-  }
-
-  /// Move camera to specific position
   void _moveCameraToPosition(LatLng position) {
     _mapController?.animateCamera(
       CameraUpdate.newCameraPosition(
@@ -102,65 +91,34 @@ class _LocationMapPageState extends State<LocationMapPage> {
     );
   }
 
-  /// ✅ NEW: Search for location using geocoding
   Future<void> _searchLocation(String query) async {
     try {
-      debugPrint('🔍 Searching for: $query');
-
-      // Use geocoding package to search
       final locations = await locationFromAddress(query);
-
       if (!mounted) return;
 
       if (locations.isNotEmpty) {
         final location = locations.first;
         final newPosition = LatLng(location.latitude, location.longitude);
-
-        setState(() {
-          _currentLocation = newPosition;
-        });
-
         _moveCameraToPosition(newPosition);
-
-        // Get address for this position and update cubit
-        context.read<PermissionFlowCubit>().getAddressFromCoordinates(
-          location.latitude,
-          location.longitude,
-        );
-
-        debugPrint(
-          '✅ Found location: ${location.latitude}, ${location.longitude}',
-        );
       } else {
-        debugPrint('⚠️ No results found for: $query');
-        // Show snackbar
-        if (mounted) {
-          final l10n = AppLocalizations.of(context)!;
-          context.showErrorSnackBar(l10n.location_map_no_results);
-        }
-      }
-    } catch (e) {
-      debugPrint('❌ Search error: $e');
-      if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
-        // ✅ IMPROVED ERROR HANDLING: Show user-friendly error message
         context.showErrorSnackBar(
-          l10n.location_map_search_error,
+          AppLocalizations.of(context)!.location_map_no_results,
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        context.showErrorSnackBar(
+          AppLocalizations.of(context)!.location_map_search_error,
         );
       }
     }
   }
 
-  /// ✅ Voice Search using Speech to Text
   Future<void> _startListening() async {
     try {
-      bool available = await _speech.initialize(
-        onError: (error) {
-          debugPrint('❌ Speech error: $error');
-          setState(() => _isListening = false);
-        },
+      final available = await _speech.initialize(
+        onError: (_) => setState(() => _isListening = false),
         onStatus: (status) {
-          debugPrint('🎤 Speech status: $status');
           if (status == 'done' || status == 'notListening') {
             setState(() => _isListening = false);
           }
@@ -169,36 +127,29 @@ class _LocationMapPageState extends State<LocationMapPage> {
 
       if (available) {
         setState(() => _isListening = true);
-
         await _speech.listen(
           onResult: (result) {
-            setState(() {
-              _searchController.text = result.recognizedWords;
-            });
-
-            // If speech is finalized, search automatically
+            setState(() => _searchController.text = result.recognizedWords);
             if (result.finalResult && result.recognizedWords.isNotEmpty) {
               _searchLocation(result.recognizedWords);
               _speech.stop();
               setState(() => _isListening = false);
             }
           },
-          localeId: 'ar_EG', // Arabic locale
+          localeId: 'ar_EG',
         );
       } else {
-        debugPrint('⚠️ Speech recognition not available');
         if (mounted) {
-          final l10n = AppLocalizations.of(context)!;
-          context.showWarningSnackBar(l10n.location_map_voice_unavailable);
+          context.showWarningSnackBar(
+            AppLocalizations.of(context)!.location_map_voice_unavailable,
+          );
         }
       }
-    } catch (e) {
-      debugPrint('❌ Voice search error: $e');
+    } catch (_) {
       setState(() => _isListening = false);
     }
   }
 
-  /// Stop listening
   void _stopListening() {
     _speech.stop();
     setState(() => _isListening = false);
@@ -216,10 +167,17 @@ class _LocationMapPageState extends State<LocationMapPage> {
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: BlocListener<PermissionFlowCubit, PermissionFlowState>(
+        // Only listen to events we actually act on — avoids unnecessary listener calls.
+        listenWhen: (prev, curr) {
+          if (prev.navSignal != curr.navSignal) return true;
+          // First GPS position arrival → animate camera
+          if (prev.userPosition == null && curr.userPosition != null) return true;
+          // Address updated → dismiss shimmer
+          if (prev.currentAddress != curr.currentAddress) return true;
+          return false;
+        },
         listener: (context, state) {
-          // ✅ Phase 1 Fix: All navigation driven by navSignal only.
-          // Never call context.go() inline after cubit calls — that causes
-          // the "route._navigator == navigator" assertion crash.
+          // ── Navigation signals ──────────────────────────────
           if (state.navSignal ==
               PermissionNavigationSignal.toNotificationIntro) {
             context.go(AppRouter.permissionNotificationIntro);
@@ -233,478 +191,571 @@ class _LocationMapPageState extends State<LocationMapPage> {
             context.go(AppRouter.onboarding);
             context.read<PermissionFlowCubit>().clearNavigationSignal();
           }
+
+          // ── GPS position arrived for the first time ─────────
+          if (state.userPosition != null &&
+              _isMapReady &&
+              !_hasCenteredOnGps) {
+            _hasCenteredOnGps = true;
+            final pos = state.userPosition!;
+            final initialPosition = LatLng(pos.latitude, pos.longitude);
+            _moveCameraToPosition(initialPosition);
+            
+            // Explicitly fetch address for initial position
+            setState(() {
+              _selectedLatLng = initialPosition;
+              _isAddressLoading = true;
+            });
+            context.read<PermissionFlowCubit>().getAddressFromCoordinates(
+              pos.latitude,
+              pos.longitude,
+            );
+            
+            // Safety timeout: stop loading after 10 seconds if no response
+            Future.delayed(const Duration(seconds: 10), () {
+              if (mounted && _isAddressLoading) {
+                setState(() => _isAddressLoading = false);
+              }
+            });
+          }
+
+          // ── Address result arrived → dismiss shimmer ────────
+          if (state.currentAddress != null && _isAddressLoading) {
+            setState(() => _isAddressLoading = false);
+          }
         },
         child: Stack(
           children: [
-          // ✅ Google Map
-          BlocBuilder<PermissionFlowCubit, PermissionFlowState>(
-            builder: (context, state) {
-              // Get location from state or use current/default
-              final position = state.userPosition;
-              final LatLng mapCenter =
-                  _currentLocation ??
-                  (position != null
-                      ? LatLng(position.latitude, position.longitude)
-                      : _defaultLocation);
+            // ── Google Map ────────────────────────────────────
+            // Not wrapped in any BlocBuilder: its params are static after
+            // construction. Camera is moved imperatively via _mapController.
+            GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: _lastCameraCenter,
+                zoom: 15,
+              ),
+              onMapCreated: (controller) {
+                _mapController = controller;
+                setState(() {
+                  _isMapReady = true;
+                  _isMapLoading = false;
+                });
 
-              return GoogleMap(
-                initialCameraPosition: CameraPosition(
-                  target: mapCenter,
-                  zoom: 15,
-                ),
-                onMapCreated: (controller) {
-                  _mapController = controller;
-                  
-                  // ✅ PERFORMANCE FIX: Hide loading immediately when map is ready
-                  // Using onMapCreated instead of onCameraIdle eliminates 5+ second delay
-                  setState(() {
-                    _isMapReady = true;
-                    _isMapLoading = false; // Hide loading overlay immediately
-                  });
-
-                  debugPrint('✅ Google Map Controller created - Loading complete');
-
-                  // Move to user position if we have it
-                  if (_currentLocation != null) {
-                    Future.delayed(const Duration(milliseconds: 300), () {
-                      if (mounted) _moveCameraToPosition(_currentLocation!);
+                // If GPS position already arrived before map was ready, jump to it.
+                if (!_hasCenteredOnGps) {
+                  final pos = context
+                      .read<PermissionFlowCubit>()
+                      .state
+                      .userPosition;
+                  if (pos != null) {
+                    _hasCenteredOnGps = true;
+                    final initialPosition = LatLng(pos.latitude, pos.longitude);
+                    Future.delayed(const Duration(milliseconds: 200), () {
+                      if (mounted) {
+                        _moveCameraToPosition(initialPosition);
+                        
+                        // Explicitly fetch address for initial position
+                        setState(() {
+                          _selectedLatLng = initialPosition;
+                          _isAddressLoading = true;
+                        });
+                        context.read<PermissionFlowCubit>().getAddressFromCoordinates(
+                          pos.latitude,
+                          pos.longitude,
+                        );
+                        
+                        // Safety timeout: stop loading after 10 seconds if no response
+                        Future.delayed(const Duration(seconds: 10), () {
+                          if (mounted && _isAddressLoading) {
+                            setState(() => _isAddressLoading = false);
+                          }
+                        });
+                      }
                     });
                   }
-                },
-                myLocationEnabled: true,
-                myLocationButtonEnabled: false,
-                zoomControlsEnabled: false,
-                markers: {
-                  Marker(
-                    markerId: const MarkerId('current_location'),
-                    position: mapCenter,
-                    infoWindow: InfoWindow(
-                      title: AppLocalizations.of(context)!.location_map_current_location_marker,
-                    ),
-                    icon: BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueOrange,
-                    ),
-                  ),
-                },
-                onTap: (position) {
-                  // Allow user to tap and change location
-                  setState(() {
-                    _currentLocation = position;
-                  });
+                }
+              },
+              // ── Center-Pin pattern: track camera center instead of taps ──
+              onCameraMove: (CameraPosition pos) {
+                _lastCameraCenter = pos.target;
+                if (!_isAddressLoading) {
+                  setState(() => _isAddressLoading = true);
+                }
+              },
+              onCameraIdle: () {
+                setState(() {
+                  _selectedLatLng = _lastCameraCenter;
+                  // Keep _isAddressLoading = true until geocoding completes
+                });
+                context.read<PermissionFlowCubit>().getAddressFromCoordinates(
+                  _lastCameraCenter.latitude,
+                  _lastCameraCenter.longitude,
+                );
+                
+                // Safety timeout: stop loading after 10 seconds if no response
+                Future.delayed(const Duration(seconds: 10), () {
+                  if (mounted && _isAddressLoading) {
+                    setState(() => _isAddressLoading = false);
+                  }
+                });
+              },
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+              zoomControlsEnabled: false,
+              // No markers — the static crosshair overlay is the pin.
+            ),
 
-                  // Fetch address for tapped position
-                  context.read<PermissionFlowCubit>().getAddressFromCoordinates(
-                    position.latitude,
-                    position.longitude,
-                  );
-
-                  debugPrint(
-                    '📍 User tapped new location: ${position.latitude}, ${position.longitude}',
-                  );
-                },
-              );
-            },
-          ),
-
-          // ✅ Map Loading Indicator - shown until map is fully rendered
-          if (_isMapLoading)
-            Positioned.fill(
-              child: Container(
-                color: AppColors.surface,
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: AppColors.primary,
-                    strokeWidth: 3,
+            // ── Static Center-Pin (crosshair overlay) ─────────
+            // Always at the exact screen center regardless of map movements.
+            if (_isMapReady)
+              Align(
+                alignment: Alignment.center,
+                child: Padding(
+                  // Offset upward by half the icon height so the pin tip
+                  // points at the exact center pixel.
+                  padding: EdgeInsets.only(bottom: 36.h),
+                  child: Icon(
+                    Icons.location_pin,
+                    color: Theme.of(context).primaryColor,
+                    size: 48.w,
+                    shadows: [
+                      Shadow(
+                        color: AppColors.shadow.withValues(alpha: 0.4),
+                        blurRadius: 8,
+                        offset: Offset(0, 4.h),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ),
 
-          // ✅ No Network Banner
-          if (!_hasNetwork)
+            // ── Map Loading Overlay ───────────────────────────
+            if (_isMapLoading)
+              Positioned.fill(
+                child: Container(
+                  color: AppColors.surface,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.primary,
+                      strokeWidth: 3,
+                    ),
+                  ),
+                ),
+              ),
+
+            // ── No Network Banner ─────────────────────────────
+            if (!_hasNetwork)
+              PositionedDirectional(
+                top: MediaQuery.of(context).padding.top + 80.h,
+                start: 16.w,
+                end: 16.w,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 10.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.error.withValues(alpha: 0.9),
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.wifi_off, color: AppColors.surface, size: 18.w),
+                      SizedBox(width: 8.w),
+                      Text(
+                        AppLocalizations.of(context)!.networkError,
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.surface,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+            // ── Top Search Bar ─────────────────────────────────
             PositionedDirectional(
-              top: MediaQuery.of(context).padding.top + 80.h,
+              top: MediaQuery.of(context).padding.top + 16.h,
               start: 16.w,
               end: 16.w,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-                decoration: BoxDecoration(
-                  color: AppColors.error.withValues(alpha: 0.9),
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.wifi_off, color: AppColors.surface, size: 18.w),
-                    SizedBox(width: 8.w),
-                    Text(
-                      AppLocalizations.of(context)!.networkError,
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.surface,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-          // ✅ Top Search Bar - Exact Original Design
-          PositionedDirectional(
-            top: MediaQuery.of(context).padding.top + 16.h,
-            start: 16.w,
-            end: 16.w,
-            child: Row(
-              children: [
-                // 1. Orange Location Icon (Left Side)
-                Container(
-                  width: 40.w,
-                  height: 40.h,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.location_on,
-                    color: AppColors.surface,
-                    size: 22.w,
-                  ),
-                ),
-
-                SizedBox(width: 12.w),
-
-                // 2. Search Box (Center - Full Width) - LAYERED STRUCTURE
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    height: 55.h,
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(
-                        color: AppColors.grey200,
-                        width: 1.w,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.shadow.withValues(alpha: 0.05),
-                          blurRadius: 4,
-                          offset: Offset(0, 2.h),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        // Search Icon (Left - Functional) - ON TOP LAYER
-                        GestureDetector(
-                          onTap: () {
-                            if (_searchController.text.trim().isNotEmpty) {
-                              _searchLocation(_searchController.text.trim());
-                              FocusScope.of(context).unfocus();
-                            }
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12.w),
-                            child: Icon(
-                              Icons.search,
-                              color: AppColors.grey600,
-                              size: 22.w,
-                            ),
-                          ),
-                        ),
-
-                        // Search TextField (Center) - EXPANDED TO PREVENT ICON OVERFLOW
-                        Expanded(
-                          child: TextField(
-                            controller: _searchController,
-                            textDirection: TextDirection.rtl,
-                            textAlign: TextAlign.right,
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.grey800,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: AppLocalizations.of(context)!.location_map_search_placeholder,
-                              hintStyle: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.grey600,
-                              ),
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: 8.w,
-                                vertical: 16.h,
-                              ),
-                            ),
-                            onSubmitted: (value) {
-                              if (value.trim().isNotEmpty) {
-                                _searchLocation(value.trim());
-                              }
-                            },
-                          ),
-                        ),
-
-                        // Microphone Icon (Right - Functional) - ON TOP LAYER
-                        GestureDetector(
-                          onTap: () {
-                            if (_isListening) {
-                              _stopListening();
-                            } else {
-                              _startListening();
-                            }
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12.w),
-                            child: Icon(
-                              _isListening ? Icons.mic : Icons.mic_none,
-                              color: _isListening
-                                  ? Theme.of(context).primaryColor
-                                  : AppColors.grey600,
-                              size: 22.w,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                SizedBox(width: 12.w),
-
-                // 3. Back Button (Right Side)
-                GestureDetector(
-                  onTap: () {
-                    // Navigate back to previous screen
-                    context.go(AppRouter.permissionLocationIntro);
-                  },
-                  child: Container(
+              child: Row(
+                children: [
+                  // Orange location icon
+                  Container(
                     width: 40.w,
                     height: 40.h,
                     decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(8.r),
+                      color: Theme.of(context).primaryColor,
+                      shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      Icons.arrow_back_ios,
-                      color: AppColors.grey800,
-                      size: 18.w,
+                      Icons.location_on,
+                      color: AppColors.surface,
+                      size: 22.w,
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
 
+                  SizedBox(width: 12.w),
 
-
-          // ✅ Use Current Location Button (Orange - On Map)
-          PositionedDirectional(
-            bottom: 240.h, // Above bottom sheet
-            start: 0,
-            end: 0,
-            child: Center(
-              child: BlocBuilder<PermissionFlowCubit, PermissionFlowState>(
-                builder: (context, state) {
-                  return GestureDetector(
-                    onTap: state.isRequestingLocation
-                        ? null
-                        : () async {
-                            // ✅ FIX: Capture cubit before async gap
-                            final cubit = context.read<PermissionFlowCubit>();
-                            
-                            await cubit.useCurrentLocation();
-
-                            if (!mounted) return;
-
-                            // Move camera to updated position
-                            final updatedState = cubit.state;
-                            if (updatedState.userPosition != null) {
-                              final pos = updatedState.userPosition!;
-                              final newLocation = LatLng(
-                                pos.latitude,
-                                pos.longitude,
-                              );
-
-                              setState(() {
-                                _currentLocation = newLocation;
-                              });
-
-                              _moveCameraToPosition(newLocation);
-                            }
-                          },
+                  // Search box
+                  Expanded(
                     child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 14.h,
-                      ),
+                      height: 55.h,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(25.r),
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(
+                          color: AppColors.grey200,
+                          width: 1.w,
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: Theme.of(
-                              context,
-                            ).primaryColor.withValues(alpha: 0.4),
-                            blurRadius: 12,
-                            offset: Offset(0, 4.h),
+                            color: AppColors.shadow.withValues(alpha: 0.05),
+                            blurRadius: 4,
+                            offset: Offset(0, 2.h),
                           ),
                         ],
                       ),
                       child: Row(
-                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            AppLocalizations.of(context)!.location_map_use_current,
-                            style: AppTextStyles.bodyLarge.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.surface,
+                          // Search icon
+                          GestureDetector(
+                            onTap: () {
+                              if (_searchController.text.trim().isNotEmpty) {
+                                _searchLocation(_searchController.text.trim());
+                                FocusScope.of(context).unfocus();
+                              }
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 12.w),
+                              child: Icon(
+                                Icons.search,
+                                color: AppColors.grey600,
+                                size: 22.w,
+                              ),
                             ),
                           ),
-                          SizedBox(width: 8.w),
-                          if (state.isRequestingLocation)
-                            SizedBox(
-                              width: 20.w,
-                              height: 20.w,
-                              child: const CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  AppColors.surface,
+
+                          // Search text field
+                          Expanded(
+                            child: TextField(
+                              controller: _searchController,
+                              textDirection: TextDirection.rtl,
+                              textAlign: TextAlign.right,
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: AppColors.grey800,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: AppLocalizations.of(
+                                  context,
+                                )!.location_map_search_placeholder,
+                                hintStyle: AppTextStyles.bodyMedium.copyWith(
+                                  color: AppColors.grey600,
+                                ),
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 8.w,
+                                  vertical: 16.h,
                                 ),
                               ),
-                            )
-                          else
-                            Icon(
-                              Icons.my_location,
-                              color: AppColors.surface,
-                              size: 20.w,
+                              onSubmitted: (value) {
+                                if (value.trim().isNotEmpty) {
+                                  _searchLocation(value.trim());
+                                }
+                              },
                             ),
+                          ),
+
+                          // Microphone icon
+                          GestureDetector(
+                            onTap: _isListening
+                                ? _stopListening
+                                : _startListening,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 12.w),
+                              child: Icon(
+                                _isListening ? Icons.mic : Icons.mic_none,
+                                color: _isListening
+                                    ? Theme.of(context).primaryColor
+                                    : AppColors.grey600,
+                                size: 22.w,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                  );
-                },
-              ),
-            ),
-          ),
+                  ),
 
-          // ✅ Bottom Sheet
-          PositionedDirectional(
-            bottom: 0,
-            start: 0,
-            end: 0,
-            child: Container(
-              padding: EdgeInsets.fromLTRB(10.w, 20.h, 20.w, 10.h),
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24.r),
-                  topRight: Radius.circular(24.r),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.shadow,
-                    blurRadius: 20,
-                    offset: Offset(0, -4.h),
+                  SizedBox(width: 12.w),
+
+                  // Back button
+                  GestureDetector(
+                    onTap: () => context.go(AppRouter.permissionLocationIntro),
+                    child: Container(
+                      width: 40.w,
+                      height: 40.h,
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: AppColors.grey800,
+                        size: 18.w,
+                      ),
+                    ),
                   ),
                 ],
               ),
-              child: SafeArea(
-                top: false,
-                child: BlocBuilder<PermissionFlowCubit, PermissionFlowState>(
-                  builder: (context, state) {
-                    final position = state.userPosition;
-                    final hasPosition =
-                        position != null || _currentLocation != null;
-                    final displayLocation =
-                        _currentLocation ??
-                        (position != null
-                            ? LatLng(position.latitude, position.longitude)
-                            : null);
+            ),
 
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Location Label with Icon
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.location_on,
-                              color: Theme.of(context).primaryColor,
-                              size: 22.w,
-                            ),
-                            SizedBox(width: 8.w),
-                            Text(
-                              AppLocalizations.of(context)!.location_map_your_location,
-                              style: AppTextStyles.h4.copyWith(
-                                color: Theme.of(context).primaryColor,
-                              ),
+            // ── "Use Current Location" Button ─────────────────
+            PositionedDirectional(
+              bottom: 240.h,
+              start: 0,
+              end: 0,
+              child: Center(
+                // buildWhen: only toggle button state when loading flag changes.
+                child: BlocBuilder<PermissionFlowCubit, PermissionFlowState>(
+                  buildWhen: (prev, curr) =>
+                      prev.isRequestingLocation != curr.isRequestingLocation,
+                  builder: (context, state) {
+                    return GestureDetector(
+                      onTap: state.isRequestingLocation
+                          ? null
+                          : () async {
+                              final cubit =
+                                  context.read<PermissionFlowCubit>();
+                              await cubit.useCurrentLocation();
+
+                              if (!mounted) return;
+
+                              final pos = cubit.state.userPosition;
+                              if (pos != null) {
+                                _moveCameraToPosition(
+                                  LatLng(pos.latitude, pos.longitude),
+                                );
+                              }
+                            },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 14.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(25.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Theme.of(
+                                context,
+                              ).primaryColor.withValues(alpha: 0.4),
+                              blurRadius: 12,
+                              offset: Offset(0, 4.h),
                             ),
                           ],
                         ),
-
-                        SizedBox(height: 12.h),
-
-                        // Address
-                        Padding(
-                          padding: EdgeInsetsDirectional.only(end: 30.w),
-                          child: Builder(
-                            builder: (context) {
-                              final l10n = AppLocalizations.of(context)!;
-                              return Text(
-                                state.currentAddress ??
-                                    (displayLocation != null
-                                        ? l10n.location_map_coordinates_format(
-                                            displayLocation.latitude.toStringAsFixed(4),
-                                            displayLocation.longitude.toStringAsFixed(4),
-                                          )
-                                        : l10n.location_map_tap_to_select),
-                                style: AppTextStyles.bodyMedium.copyWith(
-                                  color: AppColors.textSecondary,
-                                  height: 1.5,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.location_map_use_current,
+                              style: AppTextStyles.bodyLarge.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.surface,
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            if (state.isRequestingLocation)
+                              SizedBox(
+                                width: 20.w,
+                                height: 20.w,
+                                child: const CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    AppColors.surface,
+                                  ),
                                 ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              );
-                            },
-                          ),
+                              )
+                            else
+                              Icon(
+                                Icons.my_location,
+                                color: AppColors.surface,
+                                size: 20.w,
+                              ),
+                          ],
                         ),
-
-                        SizedBox(height: 24.h),
-
-                        // Confirm Button
-                        Builder(
-                          builder: (context) {
-                            final l10n = AppLocalizations.of(context)!;
-                            return AppPrimaryButton(
-                              text: l10n.location_map_confirm_button,
-                              onPressed: hasPosition
-                                  ? () {
-                                      // ✅ FIX: Let the cubit emit the navSignal.
-                                      // The BlocListener below handles navigation.
-                                      // Do NOT call context.go() here — that causes
-                                      // the "route._navigator == navigator" assertion crash.
-                                      debugPrint('✅ Location confirmed');
-                                      context
-                                          .read<PermissionFlowCubit>()
-                                          .confirmLocation();
-                                    }
-                                  : null,
-                              size: AppButtonSize.medium,
-                              borderRadius: 12.r,
-                              disabledBackgroundColor: AppColors.textDisabled,
-                            );
-                          },
-                        ),
-                      ],
+                      ),
                     );
                   },
                 ),
               ),
             ),
-          ),
+
+            // ── Bottom Sheet ───────────────────────────────────
+            PositionedDirectional(
+              bottom: 0,
+              start: 0,
+              end: 0,
+              child: Container(
+                padding: EdgeInsets.fromLTRB(10.w, 20.h, 20.w, 10.h),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(24.r),
+                    topRight: Radius.circular(24.r),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.shadow,
+                      blurRadius: 20,
+                      offset: Offset(0, -4.h),
+                    ),
+                  ],
+                ),
+                child: SafeArea(
+                  top: false,
+                  // buildWhen: only rebuild when address or position changes.
+                  child: BlocBuilder<PermissionFlowCubit, PermissionFlowState>(
+                    buildWhen: (prev, curr) =>
+                        prev.currentAddress != curr.currentAddress ||
+                        prev.userPosition != curr.userPosition,
+                    builder: (context, state) {
+                      final hasPosition = _selectedLatLng != null ||
+                          state.userPosition != null;
+
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Location label
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.location_on,
+                                color: Theme.of(context).primaryColor,
+                                size: 22.w,
+                              ),
+                              SizedBox(width: 8.w),
+                              Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.location_map_your_location,
+                                style: AppTextStyles.h4.copyWith(
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          SizedBox(height: 12.h),
+
+                          // Address / shimmer
+                          Padding(
+                            padding:
+                                EdgeInsetsDirectional.only(end: 30.w),
+                            child: _isAddressLoading
+                                ? _AddressShimmer()
+                                : _AddressText(
+                                    address: state.currentAddress,
+                                    selectedLatLng: _selectedLatLng,
+                                  ),
+                          ),
+
+                          SizedBox(height: 24.h),
+
+                          // Confirm button
+                          AppPrimaryButton(
+                            text: AppLocalizations.of(
+                              context,
+                            )!.location_map_confirm_button,
+                            onPressed: hasPosition
+                                ? () {
+                                    context
+                                        .read<PermissionFlowCubit>()
+                                        .confirmLocation();
+                                  }
+                                : null,
+                            size: AppButtonSize.medium,
+                            borderRadius: 12.r,
+                            disabledBackgroundColor: AppColors.textDisabled,
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
+    );
+  }
+}
+
+// ── Sub-widgets ────────────────────────────────────────────────────────────────
+
+/// Pulsing shimmer shown while geocoding is in-flight.
+class _AddressShimmer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 16.w,
+          height: 16.w,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: AppColors.primary,
+          ),
+        ),
+        SizedBox(width: 8.w),
+        Text(
+          '...',
+          style: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.textSecondary,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Displays the resolved address, or a fallback coordinate string.
+class _AddressText extends StatelessWidget {
+  final String? address;
+  final LatLng? selectedLatLng;
+
+  const _AddressText({this.address, this.selectedLatLng});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    final displayText = address ??
+        (selectedLatLng != null
+            ? l10n.location_map_coordinates_format(
+                selectedLatLng!.latitude.toStringAsFixed(4),
+                selectedLatLng!.longitude.toStringAsFixed(4),
+              )
+            : l10n.location_map_tap_to_select);
+
+    return Text(
+      displayText,
+      style: AppTextStyles.bodyMedium.copyWith(
+        color: AppColors.textSecondary,
+        height: 1.5,
+      ),
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }

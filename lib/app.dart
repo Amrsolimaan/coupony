@@ -87,9 +87,13 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
       builder: (context, locale) {
         return BlocBuilder<AuthRoleCubit, AuthRoleState>(
           builder: (context, roleState) {
-            final primaryColor = roleState.isSeller
-                ? AppColors.primaryOfSeller
-                : AppColors.primary;
+            // Neutral theme during loading to prevent flickering
+            final primaryColor = roleState.isLoading
+                ? Colors.white  // Neutral color during loading
+                : (roleState.isSeller
+                    ? AppColors.primaryOfSeller
+                    : AppColors.primary);
+            
             final theme = AppTheme.lightTheme.copyWith(
               primaryColor: primaryColor,
               colorScheme: AppTheme.lightTheme.colorScheme.copyWith(

@@ -43,3 +43,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# ── Secret files — contain API keys, never commit ─────────────────────────
+# Android: Maps API key for native map tiles (read by build.gradle.kts)
+android/local.properties
+# iOS: Maps API key for native map tiles (read by Debug/Release.xcconfig)
+ios/Flutter/Local.xcconfig
+# VS Code: launch configs with --dart-define keys (read by AppConfig.dart)
+.vscode/launch.json

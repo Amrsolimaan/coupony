@@ -305,6 +305,9 @@
   "create_store_socials_label": "Social Media Links",
   "create_store_socials_empty": "No social links added yet",
   "create_store_add_social": "Add Link",
+  "create_store_select_platform": "Select Platform",
+  "create_store_choose_platform": "Choose a social platform",
+  "create_store_no_platforms": "No platforms available",
   "create_store_social_id_hint": "Platform ID (e.g. 1)",
   "create_store_social_link_hint": "Link (e.g. https://facebook.com/...)",
   "create_store_cancel": "Cancel",
@@ -318,7 +321,21 @@
   "create_store_location_section_label": "Store Location",
   "create_store_locate_button": "Detect My Location",
   "create_store_location_fetched": "Location detected",
+  "create_store_map_search_placeholder": "Search for store location",
+  "create_store_map_your_location": "Your Location",
+  "create_store_map_confirm_button": "Confirm Location",
+  "create_store_map_use_current": "Use My Current Location",
+  "create_store_map_no_results": "No search results found",
+  "create_store_map_search_error": "Search error, please try again",
+  "create_store_map_voice_unavailable": "Voice search is unavailable",
+  "create_store_map_tap_to_select": "Drag the map to select location",
+  "create_store_map_coordinates_format": "Coordinates: {lat}, {lng}",
   "error_create_store_location_denied": "Location permission denied. Please enable it in settings.",
   "error_create_store_location_gps_off": "GPS is disabled. Please enable location services.",
-  "error_create_store_location_failed": "Could not determine location. Please try again."
+  "error_create_store_location_failed": "Could not determine location. Please try again.",
+
+  "store_under_review_title": "Your request is under review",
+  "store_under_review_subtitle": "Your request is currently being reviewed, you will be notified upon completion",
+  "store_under_review_home_button": "Home",
+  "store_under_review_contact_button": "Contact Us"
 }

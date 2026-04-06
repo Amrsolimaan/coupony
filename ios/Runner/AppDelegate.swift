@@ -14,7 +14,13 @@ import FirebaseMessaging
     FirebaseApp.configure()
     
     // Google Maps API Key
-    GMSServices.provideAPIKey("AIzaSyDASWTQo7hITM4HU58rRzRw4ha3Mma1qAE")
+    // KEY IS MANAGED VIA ENVIRONMENT — do not hardcode here.
+    // Value flows: Local.xcconfig (MAPS_API_KEY_IOS) → Info.plist (MapsApiKey) → Bundle.main
+    // For CI/CD: set MAPS_API_KEY_IOS as a User-Defined build setting in Xcode
+    // or via: xcodebuild OTHER_SWIFT_FLAGS="$(inherited) -DMAPS_API_KEY_IOS=..."
+    // ⚠️  Removed hardcoded key: GMSServices.provideAPIKey("AIzaSyDAS...qAE")
+    let mapsApiKey = Bundle.main.object(forInfoDictionaryKey: "MapsApiKey") as? String ?? ""
+    GMSServices.provideAPIKey(mapsApiKey)
     
     // Register for remote notifications
     if #available(iOS 10.0, *) {

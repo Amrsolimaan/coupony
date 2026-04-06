@@ -10,12 +10,14 @@ class AuthSuccessBottomSheet extends StatefulWidget {
   final String title;
   final String buttonText;
   final VoidCallback onContinue;
+  final Color? primaryColor; // ✅ Explicit color injection to avoid premature capture
 
   const AuthSuccessBottomSheet({
     super.key,
     required this.title,
     required this.buttonText,
     required this.onContinue,
+    this.primaryColor, // Optional: falls back to theme if not provided
   });
 
   @override
@@ -69,20 +71,28 @@ class _AuthSuccessBottomSheetState extends State<AuthSuccessBottomSheet>
   @override
   void initState() {
     super.initState();
-    _generateParticles();
+    // ⚠️ DO NOT call _generateParticles() here - it will capture wrong theme
     _initControllers();
     _runSequence();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // ✅ Generate particles here with correct color after dependencies are resolved
+    _generateParticles();
+  }
+
   void _generateParticles() {
     final rng = math.Random(42);
+    // ✅ Use injected color first, fallback to theme
+    final primaryColor = widget.primaryColor ?? Theme.of(context).primaryColor;
 
     // Wave 1 — 48 particles, sharp burst outward
-    // 🎨 Note: Confetti uses a mix of vibrant colors for visual appeal
-    // The main circle will use the dynamic theme color
+    // 🎨 Confetti uses dynamic theme color mixed with vibrant colors
     _particles = List.generate(48, (i) {
       final color = i % 3 == 0
-          ? AppColors.primary
+          ? primaryColor
           : _extraColors[i % _extraColors.length];
       return _ConfettiParticle(
         angle: (i / 48) * 2 * math.pi + (rng.nextDouble() - .5) * .3,
@@ -114,7 +124,7 @@ class _AuthSuccessBottomSheetState extends State<AuthSuccessBottomSheet>
     // Wave 3 — 24 slow floaters that linger and sway
     _particles3 = List.generate(24, (i) {
       final color = i % 2 == 0
-          ? AppColors.primary
+          ? primaryColor
           : _extraColors[i % _extraColors.length];
       return _ConfettiParticle(
         angle: (i / 24) * 2 * math.pi + (rng.nextDouble() - .5) * .5,
@@ -257,8 +267,8 @@ class _AuthSuccessBottomSheetState extends State<AuthSuccessBottomSheet>
 
   @override
   Widget build(BuildContext context) {
-    // 🎨 Dynamic theme color based on active role (Customer=Green, Seller=Blue)
-    final primaryColor = Theme.of(context).primaryColor;
+    // ✅ Use injected color first, fallback to theme
+    final primaryColor = widget.primaryColor ?? Theme.of(context).primaryColor;
     
     return PopScope(
       canPop: false,

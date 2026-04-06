@@ -5,6 +5,7 @@ import '../../../../core/repositories/platform_base_repository.dart';
 import '../../../../core/services/location_service.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../domain/repositories/permission_repository.dart';
+import '../data_sources/location_geocoding_data_source.dart';
 import '../data_sources/permission_local_data_source.dart';
 import '../models/permission_status_model.dart';
 
@@ -17,11 +18,13 @@ class PermissionRepositoryImpl extends PlatformBaseRepository
   final PermissionLocalDataSource localDataSource;
   final LocationService locationService;
   final NotificationService notificationService;
+  final LocationGeocodingDataSource geocodingDataSource;
 
   PermissionRepositoryImpl({
     required this.localDataSource,
     required this.locationService,
     required this.notificationService,
+    required this.geocodingDataSource,
     required super.logger,
   });
 
@@ -263,6 +266,14 @@ class PermissionRepositoryImpl extends PlatformBaseRepository
         return 'error';
     }
   }
+
+  // ════════════════════════════════════════════════════════
+  // GEOCODING
+  // ════════════════════════════════════════════════════════
+
+  @override
+  Future<String> getAddressFromCoordinates(double lat, double lng) =>
+      geocodingDataSource.getAddressFromCoordinates(lat, lng);
 
   /// Map NotificationPermissionStatus to string
   String _mapNotificationStatus(NotificationPermissionStatus status) {

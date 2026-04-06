@@ -13,6 +13,7 @@ enum AuthNavigation {
   toOnboarding,       // Authenticated + onboarding NOT yet done → customer onboarding wizard
   toSellerOnboarding, // Authenticated seller → seller onboarding wizard
   toMerchantDash,     // Seller with completed onboarding → merchant dashboard
+  toCreateStore,      // Seller with completed onboarding but no store yet → create store screen
   toOtpVerification,  // After register → OTP screen
   toResetPassword,    // OTP verified (forgotPassword mode) → reset password screen
   toLogin,            // After logout or session expiry

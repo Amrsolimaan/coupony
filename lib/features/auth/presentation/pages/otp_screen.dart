@@ -162,15 +162,33 @@ class OtpScreen extends HookWidget {
         // ── CASE A: email verification success → bottom sheet ──────────────
         if (state.navSignal == AuthNavigation.toHome ||
             state.navSignal == AuthNavigation.toOnboarding ||
-            state.navSignal == AuthNavigation.toMerchantDash) {
+            state.navSignal == AuthNavigation.toSellerOnboarding ||
+            state.navSignal == AuthNavigation.toMerchantDash ||
+            state.navSignal == AuthNavigation.toCreateStore) {
           HapticFeedback.mediumImpact();
+
+          // Capture the navigation signal before clearing
+          final targetNav = state.navSignal;
+
+          // 🔍 Debug logging
+          print('🎯 OTP Screen - Navigation Signal Received: $targetNav');
+          print('🎯 OTP Screen - User Role: ${state.user?.role}');
+          print('🎯 OTP Screen - Onboarding Completed: ${state.user?.isOnboardingCompleted}');
+          print('🎯 OTP Screen - Store Created: ${state.user?.isStoreCreated}');
+
           _showSuccessModal(context, l10n, onContinue: () {
-            final route = switch (state.navSignal) {
+            Navigator.of(context).pop(); // Close bottom sheet first
+            context.read<OtpCubit>().clearNavSignal(); // Clear signal
+
+            final route = switch (targetNav) {
               AuthNavigation.toMerchantDash      => AppRouter.merchantDashboard,
               AuthNavigation.toSellerOnboarding  => AppRouter.sellerOnboarding,
+              AuthNavigation.toCreateStore       => AppRouter.createStore,
               AuthNavigation.toOnboarding        => AppRouter.onboarding,
               _                                  => AppRouter.home,
             };
+
+            print('🎯 OTP Screen - Navigating to route: $route');
             context.go(route);
           });
         }
@@ -405,6 +423,9 @@ class OtpScreen extends HookWidget {
     AppLocalizations l10n, {
     required VoidCallback onContinue,
   }) {
+    // ✅ Capture current theme color explicitly to avoid premature capture bug
+    final primaryColor = Theme.of(context).primaryColor;
+    
     showModalBottomSheet(
       context:            context,
       isScrollControlled: true,
@@ -412,9 +433,10 @@ class OtpScreen extends HookWidget {
       isDismissible:      false,
       enableDrag:         false,
       builder: (_) => AuthSuccessBottomSheet(
-        title:      l10n.otp_success_title,
-        buttonText: l10n.otp_success_button,
-        onContinue: onContinue,
+        title:        l10n.otp_success_title,
+        buttonText:   l10n.otp_success_button,
+        onContinue:   onContinue,
+        primaryColor: primaryColor, // ✅ Explicit color injection
       ),
     );
   }

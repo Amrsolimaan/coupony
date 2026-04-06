@@ -1,24 +1,31 @@
 import 'package:coupony/core/services/location_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
+import '../../../../auth/data/datasources/auth_local_data_source.dart';
 import '../../domain/entities/social_link_entity.dart';
 import '../../domain/use_cases/create_store_use_case.dart';
 import '../../domain/use_cases/get_categories_use_case.dart';
+import '../../domain/use_cases/get_social_platforms_use_case.dart';
 import 'create_store_state.dart';
 
 class CreateStoreCubit extends Cubit<CreateStoreState> {
   final CreateStoreUseCase createStoreUseCase;
   final GetCategoriesUseCase getCategoriesUseCase;
+  final GetSocialPlatformsUseCase getSocialPlatformsUseCase;
   final LocationService locationService;
+  final AuthLocalDataSource authLocalDataSource;
   final Logger logger;
 
   CreateStoreCubit({
     required this.createStoreUseCase,
     required this.getCategoriesUseCase,
+    required this.getSocialPlatformsUseCase,
     required this.locationService,
+    required this.authLocalDataSource,
     required this.logger,
   }) : super(const CreateStoreState()) {
     fetchCategories();
+    fetchSocialPlatforms();
   }
 
   void _safeEmit(CreateStoreState s) {
@@ -47,6 +54,33 @@ class CreateStoreCubit extends Cubit<CreateStoreState> {
         _safeEmit(state.copyWith(
           isCategoriesLoading: false,
           categories: categories,
+        ));
+      },
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // SOCIAL PLATFORMS
+  // ═══════════════════════════════════════════════════════════
+
+  Future<void> fetchSocialPlatforms() async {
+    _safeEmit(state.copyWith(isSocialPlatformsLoading: true));
+
+    final result = await getSocialPlatformsUseCase();
+
+    result.fold(
+      (failure) {
+        logger.w('GetSocialPlatforms failed: ${failure.message}');
+        _safeEmit(state.copyWith(
+          isSocialPlatformsLoading: false,
+          socialPlatformsErrorKey: failure.message,
+        ));
+      },
+      (platforms) {
+        logger.i('Fetched ${platforms.length} social platforms');
+        _safeEmit(state.copyWith(
+          isSocialPlatformsLoading: false,
+          socialPlatforms: platforms,
         ));
       },
     );
@@ -146,11 +180,7 @@ class CreateStoreCubit extends Cubit<CreateStoreState> {
       _safeEmit(state.copyWith(errorKey: 'error_create_store_phone_required'));
       return;
     }
-    if (params.addressLine1.trim().isEmpty) {
-      _safeEmit(state.copyWith(errorKey: 'error_create_store_address_required'));
-      return;
-    }
-    if (params.categoryIds.isEmpty) {
+    if (params.categoryId == 0) {
       _safeEmit(state.copyWith(errorKey: 'error_create_store_category_required'));
       return;
     }
@@ -160,20 +190,33 @@ class CreateStoreCubit extends Cubit<CreateStoreState> {
 
     final result = await createStoreUseCase(params);
 
-    result.fold(
-      (failure) {
+    await result.fold(
+      (failure) async {
         logger.e('CreateStore API failed: ${failure.message}');
         _safeEmit(state.copyWith(
           isSubmitting: false,
           errorKey: failure.message,
         ));
       },
-      (_) {
+      (_) async {
         logger.i('Store created successfully ✅');
+
+        // Persist the scoped flag ({userId}_is_store_created).
+        // Wrapped in try-catch: a cache failure (e.g. SecureStorage unavailable
+        // on first launch) must NOT leave the UI stuck in isSubmitting=true.
+        // The API call has already succeeded — navigation proceeds regardless.
+        try {
+          await authLocalDataSource.cacheStoreCreated(true);
+          logger.i('storeCreated flag persisted ✅');
+        } catch (e) {
+          logger.w('cacheStoreCreated failed (non-fatal, proceeding): $e');
+        }
+
+        // Navigation emit is the absolute last step, guaranteed to run.
         _safeEmit(state.copyWith(
           isSubmitting: false,
           successKey: 'success_create_store',
-          navigationSignal: CreateStoreNavigation.toHome,
+          navigationSignal: CreateStoreNavigation.toStoreUnderReview,
         ));
       },
     );
@@ -187,7 +230,13 @@ class CreateStoreCubit extends Cubit<CreateStoreState> {
     _safeEmit(state.copyWith(navigationSignal: CreateStoreNavigation.none));
   }
 
+
   void clearMessages() {
     _safeEmit(state.copyWith(errorKey: null, successKey: null));
+  }
+
+  void setLocation(String lat, String lng) {
+    _safeEmit(state.copyWith(latitude: lat, longitude: lng));
+    logger.i('Location set from map: $lat, $lng');
   }
 }

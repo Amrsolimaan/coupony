@@ -401,7 +401,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'يرجى اختيار أسلوب تسوق واحد على الأقل';
 
   @override
-  String get onboarding_intro_title => '...خلّينا نعرفك أكتر\nوهنوفرلك أكتر ';
+  String get onboarding_intro_title => 'خلّينا نعرفك أكتر...\nوهنوفرلك أكتر';
 
   @override
   String get onboarding_intro_continue => 'متابعه';
@@ -902,6 +902,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get create_store_add_social => 'إضافة رابط';
 
   @override
+  String get create_store_select_platform => 'اختر المنصة';
+
+  @override
+  String get create_store_choose_platform => 'اختر منصة التواصل';
+
+  @override
+  String get create_store_no_platforms => 'لا توجد منصات متاحة';
+
+  @override
   String get create_store_social_id_hint => 'رقم المنصة (مثال: 1)';
 
   @override
@@ -941,6 +950,35 @@ class AppLocalizationsAr extends AppLocalizations {
   String get create_store_location_fetched => 'تم تحديد الموقع';
 
   @override
+  String get create_store_map_search_placeholder => 'ابحث عن موقع المحل';
+
+  @override
+  String get create_store_map_your_location => 'موقعك';
+
+  @override
+  String get create_store_map_confirm_button => 'تأكيد الموقع';
+
+  @override
+  String get create_store_map_use_current => 'استخدم موقعي الحالي';
+
+  @override
+  String get create_store_map_no_results => 'لا توجد نتائج للبحث';
+
+  @override
+  String get create_store_map_search_error => 'خطأ في البحث، حاول مرة أخرى';
+
+  @override
+  String get create_store_map_voice_unavailable => 'البحث الصوتي غير متاح';
+
+  @override
+  String get create_store_map_tap_to_select => 'اسحب الخريطة لتحديد الموقع';
+
+  @override
+  String create_store_map_coordinates_format(Object lat, Object lng) {
+    return 'الإحداثيات: $lat, $lng';
+  }
+
+  @override
   String get error_create_store_location_denied =>
       'تم رفض إذن الموقع. يرجى تفعيله من الإعدادات.';
 
@@ -951,4 +989,17 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get error_create_store_location_failed =>
       'تعذر تحديد الموقع. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get store_under_review_title => 'طلبك قيد المراجعة';
+
+  @override
+  String get store_under_review_subtitle =>
+      'طلبك قيد المراجعة حاليًا سيتم إشعارك فور الانتهاء';
+
+  @override
+  String get store_under_review_home_button => 'الرئيسية';
+
+  @override
+  String get store_under_review_contact_button => 'تواصل معنا';
 }

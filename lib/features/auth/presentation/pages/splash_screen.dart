@@ -9,7 +9,6 @@ import '../../../../core/localization/locale_cubit.dart';
 import '../../../../config/routes/app_router.dart';
 import '../../../../core/constants/storage_keys.dart';
 import '../../../../config/dependency_injection/injection_container.dart' as di;
-import '../../../../core/storage/secure_storage_service.dart';
 import '../../../permissions/domain/repositories/permission_repository.dart';
 import '../../data/datasources/auth_local_data_source.dart';
 import '../cubit/auth_role_cubit.dart';
@@ -28,9 +27,6 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
   late Animation<double> _dropAnimation;
   late Animation<double> _expandAnimation;
   late Animation<double> _logoOpacityAnimation;
-
-  // Role-based branding — resolved from SecureStorage before animation starts
-  bool _isSeller = false;
 
   @override
   void initState() {
@@ -68,20 +64,15 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
     _loadRoleAndStart();
   }
 
-  /// Reads the persisted role from AuthRoleCubit, updates branding flag,
-  /// then starts the animation and navigation flow.
+  /// Loads the persisted role from AuthRoleCubit and starts the animation.
+  /// The role is loaded asynchronously, and the UI will update via BlocBuilder.
   Future<void> _loadRoleAndStart() async {
     try {
       // Load persisted role from AuthRoleCubit
       final authRoleCubit = di.sl<AuthRoleCubit>();
       await authRoleCubit.loadPersistedRole();
-      
-      if (mounted) {
-        final roleState = authRoleCubit.state;
-        setState(() => _isSeller = roleState.isSeller);
-      }
     } catch (_) {
-      // Fallback: default customer branding
+      // Fallback: AuthRoleCubit will default to customer on error
     }
 
     if (!mounted) return;
@@ -145,6 +136,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
         authLocalDs.getAccessToken(),
         authLocalDs.getGuestStatus(),
         authLocalDs.getOnboardingCompleted(),
+        authLocalDs.getStoreCreated(),
       ]);
 
       if (!mounted) return;
@@ -152,6 +144,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
       final token = results[0] as String?;
       final isGuest = results[1] as bool;
       final isOnboardingCompleted = results[2] as bool;
+      final isStoreCreated = results[3] as bool;
 
       if (isGuest) {
         context.go(AppRouter.home);
@@ -159,10 +152,23 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
       }
 
       if (token != null && token.isNotEmpty) {
-        if (isOnboardingCompleted) {
-          context.go(AppRouter.home);
+        final authRoleCubit = context.read<AuthRoleCubit>();
+
+        if (authRoleCubit.state.isSeller) {
+          if (!isOnboardingCompleted) {
+            context.go(AppRouter.sellerOnboarding);
+          } else if (!isStoreCreated) {
+            // Guard: seller has finished onboarding but hasn't created a store yet
+            context.go(AppRouter.createStore);
+          } else {
+            context.go(AppRouter.merchantDashboard);
+          }
         } else {
-          context.go(AppRouter.onboarding);
+          if (isOnboardingCompleted) {
+            context.go(AppRouter.home);
+          } else {
+            context.go(AppRouter.onboarding);
+          }
         }
         return;
       }
@@ -179,48 +185,56 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
     super.dispose();
   }
 
-  // Role-resolved gradient colors
-  Color get _gradientColor =>
-      _isSeller ? AppColors.primaryOfSeller : AppColors.splashGradientStart;
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          // Animated ball: drops then expands to fill screen
-          AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              return Align(
-                alignment: Alignment(0.0, _dropAnimation.value),
-                child: Transform.scale(
-                  scale: _expandAnimation.value,
-                  child: Container(
-                    width: 80.w,
-                    height: 80.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _gradientColor,
+    return BlocBuilder<AuthRoleCubit, AuthRoleState>(
+      builder: (context, roleState) {
+        // Determine gradient color based on role state
+        // During loading, use neutral white to prevent flickering
+        final gradientColor = roleState.isLoading
+            ? Colors.white
+            : (roleState.isSeller
+                ? AppColors.primaryOfSeller
+                : AppColors.splashGradientStart);
+
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: Stack(
+            children: [
+              // Animated ball: drops then expands to fill screen
+              AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return Align(
+                    alignment: Alignment(0.0, _dropAnimation.value),
+                    child: Transform.scale(
+                      scale: _expandAnimation.value,
+                      child: Container(
+                        width: 80.w,
+                        height: 80.h,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: gradientColor,
+                        ),
+                      ),
                     ),
+                  );
+                },
+              ),
+              // Logo fades in at the end of the animation
+              Center(
+                child: FadeTransition(
+                  opacity: _logoOpacityAnimation,
+                  child: Text(
+                    'Coupony',
+                    style: AppTextStyles.logoStyle.copyWith(color: Colors.white),
                   ),
                 ),
-              );
-            },
-          ),
-          // Logo fades in at the end of the animation
-          Center(
-            child: FadeTransition(
-              opacity: _logoOpacityAnimation,
-              child: Text(
-                'Coupony',
-                style: AppTextStyles.logoStyle.copyWith(color: Colors.white),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

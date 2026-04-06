@@ -49,6 +49,21 @@ class OnboardingRemoteDataSourceImpl implements OnboardingRemoteDataSource {
       
       print('✅ Onboarding submission successful');
     } on DioException catch (e) {
+      // ═══════════════════════════════════════════════════════════════════
+      // 🔍 TEMPORARY DEBUG LOGGING - REMOVE AFTER FIXING THE ISSUE
+      // ═══════════════════════════════════════════════════════════════════
+      print('❌ DioException caught in submitOnboarding:');
+      print('  - Type: ${e.type}');
+      print('  - Message: ${e.message}');
+      print('  - Status Code: ${e.response?.statusCode}');
+      print('  - Response Data: ${e.response?.data}');
+      print('  - Response Headers: ${e.response?.headers}');
+      print('  - Request Path: ${e.requestOptions.path}');
+      print('  - Request Data: ${e.requestOptions.data}');
+      print('  - Error Object: ${e.error}');
+      print('═══════════════════════════════════════════════════════════════════');
+      // ═══════════════════════════════════════════════════════════════════
+      
       final error = e.error;
       if (error is ServerException) throw error;
       if (error is UnauthorizedException) throw error;
@@ -75,6 +90,20 @@ class OnboardingRemoteDataSourceImpl implements OnboardingRemoteDataSource {
       print('✅ Onboarding preferences fetched: $data');
       return data;
     } on DioException catch (e) {
+      // ═══════════════════════════════════════════════════════════════════
+      // 🔍 TEMPORARY DEBUG LOGGING - REMOVE AFTER FIXING THE ISSUE
+      // ═══════════════════════════════════════════════════════════════════
+      print('❌ DioException caught in fetchPreferences:');
+      print('  - Type: ${e.type}');
+      print('  - Message: ${e.message}');
+      print('  - Status Code: ${e.response?.statusCode}');
+      print('  - Response Data: ${e.response?.data}');
+      print('  - Response Headers: ${e.response?.headers}');
+      print('  - Request Path: ${e.requestOptions.path}');
+      print('  - Error Object: ${e.error}');
+      print('═══════════════════════════════════════════════════════════════════');
+      // ═══════════════════════════════════════════════════════════════════
+      
       // e.error is set by ErrorInterceptor (ServerException / UnauthorizedException).
       // Fall back to e.message for raw Dio errors that bypass the interceptor.
       final error = e.error;

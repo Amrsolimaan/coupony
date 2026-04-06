@@ -75,6 +75,8 @@ class LoginScreen extends HookWidget {
                   context.go(AppRouter.onboarding);
                 case AuthNavigation.toSellerOnboarding:
                   context.go(AppRouter.sellerOnboarding);
+                case AuthNavigation.toCreateStore:
+                  context.go(AppRouter.createStore);
                 case AuthNavigation.toMerchantDash:
                   context.go(AppRouter.merchantDashboard);
                 case AuthNavigation.toRegister:
@@ -103,6 +105,9 @@ class LoginScreen extends HookWidget {
               }
 
               if (state.successMessage != null && state.navSignal != AuthNavigation.none) {
+                // ✅ Capture current theme color explicitly
+                final primaryColor = Theme.of(context).primaryColor;
+                
                 // عرض AuthSuccessBottomSheet عند نجاح تسجيل الدخول بـ Google
                 showModalBottomSheet(
                   context: context,
@@ -111,6 +116,7 @@ class LoginScreen extends HookWidget {
                   builder: (context) => AuthSuccessBottomSheet(
                     title: l10n.login_success_title,
                     buttonText: l10n.continue_button,
+                    primaryColor: primaryColor, // ✅ Explicit color injection
                     onContinue: () {
                       Navigator.of(context).pop();
                       switch (state.navSignal) {

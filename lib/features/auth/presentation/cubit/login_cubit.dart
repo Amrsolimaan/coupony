@@ -69,15 +69,18 @@ class LoginCubit extends Cubit<AuthState> {
         ));
       },
       (user) {
-        logger.i('Login successful — role: ${user.role}, onboardingCompleted: ${user.isOnboardingCompleted}');
-        
-        // Determine navigation based on role and onboarding status
+        logger.i('Login successful — role: ${user.role}, onboardingCompleted: ${user.isOnboardingCompleted}, storeCreated: ${user.isStoreCreated}');
+
+        // Determine navigation based on role and onboarding/store status
         final AuthNavigation nav;
         if (user.role == 'seller') {
-          // Sellers: check if onboarding is completed
-          nav = user.isOnboardingCompleted
-              ? AuthNavigation.toMerchantDash
-              : AuthNavigation.toSellerOnboarding;
+          if (!user.isOnboardingCompleted) {
+            nav = AuthNavigation.toSellerOnboarding;
+          } else if (!user.isStoreCreated) {
+            nav = AuthNavigation.toCreateStore;
+          } else {
+            nav = AuthNavigation.toMerchantDash;
+          }
         } else {
           // Customers: check if onboarding is completed
           nav = user.isOnboardingCompleted

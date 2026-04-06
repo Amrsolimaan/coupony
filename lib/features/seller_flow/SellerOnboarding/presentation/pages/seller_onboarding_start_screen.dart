@@ -31,9 +31,11 @@ class SellerOnboardingStartScreen extends StatelessWidget {
               Text(
                 l10n.seller_onboarding_start_title,
                 textAlign: TextAlign.center,
-                style: isArabic 
+                style: (isArabic 
                   ? AppTextStyles.onboardingHeader
-                  : AppTextStyles.onboardingHeaderEnglish,
+                  : AppTextStyles.onboardingHeaderEnglish).copyWith(
+                    color: AppColors.primaryOfSeller, // ✅ Seller Blue color
+                  ),
               ),
 
               SizedBox(height: 16.h),

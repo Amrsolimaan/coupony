@@ -28,7 +28,10 @@ import '../../../features/auth/data/datasources/auth_local_data_source.dart';
 void registerOnboardingDependencies(GetIt sl) {
   // Data Sources
   sl.registerLazySingleton<OnboardingLocalDataSource>(
-    () => OnboardingLocalDataSourceImpl(cacheService: sl<LocalCacheService>()),
+    () => OnboardingLocalDataSourceImpl(
+      cacheService: sl<LocalCacheService>(),
+      authLocalDataSource: sl<AuthLocalDataSource>(),
+    ),
   );
 
   sl.registerLazySingleton<OnboardingRemoteDataSource>(
@@ -86,6 +89,7 @@ void registerOnboardingDependencies(GetIt sl) {
   sl.registerLazySingleton<SellerOnboardingLocalDataSource>(
     () => SellerOnboardingLocalDataSourceImpl(
       cacheService: sl<LocalCacheService>(),
+      authLocalDataSource: sl<AuthLocalDataSource>(),
     ),
   );
 

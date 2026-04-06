@@ -3,7 +3,8 @@
     "allow": [
       "Bash(flutter analyze:*)",
       "Bash(flutter build:*)",
-      "Bash(grep -v \"^$\")"
+      "Bash(grep -v \"^$\")",
+      "Bash(dir \"D:\\\\Courses\\\\AMITFlutter\\\\coupon\\\\android\\\\app\\\\\" 2>&1 | head -20:*)"
     ]
   }
 }

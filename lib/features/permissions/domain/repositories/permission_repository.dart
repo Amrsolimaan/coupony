@@ -68,4 +68,12 @@ abstract class PermissionRepository {
 
   /// Clear all permission data
   Future<Either<Failure, void>> clearPermissionStatus();
+
+  // ════════════════════════════════════════════════════════
+  // GEOCODING
+  // ════════════════════════════════════════════════════════
+
+  /// Reverse-geocode [lat],[lng] to a human-readable Arabic address.
+  /// Never throws — returns a formatted coordinate string as fallback.
+  Future<String> getAddressFromCoordinates(double lat, double lng);
 }

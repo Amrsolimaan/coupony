@@ -226,6 +226,9 @@ class ResetPasswordScreen extends HookWidget {
     AppLocalizations l10n, {
     required VoidCallback onContinue,
   }) {
+    // ✅ Capture current theme color explicitly
+    final primaryColor = Theme.of(context).primaryColor;
+    
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -235,6 +238,7 @@ class ResetPasswordScreen extends HookWidget {
       builder: (_) => AuthSuccessBottomSheet(
         title: l10n.reset_password_success,
         buttonText: l10n.reset_password_continue_login,
+        primaryColor: primaryColor, // ✅ Explicit color injection
         onContinue: onContinue,
       ),
     );

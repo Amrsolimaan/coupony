@@ -1,1 +1,4 @@
+// Local.xcconfig holds MAPS_API_KEY_IOS — see ios/Flutter/Local.xcconfig (gitignored).
+// The ? makes the include optional so CI builds don't fail if the file is absent.
+#include? "Local.xcconfig"
 #include "Generated.xcconfig"

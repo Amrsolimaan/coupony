@@ -51,11 +51,34 @@ class SellerOnboardingRemoteDataSourceImpl
 
       print('✅ Seller onboarding submission successful');
     } on DioException catch (e) {
+      print('❌ DioException caught:');
+      print('  - Type: ${e.type}');
+      print('  - Message: ${e.message}');
+      print('  - Response: ${e.response?.data}');
+      print('  - Status Code: ${e.response?.statusCode}');
+      print('  - Error: ${e.error}');
+      
       final error = e.error;
       if (error is ServerException) throw error;
       if (error is UnauthorizedException) throw error;
-      throw ServerException(e.message ?? 'Network error during seller onboarding submission');
+      
+      // Provide more detailed error message
+      final statusCode = e.response?.statusCode;
+      final responseData = e.response?.data;
+      String errorMessage = 'Network error during seller onboarding submission';
+      
+      if (statusCode != null) {
+        errorMessage = 'Server error ($statusCode)';
+        if (responseData is Map && responseData['message'] != null) {
+          errorMessage = responseData['message'];
+        }
+      } else if (e.message != null) {
+        errorMessage = e.message!;
+      }
+      
+      throw ServerException(errorMessage);
     } catch (e) {
+      print('❌ Unexpected exception: $e');
       if (e is ServerException || e is UnauthorizedException) rethrow;
       throw ServerException(e.toString());
     }

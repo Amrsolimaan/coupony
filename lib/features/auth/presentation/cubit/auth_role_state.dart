@@ -14,10 +14,11 @@ class AuthRoleState extends Equatable {
     this.isLoading = false,
   });
 
-  /// Initial state with customer role
+  /// Initial state with neutral role (loading state)
+  /// Role is determined after loading from storage
   factory AuthRoleState.initial() {
     return const AuthRoleState(
-      role: 'customer',
+      role: '',  // Neutral - no role assigned yet
       isLoading: true,
     );
   }

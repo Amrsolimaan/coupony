@@ -242,20 +242,29 @@ class OtpCubit extends Cubit<AuthState> {
         ));
       },
       (user) {
-        logger.i('OTP verified — role: ${user.role}, onboardingCompleted: ${user.isOnboardingCompleted}');
-        
-        // Determine navigation based on role and onboarding status
+        logger.i('🎯 OTP VERIFICATION SUCCESS:');
+        logger.i('  - User role: ${user.role}');
+        logger.i('  - Onboarding completed: ${user.isOnboardingCompleted}');
+        logger.i('  - Store created: ${user.isStoreCreated}');
+        logger.i('  - User email: ${user.email}');
+
+        // Determine navigation based on role and onboarding/store status
         final AuthNavigation nav;
         if (user.role == 'seller') {
-          // Sellers: check if onboarding is completed
-          nav = user.isOnboardingCompleted
-              ? AuthNavigation.toMerchantDash
-              : AuthNavigation.toSellerOnboarding;
+          if (!user.isOnboardingCompleted) {
+            nav = AuthNavigation.toSellerOnboarding;
+          } else if (!user.isStoreCreated) {
+            nav = AuthNavigation.toCreateStore;
+          } else {
+            nav = AuthNavigation.toMerchantDash;
+          }
+          logger.i('  - Navigation for SELLER: $nav');
         } else {
           // Customers: check if onboarding is completed
           nav = user.isOnboardingCompleted
               ? AuthNavigation.toHome
               : AuthNavigation.toOnboarding;
+          logger.i('  - Navigation for CUSTOMER: $nav');
         }
 
         _safeEmit(state.copyWith(

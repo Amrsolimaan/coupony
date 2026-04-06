@@ -920,6 +920,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get create_store_add_social => 'Add Link';
 
   @override
+  String get create_store_select_platform => 'Select Platform';
+
+  @override
+  String get create_store_choose_platform => 'Choose a social platform';
+
+  @override
+  String get create_store_no_platforms => 'No platforms available';
+
+  @override
   String get create_store_social_id_hint => 'Platform ID (e.g. 1)';
 
   @override
@@ -959,6 +968,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get create_store_location_fetched => 'Location detected';
 
   @override
+  String get create_store_map_search_placeholder => 'Search for store location';
+
+  @override
+  String get create_store_map_your_location => 'Your Location';
+
+  @override
+  String get create_store_map_confirm_button => 'Confirm Location';
+
+  @override
+  String get create_store_map_use_current => 'Use My Current Location';
+
+  @override
+  String get create_store_map_no_results => 'No search results found';
+
+  @override
+  String get create_store_map_search_error => 'Search error, please try again';
+
+  @override
+  String get create_store_map_voice_unavailable =>
+      'Voice search is unavailable';
+
+  @override
+  String get create_store_map_tap_to_select =>
+      'Drag the map to select location';
+
+  @override
+  String create_store_map_coordinates_format(Object lat, Object lng) {
+    return 'Coordinates: $lat, $lng';
+  }
+
+  @override
   String get error_create_store_location_denied =>
       'Location permission denied. Please enable it in settings.';
 
@@ -969,4 +1009,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get error_create_store_location_failed =>
       'Could not determine location. Please try again.';
+
+  @override
+  String get store_under_review_title => 'Your request is under review';
+
+  @override
+  String get store_under_review_subtitle =>
+      'Your request is currently being reviewed, you will be notified upon completion';
+
+  @override
+  String get store_under_review_home_button => 'Home';
+
+  @override
+  String get store_under_review_contact_button => 'Contact Us';
 }

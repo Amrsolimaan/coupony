@@ -61,27 +61,24 @@ class StoreModel extends StoreEntity {
 
   /// Builds [FormData] for multipart/form-data submission.
   ///
-  /// Files are added via [MultipartFile.fromFile] — this is async so the
-  /// method itself is async.
+  /// Field keys match the /api/v1/stores multipart contract exactly.
+  /// Files are added via [MultipartFile.fromFile] — async method.
   static Future<FormData> toFormData(CreateStoreParams params) async {
     final formData = FormData();
 
     // ── Scalar fields ──────────────────────────────────────────────────────
     formData.fields.addAll([
       MapEntry('name', params.name),
-      MapEntry('description', params.description),
-      MapEntry('email', params.email),
       MapEntry('phone', params.phone),
-      MapEntry('address_line1', params.addressLine1),
-      MapEntry('city', params.city),
+      MapEntry('description', params.description),
       MapEntry('latitude', params.latitude),
       MapEntry('longitude', params.longitude),
+      MapEntry('city', params.city),
+      MapEntry('address_line1', params.addressLine1),
     ]);
 
-    // ── Categories (array) ─────────────────────────────────────────────────
-    for (final id in params.categoryIds) {
-      formData.fields.add(MapEntry('categories[]', id.toString()));
-    }
+    // ── Category sent as an array (categories[]) ───────────────────────────
+    formData.fields.add(MapEntry('categories[]', params.categoryId.toString()));
 
     // ── Socials (array of objects) ─────────────────────────────────────────
     for (var i = 0; i < params.socials.length; i++) {
@@ -91,12 +88,12 @@ class StoreModel extends StoreEntity {
     }
 
     // ── Logo ───────────────────────────────────────────────────────────────
-    if (params.logoUrl != null) {
+    if (params.logo != null) {
       formData.files.add(MapEntry(
         'logo_url',
         await MultipartFile.fromFile(
-          params.logoUrl!.path,
-          filename: _filename(params.logoUrl!),
+          params.logo!.path,
+          filename: _filename(params.logo!),
         ),
       ));
     }

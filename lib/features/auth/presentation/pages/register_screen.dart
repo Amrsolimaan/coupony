@@ -105,6 +105,9 @@ class RegisterScreen extends HookWidget {
                 context.showErrorSnackBar(context.getLocalizedMessage(state.errorMessage));
               }
               if (state.successMessage != null && state.navSignal != AuthNavigation.none) {
+                // ✅ Capture current theme color explicitly
+                final primaryColor = Theme.of(context).primaryColor;
+                
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
@@ -112,6 +115,7 @@ class RegisterScreen extends HookWidget {
                   builder: (context) => AuthSuccessBottomSheet(
                     title: l10n.login_success_title,
                     buttonText: l10n.continue_button,
+                    primaryColor: primaryColor, // ✅ Explicit color injection
                     onContinue: () {
                       Navigator.of(context).pop();
                       switch (state.navSignal) {

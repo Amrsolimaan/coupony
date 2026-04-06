@@ -150,18 +150,24 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
       // Delete FCM token from Firebase (non-blocking)
       notificationService.deleteFCMToken();
 
-      // 1. Clear SecureStorage (tokens, userId, role, fcmToken)
-      await localDataSource.clearUser();
-
-      // 2. Clear SharedPreferences session flags (isGuest, onboardingCompleted)
+      // 1. Clear SharedPreferences session flags FIRST.
+      //    clearSessionFlags() needs the userId from SecureStorage to resolve
+      //    user-scoped keys — it MUST run before clearUser() deletes the userId.
       await localDataSource.clearSessionFlags();
 
-      // 3. Clear Hive: onboarding preferences box
+      // 2. Clear SecureStorage (tokens, userId, role, fcmToken)
+      await localDataSource.clearUser();
+
+      // 3. Clear Hive: customer onboarding preferences box.
       //    Without this, a second user logging in on the same device would
       //    inherit the previous user's cached preferences.
       await clearFeatureCache(StorageKeys.onboardingPreferencesBox);
 
-      // 4. Revoke Google OAuth grant so the account picker appears on the
+      // 4. Clear Hive: seller onboarding preferences box.
+      //    Explicitly wiped so seller data never leaks to another account.
+      await clearFeatureCache(StorageKeys.sellerOnboardingPreferencesBox);
+
+      // 5. Revoke Google OAuth grant so the account picker appears on the
       //    next Google Sign-In instead of silently reusing the cached session.
       await GoogleSignInService().signOut();
     }
@@ -251,12 +257,15 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
       final password = 'google_auth_${googleUserData['id']}';
 
       // ── Step 1: try login ──────────────────────────────────────────────────
+      // 🔧 FIX: For Google Sign-In, do NOT send role to backend.
+      // Backend determines role from existing user record.
+      // Sending role causes "Invalid Credentials" error.
       try {
         print('🔐 [REPOSITORY] Trying login for: $email');
         final user = await remoteDataSource.login(
           email: email,
           password: password,
-          role: role,
+          role: null,  // ✅ Google users: backend determines role from DB
         );
         print('✅ [REPOSITORY] Login succeeded');
         await _persistUserAndRegisterFcm(user);
@@ -296,6 +305,9 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
   /// Registers a new Google-authenticated user.
   /// If registration fails with "already registered" the account exists but is
   /// unverified, so we redirect to OTP instead of surfacing the error.
+  /// 
+  /// 🔧 FIX: For Google Sign-In, role is sent during registration (new user)
+  /// but NOT during login (existing user).
   Future<Either<Failure, UserEntity>> _registerGoogleUser({
     required String email,
     required String password,
@@ -305,6 +317,7 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
     required String phoneNumber,
   }) async {
     try {
+      // ✅ For NEW Google users, we DO send role during registration
       final user = await remoteDataSource.register(
         firstName: firstName,
         lastName: lastName,
@@ -312,7 +325,7 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
         phoneNumber: phoneNumber,
         password: password,
         passwordConfirmation: password,
-        role: role,
+        role: role,  // ✅ Role is needed for new user creation
       );
       print('✅ [REPOSITORY] Registration succeeded');
       if (user.accessToken == null) {

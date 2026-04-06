@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
@@ -31,6 +33,22 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // ── Google Maps API Key injection ──────────────────────────────────
+        // Priority: CI env var → android/local.properties → empty string.
+        // The key is referenced in AndroidManifest.xml as ${mapsApiKey}.
+        //
+        // For local development, the key is stored in android/local.properties
+        // (gitignored). For CI/CD, set MAPS_API_KEY_ANDROID as a secret env var.
+        val localProps = Properties()
+        rootProject.file("local.properties")
+            .takeIf { it.exists() }
+            ?.inputStream()
+            ?.use { localProps.load(it) }
+
+        manifestPlaceholders["mapsApiKey"] =
+            System.getenv("MAPS_API_KEY_ANDROID")
+                ?: localProps.getProperty("MAPS_API_KEY_ANDROID", "")
     }
 
     buildTypes {

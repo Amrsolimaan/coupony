@@ -16,7 +16,7 @@ abstract class AuthRemoteDataSource {
   Future<UserModel> login({
     required String email,
     required String password,
-    required String role,
+    required String? role,  // ✅ Nullable for Google Sign-In
   });
 
   /// POST /auth/register
@@ -91,18 +91,24 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<UserModel> login({
     required String email,
     required String password,
-    required String role,
+    required String? role,  // ✅ Nullable for Google Sign-In
   }) async {
     try {
-      logger.i('🔐 LOGIN REQUEST - Email: $email, Role: $role');
+      logger.i('🔐 LOGIN REQUEST - Email: $email, Role: ${role ?? "null (Google)"}');
+      
+      // 🔧 FIX: Only include role in request body if it's not null
+      // This ensures Google Sign-In doesn't send role to backend
+      final requestData = {
+        'email':    email,
+        'password': password,
+        if (role != null) 'role': role,  // ✅ Conditional inclusion
+      };
+      
+      logger.i('📤 REQUEST BODY: $requestData');
       
       final response = await client.post(
         ApiConstants.login,
-        data: {
-          'email':    email,
-          'password': password,
-          'role':     role,
-        },
+        data: requestData,
       );
       
       final data = response.data as Map<String, dynamic>? ?? {};

@@ -14,7 +14,8 @@ class ApiConstants {
 
   // ── Stores ────────────────────────────────────────────
   static const String createStore    = '/stores';
-  static const String getCategories  = '/categories';
+  static const String getCategories  = '/store-categories';
+  static const String getSocials     = '/socials';
 
   // ── Password Reset ─────────────────────────────────────
   static const String forgotPassword    = '/auth/password/forgot';

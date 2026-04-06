@@ -11,11 +11,15 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         
-        <!-- Google Maps API Key -->
-        <!-- TODO: Replace with your actual API Key from Google Cloud Console -->
+        <!-- Google Maps API Key                                                    -->
+        <!-- KEY IS MANAGED VIA ENVIRONMENT VARIABLE. Do not hardcode here.         -->
+        <!-- Android: build.gradle.kts reads MAPS_API_KEY_ANDROID from              -->
+        <!--   android/local.properties (local) or CI env var, then injects it      -->
+        <!--   here via manifestPlaceholders["mapsApiKey"].                          -->
+        <!-- Dart: AppConfig.googleMapsApiKey reads from dart-define at build time. -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBMtc18ot9J6w9fv6l-T-e1iC_R0yGHU_c" />
+            android:value="${mapsApiKey}" />
 
         <activity
             android:name=".MainActivity"

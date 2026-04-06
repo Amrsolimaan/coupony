@@ -14,6 +14,11 @@ class UserEntity extends Equatable {
   /// true = backend already has the user's onboarding preferences.
   final bool isOnboardingCompleted;
 
+  /// Populated from the login/OTP API response.
+  /// true  = seller has already submitted their store for review.
+  /// false = seller must complete store creation before accessing the dashboard.
+  final bool isStoreCreated;
+
   const UserEntity({
     required this.id,
     required this.firstName,
@@ -25,6 +30,7 @@ class UserEntity extends Equatable {
     this.refreshToken,
     this.fcmToken,
     this.isOnboardingCompleted = false,
+    this.isStoreCreated = false,
   });
 
   /// Full display name
@@ -34,6 +40,6 @@ class UserEntity extends Equatable {
   List<Object?> get props => [
     id, firstName, lastName, email, phoneNumber,
     role, accessToken, refreshToken, fcmToken,
-    isOnboardingCompleted,
+    isOnboardingCompleted, isStoreCreated,
   ];
 }

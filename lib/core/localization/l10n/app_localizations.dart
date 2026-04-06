@@ -1754,6 +1754,24 @@ abstract class AppLocalizations {
   /// **'Add Link'**
   String get create_store_add_social;
 
+  /// No description provided for @create_store_select_platform.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Platform'**
+  String get create_store_select_platform;
+
+  /// No description provided for @create_store_choose_platform.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a social platform'**
+  String get create_store_choose_platform;
+
+  /// No description provided for @create_store_no_platforms.
+  ///
+  /// In en, this message translates to:
+  /// **'No platforms available'**
+  String get create_store_no_platforms;
+
   /// No description provided for @create_store_social_id_hint.
   ///
   /// In en, this message translates to:
@@ -1826,6 +1844,60 @@ abstract class AppLocalizations {
   /// **'Location detected'**
   String get create_store_location_fetched;
 
+  /// No description provided for @create_store_map_search_placeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for store location'**
+  String get create_store_map_search_placeholder;
+
+  /// No description provided for @create_store_map_your_location.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Location'**
+  String get create_store_map_your_location;
+
+  /// No description provided for @create_store_map_confirm_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Location'**
+  String get create_store_map_confirm_button;
+
+  /// No description provided for @create_store_map_use_current.
+  ///
+  /// In en, this message translates to:
+  /// **'Use My Current Location'**
+  String get create_store_map_use_current;
+
+  /// No description provided for @create_store_map_no_results.
+  ///
+  /// In en, this message translates to:
+  /// **'No search results found'**
+  String get create_store_map_no_results;
+
+  /// No description provided for @create_store_map_search_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Search error, please try again'**
+  String get create_store_map_search_error;
+
+  /// No description provided for @create_store_map_voice_unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice search is unavailable'**
+  String get create_store_map_voice_unavailable;
+
+  /// No description provided for @create_store_map_tap_to_select.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag the map to select location'**
+  String get create_store_map_tap_to_select;
+
+  /// No description provided for @create_store_map_coordinates_format.
+  ///
+  /// In en, this message translates to:
+  /// **'Coordinates: {lat}, {lng}'**
+  String create_store_map_coordinates_format(Object lat, Object lng);
+
   /// No description provided for @error_create_store_location_denied.
   ///
   /// In en, this message translates to:
@@ -1843,6 +1915,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not determine location. Please try again.'**
   String get error_create_store_location_failed;
+
+  /// No description provided for @store_under_review_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your request is under review'**
+  String get store_under_review_title;
+
+  /// No description provided for @store_under_review_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your request is currently being reviewed, you will be notified upon completion'**
+  String get store_under_review_subtitle;
+
+  /// No description provided for @store_under_review_home_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get store_under_review_home_button;
+
+  /// No description provided for @store_under_review_contact_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Us'**
+  String get store_under_review_contact_button;
 }
 
 class _AppLocalizationsDelegate

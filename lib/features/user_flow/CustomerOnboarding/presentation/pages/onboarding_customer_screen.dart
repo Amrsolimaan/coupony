@@ -7,14 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class OnboardingCustomerScreen extends StatelessWidget {
-  const OnboardingCustomerScreen({super.key});
+class OnboardingScreen extends StatelessWidget {
+  const OnboardingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context);
     final isArabic = locale.languageCode == 'ar';
-    
+
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
@@ -25,11 +25,11 @@ class OnboardingCustomerScreen extends StatelessWidget {
               SizedBox(height: 100.h),
               // Title using localization with language-specific styling
               Text(
-                AppLocalizations.of(context)!.customerOnboardingTitle,
+                AppLocalizations.of(context)!.onboarding_intro_title,
                 textAlign: TextAlign.center,
-                style: isArabic 
-                  ? AppTextStyles.onboardingHeader
-                  : AppTextStyles.onboardingHeaderEnglish,
+                style: isArabic
+                    ? AppTextStyles.onboardingHeader
+                    : AppTextStyles.onboardingHeaderEnglish,
               ),
 
               // --- الرسم التوضيحي (Illustration) ---
@@ -38,7 +38,7 @@ class OnboardingCustomerScreen extends StatelessWidget {
               SizedBox(height: 24.h),
 
               // --- زر المتابعة ---
-              _buildContinueButton(context),
+              _buildContinueButton(context), // Pass context here
 
               SizedBox(height: 24.h),
             ],
@@ -59,7 +59,7 @@ class OnboardingCustomerScreen extends StatelessWidget {
 
   Widget _buildContinueButton(BuildContext context) {
     return AppPrimaryButton(
-      text: AppLocalizations.of(context)!.customerOnboardingSubTitle,
+      text: AppLocalizations.of(context)!.onboarding_intro_continue,
       onPressed: () {
         context.go(AppRouter.onboardingPreferences);
       },
