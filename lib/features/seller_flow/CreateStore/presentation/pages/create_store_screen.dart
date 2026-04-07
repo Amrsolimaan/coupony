@@ -1,12 +1,16 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coupony/config/routes/app_router.dart';
+import 'package:coupony/core/constants/api_constants.dart';
 import 'package:coupony/core/extensions/snackbar_extension.dart';
 import 'package:coupony/core/localization/l10n/app_localizations.dart';
 import 'package:coupony/core/theme/app_colors.dart';
 import 'package:coupony/core/theme/app_text_styles.dart';
 import 'package:coupony/core/widgets/buttons/app_primary_button.dart';
 import 'package:coupony/core/utils/message_formatter.dart';
+import 'package:coupony/features/auth/presentation/cubit/login_cubit.dart';
+import 'package:coupony/features/auth/presentation/cubit/auth_state.dart';
 import 'package:coupony/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:coupony/features/seller_flow/CreateStore/domain/entities/category_entity.dart';
 import 'package:coupony/features/seller_flow/CreateStore/domain/entities/social_link_entity.dart';
@@ -27,6 +31,35 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HELPER FUNCTIONS
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// بناء URL كامل للصورة من المسار النسبي أو الكامل
+String? _buildFullImageUrl(String? imageUrl) {
+  if (imageUrl == null || imageUrl.isEmpty) return null;
+  
+  // إذا كان URL كامل (يبدأ بـ http أو https)، استخدمه مباشرة
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl;
+  }
+  
+  // إذا كان مسار نسبي، أضف base URL
+  final baseUrl = ApiConstants.baseUrl.replaceAll('/api/v1', '');
+  
+  // إضافة /storage/ إذا لم يكن موجوداً
+  String cleanPath = imageUrl;
+  if (!cleanPath.startsWith('/storage/') && !cleanPath.startsWith('storage/')) {
+    cleanPath = '/storage/$cleanPath';
+  } else if (!cleanPath.startsWith('/')) {
+    cleanPath = '/$cleanPath';
+  }
+  
+  final fullUrl = '$baseUrl$cleanPath';
+  print('🔗 Social Icon URL: $imageUrl → $fullUrl');
+  return fullUrl;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CREATE STORE SCREEN
@@ -80,27 +113,39 @@ class CreateStoreScreen extends HookWidget {
         termsValue;
 
     // ── BlocListener for side-effects ──────────────────────────────────────
-    return BlocListener<CreateStoreCubit, CreateStoreState>(
-      listener: (context, state) {
-        if (state.navigationSignal == CreateStoreNavigation.toStoreUnderReview) {
-          context.read<CreateStoreCubit>().clearNavigationSignal();
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) context.go(AppRouter.storeUnderReview);
-          });
-        }
-        if (state.navigationSignal == CreateStoreNavigation.toMerchantDashboard) {
-          context.read<CreateStoreCubit>().clearNavigationSignal();
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) context.go(AppRouter.merchantDashboard);
-          });
-        }
-        if (state.errorKey != null) {
-          context.showErrorSnackBar(context.getLocalizedMessage(state.errorKey));
-        }
-        if (state.successKey != null) {
-          context.showSuccessSnackBar(context.getLocalizedMessage(state.successKey));
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<CreateStoreCubit, CreateStoreState>(
+          listener: (context, state) {
+            if (state.navigationSignal == CreateStoreNavigation.toStoreUnderReview) {
+              context.read<CreateStoreCubit>().clearNavigationSignal();
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (context.mounted) context.go(AppRouter.storeUnderReview);
+              });
+            }
+            if (state.navigationSignal == CreateStoreNavigation.toMerchantDashboard) {
+              context.read<CreateStoreCubit>().clearNavigationSignal();
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (context.mounted) context.go(AppRouter.merchantDashboard);
+              });
+            }
+            if (state.errorKey != null) {
+              context.showErrorSnackBar(context.getLocalizedMessage(state.errorKey));
+            }
+            if (state.successKey != null) {
+              context.showSuccessSnackBar(context.getLocalizedMessage(state.successKey));
+            }
+          },
+        ),
+        BlocListener<LoginCubit, AuthState>(
+          listenWhen: (previous, current) => 
+            previous.navSignal != current.navSignal && 
+            current.navSignal == AuthNavigation.toLogin,
+          listener: (context, state) {
+            context.go('/login');
+          },
+        ),
+      ],
       child: Scaffold(
         backgroundColor: AppColors.surface,
         body: GestureDetector(
@@ -317,26 +362,100 @@ class _TopBar extends StatelessWidget {
   final AppLocalizations l10n;
   const _TopBar({required this.l10n});
 
+  Future<void> _handleLogout(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        title: Text(
+          l10n.logout_dialog_title,
+          style: AppTextStyles.customStyle(
+            context,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: AppColors.primaryOfSeller,
+          ),
+        ),
+        content: Text(
+          l10n.logout_dialog_message,
+          style: AppTextStyles.customStyle(
+            context,
+            fontSize: 14,
+            color: AppColors.textSecondary,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(
+              l10n.logout_dialog_cancel,
+              style: AppTextStyles.customStyle(
+                context,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(
+              l10n.logout_dialog_confirm,
+              style: AppTextStyles.customStyle(
+                context,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.primaryOfSeller,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      context.read<LoginCubit>().logout();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Material(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(12.r),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(12.r),
-            onTap: () => context.pop(),
-            child: Padding(
-              padding: EdgeInsets.all(8.w),
-              child: Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 20.w,
-                color: AppColors.textPrimary,
+        BlocBuilder<LoginCubit, AuthState>(
+          builder: (context, state) {
+            if (state.isLoading) {
+              return Padding(
+                padding: EdgeInsets.all(12.w),
+                child: SizedBox(
+                  width: 24.w,
+                  height: 24.w,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    valueColor: AlwaysStoppedAnimation(AppColors.primaryOfSeller),
+                  ),
+                ),
+              );
+            }
+            
+            return Material(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(12.r),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12.r),
+                onTap: () => _handleLogout(context),
+                child: Padding(
+                  padding: EdgeInsets.all(8.w),
+                  child: Icon(
+                    Icons.logout_rounded,
+                    size: 20.w,
+                    color: AppColors.primaryOfSeller,
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ],
     );
@@ -892,18 +1011,27 @@ class _SocialLinksSection extends StatelessWidget {
                                           if (platform.iconUrl.isNotEmpty)
                                             ClipRRect(
                                               borderRadius: BorderRadius.circular(8.r),
-                                              child: Image.network(
-                                                platform.iconUrl,
+                                              child: CachedNetworkImage(
+                                                imageUrl: _buildFullImageUrl(platform.iconUrl) ?? '',
                                                 width: 40.w,
                                                 height: 40.w,
                                                 fit: BoxFit.contain,
-                                                // FIX: unnecessary_underscores
-                                                errorBuilder: (_, __, _) => Icon(
+                                                errorWidget: (context, url, error) => Icon(
                                                   Icons.link,
                                                   size: 40.w,
                                                   color: isSelected
                                                       ? Theme.of(context).primaryColor
                                                       : AppColors.textDisabled,
+                                                ),
+                                                placeholder: (context, url) => SizedBox(
+                                                  width: 40.w,
+                                                  height: 40.w,
+                                                  child: Center(
+                                                    child: CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                      color: Theme.of(context).primaryColor,
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             )
@@ -1142,15 +1270,23 @@ class _SocialLinkTile extends StatelessWidget {
           child: Row(
             children: [
               if (platform.iconUrl.isNotEmpty)
-                Image.network(
-                  platform.iconUrl,
+                CachedNetworkImage(
+                  imageUrl: _buildFullImageUrl(platform.iconUrl) ?? '',
                   width: 20.w,
                   height: 20.w,
-                  // FIX: unnecessary_underscores
-                  errorBuilder: (_, __, _) => Icon(
+                  fit: BoxFit.contain,
+                  errorWidget: (context, url, error) => Icon(
                     Icons.link,
                     size: 20.w,
                     color: Theme.of(context).primaryColor,
+                  ),
+                  placeholder: (context, url) => SizedBox(
+                    width: 20.w,
+                    height: 20.w,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 1.5,
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ),
                 )
               else

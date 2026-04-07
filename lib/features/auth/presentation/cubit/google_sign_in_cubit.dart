@@ -62,20 +62,17 @@ class GoogleSignInCubit extends Cubit<AuthState> {
           logger.i('✅ [CUBIT] Google Sign-In successful for: ${user.email}');
           logger.d("Google Sign-In Success - User: ${user.email}, Onboarding: ${user.isOnboardingCompleted}");
           
-          // Determine navigation based on role and onboarding status
           final AuthNavigation navigation;
           if (user.role == 'seller') {
-            // Sellers: check if onboarding is completed
             navigation = user.isOnboardingCompleted
-                ? AuthNavigation.toMerchantDash
+                ? AuthNavigation.toSellerLanding
                 : AuthNavigation.toSellerOnboarding;
-            logger.d("Seller - navigating to ${user.isOnboardingCompleted ? 'merchant dashboard' : 'seller onboarding'}");
+            logger.d('Seller nav signal: $navigation');
           } else {
-            // Customers: check if onboarding is completed
             navigation = user.isOnboardingCompleted
                 ? AuthNavigation.toHome
                 : AuthNavigation.toOnboarding;
-            logger.d("Customer - navigating to ${user.isOnboardingCompleted ? 'home' : 'customer onboarding'}");
+            logger.d('Customer nav signal: $navigation');
           }
 
           _safeEmit(state.copyWith(

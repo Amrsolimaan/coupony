@@ -242,29 +242,22 @@ class OtpCubit extends Cubit<AuthState> {
         ));
       },
       (user) {
-        logger.i('🎯 OTP VERIFICATION SUCCESS:');
-        logger.i('  - User role: ${user.role}');
-        logger.i('  - Onboarding completed: ${user.isOnboardingCompleted}');
-        logger.i('  - Store created: ${user.isStoreCreated}');
-        logger.i('  - User email: ${user.email}');
+        logger.i('🎯 OTP VERIFICATION SUCCESS — role: ${user.role}, onboarding: ${user.isOnboardingCompleted}');
 
-        // Determine navigation based on role and onboarding/store status
         final AuthNavigation nav;
         if (user.role == 'seller') {
-          if (!user.isOnboardingCompleted) {
-            nav = AuthNavigation.toSellerOnboarding;
-          } else if (!user.isStoreCreated) {
-            nav = AuthNavigation.toCreateStore;
-          } else {
-            nav = AuthNavigation.toMerchantDash;
-          }
-          logger.i('  - Navigation for SELLER: $nav');
+          // Delegate all seller routing to SellerRoutingResolver in the UI
+          // listener — it reads user.stores (fresh from API) and applies the
+          // 4-scenario decision engine.
+          nav = user.isOnboardingCompleted
+              ? AuthNavigation.toSellerLanding
+              : AuthNavigation.toSellerOnboarding;
+          logger.i('  - Seller nav signal: $nav');
         } else {
-          // Customers: check if onboarding is completed
           nav = user.isOnboardingCompleted
               ? AuthNavigation.toHome
               : AuthNavigation.toOnboarding;
-          logger.i('  - Navigation for CUSTOMER: $nav');
+          logger.i('  - Customer nav signal: $nav');
         }
 
         _safeEmit(state.copyWith(

@@ -5,15 +5,18 @@ import '../../domain/entities/user_entity.dart';
 // NAVIGATION SIGNALS
 // ════════════════════════════════════════════════════════
 
-/// Navigation signals emitted by auth cubits
+/// Navigation signals emitted by auth cubits.
 /// UI listens via BlocConsumer.listener and calls context.go(...)
 enum AuthNavigation {
   none,
-  toHome,             // Authenticated + onboarding already done → user home
-  toOnboarding,       // Authenticated + onboarding NOT yet done → customer onboarding wizard
-  toSellerOnboarding, // Authenticated seller → seller onboarding wizard
-  toMerchantDash,     // Seller with completed onboarding → merchant dashboard
-  toCreateStore,      // Seller with completed onboarding but no store yet → create store screen
+  toHome,             // Authenticated customer → user home
+  toOnboarding,       // Authenticated customer, onboarding pending
+  toSellerOnboarding, // Seller, onboarding pending
+  /// Seller, onboarding complete → delegate to [SellerRoutingResolver].
+  /// Replaces the old toCreateStore / toMerchantDash signals.
+  toSellerLanding,
+  toMerchantDash,     // @deprecated — kept for backwards compat; no longer emitted
+  toCreateStore,      // @deprecated — kept for backwards compat; no longer emitted
   toOtpVerification,  // After register → OTP screen
   toResetPassword,    // OTP verified (forgotPassword mode) → reset password screen
   toLogin,            // After logout or session expiry

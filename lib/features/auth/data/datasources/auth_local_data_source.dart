@@ -4,6 +4,7 @@ import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/storage/secure_storage_service.dart';
 import '../models/user_model.dart';
+import '../models/user_store_model.dart';
 
 abstract class AuthLocalDataSource {
   Future<void> cacheUser(UserModel user);
@@ -13,32 +14,36 @@ abstract class AuthLocalDataSource {
   Future<String?> getRefreshToken();
 
   /// Returns the currently authenticated user's ID from secure storage.
-  /// Used by other data sources (e.g. onboarding) to scope their cache keys.
+  /// Used by other data sources to scope their cache keys.
   Future<String?> getUserId();
 
   /// Persist whether the user is browsing as a guest.
-  /// Stored in SharedPreferences (non-sensitive plain flag).
   Future<void> cacheGuestStatus(bool isGuest);
-
-  /// Returns [true] if the user has explicitly entered as a guest.
   Future<bool> getGuestStatus();
 
-  /// Persist the onboarding-completed flag received from the backend.
-  /// Stored under a user-specific key to prevent leakage between accounts.
-  /// Written after a successful POST /api/v1/on-boarding/{role} call.
+  /// Persist the onboarding-completed flag from the backend.
   Future<void> cacheOnboardingCompleted(bool completed);
-
-  /// Returns [true] if the backend has previously acknowledged this user's
-  /// onboarding preferences (i.e., the flag was cached after a 200 OK).
   Future<bool> getOnboardingCompleted();
 
-  /// Persist whether the seller has created their store.
-  /// Stored under a user-specific key to prevent leakage between accounts.
-  /// Written after a successful POST /api/v1/stores call.
+  /// Persist whether the seller has created their store (legacy bool flag).
   Future<void> cacheStoreCreated(bool created);
-
-  /// Returns [true] if the seller has already submitted a store for review.
   Future<bool> getStoreCreated();
+
+  // ── Multi-store support ──────────────────────────────────────────────────
+
+  /// Cache the full stores list returned by the login / OTP API response.
+  /// Stored as a JSON string under a user-scoped SharedPreferences key.
+  Future<void> cacheStores(List<UserStoreModel> stores);
+
+  /// Returns the cached stores list. Returns [] when none are cached.
+  Future<List<UserStoreModel>> getCachedStores();
+
+  /// Persist the selected store ID to SecureStorage so the merchant
+  /// dashboard can scope its API calls to the correct store on resume.
+  Future<void> saveSelectedStoreId(String id);
+
+  /// Returns the seller's currently selected store ID, or null if not set.
+  Future<String?> getSelectedStoreId();
 
   /// Wipe ALL non-secure session flags from SharedPreferences.
   /// MUST be called BEFORE [clearUser] during logout so the userId is still
@@ -57,14 +62,8 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   // ── Key helpers ──────────────────────────────────────────────────────────
 
-  /// Centralised user-scoped key builder. All per-user SharedPreferences
-  /// flags MUST be stored under this key to prevent data leakage between
-  /// different accounts on the same device.
   String _getUserKey(String baseKey, String userId) => '${userId}_$baseKey';
 
-  /// Reads the current userId from SecureStorage.
-  /// Throws [CacheException] when no authenticated user is present so callers
-  /// fail loudly rather than silently writing to the wrong key.
   Future<String> _requireUserId() async {
     final id = await secureStorage.read(StorageKeys.userId);
     if (id == null) {
@@ -75,50 +74,34 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     return id;
   }
 
+  // ── cacheUser ────────────────────────────────────────────────────────────
+
   @override
   Future<void> cacheUser(UserModel user) async {
     try {
-      print('💾 AuthLocalDataSource.cacheUser - Starting cache for user:');
-      print('  - ID: ${user.id}');
-      print('  - Email: ${user.email}');
-      print('  - Role: ${user.role}');
-      print('  - isOnboardingCompleted: ${user.isOnboardingCompleted}');
-      print('  - Has Access Token: ${user.accessToken != null}');
-      
-      if (user.accessToken != null) {
-        await secureStorage.write(StorageKeys.authToken, user.accessToken!);
-        print('✅ Access token cached');
-      }
-      if (user.refreshToken != null) {
-        await secureStorage.write(StorageKeys.refreshToken, user.refreshToken!);
-        print('✅ Refresh token cached');
-      }
-      if (user.fcmToken != null) {
-        await secureStorage.write(StorageKeys.fcmToken, user.fcmToken!);
-        print('✅ FCM token cached');
-      }
-      // Use email as the stable unique scope key.
-      // The backend returns UUIDs so user.id is always 0 in UserModel.fromJson.
-      // Email is unique per account and prevents cache leakage between accounts
-      // on the same device.
+      print('💾 AuthLocalDataSource.cacheUser — email: ${user.email} role: ${user.role} stores: ${user.stores.length}');
+
+      if (user.accessToken  != null) await secureStorage.write(StorageKeys.authToken,    user.accessToken!);
+      if (user.refreshToken != null) await secureStorage.write(StorageKeys.refreshToken, user.refreshToken!);
+      if (user.fcmToken     != null) await secureStorage.write(StorageKeys.fcmToken,     user.fcmToken!);
+
       final scopedId = user.email.isNotEmpty ? user.email : user.id.toString();
-      await secureStorage.write(StorageKeys.userId, scopedId);
+      await secureStorage.write(StorageKeys.userId,   scopedId);
       await secureStorage.write(StorageKeys.userRole, user.role);
 
-      // Sync onboarding and store-created flags from the backend response so
-      // the Splash routing decision is always based on the server's source of truth,
-      // not stale local state from a previous session.
-      print('💾 Syncing onboarding status from backend: ${user.isOnboardingCompleted}');
+      // Sync flags from the backend source of truth
       await cacheOnboardingCompleted(user.isOnboardingCompleted);
-      print('💾 Syncing store-created status from backend: ${user.isStoreCreated}');
       await cacheStoreCreated(user.isStoreCreated);
+      await cacheStores(user.stores);
 
-      print('✅ AuthLocalDataSource.cacheUser - All data cached successfully');
+      print('✅ AuthLocalDataSource.cacheUser — all data cached');
     } catch (e) {
-      print('❌ AuthLocalDataSource.cacheUser - Error: $e');
+      print('❌ AuthLocalDataSource.cacheUser — $e');
       throw CacheException('Failed to cache user: ${e.toString()}');
     }
   }
+
+  // ── getCachedUser ────────────────────────────────────────────────────────
 
   @override
   Future<UserModel?> getCachedUser() async {
@@ -130,20 +113,22 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       if (accessToken == null || userId == null) return null;
 
       return UserModel(
-        id:           int.tryParse(userId) ?? 0,
-        firstName:    '',
-        lastName:     '',
-        email:        '',
-        phoneNumber:  '',
-        role:         role ?? 'user',
-        accessToken:  accessToken,
+        id:          int.tryParse(userId) ?? 0,
+        firstName:   '',
+        lastName:    '',
+        email:       '',
+        phoneNumber: '',
+        role:        role ?? 'user',
+        accessToken: accessToken,
         refreshToken: await secureStorage.read(StorageKeys.refreshToken),
-        fcmToken:     await secureStorage.read(StorageKeys.fcmToken),
+        fcmToken:    await secureStorage.read(StorageKeys.fcmToken),
       );
     } catch (_) {
       return null;
     }
   }
+
+  // ── clearUser ────────────────────────────────────────────────────────────
 
   @override
   Future<void> clearUser() async {
@@ -152,7 +137,10 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     await secureStorage.delete(StorageKeys.userId);
     await secureStorage.delete(StorageKeys.userRole);
     await secureStorage.delete(StorageKeys.fcmToken);
+    await secureStorage.delete(StorageKeys.selectedStoreId);
   }
+
+  // ── Token getters ────────────────────────────────────────────────────────
 
   @override
   Future<String?> getAccessToken() => secureStorage.read(StorageKeys.authToken);
@@ -163,19 +151,17 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<String?> getUserId() => secureStorage.read(StorageKeys.userId);
 
-  @override
-  Future<void> cacheGuestStatus(bool isGuest) async {
-    await sharedPrefs.setBool(StorageKeys.isGuest, isGuest);
-  }
+  // ── Guest flag ───────────────────────────────────────────────────────────
 
   @override
-  Future<bool> getGuestStatus() async {
-    return sharedPrefs.getBool(StorageKeys.isGuest) ?? false;
-  }
+  Future<void> cacheGuestStatus(bool isGuest) async =>
+      sharedPrefs.setBool(StorageKeys.isGuest, isGuest);
+
+  @override
+  Future<bool> getGuestStatus() async =>
+      sharedPrefs.getBool(StorageKeys.isGuest) ?? false;
 
   // ── Per-user session flags ───────────────────────────────────────────────
-  // Each flag is stored under "${userId}_<baseKey>" so that a second user
-  // logging in on the same device never inherits a previous user's state.
 
   @override
   Future<void> cacheOnboardingCompleted(bool completed) async {
@@ -213,11 +199,42 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
         false;
   }
 
-  /// Clears all session flags for the current user.
-  ///
-  /// IMPORTANT: This MUST be called BEFORE [clearUser] during logout because
-  /// it needs the userId from SecureStorage to resolve user-scoped keys.
-  /// Also removes any legacy flat keys left over from a previous app version.
+  // ── Multi-store support ──────────────────────────────────────────────────
+
+  @override
+  Future<void> cacheStores(List<UserStoreModel> stores) async {
+    final userId = await _requireUserId();
+    final key    = _getUserKey(StorageKeys.cachedStoresKey, userId);
+    await sharedPrefs.setString(key, UserStoreModel.encodeList(stores));
+    print('💾 cacheStores — stored ${stores.length} store(s) under key "$key"');
+  }
+
+  @override
+  Future<List<UserStoreModel>> getCachedStores() async {
+    try {
+      final userId = await _requireUserId();
+      final json   = sharedPrefs.getString(
+        _getUserKey(StorageKeys.cachedStoresKey, userId),
+      );
+      if (json == null) return [];
+      return UserStoreModel.decodeList(json);
+    } catch (_) {
+      return [];
+    }
+  }
+
+  @override
+  Future<void> saveSelectedStoreId(String id) async {
+    await secureStorage.write(StorageKeys.selectedStoreId, id);
+    print('💾 saveSelectedStoreId — $id');
+  }
+
+  @override
+  Future<String?> getSelectedStoreId() =>
+      secureStorage.read(StorageKeys.selectedStoreId);
+
+  // ── clearSessionFlags ────────────────────────────────────────────────────
+
   @override
   Future<void> clearSessionFlags() async {
     final userId = await secureStorage.read(StorageKeys.userId);
@@ -225,15 +242,12 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     await sharedPrefs.remove(StorageKeys.isGuest);
 
     if (userId != null) {
-      await sharedPrefs.remove(
-        _getUserKey(StorageKeys.onboardingCompletedKey, userId),
-      );
-      await sharedPrefs.remove(
-        _getUserKey(StorageKeys.storeCreatedKey, userId),
-      );
+      await sharedPrefs.remove(_getUserKey(StorageKeys.onboardingCompletedKey, userId));
+      await sharedPrefs.remove(_getUserKey(StorageKeys.storeCreatedKey, userId));
+      await sharedPrefs.remove(_getUserKey(StorageKeys.cachedStoresKey, userId));
     }
 
-    // Remove legacy flat keys so old data from pre-refactor builds is cleaned.
+    // Remove legacy flat keys from pre-refactor builds.
     await sharedPrefs.remove(StorageKeys.onboardingCompletedKey);
     await sharedPrefs.remove(StorageKeys.storeCreatedKey);
   }

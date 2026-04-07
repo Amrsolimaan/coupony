@@ -11,11 +11,16 @@ class SocialPlatformModel extends SocialPlatformEntity {
   });
 
   factory SocialPlatformModel.fromJson(Map<String, dynamic> json) {
+    // الباك إند يرسل icon و icon_url
+    // icon يحتوي على URL صحيح
+    // icon_url قد يحتوي على URL مكرر، لذلك نستخدم icon
+    final iconValue = json['icon'] as String? ?? '';
+    
     return SocialPlatformModel(
       id: json['id'] as int? ?? 0,
       name: json['name'] as String? ?? '',
-      icon: json['icon'] as String? ?? '',
-      iconUrl: json['icon'] as String? ?? '',
+      icon: iconValue,
+      iconUrl: iconValue, // استخدام icon بدلاً من icon_url لتجنب التكرار
     );
   }
 

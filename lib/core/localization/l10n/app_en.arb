@@ -337,5 +337,22 @@
   "store_under_review_title": "Your request is under review",
   "store_under_review_subtitle": "Your request is currently being reviewed, you will be notified upon completion",
   "store_under_review_home_button": "Home",
-  "store_under_review_contact_button": "Contact Us"
+  "store_under_review_contact_button": "Contact Us",
+  "store_under_review_whatsapp_button": "Chat on WhatsApp",
+  "store_under_review_email_button": "Send us an Email",
+
+  "under_review_title": "Your Store is Under Review",
+  "under_review_body": "Our team is reviewing your information. You'll receive a notification once your store is approved.",
+  "contact_support": "Contact Support",
+
+  "select_store": "Select Your Store",
+  "select_store_subtitle": "Choose the store you'd like to manage",
+  "select_store_active_badge": "Active",
+
+  "logout": "Logout",
+  "logout_dialog_title": "Logout",
+  "logout_dialog_message": "Are you sure you want to logout?",
+  "logout_dialog_cancel": "Cancel",
+  "logout_dialog_confirm": "Logout",
+  "logout_success": "Logged out successfully"
 }

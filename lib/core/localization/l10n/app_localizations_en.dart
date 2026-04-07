@@ -1022,4 +1022,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get store_under_review_contact_button => 'Contact Us';
+
+  @override
+  String get store_under_review_whatsapp_button => 'Chat on WhatsApp';
+
+  @override
+  String get store_under_review_email_button => 'Send us an Email';
+
+  @override
+  String get under_review_title => 'Your Store is Under Review';
+
+  @override
+  String get under_review_body =>
+      'Our team is reviewing your information. You\'ll receive a notification once your store is approved.';
+
+  @override
+  String get contact_support => 'Contact Support';
+
+  @override
+  String get select_store => 'Select Your Store';
+
+  @override
+  String get select_store_subtitle => 'Choose the store you\'d like to manage';
+
+  @override
+  String get select_store_active_badge => 'Active';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get logout_dialog_title => 'Logout';
+
+  @override
+  String get logout_dialog_message => 'Are you sure you want to logout?';
+
+  @override
+  String get logout_dialog_cancel => 'Cancel';
+
+  @override
+  String get logout_dialog_confirm => 'Logout';
+
+  @override
+  String get logout_success => 'Logged out successfully';
 }

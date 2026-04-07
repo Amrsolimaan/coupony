@@ -243,122 +243,35 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
     if (!isConnected) return const Left(NetworkFailure('error_no_internet'));
 
     try {
-      final googleUserData = await GoogleSignInService()
-          .signInWithGoogleAndGetUserData();
+      // ── Step 1: Get idToken from Google ────────────────────────────────────
+      final idToken = await GoogleSignInService()
+          .signInWithGoogleAndGetIdToken();
 
-      if (googleUserData == null) {
+      if (idToken == null) {
         print('❌ [REPOSITORY] Google Sign-In was cancelled');
         return const Left(UnexpectedFailure('login_google_cancelled'));
       }
 
-      print('✅ [REPOSITORY] Got Google user data: ${googleUserData['email']}');
+      print('✅ [REPOSITORY] Got Google ID token');
 
-      final email = googleUserData['email']!;
-      final password = 'google_auth_${googleUserData['id']}';
+      // ── Step 2: Send idToken to backend ────────────────────────────────────
+      print('🔐 [REPOSITORY] Calling /auth/google endpoint...');
+      final user = await remoteDataSource.googleSignIn(
+        idToken: idToken,
+        role: role,
+      );
+      
+      print('✅ [REPOSITORY] Google authentication succeeded');
+      await _persistUserAndRegisterFcm(user);
+      return Right(user);
 
-      // ── Step 1: try login ──────────────────────────────────────────────────
-      // 🔧 FIX: For Google Sign-In, do NOT send role to backend.
-      // Backend determines role from existing user record.
-      // Sending role causes "Invalid Credentials" error.
-      try {
-        print('🔐 [REPOSITORY] Trying login for: $email');
-        final user = await remoteDataSource.login(
-          email: email,
-          password: password,
-          role: null,  // ✅ Google users: backend determines role from DB
-        );
-        print('✅ [REPOSITORY] Login succeeded');
-        await _persistUserAndRegisterFcm(user);
-        return Right(user);
-      } catch (loginError) {
-        final msg = _exceptionMessage(loginError).toLowerCase();
-        print('⚠️ [REPOSITORY] Login failed — "$msg"');
-
-        // Account exists but email is not yet verified → go to OTP
-        if (_isUnverifiedError(msg)) {
-          print('🔐 [REPOSITORY] Account unverified → OTP required');
-          return Left(OtpRequiredFailure(email: email, password: password));
-        }
-
-        // Account not found → attempt registration
-        if (_isNotFoundError(msg)) {
-          print('🔐 [REPOSITORY] Account not found → attempting registration');
-          return await _registerGoogleUser(
-            email: email,
-            password: password,
-            role: role,
-            firstName: googleUserData['firstName'] ?? 'مستخدم',
-            lastName: googleUserData['lastName'] ?? 'جديد',
-            phoneNumber: googleUserData['phoneNumber'] ?? '+1234567890',
-          );
-        }
-
-        // Any other login error → surface it
-        return Left(_mapException(loginError));
-      }
     } catch (e, st) {
       print('❌ [REPOSITORY] Unexpected error in googleSignIn: $e\n$st');
       return Left(_mapException(e));
     }
   }
 
-  /// Registers a new Google-authenticated user.
-  /// If registration fails with "already registered" the account exists but is
-  /// unverified, so we redirect to OTP instead of surfacing the error.
-  /// 
-  /// 🔧 FIX: For Google Sign-In, role is sent during registration (new user)
-  /// but NOT during login (existing user).
-  Future<Either<Failure, UserEntity>> _registerGoogleUser({
-    required String email,
-    required String password,
-    required String role,
-    required String firstName,
-    required String lastName,
-    required String phoneNumber,
-  }) async {
-    try {
-      // ✅ For NEW Google users, we DO send role during registration
-      final user = await remoteDataSource.register(
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        phoneNumber: phoneNumber,
-        password: password,
-        passwordConfirmation: password,
-        role: role,  // ✅ Role is needed for new user creation
-      );
-      print('✅ [REPOSITORY] Registration succeeded');
-      if (user.accessToken == null) {
-        print('🔐 [REPOSITORY] No token received -> OTP Verification required');
-        return Left(OtpRequiredFailure(email: email, password: password));
-      }
-      await _persistUserAndRegisterFcm(user);
-      return Right(user);
-    } catch (registerError) {
-      final msg = _exceptionMessage(registerError).toLowerCase();
-      print('⚠️ [REPOSITORY] Registration failed — "$msg"');
-
-      // Email already exists but is unverified → go to OTP
-      if (_isAlreadyRegisteredError(msg)) {
-        print('🔐 [REPOSITORY] Email exists (unverified) → OTP required');
-        return Left(OtpRequiredFailure(email: email, password: password));
-      }
-
-      return Left(_mapException(registerError));
-    }
-  }
-
   // ── Error-message helpers ────────────────────────────────────────────────
-
-  /// Extracts the human-readable message from an exception thrown by the
-  /// remote data source.
-  String _exceptionMessage(Object error) {
-    if (error is ServerException) return error.message;
-    if (error is InvalidTokenException) return error.message;
-    if (error is UnauthorizedException) return error.message;
-    if (error is NetworkException) return error.message;
-    return error.toString();
-  }
 
   /// Maps a data-source exception to the corresponding [Failure] type.
   Failure _mapException(Object error) {
@@ -372,25 +285,6 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
     if (error is CacheException) return CacheFailure(error.message);
     return UnexpectedFailure(error.toString());
   }
-
-  bool _isUnverifiedError(String msg) =>
-      msg.contains('not verified') ||
-      msg.contains('unverified') ||
-      msg.contains('not activated') ||
-      msg.contains('verification code has been sent');
-
-  bool _isNotFoundError(String msg) =>
-      msg.contains('not found') ||
-      msg.contains('no account') ||
-      msg.contains('invalid credentials') ||
-      msg.contains('wrong credentials') ||
-      msg.contains('selected email is invalid');
-
-  bool _isAlreadyRegisteredError(String msg) =>
-      msg.contains('already registered') ||
-      msg.contains('already taken') ||
-      msg.contains('already exists') ||
-      msg.contains('email taken');
 
   // ════════════════════════════════════════════════════════
   // PRIVATE HELPERS

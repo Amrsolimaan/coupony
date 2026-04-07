@@ -6,6 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../config/dependency_injection/injection_container.dart' as di;
 import '../../../../config/routes/app_router.dart';
 import '../../../../core/localization/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -13,8 +14,10 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/message_formatter.dart';
 import '../../../../core/widgets/buttons/app_primary_button.dart';
 import '../../../../core/extensions/snackbar_extension.dart';
+import '../../data/datasources/auth_local_data_source.dart';
 import '../cubit/auth_state.dart';
 import '../cubit/otp_cubit.dart';
+import '../utils/seller_routing_resolver.dart';
 import '../widgets/auth_success_bottom_sheet.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -163,33 +166,33 @@ class OtpScreen extends HookWidget {
         if (state.navSignal == AuthNavigation.toHome ||
             state.navSignal == AuthNavigation.toOnboarding ||
             state.navSignal == AuthNavigation.toSellerOnboarding ||
-            state.navSignal == AuthNavigation.toMerchantDash ||
-            state.navSignal == AuthNavigation.toCreateStore) {
+            state.navSignal == AuthNavigation.toSellerLanding) {
           HapticFeedback.mediumImpact();
 
-          // Capture the navigation signal before clearing
-          final targetNav = state.navSignal;
-
-          // 🔍 Debug logging
-          print('🎯 OTP Screen - Navigation Signal Received: $targetNav');
-          print('🎯 OTP Screen - User Role: ${state.user?.role}');
-          print('🎯 OTP Screen - Onboarding Completed: ${state.user?.isOnboardingCompleted}');
-          print('🎯 OTP Screen - Store Created: ${state.user?.isStoreCreated}');
+          // Capture before async/builder boundary to prevent use-after-dispose
+          final targetNav  = state.navSignal;
+          final targetUser = state.user;
 
           _showSuccessModal(context, l10n, onContinue: () {
-            Navigator.of(context).pop(); // Close bottom sheet first
-            context.read<OtpCubit>().clearNavSignal(); // Clear signal
+            Navigator.of(context).pop();
+            context.read<OtpCubit>().clearNavSignal();
 
-            final route = switch (targetNav) {
-              AuthNavigation.toMerchantDash      => AppRouter.merchantDashboard,
-              AuthNavigation.toSellerOnboarding  => AppRouter.sellerOnboarding,
-              AuthNavigation.toCreateStore       => AppRouter.createStore,
-              AuthNavigation.toOnboarding        => AppRouter.onboarding,
-              _                                  => AppRouter.home,
-            };
-
-            print('🎯 OTP Screen - Navigating to route: $route');
-            context.go(route);
+            switch (targetNav) {
+              case AuthNavigation.toSellerLanding:
+                if (targetUser != null) {
+                  SellerRoutingResolver.resolveForUser(
+                    context:     context,
+                    user:        targetUser,
+                    authLocalDs: di.sl<AuthLocalDataSource>(),
+                  );
+                }
+              case AuthNavigation.toSellerOnboarding:
+                context.go(AppRouter.sellerOnboarding);
+              case AuthNavigation.toOnboarding:
+                context.go(AppRouter.onboarding);
+              default:
+                context.go(AppRouter.home);
+            }
           });
         }
 

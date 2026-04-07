@@ -33,6 +33,12 @@ abstract class AuthRemoteDataSource {
   /// POST /auth/otp/send  body: { email }
   Future<void> sendOtp({required String email});
 
+  /// POST /auth/google  body: { id_token, role }
+  Future<UserModel> googleSignIn({
+    required String idToken,
+    required String role,
+  });
+
   /// POST /auth/otp/verify  body: { email, code, purpose: verify_email }
   Future<UserModel> verifyOtp({
     required String email,
@@ -86,6 +92,44 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   // ══════════════════════════════════════════════════════════════════════════
   // AUTH OPERATIONS
   // ══════════════════════════════════════════════════════════════════════════
+
+  @override
+  Future<UserModel> googleSignIn({
+    required String idToken,
+    required String role,
+  }) async {
+    try {
+      logger.i('🔐 GOOGLE AUTH REQUEST - Role: $role');
+      logger.i('📤 ID Token (first 20 chars): ${idToken.substring(0, 20)}...');
+      
+      final response = await client.post(
+        ApiConstants.googleAuth,
+        data: {
+          'id_token': idToken,
+          'role': role,
+        },
+      );
+      
+      final data = response.data as Map<String, dynamic>? ?? {};
+      
+      logger.i('📥 GOOGLE AUTH RESPONSE - Full Response:');
+      logger.i('Raw Response Data: $data');
+      
+      final nestedData = data['data'] as Map<String, dynamic>? ?? data;
+      logger.i('Nested Data: $nestedData');
+      
+      final userModel = UserModel.fromJson(data);
+      logger.i('✅ UserModel created - Email: ${userModel.email}, Role: ${userModel.role}');
+      
+      return userModel;
+    } on DioException catch (e) {
+      logger.e('❌ GOOGLE AUTH ERROR - DioException: ${e.response?.statusCode} - ${e.response?.data}');
+      _rethrowAs422Or(e);
+    } catch (e) {
+      logger.e('❌ GOOGLE AUTH ERROR - General Exception: $e');
+      throw ServerException(e.toString());
+    }
+  }
 
   @override
   Future<UserModel> login({
@@ -402,15 +446,31 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   // ══════════════════════════════════════════════════════════════════════════
 
   /// Rethrows DioException based on status code:
+  /// - Re-throws any exception already wrapped by ErrorInterceptor in e.error
   /// - 422 with token-related message → InvalidTokenException
-  /// - Other 422 errors are already handled by ErrorInterceptor as ValidationException
   /// - Other errors → ServerException
   Never _rethrowAs422Or(DioException e) {
-    // Check if ErrorInterceptor already wrapped this as ValidationException
+    // ✅ 1. Re-throw ValidationException (422 validation errors)
     if (e.error is ValidationException) {
       throw e.error as ValidationException;
     }
     
+    // ✅ 2. Re-throw UnauthorizedException (401 errors)
+    if (e.error is UnauthorizedException) {
+      throw e.error as UnauthorizedException;
+    }
+    
+    // ✅ 3. Re-throw NotFoundException (404 errors)
+    if (e.error is NotFoundException) {
+      throw e.error as NotFoundException;
+    }
+    
+    // ✅ 4. Re-throw ServerException (500+, timeouts, connection errors)
+    if (e.error is ServerException) {
+      throw e.error as ServerException;
+    }
+    
+    // ✅ 5. Only extract message from response if no error was set by interceptor
     final data = e.response?.data;
     String backendMessage(String fallback) {
       if (data is Map<String, dynamic>) {

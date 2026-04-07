@@ -69,20 +69,17 @@ class LoginCubit extends Cubit<AuthState> {
         ));
       },
       (user) {
-        logger.i('Login successful — role: ${user.role}, onboardingCompleted: ${user.isOnboardingCompleted}, storeCreated: ${user.isStoreCreated}');
+        logger.i('Login successful — role: ${user.role}, onboardingCompleted: ${user.isOnboardingCompleted}');
 
-        // Determine navigation based on role and onboarding/store status
         final AuthNavigation nav;
         if (user.role == 'seller') {
-          if (!user.isOnboardingCompleted) {
-            nav = AuthNavigation.toSellerOnboarding;
-          } else if (!user.isStoreCreated) {
-            nav = AuthNavigation.toCreateStore;
-          } else {
-            nav = AuthNavigation.toMerchantDash;
-          }
+          // Delegate all seller post-login routing to SellerRoutingResolver.
+          // The resolver reads user.stores (fresh from API) and applies the
+          // 4-scenario logic — no hardcoded routes here.
+          nav = user.isOnboardingCompleted
+              ? AuthNavigation.toSellerLanding
+              : AuthNavigation.toSellerOnboarding;
         } else {
-          // Customers: check if onboarding is completed
           nav = user.isOnboardingCompleted
               ? AuthNavigation.toHome
               : AuthNavigation.toOnboarding;

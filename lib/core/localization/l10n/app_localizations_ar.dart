@@ -1002,4 +1002,47 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get store_under_review_contact_button => 'تواصل معنا';
+
+  @override
+  String get store_under_review_whatsapp_button => 'تواصل عبر واتساب';
+
+  @override
+  String get store_under_review_email_button => 'راسلنا على البريد';
+
+  @override
+  String get under_review_title => 'متجرك قيد المراجعة';
+
+  @override
+  String get under_review_body =>
+      'فريقنا يراجع معلوماتك حاليًا. ستحصل على إشعار فور الموافقة على متجرك.';
+
+  @override
+  String get contact_support => 'تواصل مع الدعم';
+
+  @override
+  String get select_store => 'اختر متجرك';
+
+  @override
+  String get select_store_subtitle => 'اختر المتجر الذي تريد إدارته الآن';
+
+  @override
+  String get select_store_active_badge => 'نشط';
+
+  @override
+  String get logout => 'تسجيل الخروج';
+
+  @override
+  String get logout_dialog_title => 'تسجيل الخروج';
+
+  @override
+  String get logout_dialog_message => 'هل أنت متأكد من تسجيل الخروج؟';
+
+  @override
+  String get logout_dialog_cancel => 'إلغاء';
+
+  @override
+  String get logout_dialog_confirm => 'تسجيل الخروج';
+
+  @override
+  String get logout_success => 'تم تسجيل الخروج بنجاح';
 }

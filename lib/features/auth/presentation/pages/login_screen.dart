@@ -7,6 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../config/routes/app_router.dart';
+import '../../data/datasources/auth_local_data_source.dart';
+import '../utils/seller_routing_resolver.dart';
 import '../../../../core/localization/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -75,10 +77,16 @@ class LoginScreen extends HookWidget {
                   context.go(AppRouter.onboarding);
                 case AuthNavigation.toSellerOnboarding:
                   context.go(AppRouter.sellerOnboarding);
-                case AuthNavigation.toCreateStore:
-                  context.go(AppRouter.createStore);
-                case AuthNavigation.toMerchantDash:
-                  context.go(AppRouter.merchantDashboard);
+                case AuthNavigation.toSellerLanding:
+                  // Delegate to the shared 4-scenario resolver.
+                  // user is always a UserModel here (carries fresh stores list).
+                  if (state.user != null) {
+                    SellerRoutingResolver.resolveForUser(
+                      context:     context,
+                      user:        state.user!,
+                      authLocalDs: di.sl<AuthLocalDataSource>(),
+                    );
+                  }
                 case AuthNavigation.toRegister:
                   context.push(AppRouter.register);
                 default:
@@ -105,29 +113,39 @@ class LoginScreen extends HookWidget {
               }
 
               if (state.successMessage != null && state.navSignal != AuthNavigation.none) {
-                // ✅ Capture current theme color explicitly
                 final primaryColor = Theme.of(context).primaryColor;
-                
-                // عرض AuthSuccessBottomSheet عند نجاح تسجيل الدخول بـ Google
+                // Capture the login-screen context before entering the builder
+                // so async resolver calls (e.g. saveSelectedStoreId) can use a
+                // context that outlives the bottom sheet widget.
+                final outerCtx  = context;
+                final snapUser  = state.user;
+                final snapSignal = state.navSignal;
+
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
                   backgroundColor: Colors.transparent,
-                  builder: (context) => AuthSuccessBottomSheet(
-                    title: l10n.login_success_title,
-                    buttonText: l10n.continue_button,
-                    primaryColor: primaryColor, // ✅ Explicit color injection
+                  builder: (_) => AuthSuccessBottomSheet(
+                    title:        l10n.login_success_title,
+                    buttonText:   l10n.continue_button,
+                    primaryColor: primaryColor,
                     onContinue: () {
-                      Navigator.of(context).pop();
-                      switch (state.navSignal) {
+                      Navigator.of(outerCtx).pop();
+                      switch (snapSignal) {
                         case AuthNavigation.toHome:
-                          context.go(AppRouter.home);
+                          outerCtx.go(AppRouter.home);
                         case AuthNavigation.toOnboarding:
-                          context.go(AppRouter.onboarding);
+                          outerCtx.go(AppRouter.onboarding);
                         case AuthNavigation.toSellerOnboarding:
-                          context.go(AppRouter.sellerOnboarding);
-                        case AuthNavigation.toMerchantDash:
-                          context.go(AppRouter.merchantDashboard);
+                          outerCtx.go(AppRouter.sellerOnboarding);
+                        case AuthNavigation.toSellerLanding:
+                          if (snapUser != null) {
+                            SellerRoutingResolver.resolveForUser(
+                              context:     outerCtx,
+                              user:        snapUser,
+                              authLocalDs: di.sl<AuthLocalDataSource>(),
+                            );
+                          }
                         default:
                           break;
                       }

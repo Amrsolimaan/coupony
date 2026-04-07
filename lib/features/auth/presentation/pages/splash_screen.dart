@@ -13,6 +13,7 @@ import '../../../permissions/domain/repositories/permission_repository.dart';
 import '../../data/datasources/auth_local_data_source.dart';
 import '../cubit/auth_role_cubit.dart';
 import '../cubit/auth_role_state.dart';
+import '../utils/seller_routing_resolver.dart';
 
 class AnimatedSplashScreen extends StatefulWidget {
   const AnimatedSplashScreen({super.key});
@@ -37,60 +38,36 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
       vsync: this,
     );
 
-    // 1. Drop from top to center
     _dropAnimation = Tween<double>(begin: -0.5, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 0.4, curve: Curves.bounceOut),
-      ),
+      CurvedAnimation(parent: _controller, curve: const Interval(0.0, 0.4, curve: Curves.bounceOut)),
     );
-
-    // 2. Expand ball to fill screen
     _expandAnimation = Tween<double>(begin: 1.0, end: 30.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.5, 0.8, curve: Curves.easeInOut),
-      ),
+      CurvedAnimation(parent: _controller, curve: const Interval(0.5, 0.8, curve: Curves.easeInOut)),
     );
-
-    // 3. Logo fade-in
     _logoOpacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.8, 1.0, curve: Curves.easeIn),
-      ),
+      CurvedAnimation(parent: _controller, curve: const Interval(0.8, 1.0, curve: Curves.easeIn)),
     );
 
     _loadRoleAndStart();
   }
 
-  /// Loads the persisted role from AuthRoleCubit and starts the animation.
-  /// The role is loaded asynchronously, and the UI will update via BlocBuilder.
   Future<void> _loadRoleAndStart() async {
     try {
-      // Load persisted role from AuthRoleCubit
-      final authRoleCubit = di.sl<AuthRoleCubit>();
-      await authRoleCubit.loadPersistedRole();
-    } catch (_) {
-      // Fallback: AuthRoleCubit will default to customer on error
-    }
+      await di.sl<AuthRoleCubit>().loadPersistedRole();
+    } catch (_) {}
 
     if (!mounted) return;
 
     _controller.forward().then((_) async {
-      // ✅ STEP 1: Check if language has been selected (first-time check)
       try {
         final localeCubit = context.read<LocaleCubit>();
-        final hasLanguagePreference = await localeCubit.hasManualPreference();
-
-        if (!hasLanguagePreference) {
+        if (!await localeCubit.hasManualPreference()) {
           if (mounted) context.go(AppRouter.languageSelection);
           return;
         }
 
-        // ✅ STEP 2: Check permission status
         final permissionRepository = di.sl<PermissionRepository>();
-        final permissionResult = await permissionRepository.getPermissionStatus();
+        final permissionResult     = await permissionRepository.getPermissionStatus();
 
         permissionResult.fold(
           (failure) {
@@ -112,12 +89,9 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
 
   Future<void> _checkWelcomeGatewayStatus() async {
     try {
-      final prefs = di.sl<SharedPreferences>();
-      final hasPassedGateway =
-          prefs.getBool(StorageKeys.hasPassedWelcomeGateway) ?? false;
-
+      final prefs           = di.sl<SharedPreferences>();
+      final hasPassedGateway = prefs.getBool(StorageKeys.hasPassedWelcomeGateway) ?? false;
       if (!mounted) return;
-
       if (hasPassedGateway) {
         _checkOnboardingStatus();
       } else {
@@ -141,10 +115,10 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
 
       if (!mounted) return;
 
-      final token = results[0] as String?;
-      final isGuest = results[1] as bool;
+      final token                = results[0] as String?;
+      final isGuest              = results[1] as bool;
       final isOnboardingCompleted = results[2] as bool;
-      final isStoreCreated = results[3] as bool;
+      final isStoreCreated       = results[3] as bool;
 
       if (isGuest) {
         context.go(AppRouter.home);
@@ -155,21 +129,24 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
         final authRoleCubit = context.read<AuthRoleCubit>();
 
         if (authRoleCubit.state.isSeller) {
+          // Step 1: seller must complete onboarding before store decisions
           if (!isOnboardingCompleted) {
             context.go(AppRouter.sellerOnboarding);
-          } else if (!isStoreCreated) {
-            // Guard: seller has finished onboarding but hasn't created a store yet
-            context.go(AppRouter.createStore);
-          } else {
-            context.go(AppRouter.merchantDashboard);
+            return;
           }
-        } else {
-          if (isOnboardingCompleted) {
-            context.go(AppRouter.home);
-          } else {
-            context.go(AppRouter.onboarding);
-          }
+
+          // Step 2: delegate to the shared 4-scenario resolver
+          await SellerRoutingResolver.resolveFromCache(
+            context:               context,
+            isOnboardingCompleted: isOnboardingCompleted,
+            isStoreCreated:        isStoreCreated,
+            authLocalDs:           authLocalDs,
+          );
+          return;
         }
+
+        // Customer path
+        context.go(isOnboardingCompleted ? AppRouter.home : AppRouter.onboarding);
         return;
       }
 
@@ -189,8 +166,6 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
   Widget build(BuildContext context) {
     return BlocBuilder<AuthRoleCubit, AuthRoleState>(
       builder: (context, roleState) {
-        // Determine gradient color based on role state
-        // During loading, use neutral white to prevent flickering
         final gradientColor = roleState.isLoading
             ? Colors.white
             : (roleState.isSeller
@@ -201,7 +176,6 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
           backgroundColor: Colors.white,
           body: Stack(
             children: [
-              // Animated ball: drops then expands to fill screen
               AnimatedBuilder(
                 animation: _controller,
                 builder: (context, child) {
@@ -221,7 +195,6 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
                   );
                 },
               ),
-              // Logo fades in at the end of the animation
               Center(
                 child: FadeTransition(
                   opacity: _logoOpacityAnimation,

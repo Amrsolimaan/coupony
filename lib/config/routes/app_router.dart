@@ -14,6 +14,8 @@ import 'package:coupony/features/permissions/presentation/pages/pages/permission
 import 'package:coupony/features/seller_flow/CreateStore/presentation/cubit/create_store_cubit.dart';
 import 'package:coupony/features/seller_flow/CreateStore/presentation/pages/create_store_screen.dart';
 import 'package:coupony/features/seller_flow/CreateStore/presentation/pages/store_under_review_page.dart';
+import 'package:coupony/features/seller_flow/StoreSelection/presentation/pages/store_selection_page.dart';
+import 'package:coupony/features/auth/data/models/user_store_model.dart';
 import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/pages/onboarding_seller_screen.dart';
 import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/pages/seller_onboarding_start_screen.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_budget_screen.dart';
@@ -229,6 +231,7 @@ class AppRouter {
   static const String sellerOnboardingFlow = '/seller-onboarding-flow';
   static const String createStore = '/create-store';
   static const String storeUnderReview = '/store-under-review';
+  static const String storeSelection   = '/store-selection';
   static const String login = '/login';
   static const String register = '/register';
   static const String otpVerification = '/otp-verification';
@@ -363,8 +366,11 @@ class AppRouter {
         pageBuilder: (context, state) => AppPageTransition.build(
           context: context,
           state: state,
-          child: BlocProvider(
-            create: (_) => sl<CreateStoreCubit>(),
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => sl<CreateStoreCubit>()),
+              BlocProvider(create: (_) => sl<LoginCubit>()),
+            ],
             child: const CreateStoreScreen(),
           ),
         ),
@@ -374,8 +380,22 @@ class AppRouter {
         pageBuilder: (context, state) => AppPageTransition.build(
           context: context,
           state: state,
-          child: const StoreUnderReviewPage(),
+          child: BlocProvider(
+            create: (_) => sl<LoginCubit>(),
+            child: const StoreUnderReviewPage(),
+          ),
         ),
+      ),
+      GoRoute(
+        path: storeSelection,
+        pageBuilder: (context, state) {
+          final stores = state.extra as List<UserStoreModel>? ?? const [];
+          return AppPageTransition.build(
+            context: context,
+            state: state,
+            child: StoreSelectionPage(stores: stores),
+          );
+        },
       ),
 
       // 4. Permission flow

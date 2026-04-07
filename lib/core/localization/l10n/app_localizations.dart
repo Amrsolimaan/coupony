@@ -1939,6 +1939,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Contact Us'**
   String get store_under_review_contact_button;
+
+  /// No description provided for @store_under_review_whatsapp_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat on WhatsApp'**
+  String get store_under_review_whatsapp_button;
+
+  /// No description provided for @store_under_review_email_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Send us an Email'**
+  String get store_under_review_email_button;
+
+  /// No description provided for @under_review_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Store is Under Review'**
+  String get under_review_title;
+
+  /// No description provided for @under_review_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Our team is reviewing your information. You\'ll receive a notification once your store is approved.'**
+  String get under_review_body;
+
+  /// No description provided for @contact_support.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Support'**
+  String get contact_support;
+
+  /// No description provided for @select_store.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Your Store'**
+  String get select_store;
+
+  /// No description provided for @select_store_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the store you\'d like to manage'**
+  String get select_store_subtitle;
+
+  /// No description provided for @select_store_active_badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get select_store_active_badge;
+
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
+
+  /// No description provided for @logout_dialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout_dialog_title;
+
+  /// No description provided for @logout_dialog_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get logout_dialog_message;
+
+  /// No description provided for @logout_dialog_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get logout_dialog_cancel;
+
+  /// No description provided for @logout_dialog_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout_dialog_confirm;
+
+  /// No description provided for @logout_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Logged out successfully'**
+  String get logout_success;
 }
 
 class _AppLocalizationsDelegate

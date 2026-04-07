@@ -338,5 +338,22 @@
   "store_under_review_title": "طلبك قيد المراجعة",
   "store_under_review_subtitle": "طلبك قيد المراجعة حاليًا سيتم إشعارك فور الانتهاء",
   "store_under_review_home_button": "الرئيسية",
-  "store_under_review_contact_button": "تواصل معنا"
+  "store_under_review_contact_button": "تواصل معنا",
+  "store_under_review_whatsapp_button": "تواصل عبر واتساب",
+  "store_under_review_email_button": "راسلنا على البريد",
+
+  "under_review_title": "متجرك قيد المراجعة",
+  "under_review_body": "فريقنا يراجع معلوماتك حاليًا. ستحصل على إشعار فور الموافقة على متجرك.",
+  "contact_support": "تواصل مع الدعم",
+
+  "select_store": "اختر متجرك",
+  "select_store_subtitle": "اختر المتجر الذي تريد إدارته الآن",
+  "select_store_active_badge": "نشط",
+
+  "logout": "تسجيل الخروج",
+  "logout_dialog_title": "تسجيل الخروج",
+  "logout_dialog_message": "هل أنت متأكد من تسجيل الخروج؟",
+  "logout_dialog_cancel": "إلغاء",
+  "logout_dialog_confirm": "تسجيل الخروج",
+  "logout_success": "تم تسجيل الخروج بنجاح"
 }

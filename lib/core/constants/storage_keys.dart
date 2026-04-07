@@ -58,6 +58,15 @@ class StorageKeys {
   /// false → seller must complete store creation before accessing the dashboard.
   static const String storeCreatedKey = 'is_store_created';
 
+  /// SecureStorage key: the seller's currently active / selected store ID.
+  /// Written by [AuthLocalDataSource.saveSelectedStoreId] and read by the
+  /// merchant dashboard to scope API calls to the correct store.
+  static const String selectedStoreId = 'selected_store_id';
+
+  /// User-scoped SharedPreferences key: JSON-encoded list of [UserStoreModel]
+  /// objects cached from the last successful login response.
+  static const String cachedStoresKey = 'cached_stores';
+
   /// ⭐ INTEREST TRACKING KEYS
   static const String categoryScoresKey = 'category_scores';
   static const String seenProductsListKey = 'seen_products_list';
