@@ -57,7 +57,10 @@ class _GlobalNetworkListenerState extends State<GlobalNetworkListener> {
       if (!mounted) return;
       
       final l10n = AppLocalizations.of(context);
-      if (l10n == null) return;
+      if (l10n == null) {
+        debugPrint('⚠️ Network warning skipped: AppLocalizations not available');
+        return;
+      }
 
       // Determine message based on severity
       final message = _getWarningMessage(event, l10n);
@@ -71,7 +74,7 @@ class _GlobalNetworkListenerState extends State<GlobalNetworkListener> {
       // Update last warning time
       _lastWarningShown = DateTime.now();
       
-      debugPrint('Network warning shown: ${event.speed.name} (${event.averageResponseTimeMs}ms avg)');
+      debugPrint('✅ Network warning shown: ${event.speed.name} (${event.averageResponseTimeMs}ms avg)');
     });
   }
 

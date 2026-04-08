@@ -51,7 +51,7 @@ GlobalNetworkListener(
 3. **Message**: "تم اكتشاف اتصال إنترنت بطيء" (Arabic) or "Slow internet connection detected" (English)
 
 ### **When Warnings Appear:**
-- After 2+ consecutive slow requests
+- After 1+ slow request (immediate detection)
 - Only once every 2 minutes (cooldown)
 - Automatically disappears after 6 seconds
 
@@ -60,8 +60,8 @@ GlobalNetworkListener(
 ### **Manual Testing:**
 ```dart
 // In SnackBarDemo - test buttons available:
-1. "طلب بطيء واحد" - Single slow request
-2. "عدة طلبات بطيئة" - Multiple slow requests (triggers warning)
+1. "طلب بطيء واحد" - Single slow request (triggers warning immediately)
+2. "عدة طلبات بطيئة" - Multiple slow requests
 ```
 
 ### **Programmatic Testing:**

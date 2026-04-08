@@ -21,6 +21,7 @@ class PermissionStatusModelAdapter extends TypeAdapter<PermissionStatusModel> {
       notificationStatus: fields[1] as String?,
       latitude: fields[2] as double?,
       longitude: fields[3] as double?,
+      address: fields[7] as String?,
       fcmToken: fields[4] as String?,
       timestamp: fields[5] as DateTime?,
       hasCompletedFlow: fields[6] as bool,
@@ -30,7 +31,7 @@ class PermissionStatusModelAdapter extends TypeAdapter<PermissionStatusModel> {
   @override
   void write(BinaryWriter writer, PermissionStatusModel obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.locationStatus)
       ..writeByte(1)
@@ -39,6 +40,8 @@ class PermissionStatusModelAdapter extends TypeAdapter<PermissionStatusModel> {
       ..write(obj.latitude)
       ..writeByte(3)
       ..write(obj.longitude)
+      ..writeByte(7)
+      ..write(obj.address)
       ..writeByte(4)
       ..write(obj.fcmToken)
       ..writeByte(5)

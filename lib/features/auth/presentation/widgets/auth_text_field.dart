@@ -14,6 +14,7 @@ class AuthTextField extends StatelessWidget {
   final bool hasError;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
+  final FocusNode? focusNode;
 
   const AuthTextField({
     super.key,
@@ -23,6 +24,7 @@ class AuthTextField extends StatelessWidget {
     this.hasError = false,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.next,
+    this.focusNode,
   });
 
   @override
@@ -33,6 +35,7 @@ class AuthTextField extends StatelessWidget {
         hint: hint,
         hasError: hasError,
         textInputAction: textInputAction,
+        focusNode: focusNode,
       );
     }
 
@@ -48,6 +51,7 @@ class AuthTextField extends StatelessWidget {
           keyboardType: keyboardType,
           textInputAction: textInputAction,
           primaryColor: primaryColor,
+          focusNode: focusNode,
         );
       },
     );
@@ -59,12 +63,14 @@ class _PasswordField extends StatefulWidget {
   final String hint;
   final bool hasError;
   final TextInputAction textInputAction;
+  final FocusNode? focusNode;
 
   const _PasswordField({
     required this.controller,
     required this.hint,
     required this.hasError,
     required this.textInputAction,
+    this.focusNode,
   });
 
   @override
@@ -96,6 +102,7 @@ class _PasswordFieldState extends State<_PasswordField> {
               keyboardType: TextInputType.visiblePassword,
               textInputAction: widget.textInputAction,
               primaryColor: primaryColor,
+              focusNode: widget.focusNode,
               suffixIcon: GestureDetector(
                 onTap: () => _obscure.value = !obscure,
                 child: Icon(
@@ -122,6 +129,7 @@ Widget _buildField({
   required TextInputType keyboardType,
   required TextInputAction textInputAction,
   required Color primaryColor,
+  FocusNode? focusNode,
 }) {
   final borderColor        = hasError ? AppColors.error : AppColors.divider;
   final focusedBorderColor = hasError ? AppColors.error : primaryColor;
@@ -143,6 +151,7 @@ Widget _buildField({
     height: 56.r,
     child: TextField(
       controller: controller,
+      focusNode: focusNode,
       obscureText: obscure,
       keyboardType: keyboardType,
       textInputAction: textInputAction,

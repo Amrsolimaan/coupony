@@ -31,15 +31,15 @@ _slowScore = (_slowScore - 1).clamp(0, 999);
 ```
 
 **Anti-False-Positive Logic:**
-- **Single slow request**: Adds only 1 point, insufficient to trigger warning (threshold = 2)
-- **Consecutive requirement**: Needs `minConsecutiveSlowRequests = 2` AND `warningScoreThreshold = 2`
+- **Single slow request**: Adds 1 point, sufficient to trigger warning (threshold = 1)
+- **Consecutive requirement**: Needs `minConsecutiveSlowRequests = 1` AND `warningScoreThreshold = 1`
 - **Recovery mechanism**: Fast requests subtract points, allowing quick recovery from temporary slowdowns
 
 **Example Scenario:**
 ```
-Request 1: 6000ms (slow) → +1 point, consecutive=1 → No warning
+Request 1: 6000ms (slow) → +1 point, consecutive=1 → Warning shown!
 Request 2: 1000ms (fast) → -1 point, consecutive=0 → Score reset
-Request 3: 7000ms (slow) → +1 point, consecutive=1 → No warning
+Request 3: 7000ms (slow) → +1 point, consecutive=1 → Warning shown (if cooldown expired)
 ```
 
 ---

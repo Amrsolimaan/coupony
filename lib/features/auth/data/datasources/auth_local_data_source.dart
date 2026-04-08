@@ -87,7 +87,19 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
       final scopedId = user.email.isNotEmpty ? user.email : user.id.toString();
       await secureStorage.write(StorageKeys.userId,   scopedId);
-      await secureStorage.write(StorageKeys.userRole, user.role);
+      
+      // 🎯 PRESERVE USER'S TOGGLE SELECTION
+      // Only write backend role if user hasn't selected a role via toggle yet
+      // This ensures the UI/theme respects the user's explicit choice
+      final currentToggleRole = await secureStorage.read(StorageKeys.userRole);
+      if (currentToggleRole == null || currentToggleRole.isEmpty) {
+        // First time (e.g., after OTP verification) - use backend role
+        await secureStorage.write(StorageKeys.userRole, user.role);
+        print('💾 First login - using backend role: ${user.role}');
+      } else {
+        // User already selected a role via toggle - preserve it
+        print('✅ Preserving user toggle selection: $currentToggleRole (backend sent: ${user.role})');
+      }
 
       // Sync flags from the backend source of truth
       await cacheOnboardingCompleted(user.isOnboardingCompleted);

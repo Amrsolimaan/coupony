@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/network/dio_client.dart';
 import '../../core/network/network_info.dart';
+import '../../core/services/saved_emails_service.dart';
 import '../../core/storage/local_cache_service.dart';
 import '../../core/storage/secure_storage_service.dart';
 
@@ -17,6 +18,7 @@ import 'features/auth_injection.dart';
 import 'features/create_store_injection.dart';
 import 'features/onboarding_injection.dart';
 import 'features/permissions_injection.dart';
+import 'features/profile_injection.dart';
 
 final sl = GetIt.instance;
 
@@ -72,6 +74,11 @@ Future<void> init() async {
     () => SecureStorageService(sl<FlutterSecureStorage>()),
   );
 
+  // SavedEmailsService - Manages saved emails for "Remember Me"
+  sl.registerLazySingleton<SavedEmailsService>(
+    () => SavedEmailsService(sl<SharedPreferences>()),
+  );
+
   // Network Services
   // ─────────────────
 
@@ -119,6 +126,11 @@ Future<void> init() async {
   // 6. FEATURES - CREATE STORE
   // ═══════════════════════════════════════════════════════════
   registerCreateStoreDependencies(sl);
+
+  // ═══════════════════════════════════════════════════════════
+  // 7. FEATURES - CUSTOMER PROFILE
+  // ═══════════════════════════════════════════════════════════
+  registerProfileDependencies(sl);
 
   // Coupons Feature
   // ─────────────────

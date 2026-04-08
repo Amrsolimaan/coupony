@@ -184,6 +184,7 @@ class PermissionRepositoryImpl extends PlatformBaseRepository
     NotificationPermissionStatus? notificationStatus,
     double? latitude,
     double? longitude,
+    String? address,
     String? fcmToken,
     bool? hasCompletedFlow,
   }) {
@@ -207,6 +208,7 @@ class PermissionRepositoryImpl extends PlatformBaseRepository
               : null,
           latitude: latitude,
           longitude: longitude,
+          address: address,
           fcmToken: fcmToken,
           timestamp: DateTime.now(),
           hasCompletedFlow: hasCompletedFlow,
@@ -237,6 +239,7 @@ class PermissionRepositoryImpl extends PlatformBaseRepository
     NotificationPermissionStatus? notificationStatus,
     double? latitude,
     double? longitude,
+    String? address,
     String? fcmToken,
   }) async {
     await savePermissionStatus(
@@ -244,6 +247,7 @@ class PermissionRepositoryImpl extends PlatformBaseRepository
       notificationStatus: notificationStatus,
       latitude: latitude,
       longitude: longitude,
+      address: address,
       fcmToken: fcmToken,
     );
   }

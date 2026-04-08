@@ -1045,4 +1045,371 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get logout_success => 'تم تسجيل الخروج بنجاح';
+
+  @override
+  String get home => 'الرئيسية';
+
+  @override
+  String get coupons => 'كوبوناتي';
+
+  @override
+  String get explorer => 'اكسبلورر';
+
+  @override
+  String get categories => 'فئات';
+
+  @override
+  String get account => 'الحساب';
+
+  @override
+  String get profile_title => 'الحساب الشخصى';
+
+  @override
+  String get profile_edit_account => 'تعديل الحساب';
+
+  @override
+  String get profile_favorites => 'قائمه المفضله';
+
+  @override
+  String get profile_be_seller => 'كن تاجراً';
+
+  @override
+  String get profile_follow => 'متابعة';
+
+  @override
+  String get profile_address => 'العنوان';
+
+  @override
+  String get profile_settings => 'الإعدادات';
+
+  @override
+  String get profile_support => 'المساعده و الدعم';
+
+  @override
+  String profile_version(Object version) {
+    return 'الإصدار: $version';
+  }
+
+  @override
+  String get profile_loading => 'جاري تحميل البيانات...';
+
+  @override
+  String get profile_error => 'حدث خطأ أثناء تحميل البيانات';
+
+  @override
+  String get profile_retry => 'إعادة المحاولة';
+
+  @override
+  String get profile_default_user => 'مستخدم';
+
+  @override
+  String get save => 'حفظ';
+
+  @override
+  String get edit_account => 'تعديل الحساب';
+
+  @override
+  String get first_name => 'الاسم الأول';
+
+  @override
+  String get last_name => 'الاسم الثاني';
+
+  @override
+  String get phone_number => 'رقم الهاتف';
+
+  @override
+  String get edit_profile_title => 'الحساب الشخصي';
+
+  @override
+  String get profile_update_success => 'تم تحديث الملف الشخصي بنجاح';
+
+  @override
+  String get profile_photo_view => 'عرض الصورة';
+
+  @override
+  String get profile_photo_change => 'تغيير الصورة';
+
+  @override
+  String get profile_photo_remove => 'إزالة الصورة';
+
+  @override
+  String get profile_photo_camera => 'الكاميرا';
+
+  @override
+  String get profile_photo_gallery => 'المعرض';
+
+  @override
+  String get profile_photo_remove_confirm_title => 'هل أنت متأكد؟';
+
+  @override
+  String get profile_photo_remove_confirm_message =>
+      'سيتم حذف صورة الملف الشخصي نهائياً';
+
+  @override
+  String get profile_photo_remove_confirm_button => 'نعم، احذف';
+
+  @override
+  String get profile_photo_remove_cancel_button => 'إلغاء';
+
+  @override
+  String get address_management_title => 'العنوان';
+
+  @override
+  String get address_empty_title => 'مفيش عناوين متضافة لحد دلوقتي';
+
+  @override
+  String get address_empty_subtitle => 'ضيف عنوانك عشان نوصلك الكوبونات بسهولة';
+
+  @override
+  String get address_add_new => 'إضافة عنوان جديد';
+
+  @override
+  String get address_search_hint => 'ابحث عن المنطقة، المدينة...';
+
+  @override
+  String get address_label_dialog_title => 'تسمية العنوان';
+
+  @override
+  String get address_label_dialog_subtitle =>
+      'يرجى إدخال اسم لسهولة الوصول إليه لاحقًا';
+
+  @override
+  String get address_label_hint => 'العمل';
+
+  @override
+  String get address_label_required => 'يرجى إدخال اسم للعنوان';
+
+  @override
+  String get address_save => 'حفظ';
+
+  @override
+  String get address_cancel => 'إلغاء';
+
+  @override
+  String get address_edit => 'تعديل';
+
+  @override
+  String get address_delete => 'حذف';
+
+  @override
+  String get address_set_default => 'تعيين كافتراضي';
+
+  @override
+  String get address_default_badge => 'افتراضي';
+
+  @override
+  String get address_delete_title => 'حذف العنوان';
+
+  @override
+  String get address_delete_message => 'هل أنت متأكد من حذف هذا العنوان؟';
+
+  @override
+  String get address_select_location_first =>
+      'يرجى تحديد موقع على الخريطة أولاً';
+
+  @override
+  String get loading => 'جاري التحميل...';
+
+  @override
+  String get help_support_title => 'المساعده و الدعم';
+
+  @override
+  String get help_faq_title => 'الأسئلة الشائعة';
+
+  @override
+  String get help_faq_subtitle => 'إجابات على أكثر الأسئلة شيوعاً';
+
+  @override
+  String get help_usage_guide_title => 'دليل الاستخدام';
+
+  @override
+  String get help_usage_guide_subtitle => 'تعلم كيفية استخدام التطبيق';
+
+  @override
+  String get help_report_problem_title => 'الإبلاغ عن مشكلة';
+
+  @override
+  String get help_report_problem_subtitle => 'أخبرنا إذا واجهت أي مشاكل';
+
+  @override
+  String get help_rate_app_title => 'تقييم التطبيق';
+
+  @override
+  String get help_rate_app_subtitle => 'شاركنا رأيك في التطبيق';
+
+  @override
+  String get help_terms_title => 'الشروط والأحكام';
+
+  @override
+  String get help_terms_subtitle => 'اطلع على شروط استخدام التطبيق';
+
+  @override
+  String get help_contact_us_title => 'تواصل معانا';
+
+  @override
+  String get help_contact_us_subtitle => 'نحن هنا لمساعدتك على مدار 24 ساعه';
+
+  @override
+  String get contact_us_page_title => 'تواصل معانا';
+
+  @override
+  String get contact_whatsapp => 'واتس اب';
+
+  @override
+  String get contact_facebook => 'فيس بوك';
+
+  @override
+  String get contact_website => 'الموقع الالكتروني';
+
+  @override
+  String get contact_instagram => 'انستجرام';
+
+  @override
+  String get contact_open_error => 'تعذر فتح الرابط';
+
+  @override
+  String get faq_q1 => 'ما هو تطبيق كوبوني؟';
+
+  @override
+  String get faq_a1 =>
+      'كوبوني هو تطبيق يوفر لك أفضل الكوبونات والعروض والخصومات من المتاجر المفضلة لديك في مكان واحد.';
+
+  @override
+  String get faq_q2 => 'كيف أستخدم الكوبون؟';
+
+  @override
+  String get faq_a2 =>
+      'بعد تصفح العروض المتاحة، اضغط على الكوبون لنسخه ثم استخدمه عند الشراء من المتجر سواء أونلاين أو في الفرع.';
+
+  @override
+  String get faq_q3 => 'هل التطبيق مجاني؟';
+
+  @override
+  String get faq_a3 =>
+      'نعم، تطبيق كوبوني مجاني بالكامل. يمكنك تصفح واستخدام جميع الكوبونات والعروض بدون أي رسوم.';
+
+  @override
+  String get faq_q4 => 'كيف أتواصل مع الدعم الفني؟';
+
+  @override
+  String get faq_a4 =>
+      'يمكنك التواصل معنا عبر صفحة \"تواصل معانا\" في قسم المساعدة والدعم، أو عبر واتساب مباشرة.';
+
+  @override
+  String get faq_q5 => 'هل يمكنني أن أصبح تاجراً؟';
+
+  @override
+  String get faq_a5 =>
+      'بالطبع! يمكنك التسجيل كتاجر من خلال صفحة الملف الشخصي والضغط على \"كن تاجراً\" لإنشاء متجرك.';
+
+  @override
+  String get guide_step1_title => 'إنشاء حساب';
+
+  @override
+  String get guide_step1_desc =>
+      'سجل حساب جديد باستخدام بريدك الإلكتروني أو ادخل كزائر لتصفح العروض.';
+
+  @override
+  String get guide_step2_title => 'تصفح العروض';
+
+  @override
+  String get guide_step2_desc =>
+      'استكشف أحدث العروض والكوبونات من المتاجر القريبة منك أو حسب اهتماماتك.';
+
+  @override
+  String get guide_step3_title => 'اختر الكوبون';
+
+  @override
+  String get guide_step3_desc =>
+      'اضغط على العرض الذي يعجبك لعرض تفاصيل الكوبون والتخفيض المتاح.';
+
+  @override
+  String get guide_step4_title => 'انسخ الكود';
+
+  @override
+  String get guide_step4_desc =>
+      'انسخ كود الخصم بضغطة واحدة واستخدمه عند الشراء.';
+
+  @override
+  String get guide_step5_title => 'استمتع بالخصم';
+
+  @override
+  String get guide_step5_desc =>
+      'قدم الكوبون عند الدفع واستمتع بالتوفير سواء أونلاين أو في المحل.';
+
+  @override
+  String get report_problem_description =>
+      'أخبرنا عن المشكلة التي واجهتها وسنعمل على حلها في أقرب وقت';
+
+  @override
+  String get report_problem_subject => 'عنوان المشكلة';
+
+  @override
+  String get report_problem_details => 'تفاصيل المشكلة';
+
+  @override
+  String get report_problem_submit => 'إرسال البلاغ';
+
+  @override
+  String get report_problem_empty_error => 'يرجى ملء جميع الحقول';
+
+  @override
+  String get report_problem_success => 'تم إرسال البلاغ بنجاح، شكراً لك!';
+
+  @override
+  String get rate_app_heading => 'قيّم تجربتك';
+
+  @override
+  String get rate_app_subtitle =>
+      'شاركنا رأيك في التطبيق لنتمكن من تحسين تجربتك';
+
+  @override
+  String get rate_app_comment_hint => 'أضف تعليقك هنا (اختياري)';
+
+  @override
+  String get rate_app_submit => 'إرسال التقييم';
+
+  @override
+  String get rate_app_select_rating => 'يرجى اختيار تقييم';
+
+  @override
+  String get rate_app_success => 'شكراً لتقييمك!';
+
+  @override
+  String get terms_last_updated => 'آخر تحديث: أبريل 2026';
+
+  @override
+  String get terms_section1_title => 'قبول الشروط';
+
+  @override
+  String get terms_section1_content =>
+      'باستخدامك لتطبيق كوبوني، فإنك توافق على الالتزام بهذه الشروط والأحكام. إذا كنت لا توافق على هذه الشروط، يرجى عدم استخدام التطبيق.';
+
+  @override
+  String get terms_section2_title => 'استخدام التطبيق';
+
+  @override
+  String get terms_section2_content =>
+      'يُسمح لك باستخدام التطبيق للأغراض الشخصية غير التجارية فقط. يحظر عليك نسخ أو تعديل أو توزيع أو بيع أي جزء من التطبيق بدون إذن مسبق.';
+
+  @override
+  String get terms_section3_title => 'حسابك';
+
+  @override
+  String get terms_section3_content =>
+      'أنت مسؤول عن الحفاظ على سرية معلومات حسابك وكلمة المرور. أنت توافق على إخطارنا فوراً بأي استخدام غير مصرح به لحسابك.';
+
+  @override
+  String get terms_section4_title => 'الكوبونات والعروض';
+
+  @override
+  String get terms_section4_content =>
+      'جميع الكوبونات والعروض المعروضة في التطبيق تخضع لشروط وأحكام المتاجر المعلنة. كوبوني غير مسؤول عن صلاحية أو تغيير شروط أي عرض.';
+
+  @override
+  String get terms_section5_title => 'الخصوصية';
+
+  @override
+  String get terms_section5_content =>
+      'نحن نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية. لمزيد من المعلومات، يرجى الاطلاع على سياسة الخصوصية الخاصة بنا.';
 }

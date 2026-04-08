@@ -1,5 +1,4 @@
 import 'package:coupony/core/widgets/Shared_Onboarding/onboarding_completion_loading_page.dart';
-
 import 'package:coupony/features/auth/presentation/pages/forgot_password_screen.dart';
 import 'package:coupony/features/auth/presentation/pages/language_selection_page.dart';
 import 'package:coupony/features/auth/presentation/pages/register_screen.dart';
@@ -46,81 +45,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coupony/features/auth/presentation/pages/reset_password_screen.dart';
 
 import 'package:coupony/features/permissions/presentation/pages/pages/welcome_gateway_page.dart';
-
-// ── Placeholder screens (replace with real screens when built) ──────────────
-
-class UserHomeScreen extends StatelessWidget {
-  const UserHomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<LoginCubit>(),
-      child: BlocListener<LoginCubit, AuthState>(
-        listener: (context, state) {
-          if (state.navSignal == AuthNavigation.toLogin) {
-            context.go(AppRouter.login);
-          }
-        },
-        child: Builder(
-          builder: (context) {
-            return Scaffold(
-              appBar: AppBar(
-                title: const Text('Home'),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.logout),
-                    tooltip: 'تسجيل الخروج',
-                    onPressed: () {
-                      // Show confirmation dialog
-                      showDialog(
-                        context: context,
-                        builder: (dialogContext) => AlertDialog(
-                          title: const Text('تسجيل الخروج'),
-                          content: const Text('هل أنت متأكد من تسجيل الخروج؟'),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(dialogContext),
-                              child: const Text('إلغاء'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(dialogContext);
-                                // Use the correct context from Builder
-                                context.read<LoginCubit>().logout();
-                              },
-                              child: const Text('تسجيل الخروج'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-              body: const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'User Home Screen',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Text('مرحباً! تم تسجيل الدخول بنجاح'),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
+import 'package:coupony/features/user_flow/CustomerHome/presentation/pages/CutomerHome.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/EditProfilePage.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/main_profile.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/address_management_page.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/address_map_picker_page.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/help_support_page.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/contact_us_page.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/faq_page.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/usage_guide_page.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/report_problem_page.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/rate_app_page.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/terms_page.dart';
+import 'package:coupony/features/Profile/presentation/cubit/Customer_Profile_cubit.dart';
+import 'package:coupony/features/Profile/presentation/cubit/address_cubit.dart';
 
 class MerchantDashboardScreen extends StatelessWidget {
   const MerchantDashboardScreen({super.key});
@@ -239,6 +177,17 @@ class AppRouter {
   static const String resetPassword = '/reset-password';
   static const String home = '/home';
   static const String merchantDashboard = '/merchant-dashboard';
+  static const String customerProfile = '/customer-profile';
+  static const String editCustomerProfile = '/edit-customer-profile';
+  static const String addressManagement = '/address-management';
+  static const String addressMapPicker = '/address-map-picker';
+  static const String helpSupport = '/help-support';
+  static const String contactUsPage = '/contact-us';
+  static const String faqPage = '/faq';
+  static const String usageGuidePage = '/usage-guide';
+  static const String reportProblemPage = '/report-problem';
+  static const String rateAppPage = '/rate-app';
+  static const String termsPage = '/terms';
 
   // Permission flow
   static const String permissionFlow = '/permission-flow';
@@ -558,7 +507,10 @@ class AppRouter {
         pageBuilder: (context, state) => AppPageTransition.build(
           context: context,
           state: state,
-          child: const UserHomeScreen(),
+          child: BlocProvider(
+            create: (_) => sl<LoginCubit>(),
+            child: const CustomerHome(),
+          ),
         ),
       ),
       GoRoute(
@@ -567,6 +519,103 @@ class AppRouter {
           context: context,
           state: state,
           child: const MerchantDashboardScreen(),
+        ),
+      ),
+      GoRoute(
+        path: customerProfile,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: BlocProvider(
+            create: (_) => sl<ProfileCubit>(),
+            child: const MainProfile(),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: editCustomerProfile,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: BlocProvider(
+            create: (_) => sl<ProfileCubit>()..loadProfile(),
+            child: const EditProfilePage(),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: addressManagement,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: BlocProvider(
+            create: (_) => sl<AddressCubit>()..loadAddresses(),
+            child: const AddressManagementPage(),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: addressMapPicker,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const AddressMapPickerPage(),
+        ),
+      ),
+      GoRoute(
+        path: helpSupport,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const HelpSupportPage(),
+        ),
+      ),
+      GoRoute(
+        path: contactUsPage,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const ContactUsPage(),
+        ),
+      ),
+      GoRoute(
+        path: faqPage,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const FaqPage(),
+        ),
+      ),
+      GoRoute(
+        path: usageGuidePage,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const UsageGuidePage(),
+        ),
+      ),
+      GoRoute(
+        path: reportProblemPage,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const ReportProblemPage(),
+        ),
+      ),
+      GoRoute(
+        path: rateAppPage,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const RateAppPage(),
+        ),
+      ),
+      GoRoute(
+        path: termsPage,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const TermsPage(),
         ),
       ),
     ],

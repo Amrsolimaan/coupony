@@ -29,8 +29,13 @@ class GoogleSignInButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 🎨 Dynamic theme color based on active role (Customer=Green, Seller=Blue)
+    // 🎨 Dynamic theme color based on active role (Customer=Orange, Seller=Blue)
     final primaryColor = Theme.of(context).primaryColor;
+    
+    // 🎨 Dynamic border color based on role
+    final borderColor = role == 'seller' 
+        ? AppColors.primaryOfSeller.withValues(alpha: 0.3)
+        : AppColors.primary.withValues(alpha: 0.3);
     
     return BlocBuilder<GoogleSignInCubit, AuthState>(
       builder: (context, state) {
@@ -42,7 +47,7 @@ class GoogleSignInButton extends StatelessWidget {
                 ? null 
                 : () => _handleGoogleSignIn(context),
             style: OutlinedButton.styleFrom(
-              side: BorderSide(color: AppColors.borderField, width: 1.5.w),
+              side: BorderSide(color: borderColor, width: 1.5.w),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.r),
               ),

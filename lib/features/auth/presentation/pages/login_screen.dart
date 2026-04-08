@@ -1,4 +1,5 @@
 import 'package:coupony/config/dependency_injection/injection_container.dart' as di;
+import 'package:coupony/core/services/saved_emails_service.dart';
 import 'package:coupony/features/auth/presentation/cubit/google_sign_in_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,6 +25,7 @@ import '../widgets/role_toggle.dart';
 import '../widgets/google_sign_in_button.dart';
 import '../widgets/auth_success_bottom_sheet.dart';
 import '../widgets/role_animation_wrapper.dart';
+import '../widgets/email_suggestions_dropdown.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // LOGIN SCREEN
@@ -40,6 +42,63 @@ class LoginScreen extends HookWidget {
     final emailController    = useTextEditingController();
     final passwordController = useTextEditingController();
     final rememberMe         = useValueNotifier<bool>(false);
+    final showSuggestions    = useValueNotifier<bool>(false);
+    final savedEmails        = useValueNotifier<List<String>>([]);
+    final filteredEmails     = useValueNotifier<List<String>>([]);
+    final emailFocusNode     = useFocusNode();
+
+    // ── Load saved emails on init ──────────────────────────────────────────
+    useEffect(() {
+      final emailsService = di.sl<SavedEmailsService>();
+      final emails = emailsService.getSavedEmails();
+      savedEmails.value = emails;
+      filteredEmails.value = emails;
+      
+      // Autofill last email if exists
+      final lastEmail = emailsService.getLastEmail();
+      if (lastEmail != null && lastEmail.isNotEmpty) {
+        emailController.text = lastEmail;
+        rememberMe.value = true;  // Check "Remember Me" if we have saved email
+      }
+      
+      return null;
+    }, []);
+
+    // ── Filter emails based on input (live search) ─────────────────────────
+    useEffect(() {
+      void listener() {
+        final query = emailController.text.toLowerCase().trim();
+        
+        if (query.isEmpty) {
+          // Show all emails when field is empty
+          filteredEmails.value = savedEmails.value;
+        } else {
+          // Filter emails that contain the typed text
+          final matches = savedEmails.value
+              .where((email) => email.toLowerCase().contains(query))
+              .toList();
+          
+          // 🎯 SMART FILTER: Hide dropdown if exact match exists
+          // If user typed the complete email, no need to show it in dropdown
+          final hasExactMatch = savedEmails.value.any(
+            (email) => email.toLowerCase() == query,
+          );
+          
+          filteredEmails.value = hasExactMatch ? [] : matches;
+        }
+      }
+      emailController.addListener(listener);
+      return () => emailController.removeListener(listener);
+    }, [emailController, savedEmails]);
+
+    // ── Show/hide suggestions on focus ─────────────────────────────────────
+    useEffect(() {
+      void listener() {
+        showSuggestions.value = emailFocusNode.hasFocus && savedEmails.value.isNotEmpty;
+      }
+      emailFocusNode.addListener(listener);
+      return () => emailFocusNode.removeListener(listener);
+    }, [emailFocusNode]);
 
     // ── Reactive derivations (inline — no extra ValueNotifier) ─────────────
     final emailValue    = useValueListenable(emailController);
@@ -69,6 +128,19 @@ class LoginScreen extends HookWidget {
               }
               if (state.successMessage != null) {
                 context.showSuccessSnackBar(context.getLocalizedMessage(state.successMessage));
+                
+                // ✅ Save or remove email based on "Remember Me" checkbox
+                final emailsService = di.sl<SavedEmailsService>();
+                final email = emailController.text.trim();
+                
+                if (rememberMe.value) {
+                  // User checked "Remember Me" → Save email
+                  emailsService.saveEmail(email);
+                  final updatedEmails = emailsService.getSavedEmails();
+                  savedEmails.value = updatedEmails;
+                  filteredEmails.value = updatedEmails;
+                }
+                // Note: We DON'T remove email if unchecked - only via × button
               }
               switch (state.navSignal) {
                 case AuthNavigation.toHome:
@@ -113,6 +185,18 @@ class LoginScreen extends HookWidget {
               }
 
               if (state.successMessage != null && state.navSignal != AuthNavigation.none) {
+                // ✅ Save or remove email for Google Sign-In based on "Remember Me"
+                final emailsService = di.sl<SavedEmailsService>();
+                final email = emailController.text.trim();
+                
+                if (rememberMe.value && email.isNotEmpty) {
+                  emailsService.saveEmail(email);
+                  final updatedEmails = emailsService.getSavedEmails();
+                  savedEmails.value = updatedEmails;
+                  filteredEmails.value = updatedEmails;
+                }
+                // Note: We DON'T remove email if unchecked - only via × button
+                
                 final primaryColor = Theme.of(context).primaryColor;
                 // Capture the login-screen context before entering the builder
                 // so async resolver calls (e.g. saveSelectedStoreId) can use a
@@ -204,12 +288,61 @@ class LoginScreen extends HookWidget {
                           ),
                           SizedBox(height: 20.h),
 
-                          // ── Email field ─────────────────────────────────────────
-                          AuthTextField(
-                            controller: emailController,
-                            hint: l10n.email,
-                            keyboardType: TextInputType.emailAddress,
-                            textInputAction: TextInputAction.next,
+                          // ── Email field with suggestions ────────────────────
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AuthTextField(
+                                controller: emailController,
+                                focusNode: emailFocusNode,
+                                hint: l10n.email,
+                                keyboardType: TextInputType.emailAddress,
+                                textInputAction: TextInputAction.next,
+                              ),
+                              
+                              // ── Email suggestions dropdown (with live filter) ───
+                              ValueListenableBuilder<bool>(
+                                valueListenable: showSuggestions,
+                                builder: (context, show, _) {
+                                  if (!show) return const SizedBox.shrink();
+                                  
+                                  return ValueListenableBuilder<List<String>>(
+                                    valueListenable: filteredEmails,
+                                    builder: (context, emails, _) {
+                                      // Hide dropdown if no matching emails
+                                      if (emails.isEmpty) return const SizedBox.shrink();
+                                      
+                                      return AnimatedPrimaryColor(
+                                        builder: (context, primaryColor) {
+                                          return EmailSuggestionsDropdown(
+                                            emails: emails,
+                                            primaryColor: primaryColor,
+                                            onEmailSelected: (email) {
+                                              emailController.text = email;
+                                              showSuggestions.value = false;
+                                              emailFocusNode.unfocus();
+                                              rememberMe.value = true;
+                                            },
+                                            onEmailRemoved: (email) {
+                                              final emailsService = di.sl<SavedEmailsService>();
+                                              emailsService.removeEmail(email);
+                                              final updatedEmails = emailsService.getSavedEmails();
+                                              savedEmails.value = updatedEmails;
+                                              filteredEmails.value = updatedEmails;
+                                              
+                                              // If removed email was in the field, clear remember me
+                                              if (emailController.text == email) {
+                                                rememberMe.value = false;
+                                              }
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                           SizedBox(height: 12.h),
 
@@ -277,8 +410,15 @@ class LoginScreen extends HookWidget {
                           ),
                           SizedBox(height: 20.h),
 
-                          // ── "Or continue with" divider ───────────────────────────
-                          _OrDivider(label: l10n.login_or_divider),
+                          // ── "Or continue with" divider (with dynamic color) ─────
+                          AnimatedPrimaryColor(
+                            builder: (context, primaryColor) {
+                              return _OrDivider(
+                                label: l10n.login_or_divider,
+                                dividerColor: primaryColor.withValues(alpha: 0.3),
+                              );
+                            },
+                          ),
                           SizedBox(height: 16.h),
 
                           // ── Google sign-in button ────────────────────────────────
@@ -455,14 +595,19 @@ class _RememberForgotRow extends StatelessWidget {
 
 class _OrDivider extends StatelessWidget {
   final String label;
-  const _OrDivider({required this.label});
+  final Color dividerColor;
+  
+  const _OrDivider({
+    required this.label,
+    required this.dividerColor,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(
-          child: Divider(color: AppColors.borderField, height: 1.r, thickness: 1.r),
+          child: Divider(color: dividerColor, height: 1.r, thickness: 1.r),
         ),
         Padding(
           padding: EdgeInsetsDirectional.symmetric(horizontal: 12.w),
@@ -477,7 +622,7 @@ class _OrDivider extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: Divider(color: AppColors.borderField, height: 1.r, thickness: 1.r),
+          child: Divider(color: dividerColor, height: 1.r, thickness: 1.r),
         ),
       ],
     );

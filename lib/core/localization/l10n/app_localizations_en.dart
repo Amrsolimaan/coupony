@@ -1065,4 +1065,375 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logout_success => 'Logged out successfully';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get coupons => 'My Coupons';
+
+  @override
+  String get explorer => 'Explorer';
+
+  @override
+  String get categories => 'Categories';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get profile_title => 'Personal Account';
+
+  @override
+  String get profile_edit_account => 'Edit Account';
+
+  @override
+  String get profile_favorites => 'Favorites List';
+
+  @override
+  String get profile_be_seller => 'Become a Seller';
+
+  @override
+  String get profile_follow => 'Follow';
+
+  @override
+  String get profile_address => 'Address';
+
+  @override
+  String get profile_settings => 'Settings';
+
+  @override
+  String get profile_support => 'Help & Support';
+
+  @override
+  String profile_version(Object version) {
+    return 'Version: $version';
+  }
+
+  @override
+  String get profile_loading => 'Loading data...';
+
+  @override
+  String get profile_error => 'An error occurred while loading data';
+
+  @override
+  String get profile_retry => 'Retry';
+
+  @override
+  String get profile_default_user => 'User';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get edit_account => 'Edit Account';
+
+  @override
+  String get first_name => 'First Name';
+
+  @override
+  String get last_name => 'Last Name';
+
+  @override
+  String get phone_number => 'Phone Number';
+
+  @override
+  String get edit_profile_title => 'Personal Account';
+
+  @override
+  String get profile_update_success => 'Profile updated successfully';
+
+  @override
+  String get profile_photo_view => 'View Photo';
+
+  @override
+  String get profile_photo_change => 'Change Photo';
+
+  @override
+  String get profile_photo_remove => 'Remove Photo';
+
+  @override
+  String get profile_photo_camera => 'Camera';
+
+  @override
+  String get profile_photo_gallery => 'Gallery';
+
+  @override
+  String get profile_photo_remove_confirm_title => 'Are you sure?';
+
+  @override
+  String get profile_photo_remove_confirm_message =>
+      'Your profile photo will be permanently deleted';
+
+  @override
+  String get profile_photo_remove_confirm_button => 'Yes, Delete';
+
+  @override
+  String get profile_photo_remove_cancel_button => 'Cancel';
+
+  @override
+  String get address_management_title => 'Address';
+
+  @override
+  String get address_empty_title => 'No addresses added yet';
+
+  @override
+  String get address_empty_subtitle =>
+      'Add your address so we can deliver coupons easily';
+
+  @override
+  String get address_add_new => 'Add New Address';
+
+  @override
+  String get address_search_hint => 'Search for area, city...';
+
+  @override
+  String get address_label_dialog_title => 'Label Address';
+
+  @override
+  String get address_label_dialog_subtitle =>
+      'Please enter a name for easy access later';
+
+  @override
+  String get address_label_hint => 'Work';
+
+  @override
+  String get address_label_required => 'Please enter an address name';
+
+  @override
+  String get address_save => 'Save';
+
+  @override
+  String get address_cancel => 'Cancel';
+
+  @override
+  String get address_edit => 'Edit';
+
+  @override
+  String get address_delete => 'Delete';
+
+  @override
+  String get address_set_default => 'Set as Default';
+
+  @override
+  String get address_default_badge => 'Default';
+
+  @override
+  String get address_delete_title => 'Delete Address';
+
+  @override
+  String get address_delete_message =>
+      'Are you sure you want to delete this address?';
+
+  @override
+  String get address_select_location_first =>
+      'Please select a location on the map first';
+
+  @override
+  String get loading => 'Loading...';
+
+  @override
+  String get help_support_title => 'Help & Support';
+
+  @override
+  String get help_faq_title => 'FAQ';
+
+  @override
+  String get help_faq_subtitle => 'Answers to the most common questions';
+
+  @override
+  String get help_usage_guide_title => 'Usage Guide';
+
+  @override
+  String get help_usage_guide_subtitle => 'Learn how to use the app';
+
+  @override
+  String get help_report_problem_title => 'Report a Problem';
+
+  @override
+  String get help_report_problem_subtitle =>
+      'Let us know if you face any issues';
+
+  @override
+  String get help_rate_app_title => 'Rate the App';
+
+  @override
+  String get help_rate_app_subtitle => 'Share your opinion about the app';
+
+  @override
+  String get help_terms_title => 'Terms & Conditions';
+
+  @override
+  String get help_terms_subtitle => 'Review the app\'s terms of use';
+
+  @override
+  String get help_contact_us_title => 'Contact Us';
+
+  @override
+  String get help_contact_us_subtitle => 'We\'re here to help you 24/7';
+
+  @override
+  String get contact_us_page_title => 'Contact Us';
+
+  @override
+  String get contact_whatsapp => 'WhatsApp';
+
+  @override
+  String get contact_facebook => 'Facebook';
+
+  @override
+  String get contact_website => 'Website';
+
+  @override
+  String get contact_instagram => 'Instagram';
+
+  @override
+  String get contact_open_error => 'Could not open the link';
+
+  @override
+  String get faq_q1 => 'What is Coupony?';
+
+  @override
+  String get faq_a1 =>
+      'Coupony is an app that provides you with the best coupons, deals, and discounts from your favorite stores in one place.';
+
+  @override
+  String get faq_q2 => 'How do I use a coupon?';
+
+  @override
+  String get faq_a2 =>
+      'After browsing available offers, tap on the coupon to copy it, then use it when making a purchase from the store, either online or in-store.';
+
+  @override
+  String get faq_q3 => 'Is the app free?';
+
+  @override
+  String get faq_a3 =>
+      'Yes, Coupony is completely free. You can browse and use all coupons and offers without any fees.';
+
+  @override
+  String get faq_q4 => 'How do I contact support?';
+
+  @override
+  String get faq_a4 =>
+      'You can reach us through the \"Contact Us\" page in the Help & Support section, or directly via WhatsApp.';
+
+  @override
+  String get faq_q5 => 'Can I become a merchant?';
+
+  @override
+  String get faq_a5 =>
+      'Absolutely! You can register as a merchant from the profile page by tapping \"Become a Seller\" to create your store.';
+
+  @override
+  String get guide_step1_title => 'Create an Account';
+
+  @override
+  String get guide_step1_desc =>
+      'Register a new account using your email or enter as a guest to browse offers.';
+
+  @override
+  String get guide_step2_title => 'Browse Offers';
+
+  @override
+  String get guide_step2_desc =>
+      'Explore the latest offers and coupons from stores near you or based on your interests.';
+
+  @override
+  String get guide_step3_title => 'Choose a Coupon';
+
+  @override
+  String get guide_step3_desc =>
+      'Tap on the offer you like to view coupon details and available discount.';
+
+  @override
+  String get guide_step4_title => 'Copy the Code';
+
+  @override
+  String get guide_step4_desc =>
+      'Copy the discount code with a single tap and use it when shopping.';
+
+  @override
+  String get guide_step5_title => 'Enjoy the Discount';
+
+  @override
+  String get guide_step5_desc =>
+      'Present the coupon at checkout and enjoy savings whether online or in-store.';
+
+  @override
+  String get report_problem_description =>
+      'Tell us about the problem you encountered and we\'ll work on fixing it as soon as possible';
+
+  @override
+  String get report_problem_subject => 'Problem Subject';
+
+  @override
+  String get report_problem_details => 'Problem Details';
+
+  @override
+  String get report_problem_submit => 'Submit Report';
+
+  @override
+  String get report_problem_empty_error => 'Please fill in all fields';
+
+  @override
+  String get report_problem_success =>
+      'Report submitted successfully, thank you!';
+
+  @override
+  String get rate_app_heading => 'Rate Your Experience';
+
+  @override
+  String get rate_app_subtitle =>
+      'Share your feedback to help us improve your experience';
+
+  @override
+  String get rate_app_comment_hint => 'Add your comment here (optional)';
+
+  @override
+  String get rate_app_submit => 'Submit Rating';
+
+  @override
+  String get rate_app_select_rating => 'Please select a rating';
+
+  @override
+  String get rate_app_success => 'Thank you for your rating!';
+
+  @override
+  String get terms_last_updated => 'Last updated: April 2026';
+
+  @override
+  String get terms_section1_title => 'Acceptance of Terms';
+
+  @override
+  String get terms_section1_content =>
+      'By using the Coupony app, you agree to be bound by these terms and conditions. If you do not agree to these terms, please do not use the app.';
+
+  @override
+  String get terms_section2_title => 'App Usage';
+
+  @override
+  String get terms_section2_content =>
+      'You are permitted to use the app for personal, non-commercial purposes only. You may not copy, modify, distribute, or sell any part of the app without prior permission.';
+
+  @override
+  String get terms_section3_title => 'Your Account';
+
+  @override
+  String get terms_section3_content =>
+      'You are responsible for maintaining the confidentiality of your account information and password. You agree to notify us immediately of any unauthorized use of your account.';
+
+  @override
+  String get terms_section4_title => 'Coupons & Offers';
+
+  @override
+  String get terms_section4_content =>
+      'All coupons and offers displayed in the app are subject to the terms and conditions of the advertising stores. Coupony is not responsible for the validity or changes in terms of any offer.';
+
+  @override
+  String get terms_section5_title => 'Privacy';
+
+  @override
+  String get terms_section5_content =>
+      'We respect your privacy and are committed to protecting your personal data. For more information, please review our privacy policy.';
 }

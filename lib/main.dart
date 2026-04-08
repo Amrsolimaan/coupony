@@ -1,11 +1,12 @@
 import 'package:coupony/features/seller_flow/SellerOnboarding/data/models/seller_preferences_model.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/data/models/user_preferences_model.dart';
+import 'package:coupony/features/permissions/data/models/permission_status_model.dart';
+import 'package:coupony/features/Profile/data/models/saved_address_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:coupony/app.dart';
 import 'package:coupony/core/storage/local_cache_service.dart';
 import 'package:coupony/core/network/network_monitor.dart';
-import 'package:coupony/features/permissions/data/models/permission_status_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -30,6 +31,7 @@ void main() async {
   Hive.registerAdapter(UserPreferencesModelAdapter());
   Hive.registerAdapter(SellerPreferencesModelAdapter());
   Hive.registerAdapter(PermissionStatusModelAdapter());
+  Hive.registerAdapter(SavedAddressModelAdapter());
   // Hive.registerAdapter(CouponModelAdapter()); // ✅ Uncomment after running build_runner
 
   // 3. Initialize Dependency Injection أولاً

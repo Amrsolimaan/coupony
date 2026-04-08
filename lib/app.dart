@@ -37,7 +37,8 @@ class MyApp extends StatelessWidget {
               create: (context) => sl<PermissionFlowCubit>(),
             ),
           ],
-          child: GlobalNetworkListener(child: const AppView()),
+          // ✅ إزالة GlobalNetworkListener من هنا
+          child: const AppView(),
         );
       },
     );
@@ -110,6 +111,10 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
               localizationsDelegates: AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
               locale: locale,
+              // ✅ إضافة GlobalNetworkListener هنا داخل MaterialApp
+              builder: (context, child) {
+                return GlobalNetworkListener(child: child ?? const SizedBox.shrink());
+              },
             );
           },
         );

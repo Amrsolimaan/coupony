@@ -18,6 +18,9 @@ class PermissionEntity extends Equatable {
   /// User's longitude (if location granted)
   final double? longitude;
 
+  /// User's address (if location granted and geocoded)
+  final String? address;
+
   /// FCM Token (if notification granted)
   final String? fcmToken;
 
@@ -32,6 +35,7 @@ class PermissionEntity extends Equatable {
     required this.notificationStatus,
     this.latitude,
     this.longitude,
+    this.address,
     this.fcmToken,
     required this.timestamp,
     this.hasCompletedFlow = false,
@@ -69,6 +73,7 @@ class PermissionEntity extends Equatable {
         notificationStatus,
         latitude,
         longitude,
+        address,
         fcmToken,
         timestamp,
         hasCompletedFlow,

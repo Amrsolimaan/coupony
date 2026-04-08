@@ -62,6 +62,7 @@ abstract class PermissionRepository {
     NotificationPermissionStatus? notificationStatus,
     double? latitude,
     double? longitude,
+    String? address,
     String? fcmToken,
     bool? hasCompletedFlow,
   });

@@ -304,8 +304,15 @@ class RegisterScreen extends HookWidget {
                         ),
                         SizedBox(height: 20.h),
 
-                        // ── "Or continue with" divider ───────────────────────
-                        _OrDivider(label: l10n.login_or_divider),
+                        // ── "Or continue with" divider (with dynamic color) ─────
+                        AnimatedPrimaryColor(
+                          builder: (context, primaryColor) {
+                            return _OrDivider(
+                              label: l10n.login_or_divider,
+                              dividerColor: primaryColor.withValues(alpha: 0.3),
+                            );
+                          },
+                        ),
                         SizedBox(height: 16.h),
 
                         // ── Google sign-in button ────────────────────────────
@@ -465,7 +472,12 @@ class _TermsCheckbox extends StatelessWidget {
 
 class _OrDivider extends StatelessWidget {
   final String label;
-  const _OrDivider({required this.label});
+  final Color dividerColor;
+  
+  const _OrDivider({
+    required this.label,
+    required this.dividerColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -473,7 +485,7 @@ class _OrDivider extends StatelessWidget {
       children: [
         Expanded(
           child: Divider(
-              color: AppColors.borderField, height: 1.r, thickness: 1.r),
+              color: dividerColor, height: 1.r, thickness: 1.r),
         ),
         Padding(
           padding: EdgeInsetsDirectional.symmetric(horizontal: 12.w),
@@ -489,7 +501,7 @@ class _OrDivider extends StatelessWidget {
         ),
         Expanded(
           child: Divider(
-              color: AppColors.borderField, height: 1.r, thickness: 1.r),
+              color: dividerColor, height: 1.r, thickness: 1.r),
         ),
       ],
     );

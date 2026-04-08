@@ -19,6 +19,10 @@ class UserModel extends UserEntity {
     super.accessToken,
     super.refreshToken,
     super.fcmToken,
+    super.avatar,
+    super.gender,
+    super.bio,
+    super.language,
     super.isOnboardingCompleted,
     super.isStoreCreated,
     this.roles  = const [],
@@ -69,7 +73,7 @@ class UserModel extends UserEntity {
         (userObject?['role'] as String?) ??
         (userInfo['role']    as String?) ??
         roleFromArray ??
-        'user';
+        'customer';  // Default to 'customer' instead of 'user' to avoid confusion
 
     // ── stores ───────────────────────────────────────────────────────────────
     final storesRaw  = userInfo['stores'] as List<dynamic>? ?? [];
@@ -77,16 +81,22 @@ class UserModel extends UserEntity {
 
     print('🎯 Role: $finalRole | Roles: $rolesList | Stores: ${storesList.length}');
 
+    final profile = userInfo['profile'] as Map<String, dynamic>?;
+
     return UserModel(
-      id:                    0,
-      firstName:             userInfo['profile']?['first_name'] as String? ?? '',
-      lastName:              userInfo['profile']?['last_name']  as String? ?? '',
+      id:                    int.tryParse(userInfo['id']?.toString() ?? '') ?? 0,
+      firstName:             profile?['first_name'] as String? ?? '',
+      lastName:              profile?['last_name']  as String? ?? '',
       email:                 userInfo['email']        as String? ?? '',
       phoneNumber:           userInfo['phone_number'] as String? ?? '',
       role:                  finalRole,
       accessToken:           json['access_token']  as String? ?? data['access_token']  as String?,
       refreshToken:          json['refresh_token'] as String? ?? data['refresh_token'] as String?,
       fcmToken:              data['fcm_token'] as String?,
+      avatar:                profile?['avatar']   as String?,
+      gender:                profile?['gender']   as String?,
+      bio:                   profile?['bio']      as String?,
+      language:              profile?['language'] as String?,
       isOnboardingCompleted: finalOnboardingStatus,
       isStoreCreated:        finalStoreCreated,
       roles:                 rolesList,
@@ -104,6 +114,10 @@ class UserModel extends UserEntity {
     'access_token':            accessToken,
     'refresh_token':           refreshToken,
     'fcm_token':               fcmToken,
+    'avatar':                  avatar,
+    'gender':                  gender,
+    'bio':                     bio,
+    'language':                language,
     'is_onboarding_completed': isOnboardingCompleted,
     'is_store_created':        isStoreCreated,
     'roles':                   roles,
@@ -120,6 +134,10 @@ class UserModel extends UserEntity {
     String?               accessToken,
     String?               refreshToken,
     String?               fcmToken,
+    String?               avatar,
+    String?               gender,
+    String?               bio,
+    String?               language,
     bool?                 isOnboardingCompleted,
     bool?                 isStoreCreated,
     List<String>?         roles,
@@ -135,6 +153,10 @@ class UserModel extends UserEntity {
       accessToken:           accessToken           ?? this.accessToken,
       refreshToken:          refreshToken          ?? this.refreshToken,
       fcmToken:              fcmToken              ?? this.fcmToken,
+      avatar:                avatar                ?? this.avatar,
+      gender:                gender                ?? this.gender,
+      bio:                   bio                   ?? this.bio,
+      language:              language              ?? this.language,
       isOnboardingCompleted: isOnboardingCompleted ?? this.isOnboardingCompleted,
       isStoreCreated:        isStoreCreated        ?? this.isStoreCreated,
       roles:                 roles                 ?? this.roles,

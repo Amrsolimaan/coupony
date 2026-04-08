@@ -2023,6 +2023,696 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Logged out successfully'**
   String get logout_success;
+
+  /// No description provided for @home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get home;
+
+  /// No description provided for @coupons.
+  ///
+  /// In en, this message translates to:
+  /// **'My Coupons'**
+  String get coupons;
+
+  /// No description provided for @explorer.
+  ///
+  /// In en, this message translates to:
+  /// **'Explorer'**
+  String get explorer;
+
+  /// No description provided for @categories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get categories;
+
+  /// No description provided for @account.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get account;
+
+  /// No description provided for @profile_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Account'**
+  String get profile_title;
+
+  /// No description provided for @profile_edit_account.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Account'**
+  String get profile_edit_account;
+
+  /// No description provided for @profile_favorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites List'**
+  String get profile_favorites;
+
+  /// No description provided for @profile_be_seller.
+  ///
+  /// In en, this message translates to:
+  /// **'Become a Seller'**
+  String get profile_be_seller;
+
+  /// No description provided for @profile_follow.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow'**
+  String get profile_follow;
+
+  /// No description provided for @profile_address.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get profile_address;
+
+  /// No description provided for @profile_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get profile_settings;
+
+  /// No description provided for @profile_support.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get profile_support;
+
+  /// No description provided for @profile_version.
+  ///
+  /// In en, this message translates to:
+  /// **'Version: {version}'**
+  String profile_version(Object version);
+
+  /// No description provided for @profile_loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading data...'**
+  String get profile_loading;
+
+  /// No description provided for @profile_error.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while loading data'**
+  String get profile_error;
+
+  /// No description provided for @profile_retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get profile_retry;
+
+  /// No description provided for @profile_default_user.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get profile_default_user;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @edit_account.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Account'**
+  String get edit_account;
+
+  /// No description provided for @first_name.
+  ///
+  /// In en, this message translates to:
+  /// **'First Name'**
+  String get first_name;
+
+  /// No description provided for @last_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Name'**
+  String get last_name;
+
+  /// No description provided for @phone_number.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phone_number;
+
+  /// No description provided for @edit_profile_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Account'**
+  String get edit_profile_title;
+
+  /// No description provided for @profile_update_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully'**
+  String get profile_update_success;
+
+  /// No description provided for @profile_photo_view.
+  ///
+  /// In en, this message translates to:
+  /// **'View Photo'**
+  String get profile_photo_view;
+
+  /// No description provided for @profile_photo_change.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Photo'**
+  String get profile_photo_change;
+
+  /// No description provided for @profile_photo_remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Photo'**
+  String get profile_photo_remove;
+
+  /// No description provided for @profile_photo_camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get profile_photo_camera;
+
+  /// No description provided for @profile_photo_gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get profile_photo_gallery;
+
+  /// No description provided for @profile_photo_remove_confirm_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure?'**
+  String get profile_photo_remove_confirm_title;
+
+  /// No description provided for @profile_photo_remove_confirm_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile photo will be permanently deleted'**
+  String get profile_photo_remove_confirm_message;
+
+  /// No description provided for @profile_photo_remove_confirm_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Delete'**
+  String get profile_photo_remove_confirm_button;
+
+  /// No description provided for @profile_photo_remove_cancel_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get profile_photo_remove_cancel_button;
+
+  /// No description provided for @address_management_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address_management_title;
+
+  /// No description provided for @address_empty_title.
+  ///
+  /// In en, this message translates to:
+  /// **'No addresses added yet'**
+  String get address_empty_title;
+
+  /// No description provided for @address_empty_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your address so we can deliver coupons easily'**
+  String get address_empty_subtitle;
+
+  /// No description provided for @address_add_new.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Address'**
+  String get address_add_new;
+
+  /// No description provided for @address_search_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for area, city...'**
+  String get address_search_hint;
+
+  /// No description provided for @address_label_dialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Label Address'**
+  String get address_label_dialog_title;
+
+  /// No description provided for @address_label_dialog_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a name for easy access later'**
+  String get address_label_dialog_subtitle;
+
+  /// No description provided for @address_label_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Work'**
+  String get address_label_hint;
+
+  /// No description provided for @address_label_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter an address name'**
+  String get address_label_required;
+
+  /// No description provided for @address_save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get address_save;
+
+  /// No description provided for @address_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get address_cancel;
+
+  /// No description provided for @address_edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get address_edit;
+
+  /// No description provided for @address_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get address_delete;
+
+  /// No description provided for @address_set_default.
+  ///
+  /// In en, this message translates to:
+  /// **'Set as Default'**
+  String get address_set_default;
+
+  /// No description provided for @address_default_badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get address_default_badge;
+
+  /// No description provided for @address_delete_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Address'**
+  String get address_delete_title;
+
+  /// No description provided for @address_delete_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this address?'**
+  String get address_delete_message;
+
+  /// No description provided for @address_select_location_first.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a location on the map first'**
+  String get address_select_location_first;
+
+  /// No description provided for @loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loading;
+
+  /// No description provided for @help_support_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get help_support_title;
+
+  /// No description provided for @help_faq_title.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ'**
+  String get help_faq_title;
+
+  /// No description provided for @help_faq_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Answers to the most common questions'**
+  String get help_faq_subtitle;
+
+  /// No description provided for @help_usage_guide_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Usage Guide'**
+  String get help_usage_guide_title;
+
+  /// No description provided for @help_usage_guide_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn how to use the app'**
+  String get help_usage_guide_subtitle;
+
+  /// No description provided for @help_report_problem_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a Problem'**
+  String get help_report_problem_title;
+
+  /// No description provided for @help_report_problem_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Let us know if you face any issues'**
+  String get help_report_problem_subtitle;
+
+  /// No description provided for @help_rate_app_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate the App'**
+  String get help_rate_app_title;
+
+  /// No description provided for @help_rate_app_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your opinion about the app'**
+  String get help_rate_app_subtitle;
+
+  /// No description provided for @help_terms_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & Conditions'**
+  String get help_terms_title;
+
+  /// No description provided for @help_terms_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the app\'s terms of use'**
+  String get help_terms_subtitle;
+
+  /// No description provided for @help_contact_us_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Us'**
+  String get help_contact_us_title;
+
+  /// No description provided for @help_contact_us_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re here to help you 24/7'**
+  String get help_contact_us_subtitle;
+
+  /// No description provided for @contact_us_page_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Us'**
+  String get contact_us_page_title;
+
+  /// No description provided for @contact_whatsapp.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp'**
+  String get contact_whatsapp;
+
+  /// No description provided for @contact_facebook.
+  ///
+  /// In en, this message translates to:
+  /// **'Facebook'**
+  String get contact_facebook;
+
+  /// No description provided for @contact_website.
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get contact_website;
+
+  /// No description provided for @contact_instagram.
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram'**
+  String get contact_instagram;
+
+  /// No description provided for @contact_open_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the link'**
+  String get contact_open_error;
+
+  /// No description provided for @faq_q1.
+  ///
+  /// In en, this message translates to:
+  /// **'What is Coupony?'**
+  String get faq_q1;
+
+  /// No description provided for @faq_a1.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupony is an app that provides you with the best coupons, deals, and discounts from your favorite stores in one place.'**
+  String get faq_a1;
+
+  /// No description provided for @faq_q2.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I use a coupon?'**
+  String get faq_q2;
+
+  /// No description provided for @faq_a2.
+  ///
+  /// In en, this message translates to:
+  /// **'After browsing available offers, tap on the coupon to copy it, then use it when making a purchase from the store, either online or in-store.'**
+  String get faq_a2;
+
+  /// No description provided for @faq_q3.
+  ///
+  /// In en, this message translates to:
+  /// **'Is the app free?'**
+  String get faq_q3;
+
+  /// No description provided for @faq_a3.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Coupony is completely free. You can browse and use all coupons and offers without any fees.'**
+  String get faq_a3;
+
+  /// No description provided for @faq_q4.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I contact support?'**
+  String get faq_q4;
+
+  /// No description provided for @faq_a4.
+  ///
+  /// In en, this message translates to:
+  /// **'You can reach us through the \"Contact Us\" page in the Help & Support section, or directly via WhatsApp.'**
+  String get faq_a4;
+
+  /// No description provided for @faq_q5.
+  ///
+  /// In en, this message translates to:
+  /// **'Can I become a merchant?'**
+  String get faq_q5;
+
+  /// No description provided for @faq_a5.
+  ///
+  /// In en, this message translates to:
+  /// **'Absolutely! You can register as a merchant from the profile page by tapping \"Become a Seller\" to create your store.'**
+  String get faq_a5;
+
+  /// No description provided for @guide_step1_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an Account'**
+  String get guide_step1_title;
+
+  /// No description provided for @guide_step1_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Register a new account using your email or enter as a guest to browse offers.'**
+  String get guide_step1_desc;
+
+  /// No description provided for @guide_step2_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse Offers'**
+  String get guide_step2_title;
+
+  /// No description provided for @guide_step2_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore the latest offers and coupons from stores near you or based on your interests.'**
+  String get guide_step2_desc;
+
+  /// No description provided for @guide_step3_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a Coupon'**
+  String get guide_step3_title;
+
+  /// No description provided for @guide_step3_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap on the offer you like to view coupon details and available discount.'**
+  String get guide_step3_desc;
+
+  /// No description provided for @guide_step4_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy the Code'**
+  String get guide_step4_title;
+
+  /// No description provided for @guide_step4_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy the discount code with a single tap and use it when shopping.'**
+  String get guide_step4_desc;
+
+  /// No description provided for @guide_step5_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Enjoy the Discount'**
+  String get guide_step5_title;
+
+  /// No description provided for @guide_step5_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Present the coupon at checkout and enjoy savings whether online or in-store.'**
+  String get guide_step5_desc;
+
+  /// No description provided for @report_problem_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about the problem you encountered and we\'ll work on fixing it as soon as possible'**
+  String get report_problem_description;
+
+  /// No description provided for @report_problem_subject.
+  ///
+  /// In en, this message translates to:
+  /// **'Problem Subject'**
+  String get report_problem_subject;
+
+  /// No description provided for @report_problem_details.
+  ///
+  /// In en, this message translates to:
+  /// **'Problem Details'**
+  String get report_problem_details;
+
+  /// No description provided for @report_problem_submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Report'**
+  String get report_problem_submit;
+
+  /// No description provided for @report_problem_empty_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in all fields'**
+  String get report_problem_empty_error;
+
+  /// No description provided for @report_problem_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Report submitted successfully, thank you!'**
+  String get report_problem_success;
+
+  /// No description provided for @rate_app_heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Your Experience'**
+  String get rate_app_heading;
+
+  /// No description provided for @rate_app_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your feedback to help us improve your experience'**
+  String get rate_app_subtitle;
+
+  /// No description provided for @rate_app_comment_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your comment here (optional)'**
+  String get rate_app_comment_hint;
+
+  /// No description provided for @rate_app_submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Rating'**
+  String get rate_app_submit;
+
+  /// No description provided for @rate_app_select_rating.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a rating'**
+  String get rate_app_select_rating;
+
+  /// No description provided for @rate_app_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for your rating!'**
+  String get rate_app_success;
+
+  /// No description provided for @terms_last_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: April 2026'**
+  String get terms_last_updated;
+
+  /// No description provided for @terms_section1_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Acceptance of Terms'**
+  String get terms_section1_title;
+
+  /// No description provided for @terms_section1_content.
+  ///
+  /// In en, this message translates to:
+  /// **'By using the Coupony app, you agree to be bound by these terms and conditions. If you do not agree to these terms, please do not use the app.'**
+  String get terms_section1_content;
+
+  /// No description provided for @terms_section2_title.
+  ///
+  /// In en, this message translates to:
+  /// **'App Usage'**
+  String get terms_section2_title;
+
+  /// No description provided for @terms_section2_content.
+  ///
+  /// In en, this message translates to:
+  /// **'You are permitted to use the app for personal, non-commercial purposes only. You may not copy, modify, distribute, or sell any part of the app without prior permission.'**
+  String get terms_section2_content;
+
+  /// No description provided for @terms_section3_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Account'**
+  String get terms_section3_title;
+
+  /// No description provided for @terms_section3_content.
+  ///
+  /// In en, this message translates to:
+  /// **'You are responsible for maintaining the confidentiality of your account information and password. You agree to notify us immediately of any unauthorized use of your account.'**
+  String get terms_section3_content;
+
+  /// No description provided for @terms_section4_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupons & Offers'**
+  String get terms_section4_title;
+
+  /// No description provided for @terms_section4_content.
+  ///
+  /// In en, this message translates to:
+  /// **'All coupons and offers displayed in the app are subject to the terms and conditions of the advertising stores. Coupony is not responsible for the validity or changes in terms of any offer.'**
+  String get terms_section4_content;
+
+  /// No description provided for @terms_section5_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get terms_section5_title;
+
+  /// No description provided for @terms_section5_content.
+  ///
+  /// In en, this message translates to:
+  /// **'We respect your privacy and are committed to protecting your personal data. For more information, please review our privacy policy.'**
+  String get terms_section5_content;
 }
 
 class _AppLocalizationsDelegate

@@ -10,6 +10,13 @@ class UserEntity extends Equatable {
   final String? accessToken;
   final String? refreshToken;
   final String? fcmToken;
+
+  // ── Profile fields (populated from /auth/me) ─────────────────────────────
+  final String? avatar;
+  final String? gender;
+  final String? bio;
+  final String? language;
+
   /// Populated from the login/register API response.
   /// true = backend already has the user's onboarding preferences.
   final bool isOnboardingCompleted;
@@ -29,6 +36,10 @@ class UserEntity extends Equatable {
     this.accessToken,
     this.refreshToken,
     this.fcmToken,
+    this.avatar,
+    this.gender,
+    this.bio,
+    this.language,
     this.isOnboardingCompleted = false,
     this.isStoreCreated = false,
   });
@@ -40,6 +51,7 @@ class UserEntity extends Equatable {
   List<Object?> get props => [
     id, firstName, lastName, email, phoneNumber,
     role, accessToken, refreshToken, fcmToken,
+    avatar, gender, bio, language,
     isOnboardingCompleted, isStoreCreated,
   ];
 }

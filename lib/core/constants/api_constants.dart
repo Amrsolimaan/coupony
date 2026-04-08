@@ -18,6 +18,9 @@ class ApiConstants {
   static const String getCategories  = '/store-categories';
   static const String getSocials     = '/socials';
 
+  // ── Profile ───────────────────────────────────────────
+  static const String profile         = '/auth/me';
+
   // ── Password Reset ─────────────────────────────────────
   static const String forgotPassword    = '/auth/password/forgot';
   static const String verifyResetOtp    = '/auth/password/verify-otp';

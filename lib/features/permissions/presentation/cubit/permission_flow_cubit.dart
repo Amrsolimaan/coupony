@@ -366,6 +366,17 @@ class PermissionFlowCubit extends Cubit<PermissionFlowState> {
   /// User confirmed location on map (clicked "تحديد الموقع").
   void confirmLocation() {
     logger.i('User confirmed location');
+    
+    // Save the selected location with address to local storage
+    if (state.userPosition != null) {
+      repository.savePermissionStatus(
+        latitude: state.userPosition!.latitude,
+        longitude: state.userPosition!.longitude,
+        address: state.currentAddress,
+      );
+      logger.i('✅ Saved location with address: ${state.currentAddress}');
+    }
+    
     final nextStep =
         determineNextPermissionStepUseCase.afterLocationConfirmed();
     _safeEmit(

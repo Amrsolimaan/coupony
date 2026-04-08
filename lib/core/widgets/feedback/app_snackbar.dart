@@ -62,7 +62,11 @@ class AppSnackBar {
     _SnackBarConfig config,
     Duration duration,
   ) {
-    final overlay = Overlay.of(context);
+    // Guard: context might be detached from the tree if the screen was
+    // navigated away from before the BlocListener callback fired.
+    if (!context.mounted) return;
+
+    final overlay = Overlay.of(context, rootOverlay: true);
     
     _currentOverlay = OverlayEntry(
       builder: (context) => _GlassmorphicSnackBar(

@@ -31,6 +31,10 @@ class PermissionStatusModel extends PermissionEntity {
   final double? longitude;
   
   @override
+  @HiveField(7)
+  final String? address;
+  
+  @override
   @HiveField(4)
   final String? fcmToken;
   
@@ -50,6 +54,7 @@ class PermissionStatusModel extends PermissionEntity {
     String? notificationStatus,
     this.latitude,
     this.longitude,
+    this.address,
     this.fcmToken,
     DateTime? timestamp,
     this.hasCompletedFlow = false,
@@ -61,6 +66,7 @@ class PermissionStatusModel extends PermissionEntity {
           notificationStatus: notificationStatus ?? '',
           latitude: latitude,
           longitude: longitude,
+          address: address,
           fcmToken: fcmToken,
           timestamp: timestamp ?? DateTime.utc(1970),
           hasCompletedFlow: hasCompletedFlow,
@@ -85,6 +91,7 @@ class PermissionStatusModel extends PermissionEntity {
       notificationStatus: json['notification_status'] as String,
       latitude: json['latitude'] as double?,
       longitude: json['longitude'] as double?,
+      address: json['address'] as String?,
       fcmToken: json['fcm_token'] as String?,
       timestamp: DateTime.parse(json['timestamp'] as String),
       hasCompletedFlow: json['has_completed_flow'] as bool? ?? false,
@@ -101,6 +108,7 @@ class PermissionStatusModel extends PermissionEntity {
       'notification_status': notificationStatus,
       'latitude': latitude,
       'longitude': longitude,
+      'address': address,
       'fcm_token': fcmToken,
       'timestamp': timestamp.toIso8601String(),
       'has_completed_flow': hasCompletedFlow,
@@ -116,6 +124,7 @@ class PermissionStatusModel extends PermissionEntity {
     String? notificationStatus,
     Object? latitude = _sentinel,   // ✅ Object? مش double?
     Object? longitude = _sentinel,  // ✅ Object? مش double?
+    Object? address = _sentinel,    // ✅ Object? مش String?
     Object? fcmToken = _sentinel,   // ✅ Object? مش String?
     DateTime? timestamp,
     bool? hasCompletedFlow,
@@ -125,6 +134,7 @@ class PermissionStatusModel extends PermissionEntity {
       notificationStatus: notificationStatus ?? this.notificationStatus,
       latitude: latitude == _sentinel ? this.latitude : latitude as double?,
       longitude: longitude == _sentinel ? this.longitude : longitude as double?,
+      address: address == _sentinel ? this.address : address as String?,
       fcmToken: fcmToken == _sentinel ? this.fcmToken : fcmToken as String?,
       timestamp: timestamp ?? this.timestamp,
       hasCompletedFlow: hasCompletedFlow ?? this.hasCompletedFlow,

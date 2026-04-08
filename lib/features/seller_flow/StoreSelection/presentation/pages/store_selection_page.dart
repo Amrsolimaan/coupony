@@ -132,7 +132,7 @@ class _StoreSelectionPageState extends State<StoreSelectionPage>
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6FB),
+      backgroundColor: AppColors.surface,
       body: Column(
         children: [
           // ── Navy Header ────────────────────────────────────────────────

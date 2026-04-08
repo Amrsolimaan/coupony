@@ -32,7 +32,10 @@ class DioClient {
 
     _dio.interceptors.addAll([
       LocaleInterceptor(localeCubit), // Add locale header first
-      AuthInterceptor(secureStorage),
+      AuthInterceptor(
+        secureStorage: secureStorage,
+        dio: _dio,
+      ),
       ErrorInterceptor(),
       NetworkMonitorInterceptor(),
       LoggingInterceptor(), // Only in debug mode
@@ -75,6 +78,20 @@ class DioClient {
     Options? options,
   }) async {
     return await _dio.put(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    );
+  }
+
+  Future<Response> patch(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
+    return await _dio.patch(
       path,
       data: data,
       queryParameters: queryParameters,

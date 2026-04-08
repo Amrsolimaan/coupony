@@ -7,14 +7,14 @@ import 'network_thresholds.dart';
 /// - Very-slow requests add 3 points
 /// - Fast/normal requests subtract 1 point (clamped to 0)
 ///
-/// A warning is triggered only after [minConsecutiveSlowRequests] or more
+/// A warning is triggered after [minConsecutiveSlowRequests] or more
 /// consecutive slow requests, *and* the accumulated score exceeds
 /// [warningScoreThreshold].
 class NetworkSpeedDetector {
   NetworkSpeedDetector({
     this.windowSize = 5,
-    this.minConsecutiveSlowRequests = 2,
-    this.warningScoreThreshold = 2,
+    this.minConsecutiveSlowRequests = 1,
+    this.warningScoreThreshold = 1,
   });
 
   /// Number of recent requests to keep in the sliding window.
