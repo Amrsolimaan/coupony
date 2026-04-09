@@ -41,7 +41,7 @@ class OnboardingBudgetScreen extends StatelessWidget {
               cubit.clearNavigationSignal();
             }
 
-            if (state.navigationSignal == OnboardingNavigation.toLogin) {
+            if (state.navigationSignal == OnboardingNavigation.toHome) {
               context.go(AppRouter.home);
               cubit.clearNavigationSignal();
             }

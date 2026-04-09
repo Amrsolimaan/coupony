@@ -57,7 +57,11 @@ import 'package:coupony/features/Profile/presentation/pages/customer/usage_guide
 import 'package:coupony/features/Profile/presentation/pages/customer/report_problem_page.dart';
 import 'package:coupony/features/Profile/presentation/pages/customer/rate_app_page.dart';
 import 'package:coupony/features/Profile/presentation/pages/customer/terms_page.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/settings_page.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/change_password_page.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/privacy_policy_page.dart';
 import 'package:coupony/features/Profile/presentation/cubit/Customer_Profile_cubit.dart';
+import 'package:coupony/features/Profile/presentation/cubit/change_password_cubit.dart';
 import 'package:coupony/features/Profile/presentation/cubit/address_cubit.dart';
 
 class MerchantDashboardScreen extends StatelessWidget {
@@ -188,6 +192,9 @@ class AppRouter {
   static const String reportProblemPage = '/report-problem';
   static const String rateAppPage = '/rate-app';
   static const String termsPage = '/terms';
+  static const String settingsPage = '/settings';
+  static const String changePassword = '/change-password';
+  static const String privacyPolicyPage = '/privacy-policy';
 
   // Permission flow
   static const String permissionFlow = '/permission-flow';
@@ -559,7 +566,10 @@ class AppRouter {
         pageBuilder: (context, state) => AppPageTransition.build(
           context: context,
           state: state,
-          child: const AddressMapPickerPage(),
+          child: BlocProvider(
+            create: (_) => sl<AddressCubit>(),
+            child: const AddressMapPickerPage(),
+          ),
         ),
       ),
       GoRoute(
@@ -616,6 +626,36 @@ class AppRouter {
           context: context,
           state: state,
           child: const TermsPage(),
+        ),
+      ),
+      GoRoute(
+        path: settingsPage,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: BlocProvider(
+            create: (_) => sl<ProfileCubit>()..loadProfile(),
+            child: const SettingsPage(),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: changePassword,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: BlocProvider(
+            create: (_) => sl<ChangePasswordCubit>(),
+            child: const ChangePasswordPage(),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: privacyPolicyPage,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const PrivacyPolicyPage(),
         ),
       ),
     ],

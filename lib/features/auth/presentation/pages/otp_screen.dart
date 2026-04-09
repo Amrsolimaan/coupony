@@ -523,6 +523,26 @@ class _OtpInputRow extends HookWidget {
   }
 
   void _handleDigitChange(BuildContext context, int index, String value) {
+    // Handle paste of multiple digits
+    if (value.length > 1) {
+      final digits = value.replaceAll(RegExp(r'\D'), '');
+      if (digits.isNotEmpty) {
+        HapticFeedback.mediumImpact();
+        // Fill current and subsequent fields
+        for (int i = 0; i < digits.length && (index + i) < 6; i++) {
+          controllers[index + i].text = digits[i];
+        }
+        // Move focus to next empty field or unfocus if all filled
+        final nextEmptyIndex = index + digits.length;
+        if (nextEmptyIndex < 6) {
+          focusNodes[nextEmptyIndex].requestFocus();
+        } else {
+          FocusScope.of(context).unfocus();
+        }
+      }
+      return;
+    }
+
     if (value.isNotEmpty) {
       HapticFeedback.lightImpact();
       activeIndexNotifier.value = index;
@@ -582,7 +602,7 @@ class _OtpDigitBox extends HookWidget {
     final hasValue  = textValue.text.isNotEmpty;
 
     return GestureDetector(
-      onLongPress: index == 0 ? onPaste : null,
+      onLongPress: onPaste,
       child: SizedBox(
         height: 68.h,
         child: TextField(
@@ -591,7 +611,7 @@ class _OtpDigitBox extends HookWidget {
           enabled:       isEnabled,
           keyboardType:  TextInputType.number,
           textAlign:     TextAlign.center,
-          maxLength:     1,
+          maxLength:     6, // Allow paste of full code
           style: TextStyle(
             fontFamily: AppTextStyles.Main_Font_english,
             fontSize:   24.sp,
@@ -620,6 +640,15 @@ class _OtpDigitBox extends HookWidget {
             contentPadding: EdgeInsets.zero,
           ),
           onChanged: onChanged,
+          onTap: () {
+            // Allow editing by selecting all text when tapping
+            if (hasValue) {
+              controller.selection = TextSelection(
+                baseOffset: 0,
+                extentOffset: controller.text.length,
+              );
+            }
+          },
         ),
       ),
     );

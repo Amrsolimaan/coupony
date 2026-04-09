@@ -1,0 +1,2241 @@
+{
+    "info": {
+        "name": "Coupony API",
+        "description": "",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Seller Products",
+            "description": "",
+            "item": [
+                {
+                    "name": "Create Product (Multipart)",
+                    "description": "Creates a product for the selected store and auto-saves returned product_id.",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code >= 200 && pm.response.code < 300) {",
+                                    "  const data = pm.response.json();",
+                                    "  const id = data?.data?.id || '';",
+                                    "  if (id) pm.collectionVariables.set('product_id', id);",
+                                    "}"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ],
+                    "auth": {},
+                    "request": {
+                        "auth": {},
+                        "method": "POST",
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "title",
+                                    "value": "Example Product",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "slug",
+                                    "value": "example-product",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "short_description",
+                                    "value": "Short description",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "description",
+                                    "value": "Long description",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "product_type",
+                                    "value": "standard",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "base_price",
+                                    "value": "100.00",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "compare_at_price",
+                                    "value": "120.00",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "currency",
+                                    "value": "EGP",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "sku",
+                                    "value": "SKU-001",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "status",
+                                    "value": "draft",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "is_featured",
+                                    "value": "1",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "category_ids[0]",
+                                    "value": "{{category_id}}",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "images[0][file]",
+                                    "value": "file://C:\\Users\\Ahmed Mostafa\\Desktop\\1726256002133.jpg",
+                                    "type": "file",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "images[0][sort_order]",
+                                    "value": "0",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "images[0][is_primary]",
+                                    "value": "1",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "variants[0][title]",
+                                    "value": "Red / XL",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "variants[0][option_summary]",
+                                    "value": "Color: Red, Size: XL",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "variants[0][sku]",
+                                    "value": "SKU-001-RED-XL",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "variants[0][barcode]",
+                                    "value": "123456789",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "variants[0][price]",
+                                    "value": "110.00",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "variants[0][compare_at_price]",
+                                    "value": "130.00",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "variants[0][currency]",
+                                    "value": "EGP",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "variants[0][sort_order]",
+                                    "value": "0",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "variants[0][is_default]",
+                                    "value": "1",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "variants[0][is_active]",
+                                    "value": "1",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "variants[0][attributes][0][attribute_name]",
+                                    "value": "color",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "variants[0][attributes][0][attribute_value]",
+                                    "value": "red",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "variants[0][attributes][0][sort_order]",
+                                    "value": "0",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "variants[0][attributes][1][attribute_name]",
+                                    "value": "size",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "variants[0][attributes][1][attribute_value]",
+                                    "value": "XL",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "variants[0][attributes][1][sort_order]",
+                                    "value": "1",
+                                    "type": "text",
+                                    "disabled": false
+                                }
+                            ]
+                        },
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "description": "",
+                                "type": "string"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/stores/787bed80-920e-4735-adee-c3653ae6d6a1/products",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stores",
+                                "787bed80-920e-4735-adee-c3653ae6d6a1",
+                                "products"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}",
+                                        "description": "",
+                                        "disabled": false
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/stores/787bed80-920e-4735-adee-c3653ae6d6a1/products",
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "stores",
+                                        "787bed80-920e-4735-adee-c3653ae6d6a1",
+                                        "products"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "body": {
+                                    "mode": "formdata",
+                                    "formdata": [
+                                        {
+                                            "key": "title",
+                                            "value": "Example Product",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "slug",
+                                            "value": "example-product",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "short_description",
+                                            "value": "Short description",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "description",
+                                            "value": "Long description",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "product_type",
+                                            "value": "standard",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "base_price",
+                                            "value": "100.00",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "compare_at_price",
+                                            "value": "120.00",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "currency",
+                                            "value": "EGP",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "sku",
+                                            "value": "SKU-001",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "status",
+                                            "value": "draft",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "is_featured",
+                                            "value": "false",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "category_ids[0]",
+                                            "value": "{{category_id}}",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "images[0][file]",
+                                            "value": "",
+                                            "type": "file",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "images[0][sort_order]",
+                                            "value": "0",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "images[0][is_primary]",
+                                            "value": "true",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "variants[0][title]",
+                                            "value": "Red / XL",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "variants[0][option_summary]",
+                                            "value": "Color: Red, Size: XL",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "variants[0][sku]",
+                                            "value": "SKU-001-RED-XL",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "variants[0][barcode]",
+                                            "value": "123456789",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "variants[0][price]",
+                                            "value": "110.00",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "variants[0][compare_at_price]",
+                                            "value": "130.00",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "variants[0][currency]",
+                                            "value": "EGP",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "variants[0][sort_order]",
+                                            "value": "0",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "variants[0][is_default]",
+                                            "value": "true",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "variants[0][is_active]",
+                                            "value": "true",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "variants[0][attributes][0][attribute_name]",
+                                            "value": "color",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "variants[0][attributes][0][attribute_value]",
+                                            "value": "red",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "variants[0][attributes][0][sort_order]",
+                                            "value": "0",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "variants[0][attributes][1][attribute_name]",
+                                            "value": "size",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "variants[0][attributes][1][attribute_value]",
+                                            "value": "XL",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "variants[0][attributes][1][sort_order]",
+                                            "value": "1",
+                                            "type": "text",
+                                            "disabled": false
+                                        }
+                                    ]
+                                }
+                            },
+                            "cookie": []
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "List Store Products",
+                    "description": "",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {},
+                        "method": "GET",
+                        "body": {},
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "description": "",
+                                "type": "string"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stores",
+                                "{{store_id}}",
+                                "products"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "status",
+                                    "value": "",
+                                    "description": "",
+                                    "type": "string"
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "",
+                                    "description": "",
+                                    "type": "string"
+                                },
+                                {
+                                    "key": "is_featured",
+                                    "value": "",
+                                    "description": "",
+                                    "type": "string"
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "15",
+                                    "description": "",
+                                    "type": "string"
+                                }
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}",
+                                        "description": "",
+                                        "disabled": false
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products",
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "stores",
+                                        "{{store_id}}",
+                                        "products"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "status",
+                                            "value": "",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "search",
+                                            "value": "",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "is_featured",
+                                            "value": "",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "per_page",
+                                            "value": "15",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "variable": []
+                                },
+                                "body": {}
+                            },
+                            "cookie": []
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "Show Store Product",
+                    "description": "",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {},
+                        "method": "GET",
+                        "body": {},
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "description": "",
+                                "type": "string"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stores",
+                                "{{store_id}}",
+                                "products",
+                                "{{product_id}}"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}",
+                                        "description": "",
+                                        "disabled": false
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}",
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "stores",
+                                        "{{store_id}}",
+                                        "products",
+                                        "{{product_id}}"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "body": {}
+                            },
+                            "cookie": []
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "Update Store Product (JSON)",
+                    "description": "",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {},
+                        "method": "PUT",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Updated Product\",\n  \"slug\": \"updated-product\",\n  \"status\": \"active\",\n  \"is_featured\": true,\n  \"category_ids\": [{{category_id}}],\n  \"variants\": [\n    {\n      \"title\": \"Blue / L\",\n      \"option_summary\": \"Color: Blue, Size: L\",\n      \"sku\": \"SKU-001-BLUE-L\",\n      \"barcode\": \"987654321\",\n      \"price\": 115,\n      \"compare_at_price\": 140,\n      \"currency\": \"EGP\",\n      \"sort_order\": 0,\n      \"is_default\": true,\n      \"is_active\": true,\n      \"attributes\": [\n        {\"attribute_name\": \"color\", \"attribute_value\": \"blue\", \"sort_order\": 0},\n        {\"attribute_name\": \"size\", \"attribute_value\": \"L\", \"sort_order\": 1}\n      ]\n    }\n  ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stores",
+                                "{{store_id}}",
+                                "products",
+                                "{{product_id}}"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}",
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "stores",
+                                        "{{store_id}}",
+                                        "products",
+                                        "{{product_id}}"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"title\": \"Updated Product\",\n  \"slug\": \"updated-product\",\n  \"status\": \"active\",\n  \"is_featured\": true,\n  \"category_ids\": [{{category_id}}],\n  \"variants\": [\n    {\n      \"title\": \"Blue / L\",\n      \"option_summary\": \"Color: Blue, Size: L\",\n      \"sku\": \"SKU-001-BLUE-L\",\n      \"barcode\": \"987654321\",\n      \"price\": 115,\n      \"compare_at_price\": 140,\n      \"currency\": \"EGP\",\n      \"sort_order\": 0,\n      \"is_default\": true,\n      \"is_active\": true,\n      \"attributes\": [\n        {\"attribute_name\": \"color\", \"attribute_value\": \"blue\", \"sort_order\": 0},\n        {\"attribute_name\": \"size\", \"attribute_value\": \"L\", \"sort_order\": 1}\n      ]\n    }\n  ]\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                }
+                            },
+                            "cookie": []
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "Update Product Status",
+                    "description": "",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {},
+                        "method": "PATCH",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"status\": \"active\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/status",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stores",
+                                "{{store_id}}",
+                                "products",
+                                "{{product_id}}",
+                                "status"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "PATCH",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/status",
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "stores",
+                                        "{{store_id}}",
+                                        "products",
+                                        "{{product_id}}",
+                                        "status"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"status\": \"active\"\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                }
+                            },
+                            "cookie": []
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "Delete Store Product",
+                    "description": "",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {},
+                        "method": "DELETE",
+                        "body": {},
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "description": "",
+                                "type": "string"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stores",
+                                "{{store_id}}",
+                                "products",
+                                "{{product_id}}"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}",
+                                        "description": "",
+                                        "disabled": false
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}",
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "stores",
+                                        "{{store_id}}",
+                                        "products",
+                                        "{{product_id}}"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "body": {}
+                            },
+                            "cookie": []
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "List Product Variants",
+                    "description": "",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {},
+                        "method": "GET",
+                        "body": {},
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "description": "",
+                                "type": "string"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/variants",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stores",
+                                "{{store_id}}",
+                                "products",
+                                "{{product_id}}",
+                                "variants"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}",
+                                        "description": "",
+                                        "disabled": false
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/variants",
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "stores",
+                                        "{{store_id}}",
+                                        "products",
+                                        "{{product_id}}",
+                                        "variants"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "body": {}
+                            },
+                            "cookie": []
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "Create Product Variant",
+                    "description": "Creates a separate variant for the selected product and auto-saves variant_id.",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code >= 200 && pm.response.code < 300) {",
+                                    "  const data = pm.response.json();",
+                                    "  const id = data?.data?.id || '';",
+                                    "  if (id) pm.collectionVariables.set('variant_id', id);",
+                                    "}"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ],
+                    "auth": {},
+                    "request": {
+                        "auth": {},
+                        "method": "POST",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Blue / L\",\n  \"option_summary\": \"Color: Blue, Size: L\",\n  \"sku\": \"SKU-001-BLUE-L\",\n  \"barcode\": \"987654321\",\n  \"price\": 115,\n  \"compare_at_price\": 140,\n  \"currency\": \"EGP\",\n  \"sort_order\": 1,\n  \"is_default\": false,\n  \"is_active\": true,\n  \"attributes\": [\n    {\"attribute_name\": \"color\", \"attribute_value\": \"blue\", \"sort_order\": 0},\n    {\"attribute_name\": \"size\", \"attribute_value\": \"L\", \"sort_order\": 1}\n  ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/variants",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stores",
+                                "{{store_id}}",
+                                "products",
+                                "{{product_id}}",
+                                "variants"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/variants",
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "stores",
+                                        "{{store_id}}",
+                                        "products",
+                                        "{{product_id}}",
+                                        "variants"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"title\": \"Blue / L\",\n  \"option_summary\": \"Color: Blue, Size: L\",\n  \"sku\": \"SKU-001-BLUE-L\",\n  \"barcode\": \"987654321\",\n  \"price\": 115,\n  \"compare_at_price\": 140,\n  \"currency\": \"EGP\",\n  \"sort_order\": 1,\n  \"is_default\": false,\n  \"is_active\": true,\n  \"attributes\": [\n    {\"attribute_name\": \"color\", \"attribute_value\": \"blue\", \"sort_order\": 0},\n    {\"attribute_name\": \"size\", \"attribute_value\": \"L\", \"sort_order\": 1}\n  ]\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                }
+                            },
+                            "cookie": []
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "Show Product Variant",
+                    "description": "",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {},
+                        "method": "GET",
+                        "body": {},
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "description": "",
+                                "type": "string"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/variants/{{variant_id}}",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stores",
+                                "{{store_id}}",
+                                "products",
+                                "{{product_id}}",
+                                "variants",
+                                "{{variant_id}}"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}",
+                                        "description": "",
+                                        "disabled": false
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/variants/{{variant_id}}",
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "stores",
+                                        "{{store_id}}",
+                                        "products",
+                                        "{{product_id}}",
+                                        "variants",
+                                        "{{variant_id}}"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "body": {}
+                            },
+                            "cookie": []
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "Update Product Variant",
+                    "description": "",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {},
+                        "method": "PUT",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Blue / XL\",\n  \"option_summary\": \"Color: Blue, Size: XL\",\n  \"price\": 125,\n  \"compare_at_price\": 150,\n  \"is_default\": true,\n  \"is_active\": true\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/variants/{{variant_id}}",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stores",
+                                "{{store_id}}",
+                                "products",
+                                "{{product_id}}",
+                                "variants",
+                                "{{variant_id}}"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/variants/{{variant_id}}",
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "stores",
+                                        "{{store_id}}",
+                                        "products",
+                                        "{{product_id}}",
+                                        "variants",
+                                        "{{variant_id}}"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"title\": \"Blue / XL\",\n  \"option_summary\": \"Color: Blue, Size: XL\",\n  \"price\": 125,\n  \"compare_at_price\": 150,\n  \"is_default\": true,\n  \"is_active\": true\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                }
+                            },
+                            "cookie": []
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "Replace Variant Attributes",
+                    "description": "",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {},
+                        "method": "PUT",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"attributes\": [\n    {\"attribute_name\": \"color\", \"attribute_value\": \"navy\", \"sort_order\": 0},\n    {\"attribute_name\": \"size\", \"attribute_value\": \"XL\", \"sort_order\": 1}\n  ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/variants/{{variant_id}}/attributes",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stores",
+                                "{{store_id}}",
+                                "products",
+                                "{{product_id}}",
+                                "variants",
+                                "{{variant_id}}",
+                                "attributes"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/variants/{{variant_id}}/attributes",
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "stores",
+                                        "{{store_id}}",
+                                        "products",
+                                        "{{product_id}}",
+                                        "variants",
+                                        "{{variant_id}}",
+                                        "attributes"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"attributes\": [\n    {\"attribute_name\": \"color\", \"attribute_value\": \"navy\", \"sort_order\": 0},\n    {\"attribute_name\": \"size\", \"attribute_value\": \"XL\", \"sort_order\": 1}\n  ]\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                }
+                            },
+                            "cookie": []
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "Delete Product Variant",
+                    "description": "",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {},
+                        "method": "DELETE",
+                        "body": {},
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "description": "",
+                                "type": "string"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/variants/{{variant_id}}",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stores",
+                                "{{store_id}}",
+                                "products",
+                                "{{product_id}}",
+                                "variants",
+                                "{{variant_id}}"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}",
+                                        "description": "",
+                                        "disabled": false
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/variants/{{variant_id}}",
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "stores",
+                                        "{{store_id}}",
+                                        "products",
+                                        "{{product_id}}",
+                                        "variants",
+                                        "{{variant_id}}"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "body": {}
+                            },
+                            "cookie": []
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "List Product Images",
+                    "description": "",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {},
+                        "method": "GET",
+                        "body": {},
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "description": "",
+                                "type": "string"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/images",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stores",
+                                "{{store_id}}",
+                                "products",
+                                "{{product_id}}",
+                                "images"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}",
+                                        "description": "",
+                                        "disabled": false
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/images",
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "stores",
+                                        "{{store_id}}",
+                                        "products",
+                                        "{{product_id}}",
+                                        "images"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "body": {}
+                            },
+                            "cookie": []
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "Upload Product Images (Multipart)",
+                    "description": "Uploads product images and auto-saves the first returned image_id.",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code >= 200 && pm.response.code < 300) {",
+                                    "  const data = pm.response.json();",
+                                    "  const id = data?.data?.[0]?.id || '';",
+                                    "  if (id) pm.collectionVariables.set('image_id', id);",
+                                    "}"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ],
+                    "auth": {},
+                    "request": {
+                        "auth": {},
+                        "method": "POST",
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "images[0][file]",
+                                    "type": "file",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "images[0][sort_order]",
+                                    "value": "0",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "images[0][is_primary]",
+                                    "value": "true",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "images[1][file]",
+                                    "type": "file",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "images[1][sort_order]",
+                                    "value": "1",
+                                    "type": "text",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "images[1][is_primary]",
+                                    "value": "false",
+                                    "type": "text",
+                                    "disabled": false
+                                }
+                            ]
+                        },
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "description": "",
+                                "type": "string"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/images",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stores",
+                                "{{store_id}}",
+                                "products",
+                                "{{product_id}}",
+                                "images"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}",
+                                        "description": "",
+                                        "disabled": false
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/images",
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "stores",
+                                        "{{store_id}}",
+                                        "products",
+                                        "{{product_id}}",
+                                        "images"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "body": {
+                                    "mode": "formdata",
+                                    "formdata": [
+                                        {
+                                            "key": "images[0][file]",
+                                            "value": "",
+                                            "type": "file",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "images[0][sort_order]",
+                                            "value": "0",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "images[0][is_primary]",
+                                            "value": "true",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "images[1][file]",
+                                            "value": "",
+                                            "type": "file",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "images[1][sort_order]",
+                                            "value": "1",
+                                            "type": "text",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "images[1][is_primary]",
+                                            "value": "false",
+                                            "type": "text",
+                                            "disabled": false
+                                        }
+                                    ]
+                                }
+                            },
+                            "cookie": []
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "Reorder Product Images",
+                    "description": "Send the full current image list here. The sample uses one image only.",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {},
+                        "method": "PATCH",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"images\": [\n    {\"id\": {{image_id}}, \"sort_order\": 0}\n  ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/images/reorder",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stores",
+                                "{{store_id}}",
+                                "products",
+                                "{{product_id}}",
+                                "images",
+                                "reorder"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "PATCH",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/images/reorder",
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "stores",
+                                        "{{store_id}}",
+                                        "products",
+                                        "{{product_id}}",
+                                        "images",
+                                        "reorder"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"images\": [\n    {\"id\": {{image_id}}, \"sort_order\": 0}\n  ]\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                }
+                            },
+                            "cookie": []
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "Set Primary Product Image",
+                    "description": "",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {},
+                        "method": "PATCH",
+                        "body": {},
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "description": "",
+                                "type": "string"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/images/{{image_id}}/primary",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stores",
+                                "{{store_id}}",
+                                "products",
+                                "{{product_id}}",
+                                "images",
+                                "{{image_id}}",
+                                "primary"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "PATCH",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}",
+                                        "description": "",
+                                        "disabled": false
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/images/{{image_id}}/primary",
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "stores",
+                                        "{{store_id}}",
+                                        "products",
+                                        "{{product_id}}",
+                                        "images",
+                                        "{{image_id}}",
+                                        "primary"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "body": {}
+                            },
+                            "cookie": []
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "Delete Product Image",
+                    "description": "",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {},
+                        "method": "DELETE",
+                        "body": {},
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "",
+                                "type": "string"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "description": "",
+                                "type": "string"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/images/{{image_id}}",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stores",
+                                "{{store_id}}",
+                                "products",
+                                "{{product_id}}",
+                                "images",
+                                "{{image_id}}"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "description": "",
+                                        "disabled": false
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}",
+                                        "description": "",
+                                        "disabled": false
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/stores/{{store_id}}/products/{{product_id}}/images/{{image_id}}",
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "stores",
+                                        "{{store_id}}",
+                                        "products",
+                                        "{{product_id}}",
+                                        "images",
+                                        "{{image_id}}"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "body": {}
+                            },
+                            "cookie": []
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                }
+            ],
+            "event": [
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "exec": [],
+                        "type": "text/javascript",
+                        "packages": {}
+                    }
+                },
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [],
+                        "type": "text/javascript",
+                        "packages": {}
+                    }
+                }
+            ],
+            "auth": {}
+        }
+    ],
+    "variable": [],
+    "event": [],
+    "auth": {}
+}

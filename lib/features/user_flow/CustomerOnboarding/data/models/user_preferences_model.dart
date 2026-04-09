@@ -161,7 +161,7 @@ class UserPreferencesModel extends UserPreferencesEntity {
   ///
   /// Do NOT confuse with [toJson()] which uses Hive-friendly field names.
   Map<String, dynamic> toApiJson() {
-    return {
+    return <String, dynamic>{
       'interesting_offers': selectedCategories,
       'shopping_style':     shoppingStyles ?? [],
       'budget':             budgetPreference ?? '',

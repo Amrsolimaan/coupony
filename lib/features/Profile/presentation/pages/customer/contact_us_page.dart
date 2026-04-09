@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../../core/localization/l10n/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
+import '../../widgets/shared_card.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CONTACT US PAGE
@@ -27,9 +29,9 @@ class ContactUsPage extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.surface,
       appBar: _buildAppBar(context, l10n),
-      body: _buildBody(context, l10n),
+      body: SafeArea(bottom: true, child: _buildBody(context, l10n)),
     );
   }
 
@@ -38,19 +40,20 @@ class ContactUsPage extends StatelessWidget {
     return AppBar(
       backgroundColor: AppColors.surface,
       elevation: 0,
+      surfaceTintColor: Colors.transparent,
       centerTitle: true,
       title: Text(
         l10n.contact_us_page_title,
         style: AppTextStyles.customStyle(
           context,
-          fontSize: 20,
+          fontSize: 18,
           fontWeight: FontWeight.w700,
           color: AppColors.textPrimary,
         ),
       ),
       leading: IconButton(
         icon: Icon(
-          Icons.arrow_back_ios_rounded,
+          Icons.arrow_forward_ios_rounded,
           size: 20.w,
           color: AppColors.textPrimary,
         ),
@@ -64,37 +67,105 @@ class ContactUsPage extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          SizedBox(height: 16.h),
+          SizedBox(height: 24.h),
 
-          // ── WhatsApp Button ─────────────────────────────────────────────────
-          _buildContactButton(
+          // ── Header Section ──────────────────────────────────────────────────
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.w),
+            child: Column(
+              children: [
+                // ── Contact Icon ────────────────────────────────────────────────
+                Container(
+                  width: 80.w,
+                  height: 80.w,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.primary,
+                        AppColors.primary.withValues(alpha: 0.7),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.support_agent_rounded,
+                    size: 40.w,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 20.h),
+
+                // ── Title ───────────────────────────────────────────────────────
+                Text(
+                  l10n.contact_us_heading,
+                  style: AppTextStyles.customStyle(
+                    context,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.textPrimary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 8.h),
+
+                // ── Subtitle ────────────────────────────────────────────────────
+                Text(
+                  l10n.contact_us_description,
+                  style: AppTextStyles.customStyle(
+                    context,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.textSecondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 32.h),
+
+          // ── WhatsApp ────────────────────────────────────────────────────────
+          _buildContactCard(
             context: context,
-            icon: Icons.chat_rounded,
+            icon: FontAwesomeIcons.whatsapp,
             label: l10n.contact_whatsapp,
+            color: const Color(0xFF25D366),
             onTap: () => _launchWhatsApp(context),
           ),
 
-          // ── Facebook Button ─────────────────────────────────────────────────
-          _buildContactButton(
+          // ── Facebook ────────────────────────────────────────────────────────
+          _buildContactCard(
             context: context,
-            icon: Icons.facebook_rounded,
+            icon: FontAwesomeIcons.facebook,
             label: l10n.contact_facebook,
+            color: const Color(0xFF1877F2),
             onTap: () => _launchUrl(context, _facebookUrl),
           ),
 
-          // ── Website Button ──────────────────────────────────────────────────
-          _buildContactButton(
+          // ── Website ─────────────────────────────────────────────────────────
+          _buildContactCard(
             context: context,
-            icon: Icons.language_rounded,
+            icon: FontAwesomeIcons.globe,
             label: l10n.contact_website,
+            color: AppColors.primary,
             onTap: () => _launchUrl(context, _websiteUrl),
           ),
 
-          // ── Instagram Button ────────────────────────────────────────────────
-          _buildContactButton(
+          // ── Instagram ───────────────────────────────────────────────────────
+          _buildContactCard(
             context: context,
-            icon: Icons.camera_alt_outlined,
+            icon: FontAwesomeIcons.instagram,
             label: l10n.contact_instagram,
+            color: const Color(0xFFE4405F),
             onTap: () => _launchUrl(context, _instagramUrl),
           ),
 
@@ -104,55 +175,57 @@ class ContactUsPage extends StatelessWidget {
     );
   }
 
-  // ── Contact Button Widget ──────────────────────────────────────────────────
-  Widget _buildContactButton({
+  // ── Contact Card Widget ────────────────────────────────────────────────────
+  Widget _buildContactCard({
     required BuildContext context,
     required IconData icon,
     required String label,
+    required Color color,
     required VoidCallback onTap,
   }) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12.r),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  icon,
-                  size: 24.w,
-                  color: AppColors.textPrimary,
-                ),
-                SizedBox(width: 12.w),
-                Text(
-                  label,
-                  style: AppTextStyles.customStyle(
-                    context,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ],
+    return SharedProfileCard(
+      title: '',
+      onTap: onTap,
+      child: Row(
+        children: [
+          // ── Colored Icon Circle ─────────────────────────────────────────────
+          Container(
+            width: 48.w,
+            height: 48.w,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: FaIcon(
+                icon,
+                size: 22.w,
+                color: color,
+              ),
             ),
           ),
-        ),
+          SizedBox(width: 16.w),
+
+          // ── Label ───────────────────────────────────────────────────────────
+          Expanded(
+            child: Text(
+              label,
+              style: AppTextStyles.customStyle(
+                context,
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ),
+
+          // ── Arrow Icon ──────────────────────────────────────────────────────
+          Icon(
+            Icons.arrow_forward_ios_rounded,
+            size: 16.w,
+            color: AppColors.textSecondary,
+          ),
+        ],
       ),
     );
   }
@@ -161,17 +234,9 @@ class ContactUsPage extends StatelessWidget {
   Future<void> _launchWhatsApp(BuildContext context) async {
     final whatsappUrl = Uri.parse('https://wa.me/2$_whatsappNumber');
     try {
-      if (await canLaunchUrl(whatsappUrl)) {
-        await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
-      } else {
-        if (context.mounted) {
-          _showErrorSnackBar(context);
-        }
-      }
+      await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
     } catch (e) {
-      if (context.mounted) {
-        _showErrorSnackBar(context);
-      }
+      if (context.mounted) _showErrorSnackBar(context);
     }
   }
 
@@ -179,17 +244,9 @@ class ContactUsPage extends StatelessWidget {
   Future<void> _launchUrl(BuildContext context, String url) async {
     final uri = Uri.parse(url);
     try {
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        if (context.mounted) {
-          _showErrorSnackBar(context);
-        }
-      }
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (e) {
-      if (context.mounted) {
-        _showErrorSnackBar(context);
-      }
+      if (context.mounted) _showErrorSnackBar(context);
     }
   }
 

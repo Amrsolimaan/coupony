@@ -121,6 +121,21 @@
 		<false/>
 
 		<!-- ════════════════════════════════════════════════════════ -->
+		<!-- URL SCHEMES FOR EXTERNAL APPS (url_launcher)           -->
+		<!-- Required for iOS 9+ to query if external apps can be   -->
+		<!-- opened (WhatsApp, Facebook, Instagram, etc.)            -->
+		<!-- ════════════════════════════════════════════════════════ -->
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>https</string>
+			<string>http</string>
+			<string>whatsapp</string>
+			<string>fb</string>
+			<string>instagram</string>
+			<string>tel</string>
+		</array>
+
+		<!-- ════════════════════════════════════════════════════════ -->
 		<!-- GOOGLE MAPS API KEY                                      -->
 		<!-- Value is supplied by $(MAPS_API_KEY_IOS) Xcode build    -->
 		<!-- variable, set in ios/Flutter/Local.xcconfig (local) or  -->

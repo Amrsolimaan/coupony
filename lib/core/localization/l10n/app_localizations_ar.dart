@@ -1167,6 +1167,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get address_search_hint => 'ابحث عن المنطقة، المدينة...';
 
   @override
+  String get address_search_no_results => 'لم يتم العثور على نتائج لـ';
+
+  @override
   String get address_label_dialog_title => 'تسمية العنوان';
 
   @override
@@ -1193,6 +1196,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get address_set_default => 'تعيين كافتراضي';
+
+  @override
+  String get address_set_default_success => 'تم تعيين العنوان كافتراضي بنجاح';
 
   @override
   String get address_default_badge => 'افتراضي';
@@ -1412,4 +1418,368 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get terms_section5_content =>
       'نحن نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية. لمزيد من المعلومات، يرجى الاطلاع على سياسة الخصوصية الخاصة بنا.';
+
+  @override
+  String get contact_us_heading => 'تواصل معنا';
+
+  @override
+  String get contact_us_description => 'نحن هنا لمساعدتك في أي وقت';
+
+  @override
+  String get seller_products_title => 'منتجاتي';
+
+  @override
+  String get seller_products_empty => 'لا توجد منتجات بعد';
+
+  @override
+  String get seller_products_empty_subtitle => 'أضف منتجك الأول لتبدأ البيع';
+
+  @override
+  String get seller_product_add => 'إضافة منتج';
+
+  @override
+  String get seller_product_title_hint => 'عنوان المنتج';
+
+  @override
+  String get seller_product_slug_hint => 'المعرّف (اسم URL)';
+
+  @override
+  String get seller_product_short_desc_hint => 'وصف مختصر';
+
+  @override
+  String get seller_product_desc_hint => 'الوصف الكامل';
+
+  @override
+  String get seller_product_type_hint => 'نوع المنتج';
+
+  @override
+  String get seller_product_base_price_hint => 'السعر الأساسي';
+
+  @override
+  String get seller_product_compare_price_hint => 'سعر المقارنة';
+
+  @override
+  String get seller_product_currency_hint => 'العملة';
+
+  @override
+  String get seller_product_sku_hint => 'رمز المنتج (SKU)';
+
+  @override
+  String get seller_product_status_hint => 'الحالة';
+
+  @override
+  String get seller_product_status_draft => 'مسودة';
+
+  @override
+  String get seller_product_status_active => 'نشط';
+
+  @override
+  String get seller_product_status_inactive => 'غير نشط';
+
+  @override
+  String get seller_product_is_featured => 'منتج مميز';
+
+  @override
+  String get seller_product_categories => 'التصنيفات';
+
+  @override
+  String get seller_product_images => 'صور المنتج';
+
+  @override
+  String get seller_product_add_image => 'إضافة صورة';
+
+  @override
+  String get seller_product_variants => 'المتغيرات';
+
+  @override
+  String get seller_product_add_variant => 'إضافة متغير';
+
+  @override
+  String get seller_product_variant_title_hint =>
+      'عنوان المتغير (مثل أحمر / XL)';
+
+  @override
+  String get seller_product_variant_sku_hint => 'رمز المتغير';
+
+  @override
+  String get seller_product_variant_price_hint => 'سعر المتغير';
+
+  @override
+  String get seller_product_attributes => 'الخصائص';
+
+  @override
+  String get seller_product_attribute_name_hint => 'اسم الخاصية (مثل color)';
+
+  @override
+  String get seller_product_attribute_value_hint => 'قيمة الخاصية (مثل red)';
+
+  @override
+  String get seller_product_save => 'حفظ المنتج';
+
+  @override
+  String get seller_product_update => 'تحديث المنتج';
+
+  @override
+  String get seller_product_delete => 'حذف المنتج';
+
+  @override
+  String get seller_product_delete_confirm_title => 'حذف المنتج';
+
+  @override
+  String get seller_product_delete_confirm_message =>
+      'هل أنت متأكد من حذف هذا المنتج؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get seller_product_delete_cancel => 'إلغاء';
+
+  @override
+  String get seller_product_delete_confirm => 'حذف';
+
+  @override
+  String get success_seller_product_created => 'تم إنشاء المنتج بنجاح!';
+
+  @override
+  String get success_seller_product_updated => 'تم تحديث المنتج بنجاح!';
+
+  @override
+  String get success_seller_product_deleted => 'تم حذف المنتج بنجاح!';
+
+  @override
+  String get success_seller_product_status_updated =>
+      'تم تحديث حالة المنتج بنجاح!';
+
+  @override
+  String get error_seller_product_title_required => 'عنوان المنتج مطلوب';
+
+  @override
+  String get error_seller_product_price_required => 'السعر الأساسي مطلوب';
+
+  @override
+  String get error_seller_product_load_failed =>
+      'فشل تحميل المنتجات. يرجى المحاولة مرة أخرى';
+
+  @override
+  String get error_seller_product_not_found => 'المنتج غير موجود';
+
+  @override
+  String get public_products_title => 'المنتجات';
+
+  @override
+  String get public_products_empty => 'لا توجد منتجات';
+
+  @override
+  String get public_products_empty_subtitle => 'جرب تعديل البحث أو الفلاتر';
+
+  @override
+  String get public_products_search_hint => 'ابحث عن منتجات...';
+
+  @override
+  String get public_products_filter_all => 'الكل';
+
+  @override
+  String get public_products_filter_featured => 'المميزة';
+
+  @override
+  String get public_products_loading_more => 'جاري تحميل المزيد...';
+
+  @override
+  String get public_products_no_more => 'لا توجد منتجات أخرى';
+
+  @override
+  String get public_product_details_title => 'تفاصيل المنتج';
+
+  @override
+  String get public_product_price => 'السعر';
+
+  @override
+  String get public_product_compare_price => 'كان';
+
+  @override
+  String get public_product_sku => 'رمز المنتج';
+
+  @override
+  String get public_product_variants => 'المتغيرات';
+
+  @override
+  String get public_product_images => 'صور المنتج';
+
+  @override
+  String get public_product_description => 'الوصف';
+
+  @override
+  String get public_product_featured_badge => 'مميز';
+
+  @override
+  String get public_categories_title => 'التصنيفات';
+
+  @override
+  String get public_categories_all => 'جميع التصنيفات';
+
+  @override
+  String get public_categories_empty => 'لا توجد تصنيفات متاحة';
+
+  @override
+  String get public_categories_error => 'تعذر تحميل التصنيفات';
+
+  @override
+  String get public_category_products_title => 'منتجات التصنيف';
+
+  @override
+  String get error_public_products_load_failed =>
+      'فشل تحميل المنتجات. يرجى المحاولة مرة أخرى';
+
+  @override
+  String get error_public_product_not_found => 'المنتج غير موجود';
+
+  @override
+  String get error_public_categories_load_failed =>
+      'فشل تحميل التصنيفات. يرجى المحاولة مرة أخرى';
+
+  @override
+  String get settings_page_title => 'الإعدادات';
+
+  @override
+  String get settings_app_section => 'إعدادات التطبيق';
+
+  @override
+  String get settings_language => 'اللغه';
+
+  @override
+  String get settings_notifications => 'تفعيل الأشعارات';
+
+  @override
+  String get settings_data_section => 'إداره البيانات';
+
+  @override
+  String get settings_delete_account => 'حذف الحساب';
+
+  @override
+  String get settings_delete_account_subtitle => 'حذف الحساب بشكل نهائى';
+
+  @override
+  String get settings_security_section => 'الخصوصيه و الأمان';
+
+  @override
+  String get settings_change_password => 'تغيير كلمه المرور';
+
+  @override
+  String get settings_change_password_subtitle => 'آخر تحديث منذ 2 أشهر';
+
+  @override
+  String get settings_legal_section => 'قانونى';
+
+  @override
+  String get settings_terms_of_use => 'شروط الاستخدام';
+
+  @override
+  String get settings_privacy_policy => 'سياسه الخصوصيه';
+
+  @override
+  String get settings_about_app => 'عن التطبيق';
+
+  @override
+  String get settings_app_version => 'الإصدار 1.0.0';
+
+  @override
+  String get settings_copyright => '@2025 جميع الحقوق محفوظه';
+
+  @override
+  String get delete_account_dialog_title => 'تأكيد حذف الحساب';
+
+  @override
+  String get delete_account_dialog_message => 'لا يمكن استرجاع الحساب مجدداً';
+
+  @override
+  String get delete_account_confirm_button => 'تأكيد الحذف';
+
+  @override
+  String get language_dialog_title => 'اختيار اللغة';
+
+  @override
+  String get language_dialog_subtitle => 'اختر اللغه المناسبة لك';
+
+  @override
+  String get language_arabic_full => 'اللغه العربيه';
+
+  @override
+  String get language_english_full => 'English';
+
+  @override
+  String get language_english_subtitle => 'الإنجليزيه';
+
+  @override
+  String get change_password_current_label => 'كلمة المرور الحاليه';
+
+  @override
+  String get change_password_new_label => 'كلمة المرور الجديده';
+
+  @override
+  String get change_password_confirm_label => 'تأكيد كلمة المرور الجديده';
+
+  @override
+  String get change_password_current_error =>
+      'كلمة المرور الحاليه غير صحيحة, يرجى إعادة المحاولة';
+
+  @override
+  String get change_password_forgot_link => 'هل نسيت كلمة المرور؟';
+
+  @override
+  String get change_password_submit => 'تغيير كلمة المرور';
+
+  @override
+  String get change_password_success => 'تم تغيير كلمة المرور بنجاح';
+
+  @override
+  String get privacy_policy_title => 'سياسه الخصوصيه';
+
+  @override
+  String get privacy_policy_last_updated => 'آخر تحديث: أبريل 2026';
+
+  @override
+  String get privacy_policy_section1_title => '1. جمع البيانات';
+
+  @override
+  String get privacy_policy_section1_content =>
+      'نقوم بجمع المعلومات التي تقدمها لنا والبيانات المتعلقة باستخدامك لخدماتنا لتحسين تجربتك وعرض أفضل العروض لك.';
+
+  @override
+  String get privacy_policy_section2_title => '2. استخدام البيانات';
+
+  @override
+  String get privacy_policy_section2_content =>
+      'يتم استخدام بياناتك لتخصيص تجربتك ومعالجة المعاملات وإرسال إشعارات العروض وتحسين خدماتنا باستمرار.';
+
+  @override
+  String get privacy_policy_section3_title => '3. حماية البيانات';
+
+  @override
+  String get privacy_policy_section3_content =>
+      'نطبق معايير أمان متوافقة مع معايير الصناعة لحماية معلوماتك الشخصية من الوصول غير المصرح به أو التعديل أو الإفشاء أو الإتلاف.';
+
+  @override
+  String get privacy_policy_section4_title => '4. الأطراف الثالثة';
+
+  @override
+  String get privacy_policy_section4_content =>
+      'نحن لا نبيع أو نتاجر أو ننقل معلوماتك الشخصية إلى أطراف خارجية دون موافقتك، إلا ما يقتضيه القانون أو لتقديم خدماتنا.';
+
+  @override
+  String get privacy_policy_section5_title => '5. حقوقك';
+
+  @override
+  String get privacy_policy_section5_content =>
+      'لديك الحق في الوصول إلى بياناتك الشخصية أو تصحيحها أو حذفها في أي وقت عن طريق التواصل مع فريق الدعم من خلال التطبيق.';
+
+  @override
+  String get terms_section6_title => '6. التعديلات';
+
+  @override
+  String get terms_section6_content =>
+      'نحتفظ بالحق في تعديل هذه الشروط والأحكام في أي وقت. استمرارك في استخدام التطبيق بعد أي تغييرات يعني قبولك لها.';
+
+  @override
+  String get terms_agree_button => 'موافق';
+
+  @override
+  String get privacy_agree_button => 'موافق';
 }

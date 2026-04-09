@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,9 +17,40 @@ import '../../widgets/address_card_widget.dart';
 import '../../widgets/empty_address_widget.dart';
 
 /// Address Management Page
-/// Displays and manages user's saved addresses
-class AddressManagementPage extends StatelessWidget {
+/// Displays and manages user's saved addresses.
+/// Supports server-side search via GET /me/addresses?search=
+class AddressManagementPage extends StatefulWidget {
   const AddressManagementPage({super.key});
+
+  @override
+  State<AddressManagementPage> createState() => _AddressManagementPageState();
+}
+
+class _AddressManagementPageState extends State<AddressManagementPage> {
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  // ── Debounced search trigger ───────────────────────────────────────────────
+  void _onSearchChanged(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      context.read<AddressCubit>().searchAddresses(value);
+    });
+  }
+
+  // ── Clear search and snap back to full list ────────────────────────────────
+  void _clearSearch() {
+    _searchController.clear();
+    _debounce?.cancel();
+    context.read<AddressCubit>().searchAddresses('');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +60,11 @@ class AddressManagementPage extends StatelessWidget {
       listener: (context, state) {
         // ── Handle Success ─────────────────────────────────────────────
         if (state is AddressOperationSuccess) {
-          context.showSuccessSnackBar(state.message);
+          // Check if message is a localization key
+          final message = state.message == 'address_set_default_success'
+              ? l10n.address_set_default_success
+              : state.message;
+          context.showSuccessSnackBar(message);
         }
 
         // ── Handle Error ───────────────────────────────────────────────
@@ -42,7 +79,7 @@ class AddressManagementPage extends StatelessWidget {
         }
 
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: AppColors.surface,
           appBar: _buildAppBar(context, l10n),
           body: _buildBody(context, state, l10n),
         );
@@ -82,25 +119,70 @@ class AddressManagementPage extends StatelessWidget {
     AddressState state,
     AppLocalizations l10n,
   ) {
-    if (state is AddressLoading) {
+    // ── Hard loading (first fetch / delete / save) ─────────────────────
+    if (state is AddressLoading ||
+        state is AddressSaving ||
+        state is AddressDeleting) {
       return _buildLoadingState(l10n);
     }
 
-    if (state is AddressLoaded) {
-      if (state.isEmpty) {
-        return _buildEmptyState(context, l10n);
-      }
-      return _buildAddressList(context, state, l10n);
+    // ── Search in-flight ───────────────────────────────────────────────
+    if (state is AddressSearching) {
+      return Column(
+        children: [
+          _buildSearchBar(context, l10n),
+          SizedBox(height: 16.h),
+          Expanded(child: _buildLoadingState(l10n)),
+        ],
+      );
     }
 
+    // ── Search results ─────────────────────────────────────────────────
+    if (state is AddressSearchLoaded) {
+      return Column(
+        children: [
+          _buildSearchBar(context, l10n),
+          SizedBox(height: 16.h),
+          state.isEmpty
+              ? Expanded(child: _buildSearchEmptyState(l10n, state.query))
+              : Expanded(
+                  child: _buildAddressList(context, state.results, l10n),
+                ),
+        ],
+      );
+    }
+
+    // ── Normal loaded list ─────────────────────────────────────────────
+    if (state is AddressLoaded) {
+      if (state.isEmpty) return _buildEmptyState(context, l10n);
+      return _buildFullAddressPage(context, state.addresses, l10n);
+    }
+
+    // ── Operation success (post delete / save / update) ────────────────
     if (state is AddressOperationSuccess) {
-      if (state.addresses.isEmpty) {
-        return _buildEmptyState(context, l10n);
-      }
-      return _buildAddressListFromOperation(context, state, l10n);
+      if (state.addresses.isEmpty) return _buildEmptyState(context, l10n);
+      return _buildFullAddressPage(context, state.addresses, l10n);
     }
 
     return const SizedBox.shrink();
+  }
+
+  // ── Full address page (search bar + list + add button) ────────────────────
+  Widget _buildFullAddressPage(
+    BuildContext context,
+    List addresses,
+    AppLocalizations l10n,
+  ) {
+    return Column(
+      children: [
+        _buildSearchBar(context, l10n),
+        SizedBox(height: 16.h),
+        Expanded(
+          child: _buildAddressList(context, addresses.cast(), l10n),
+        ),
+        _buildAddButton(context, l10n),
+      ],
+    );
   }
 
   // ── Loading State ──────────────────────────────────────────────────────────
@@ -126,192 +208,103 @@ class AddressManagementPage extends StatelessWidget {
     );
   }
 
-  // ── Empty State ────────────────────────────────────────────────────────────
+  // ── Empty State (no addresses at all) ─────────────────────────────────────
   Widget _buildEmptyState(BuildContext context, AppLocalizations l10n) {
     return Column(
       children: [
-        Expanded(
-          child: const EmptyAddressWidget(),
-        ),
-        
-        // ── Add New Address Button ────────────────────────────────────────
-        Container(
-          padding: EdgeInsets.all(20.w),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -2),
-              ),
-            ],
+        const Expanded(child: EmptyAddressWidget()),
+        _buildAddButton(context, l10n),
+      ],
+    );
+  }
+
+  // ── Search Empty State (query returned 0 results) ─────────────────────────
+  Widget _buildSearchEmptyState(AppLocalizations l10n, String query) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.search_off_rounded,
+            size: 56.w,
+            color: AppColors.textDisabled,
           ),
-          child: SafeArea(
-            top: false,
-            child: AppPrimaryButton(
-              text: l10n.address_add_new,
-              onPressed: () async {
-                final result = await context.push(AppRouter.addressMapPicker);
-                if (result == true && context.mounted) {
-                  context.read<AddressCubit>().loadAddresses();
-                }
-              },
-              size: AppButtonSize.large,
-              borderRadius: 12.r,
+          SizedBox(height: 16.h),
+          Text(
+            '${l10n.address_search_no_results} "$query"',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: AppColors.textSecondary,
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   // ── Address List ───────────────────────────────────────────────────────────
   Widget _buildAddressList(
     BuildContext context,
-    AddressLoaded state,
+    List<dynamic> addresses,
     AppLocalizations l10n,
   ) {
-    return Column(
-      children: [
-        // ── Search Bar ─────────────────────────────────────────────────────
-        _buildSearchBar(context, l10n),
-        SizedBox(height: 16.h),
-
-        // ── Address List ───────────────────────────────────────────────────
-        Expanded(
-          child: ListView.builder(
-            padding: EdgeInsets.only(bottom: 100.h),
-            itemCount: state.addresses.length,
-            itemBuilder: (context, index) {
-              final address = state.addresses[index];
-              return AddressCardWidget(
-                address: address,
-                onTap: () {
-                  // TODO: Navigate to address details or map
-                },
-                onEdit: () async {
-                  // TODO: Navigate to edit address
-                  final result = await context.push(
-                    AppRouter.addressMapPicker,
-                    extra: address,
-                  );
-                  if (result == true && context.mounted) {
-                    context.read<AddressCubit>().loadAddresses();
-                  }
-                },
-                onDelete: () => _showDeleteConfirmation(context, address.id, l10n),
-                onSetDefault: () {
-                  context.read<AddressCubit>().setDefaultAddress(address.id);
-                },
-              );
-            },
-          ),
-        ),
-
-        // ── Add New Address Button (Fixed at bottom) ───────────────────────
-        Container(
-          padding: EdgeInsets.all(20.w),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -2),
-              ),
-            ],
-          ),
-          child: SafeArea(
-            top: false,
-            child: AppPrimaryButton(
-              text: l10n.address_add_new,
-              onPressed: () async {
-                final result = await context.push(AppRouter.addressMapPicker);
-                if (result == true && context.mounted) {
-                  context.read<AddressCubit>().loadAddresses();
-                }
-              },
-              size: AppButtonSize.large,
-              borderRadius: 12.r,
-            ),
-          ),
-        ),
-      ],
+    return ListView.builder(
+      padding: EdgeInsets.only(bottom: 100.h),
+      itemCount: addresses.length,
+      itemBuilder: (context, index) {
+        final address = addresses[index];
+        return AddressCardWidget(
+          address: address,
+          onTap: () {
+            // TODO: Navigate to address details or map
+          },
+          onEdit: () async {
+            final result = await context.push(
+              AppRouter.addressMapPicker,
+              extra: address,
+            );
+            if (result == true && context.mounted) {
+              context.read<AddressCubit>().loadAddresses();
+            }
+          },
+          onDelete: () => _showDeleteConfirmation(context, address.id, l10n),
+          onSetDefault: () {
+            context.read<AddressCubit>().setDefaultAddress(address.id);
+          },
+        );
+      },
     );
   }
 
-  // ── Address List from Operation Success ────────────────────────────────────
-  Widget _buildAddressListFromOperation(
-    BuildContext context,
-    AddressOperationSuccess state,
-    AppLocalizations l10n,
-  ) {
-    return Column(
-      children: [
-        // ── Search Bar ─────────────────────────────────────────────────────
-        _buildSearchBar(context, l10n),
-        SizedBox(height: 16.h),
-
-        // ── Address List ───────────────────────────────────────────────────
-        Expanded(
-          child: ListView.builder(
-            padding: EdgeInsets.only(bottom: 100.h),
-            itemCount: state.addresses.length,
-            itemBuilder: (context, index) {
-              final address = state.addresses[index];
-              return AddressCardWidget(
-                address: address,
-                onTap: () {
-                  // TODO: Navigate to address details or map
-                },
-                onEdit: () async {
-                  final result = await context.push(
-                    AppRouter.addressMapPicker,
-                    extra: address,
-                  );
-                  if (result == true && context.mounted) {
-                    context.read<AddressCubit>().loadAddresses();
-                  }
-                },
-                onDelete: () => _showDeleteConfirmation(context, address.id, l10n),
-                onSetDefault: () {
-                  context.read<AddressCubit>().setDefaultAddress(address.id);
-                },
-              );
-            },
+  // ── Add New Address Button ─────────────────────────────────────────────────
+  Widget _buildAddButton(BuildContext context, AppLocalizations l10n) {
+    return Container(
+      padding: EdgeInsets.all(20.w),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
           ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: AppPrimaryButton(
+          text: l10n.address_add_new,
+          onPressed: () async {
+            final result = await context.push(AppRouter.addressMapPicker);
+            if (result == true && context.mounted) {
+              context.read<AddressCubit>().loadAddresses();
+            }
+          },
+          size: AppButtonSize.large,
+          borderRadius: 12.r,
         ),
-
-        // ── Add New Address Button (Fixed at bottom) ───────────────────────
-        Container(
-          padding: EdgeInsets.all(20.w),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -2),
-              ),
-            ],
-          ),
-          child: SafeArea(
-            top: false,
-            child: AppPrimaryButton(
-              text: l10n.address_add_new,
-              onPressed: () async {
-                final result = await context.push(AppRouter.addressMapPicker);
-                if (result == true && context.mounted) {
-                  context.read<AddressCubit>().loadAddresses();
-                }
-              },
-              size: AppButtonSize.large,
-              borderRadius: 12.r,
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
@@ -332,7 +325,7 @@ class AddressManagementPage extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // ── Orange Icon ────────────────────────────────────────────────
+          // ── Orange Location Icon ──────────────────────────────────────
           Padding(
             padding: EdgeInsets.all(12.w),
             child: Container(
@@ -350,9 +343,10 @@ class AddressManagementPage extends StatelessWidget {
             ),
           ),
 
-          // ── Search Field ───────────────────────────────────────────────
+          // ── Search TextField ──────────────────────────────────────────
           Expanded(
             child: TextField(
+              controller: _searchController,
               textDirection: TextDirection.rtl,
               textAlign: TextAlign.right,
               style: AppTextStyles.customStyle(
@@ -373,20 +367,31 @@ class AddressManagementPage extends StatelessWidget {
                   vertical: 12.h,
                 ),
               ),
-              onChanged: (value) {
-                // TODO: Implement search functionality
-              },
+              onChanged: _onSearchChanged,
             ),
           ),
 
-          // ── Search Icon ────────────────────────────────────────────────
-          Padding(
-            padding: EdgeInsets.all(12.w),
-            child: Icon(
-              Icons.search_rounded,
-              color: AppColors.textSecondary,
-              size: 20.w,
-            ),
+          // ── Clear (✕) / Search Icon ───────────────────────────────────
+          AnimatedBuilder(
+            animation: _searchController,
+            builder: (_, __) {
+              final hasText = _searchController.text.isNotEmpty;
+              return Padding(
+                padding: EdgeInsets.all(12.w),
+                child: GestureDetector(
+                  onTap: hasText ? _clearSearch : null,
+                  child: Icon(
+                    hasText
+                        ? Icons.close_rounded
+                        : Icons.search_rounded,
+                    color: hasText
+                        ? AppColors.primary
+                        : AppColors.textSecondary,
+                    size: 20.w,
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),

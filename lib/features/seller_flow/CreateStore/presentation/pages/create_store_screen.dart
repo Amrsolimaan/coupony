@@ -1638,6 +1638,7 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
   static const LatLng _defaultLocation = LatLng(30.0444, 31.2357); // Cairo fallback
 
   bool _isMapReady = false;
+  bool _isMapLoading = true; // ✅ Added: Track map loading state
   LatLng _lastCameraCenter = _defaultLocation;
   LatLng? _selectedLatLng;
   String? _currentAddress;
@@ -1662,6 +1663,7 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
           double.tryParse(lng) ?? _defaultLocation.longitude,
         );
         _lastCameraCenter = gpsPos;
+        setState(() => _isMapLoading = false); // ✅ Stop loading if we have position
       }
     });
 
@@ -1672,8 +1674,16 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
     try {
       final cubit = context.read<CreateStoreCubit>();
       await cubit.determinePosition();
+      
+      // ✅ Stop loading after getting position
+      if (mounted) {
+        setState(() => _isMapLoading = false);
+      }
     } catch (_) {
-      // GPS unavailable — keep Cairo fallback, do nothing else.
+      // GPS unavailable — stop loading and use fallback
+      if (mounted) {
+        setState(() => _isMapLoading = false);
+      }
     }
   }
 
@@ -1824,6 +1834,7 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
           setState(() {
             _selectedLatLng = gpsPos;
             _isAddressLoading = true;
+            _isMapLoading = false; // ✅ Stop loading when position arrives
           });
           _getAddressFromCoordinates(gpsPos.latitude, gpsPos.longitude);
         }
@@ -1849,89 +1860,120 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
               ),
               SizedBox(height: 16.h),
 
-              // ── Search Bar ────────────────────────────────────────────
+              // ── Search Bar with Location Icon ────────────────────────
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: Container(
-                  height: 50.h,
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(color: AppColors.divider, width: 1.w),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.shadow.withValues(alpha: 0.05),
-                        blurRadius: 4,
-                        offset: Offset(0, 2.h),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          if (_searchController.text.trim().isNotEmpty) {
-                            _searchLocation(_searchController.text.trim());
-                            FocusScope.of(context).unfocus();
-                          }
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12.w),
-                          child: Icon(
-                            Icons.search,
-                            color: AppColors.textSecondary,
-                            size: 22.w,
-                          ),
+                child: Row(
+                  children: [
+                    // Orange location icon (with tap functionality)
+                    GestureDetector(
+                      onTap: () async {
+                        await _getCurrentLocation();
+                        if (mounted && _isMapReady) {
+                          _moveCameraToPosition(_lastCameraCenter);
+                        }
+                      },
+                      child: Container(
+                        width: 40.w,
+                        height: 40.h,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.location_on,
+                          color: AppColors.surface,
+                          size: 22.w,
                         ),
                       ),
-                      Expanded(
-                        child: TextField(
-                          controller: _searchController,
-                          textDirection: TextDirection.rtl,
-                          textAlign: TextAlign.right,
-                          style: AppTextStyles.customStyle(
-                            context,
-                            fontSize: 14,
-                            color: AppColors.textPrimary,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: l10n.create_store_map_search_placeholder,
-                            hintStyle: AppTextStyles.customStyle(
-                              context,
-                              fontSize: 14,
-                              color: AppColors.textDisabled,
+                    ),
+                    SizedBox(width: 12.w),
+
+                    // Search box
+                    Expanded(
+                      child: Container(
+                        height: 50.h,
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(color: AppColors.divider, width: 1.w),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.shadow.withValues(alpha: 0.05),
+                              blurRadius: 4,
+                              offset: Offset(0, 2.h),
                             ),
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 8.w,
-                              vertical: 14.h,
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                if (_searchController.text.trim().isNotEmpty) {
+                                  _searchLocation(_searchController.text.trim());
+                                  FocusScope.of(context).unfocus();
+                                }
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                                child: Icon(
+                                  Icons.search,
+                                  color: AppColors.textSecondary,
+                                  size: 22.w,
+                                ),
+                              ),
                             ),
-                          ),
-                          onSubmitted: (value) {
-                            if (value.trim().isNotEmpty) {
-                              _searchLocation(value.trim());
-                            }
-                          },
+                            Expanded(
+                              child: TextField(
+                                controller: _searchController,
+                                textDirection: TextDirection.rtl,
+                                textAlign: TextAlign.right,
+                                style: AppTextStyles.customStyle(
+                                  context,
+                                  fontSize: 14,
+                                  color: AppColors.textPrimary,
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: l10n.create_store_map_search_placeholder,
+                                  hintStyle: AppTextStyles.customStyle(
+                                    context,
+                                    fontSize: 14,
+                                    color: AppColors.textDisabled,
+                                  ),
+                                  border: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  disabledBorder: InputBorder.none,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 8.w,
+                                    vertical: 14.h,
+                                  ),
+                                ),
+                                onSubmitted: (value) {
+                                  if (value.trim().isNotEmpty) {
+                                    _searchLocation(value.trim());
+                                  }
+                                },
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: _isListening ? _stopListening : _startListening,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                                child: Icon(
+                                  _isListening ? Icons.mic : Icons.mic_none,
+                                  color: _isListening
+                                      ? Theme.of(context).primaryColor
+                                      : AppColors.textSecondary,
+                                  size: 22.w,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      GestureDetector(
-                        onTap: _isListening ? _stopListening : _startListening,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12.w),
-                          child: Icon(
-                            _isListening ? Icons.mic : Icons.mic_none,
-                            color: _isListening
-                                ? Theme.of(context).primaryColor
-                                : AppColors.textSecondary,
-                            size: 22.w,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: 12.h),
@@ -1940,65 +1982,67 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
               Expanded(
                 child: Stack(
                   children: [
-                    GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: _lastCameraCenter,
-                        zoom: 15,
-                      ),
-                      onMapCreated: (controller) {
-                        _mapController = controller;
-                        setState(() => _isMapReady = true);
-
-                        final cubit = context.read<CreateStoreCubit>();
-                        final lat = cubit.state.latitude;
-                        final lng = cubit.state.longitude;
-
-                        if (lat.isNotEmpty && lng.isNotEmpty && !_hasCenteredOnGps) {
-                          _hasCenteredOnGps = true;
-                          final gpsPos = LatLng(
-                            double.tryParse(lat) ?? _defaultLocation.latitude,
-                            double.tryParse(lng) ?? _defaultLocation.longitude,
-                          );
-                          Future.delayed(const Duration(milliseconds: 200), () {
-                            if (mounted) {
-                              _moveCameraToPosition(gpsPos);
-                              setState(() {
-                                _selectedLatLng = gpsPos;
-                                _isAddressLoading = true;
-                              });
-                              _getAddressFromCoordinates(
-                                gpsPos.latitude,
-                                gpsPos.longitude,
-                              );
-                            }
-                          });
-                        }
-                      },
-                      onCameraMove: (CameraPosition pos) {
-                        _lastCameraCenter = pos.target;
-                        if (!_isAddressLoading) {
-                          setState(() => _isAddressLoading = true);
-                        }
-                      },
-                      onCameraIdle: () {
-                        setState(() => _selectedLatLng = _lastCameraCenter);
-                        _getAddressFromCoordinates(
-                          _lastCameraCenter.latitude,
-                          _lastCameraCenter.longitude,
-                        );
-                      },
-                      myLocationEnabled: true,
-                      myLocationButtonEnabled: false,
-                      zoomControlsEnabled: false,
-                      gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-                        Factory<OneSequenceGestureRecognizer>(
-                          () => EagerGestureRecognizer(),
+                    // ── Google Map (Hidden while loading) ──────────────
+                    if (!_isMapLoading)
+                      GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: _lastCameraCenter,
+                          zoom: 15,
                         ),
-                      },
-                    ),
+                        onMapCreated: (controller) {
+                          _mapController = controller;
+                          setState(() => _isMapReady = true);
+
+                          final cubit = context.read<CreateStoreCubit>();
+                          final lat = cubit.state.latitude;
+                          final lng = cubit.state.longitude;
+
+                          if (lat.isNotEmpty && lng.isNotEmpty && !_hasCenteredOnGps) {
+                            _hasCenteredOnGps = true;
+                            final gpsPos = LatLng(
+                              double.tryParse(lat) ?? _defaultLocation.latitude,
+                              double.tryParse(lng) ?? _defaultLocation.longitude,
+                            );
+                            Future.delayed(const Duration(milliseconds: 200), () {
+                              if (mounted) {
+                                _moveCameraToPosition(gpsPos);
+                                setState(() {
+                                  _selectedLatLng = gpsPos;
+                                  _isAddressLoading = true;
+                                });
+                                _getAddressFromCoordinates(
+                                  gpsPos.latitude,
+                                  gpsPos.longitude,
+                                );
+                              }
+                            });
+                          }
+                        },
+                        onCameraMove: (CameraPosition pos) {
+                          _lastCameraCenter = pos.target;
+                          if (!_isAddressLoading) {
+                            setState(() => _isAddressLoading = true);
+                          }
+                        },
+                        onCameraIdle: () {
+                          setState(() => _selectedLatLng = _lastCameraCenter);
+                          _getAddressFromCoordinates(
+                            _lastCameraCenter.latitude,
+                            _lastCameraCenter.longitude,
+                          );
+                        },
+                        myLocationEnabled: true,
+                        myLocationButtonEnabled: false,
+                        zoomControlsEnabled: false,
+                        gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                          Factory<OneSequenceGestureRecognizer>(
+                            () => EagerGestureRecognizer(),
+                          ),
+                        },
+                      ),
 
                     // ── Center Pin ──────────────────────────────────────
-                    if (_isMapReady)
+                    if (_isMapReady && !_isMapLoading)
                       Align(
                         alignment: Alignment.center,
                         child: Padding(
@@ -2018,58 +2062,66 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
                         ),
                       ),
 
-                    // ── "Use Current Location" Button ───────────────────
-                    PositionedDirectional(
-                      top: 16.h,
-                      start: 16.w,
-                      child: GestureDetector(
-                        onTap: () async {
-                          await _getCurrentLocation();
-                          if (mounted && _isMapReady) {
-                            _moveCameraToPosition(_lastCameraCenter);
-                          }
-                        },
+                    // ── Map Loading Overlay ─────────────────────────────
+                    if (_isMapLoading)
+                      Positioned.fill(
                         child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 14.w,
-                            vertical: 10.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor,
-                            borderRadius: BorderRadius.circular(20.r),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Theme.of(context)
-                                    .primaryColor
-                                    .withValues(alpha: 0.4),
-                                blurRadius: 8,
-                                offset: Offset(0, 3.h),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
+                          color: AppColors.surface,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons.my_location,
-                                color: AppColors.surface,
-                                size: 16.w,
+                              // Loading Icon
+                              Container(
+                                width: 80.w,
+                                height: 80.w,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withValues(alpha: 0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.location_searching_rounded,
+                                  size: 40.w,
+                                  color: AppColors.primary,
+                                ),
                               ),
-                              SizedBox(width: 6.w),
+                              SizedBox(height: 24.h),
+                              
+                              // Loading Indicator
+                              SizedBox(
+                                width: 40.w,
+                                height: 40.w,
+                                child: CircularProgressIndicator(
+                                  color: AppColors.primary,
+                                  strokeWidth: 3.w,
+                                ),
+                              ),
+                              SizedBox(height: 16.h),
+                              
+                              // Loading Text
                               Text(
-                                l10n.create_store_map_use_current,
+                                l10n.permissions_location_checking,
                                 style: AppTextStyles.customStyle(
                                   context,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.surface,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                              SizedBox(height: 8.h),
+                              Text(
+                                l10n.permissions_please_wait,
+                                style: AppTextStyles.customStyle(
+                                  context,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.textSecondary,
                                 ),
                               ),
                             ],
                           ),
                         ),
                       ),
-                    ),
+
                   ],
                 ),
               ),

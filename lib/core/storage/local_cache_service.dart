@@ -89,9 +89,21 @@ class LocalCacheService {
     // Will be implemented when we create models
   }
 
-  /// Get or open a box (opens once, reuses from memory)
+  /// Get or open a box (opens once, reuses from memory).
+  ///
+  /// **Type-collision guard**: Each box must always be opened with the same
+  /// type parameter [T]. Calling `_getBox<String>('foo')` after a prior
+  /// `_getBox<int>('foo')` in the same session is a programming error — the
+  /// assert below catches it in debug mode. In production the cast on the
+  /// return line will throw a [TypeError] rather than silently corrupting data.
   Future<Box<T>> _getBox<T>(String boxName) async {
     if (_openBoxes.containsKey(boxName)) {
+      assert(
+        _openBoxes[boxName] is Box<T>,
+        '_getBox<$T>("$boxName") conflicts with an already-open '
+        'Box<${_openBoxes[boxName].runtimeType}>. '
+        'Each box must use a single, consistent type parameter.',
+      );
       return _openBoxes[boxName] as Box<T>;
     }
 
@@ -687,7 +699,17 @@ class LocalCacheService {
         maxAge: AppConstants.storesCacheDuration,
       );
 
-      // Add more boxes as needed
+      // Clean public product details + page-1 cache
+      await _cleanBoxByTTL(
+        boxName: StorageKeys.publicProductsBox,
+        maxAge: AppConstants.productDetailCacheDuration,
+      );
+
+      // Clean categories cache
+      await _cleanBoxByTTL(
+        boxName: StorageKeys.categoriesBox,
+        maxAge: AppConstants.categoriesCacheDuration,
+      );
     } catch (e) {
       _logger.e('❌ Error cleaning expired data caches: $e');
     }

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../../core/localization/l10n/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
+import '../../widgets/shared_card.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // USAGE GUIDE PAGE
@@ -18,9 +19,9 @@ class UsageGuidePage extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.surface,
       appBar: _buildAppBar(context, l10n),
-      body: _buildBody(context, l10n),
+      body: SafeArea(bottom: true, child: _buildBody(context, l10n)),
     );
   }
 
@@ -29,19 +30,20 @@ class UsageGuidePage extends StatelessWidget {
     return AppBar(
       backgroundColor: AppColors.surface,
       elevation: 0,
+      surfaceTintColor: Colors.transparent,
       centerTitle: true,
       title: Text(
         l10n.help_usage_guide_title,
         style: AppTextStyles.customStyle(
           context,
-          fontSize: 20,
+          fontSize: 18,
           fontWeight: FontWeight.w700,
           color: AppColors.textPrimary,
         ),
       ),
       leading: IconButton(
         icon: Icon(
-          Icons.arrow_back_ios_rounded,
+          Icons.arrow_forward_ios_rounded,
           size: 20.w,
           color: AppColors.textPrimary,
         ),
@@ -88,7 +90,7 @@ class UsageGuidePage extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          SizedBox(height: 16.h),
+          SizedBox(height: 12.h),
           ...guideSteps.map((step) => _buildGuideCard(context, step)),
           SizedBox(height: 24.h),
         ],
@@ -98,24 +100,13 @@ class UsageGuidePage extends StatelessWidget {
 
   // ── Guide Step Card ────────────────────────────────────────────────────────
   Widget _buildGuideCard(BuildContext context, _GuideStep step) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return SharedProfileCard(
+      title: '',
+      onTap: null,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Step Number Circle ──────────────────────────────────────────────
+          // ── Step Icon Circle ────────────────────────────────────────────────
           Container(
             width: 40.w,
             height: 40.w,
@@ -131,7 +122,7 @@ class UsageGuidePage extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(width: 12.w),
+          SizedBox(width: 14.w),
 
           // ── Content ─────────────────────────────────────────────────────────
           Expanded(
@@ -142,8 +133,8 @@ class UsageGuidePage extends StatelessWidget {
                   '${step.stepNumber}. ${step.title}',
                   style: AppTextStyles.customStyle(
                     context,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
                     color: AppColors.textPrimary,
                   ),
                 ),
@@ -155,6 +146,7 @@ class UsageGuidePage extends StatelessWidget {
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
                     color: AppColors.textSecondary,
+                    height: 1.5,
                   ),
                 ),
               ],

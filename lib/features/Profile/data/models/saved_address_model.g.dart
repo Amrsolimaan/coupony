@@ -24,13 +24,26 @@ class SavedAddressModelAdapter extends TypeAdapter<SavedAddressModel> {
       longitude: fields[4] as double,
       isDefault: fields[5] as bool,
       createdAt: fields[6] as DateTime,
+      firstName: fields[7] as String,
+      lastName: fields[8] as String,
+      company: fields[9] as String,
+      addressLine1: fields[10] as String,
+      addressLine2: fields[11] as String,
+      city: fields[12] as String,
+      stateProvince: fields[13] as String,
+      postalCode: fields[14] as String,
+      countryCode: fields[15] as String,
+      phoneNumber: fields[16] as String,
+      deliveryInstructions: fields[17] as String,
+      isDefaultShipping: fields[18] as bool,
+      isDefaultBilling: fields[19] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, SavedAddressModel obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(20)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -44,7 +57,33 @@ class SavedAddressModelAdapter extends TypeAdapter<SavedAddressModel> {
       ..writeByte(5)
       ..write(obj.isDefault)
       ..writeByte(6)
-      ..write(obj.createdAt);
+      ..write(obj.createdAt)
+      ..writeByte(7)
+      ..write(obj.firstName)
+      ..writeByte(8)
+      ..write(obj.lastName)
+      ..writeByte(9)
+      ..write(obj.company)
+      ..writeByte(10)
+      ..write(obj.addressLine1)
+      ..writeByte(11)
+      ..write(obj.addressLine2)
+      ..writeByte(12)
+      ..write(obj.city)
+      ..writeByte(13)
+      ..write(obj.stateProvince)
+      ..writeByte(14)
+      ..write(obj.postalCode)
+      ..writeByte(15)
+      ..write(obj.countryCode)
+      ..writeByte(16)
+      ..write(obj.phoneNumber)
+      ..writeByte(17)
+      ..write(obj.deliveryInstructions)
+      ..writeByte(18)
+      ..write(obj.isDefaultShipping)
+      ..writeByte(19)
+      ..write(obj.isDefaultBilling);
   }
 
   @override

@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../../core/localization/l10n/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
+import '../../../../../core/widgets/buttons/app_primary_button.dart';
+import '../../widgets/shared_card.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TERMS & CONDITIONS PAGE
@@ -18,30 +20,32 @@ class TermsPage extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.surface,
       appBar: _buildAppBar(context, l10n),
-      body: _buildBody(context, l10n),
+      body: SafeArea(bottom: true, child: _buildBody(context, l10n)),
     );
   }
 
   // ── AppBar ─────────────────────────────────────────────────────────────────
-  PreferredSizeWidget _buildAppBar(BuildContext context, AppLocalizations l10n) {
+  PreferredSizeWidget _buildAppBar(
+      BuildContext context, AppLocalizations l10n) {
     return AppBar(
       backgroundColor: AppColors.surface,
       elevation: 0,
+      surfaceTintColor: Colors.transparent,
       centerTitle: true,
       title: Text(
         l10n.help_terms_title,
         style: AppTextStyles.customStyle(
           context,
-          fontSize: 20,
+          fontSize: 18,
           fontWeight: FontWeight.w700,
           color: AppColors.textPrimary,
         ),
       ),
       leading: IconButton(
         icon: Icon(
-          Icons.arrow_back_ios_rounded,
+          Icons.arrow_forward_ios_rounded,
           size: 20.w,
           color: AppColors.textPrimary,
         ),
@@ -73,53 +77,70 @@ class TermsPage extends StatelessWidget {
         title: l10n.terms_section5_title,
         content: l10n.terms_section5_content,
       ),
+      _TermsSection(
+        title: l10n.terms_section6_title,
+        content: l10n.terms_section6_content,
+      ),
     ];
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 16.h),
+    return Column(
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 12.h),
 
-          // ── Last Updated ────────────────────────────────────────────────────
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Text(
-              l10n.terms_last_updated,
-              style: AppTextStyles.customStyle(
-                context,
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: AppColors.textSecondary,
-              ),
+                // ── Last Updated ────────────────────────────────────────────
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  child: Text(
+                    l10n.terms_last_updated,
+                    style: AppTextStyles.customStyle(
+                      context,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 12.h),
+
+                // ── Terms Sections ──────────────────────────────────────────
+                ...termsSections.map((section) =>
+                    _buildSection(context, section)),
+                SizedBox(height: 24.h),
+              ],
             ),
           ),
-          SizedBox(height: 16.h),
+        ),
 
-          // ── Terms Sections ──────────────────────────────────────────────────
-          ...termsSections.map((section) => _buildSection(context, section)),
-          SizedBox(height: 24.h),
-        ],
-      ),
+        // ── Agree Button ──────────────────────────────────────────────────────
+        Padding(
+          padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 20.h),
+          child: AppPrimaryButton(
+            text: l10n.terms_agree_button,
+            height: 56.h,
+            backgroundColor: AppColors.primary,
+            textStyle: AppTextStyles.customStyle(
+              context,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+            onPressed: () => context.pop(),
+          ),
+        ),
+      ],
     );
   }
 
   // ── Section Widget ─────────────────────────────────────────────────────────
   Widget _buildSection(BuildContext context, _TermsSection section) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return SharedProfileCard(
+      title: '',
+      onTap: null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -128,7 +149,7 @@ class TermsPage extends StatelessWidget {
             style: AppTextStyles.customStyle(
               context,
               fontSize: 16,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
             ),
           ),
@@ -157,8 +178,5 @@ class _TermsSection {
   final String title;
   final String content;
 
-  const _TermsSection({
-    required this.title,
-    required this.content,
-  });
+  const _TermsSection({required this.title, required this.content});
 }

@@ -513,17 +513,101 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
     );
   }
 
-  /// Skip onboarding for the current session.
+  /// Skip current onboarding step and navigate to next step.
   ///
-  /// This does NOT call the API and does NOT persist a "completed" flag.
-  /// On next cold start the user will be shown onboarding again unless they
-  /// complete it. This is intentional — skipping is session-scoped only.
-  void skipOnboarding() {
-    logger.i('User skipped onboarding');
+  /// - If on Step 1 (Categories): Navigate to Step 2 (Budget)
+  /// - If on Step 2 (Budget): Navigate to Step 3 (Shopping Style)
+  /// - If on Step 3 (Shopping Style): Submit empty preferences to API
+  ///   to mark onboarding as completed on the server
+  Future<void> skipOnboarding() async {
+    logger.i('User skipped onboarding at step ${state.currentStep}');
+
+    if (state.currentStep == 1) {
+      // Skip Step 1 → Go to Step 2
+      _safeEmit(
+        state.copyWith(
+          currentStep: 2,
+          navigationSignal: OnboardingNavigation.toBudget,
+        ),
+      );
+      logger.i('Skipped Step 1 → Navigate to Budget');
+    } else if (state.currentStep == 2) {
+      // Skip Step 2 → Go to Step 3
+      _safeEmit(
+        state.copyWith(
+          currentStep: 3,
+          navigationSignal: OnboardingNavigation.toShoppingStyle,
+        ),
+      );
+      logger.i('Skipped Step 2 → Navigate to Shopping Style');
+    } else if (state.currentStep == 3) {
+      // Skip Step 3 → Submit empty preferences to API
+      logger.i('Skipped Step 3 → Submitting empty preferences to API');
+      await _submitEmptyPreferencesAndComplete();
+    }
+  }
+
+  /// Submit empty preferences to API when user skips all steps.
+  /// This marks onboarding as completed on the server side.
+  Future<void> _submitEmptyPreferencesAndComplete() async {
+    _safeEmit(state.copyWith(isSaving: true, isSubmittingToApi: true));
+
+    try {
+      // Save empty preferences locally first (required by repository)
+      logger.i('Saving empty preferences locally before API submission');
+      final saveResult = await savePreferencesUseCase(
+        selectedCategories: state.selectedCategories.isEmpty 
+            ? [] 
+            : state.selectedCategories,
+        budgetPreference: state.budgetPreference,
+        budgetSliderValue: state.budgetSliderValue,
+        shoppingStyles: state.shoppingStyles.isEmpty 
+            ? [] 
+            : state.shoppingStyles,
+      );
+
+      if (saveResult.isLeft()) {
+        logger.e('Failed to save empty preferences locally');
+        // Continue anyway to mark as completed
+      }
+
+      final role = await secureStorage.read(StorageKeys.userRole);
+      final userType = OnboardingUserType.fromRole(role);
+
+      // Submit to API (will send whatever is saved locally, even if empty)
+      final apiResult = await submitOnboardingUseCase(userType: userType);
+
+      await apiResult.fold(
+        (failure) async {
+          logger.e('Failed to submit skipped onboarding: ${failure?.message ?? ''}');
+          // Even if API fails, mark as completed locally to prevent showing again
+          await authLocalDataSource.cacheOnboardingCompleted(true);
+          _navigateToHome();
+        },
+        (_) async {
+          logger.i('✅ Empty onboarding submitted successfully');
+          // Mark as completed locally
+          await authLocalDataSource.cacheOnboardingCompleted(true);
+          _navigateToHome();
+        },
+      );
+    } catch (e) {
+      logger.e('Error submitting empty onboarding: $e');
+      // Mark as completed locally anyway to prevent showing again
+      await authLocalDataSource.cacheOnboardingCompleted(true);
+      _navigateToHome();
+    } finally {
+      _safeEmit(state.copyWith(isSaving: false, isSubmittingToApi: false));
+    }
+  }
+
+  /// Navigate to home after skipping all steps
+  void _navigateToHome() {
     _safeEmit(
       state.copyWith(
         isSkipped: true,
-        navigationSignal: OnboardingNavigation.toLogin,
+        isCompleted: true,
+        navigationSignal: OnboardingNavigation.toHome,
       ),
     );
   }

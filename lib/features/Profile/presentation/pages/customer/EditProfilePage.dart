@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coupony/core/utils/message_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,8 +8,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../../core/constants/api_constants.dart';
 import '../../../../../core/localization/l10n/app_localizations.dart';
+import '../../../../../core/utils/image_url_utils.dart';
+import '../../../../../core/widgets/images/app_cached_image.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../core/extensions/snackbar_extension.dart';
@@ -59,7 +59,7 @@ class EditProfilePage extends HookWidget {
 
     // ── Handle Avatar Tap Callback ─────────────────────────────────────────
     final handleAvatarTap = useCallback((dynamic user) async {
-      final imageUrl = _buildFullImageUrl(user.avatar);
+      final imageUrl = ImageUrlUtils.buildFullImageUrl(user.avatar as String?);
       final hasPhoto = imageUrl != null || selectedImage.value != null;
 
       try {
@@ -146,7 +146,7 @@ class EditProfilePage extends HookWidget {
           builder: (context, navigating, _) {
             // Show loading overlay during update or navigation
             return Scaffold(
-              backgroundColor: AppColors.background,
+              backgroundColor: AppColors.surface,
               appBar: _buildAppBar(
                 context,
                 l10n,
@@ -400,8 +400,6 @@ class EditProfilePage extends HookWidget {
     ValueNotifier<File?> selectedImage,
     VoidCallback onTap,
   ) {
-    final imageUrl = _buildFullImageUrl(avatarUrl);
-
     return ValueListenableBuilder<File?>(
       valueListenable: selectedImage,
       builder: (context, image, _) {
@@ -425,39 +423,25 @@ class EditProfilePage extends HookWidget {
                       ),
                     ],
                   ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppColors.surface,
-                        width: 4.w,
-                      ),
-                    ),
-                    child: ClipOval(
-                      child: image != null
-                          ? Image.file(
-                              image,
-                              fit: BoxFit.cover,
-                            )
-                          : imageUrl != null
-                              ? CachedNetworkImage(
-                                  imageUrl: imageUrl,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Container(
-                                    color: AppColors.grey200,
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2.w,
-                                        color: AppColors.primary,
-                                      ),
-                                    ),
-                                  ),
-                                  errorWidget: (context, url, error) =>
-                                      _buildAvatarPlaceholder(),
-                                )
-                              : _buildAvatarPlaceholder(),
-                    ),
-                  ),
+                  child: image != null
+                      ? Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: AppColors.surface,
+                              width: 4.w,
+                            ),
+                          ),
+                          child: ClipOval(
+                            child: Image.file(image, fit: BoxFit.cover),
+                          ),
+                        )
+                      : AppCachedImageCircular(
+                          imageUrl: avatarUrl ?? '',
+                          size: 120.w,
+                          borderWidth: 4.w,
+                          borderColor: AppColors.surface,
+                        ),
                 ),
 
                 // ── Camera Icon Overlay with Gradient ──────────────────────────────
@@ -502,38 +486,6 @@ class EditProfilePage extends HookWidget {
         );
       },
     );
-  }
-
-  Widget _buildAvatarPlaceholder() {
-    return Container(
-      color: AppColors.grey200,
-      child: Icon(
-        Icons.person_rounded,
-        size: 60.w,
-        color: AppColors.textSecondary,
-      ),
-    );
-  }
-
-  String? _buildFullImageUrl(String? avatarUrl) {
-    if (avatarUrl == null || avatarUrl.isEmpty) return null;
-
-    if (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://')) {
-      if (avatarUrl.contains('/users/avatars/')) {
-        return avatarUrl.replaceAll('/users/avatars/', '/storage/avatars/');
-      }
-      return avatarUrl;
-    }
-
-    final baseUrl = ApiConstants.baseUrl.replaceAll('/api/v1', '');
-    String cleanPath = avatarUrl;
-    if (!cleanPath.startsWith('/storage/') && !cleanPath.startsWith('storage/')) {
-      cleanPath = '/storage/$cleanPath';
-    } else if (!cleanPath.startsWith('/')) {
-      cleanPath = '/$cleanPath';
-    }
-
-    return '$baseUrl$cleanPath';
   }
 
   // ── Text Field Widget ──────────────────────────────────────────────────────
@@ -589,7 +541,7 @@ class EditProfilePage extends HookWidget {
               ),
               isDense: true,
               filled: true,
-              fillColor: enabled ? AppColors.surface : AppColors.grey200,
+              fillColor:  AppColors.surface ,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.r),
                 borderSide: BorderSide(

@@ -1188,6 +1188,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get address_search_hint => 'Search for area, city...';
 
   @override
+  String get address_search_no_results => 'No results found for';
+
+  @override
   String get address_label_dialog_title => 'Label Address';
 
   @override
@@ -1214,6 +1217,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get address_set_default => 'Set as Default';
+
+  @override
+  String get address_set_default_success =>
+      'Address set as default successfully';
 
   @override
   String get address_default_badge => 'Default';
@@ -1436,4 +1443,373 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get terms_section5_content =>
       'We respect your privacy and are committed to protecting your personal data. For more information, please review our privacy policy.';
+
+  @override
+  String get contact_us_heading => 'Contact Us';
+
+  @override
+  String get contact_us_description => 'We\'re here to help you anytime';
+
+  @override
+  String get seller_products_title => 'My Products';
+
+  @override
+  String get seller_products_empty => 'No products yet';
+
+  @override
+  String get seller_products_empty_subtitle =>
+      'Add your first product to start selling';
+
+  @override
+  String get seller_product_add => 'Add Product';
+
+  @override
+  String get seller_product_title_hint => 'Product Title';
+
+  @override
+  String get seller_product_slug_hint => 'Slug (URL-friendly name)';
+
+  @override
+  String get seller_product_short_desc_hint => 'Short Description';
+
+  @override
+  String get seller_product_desc_hint => 'Full Description';
+
+  @override
+  String get seller_product_type_hint => 'Product Type';
+
+  @override
+  String get seller_product_base_price_hint => 'Base Price';
+
+  @override
+  String get seller_product_compare_price_hint => 'Compare at Price';
+
+  @override
+  String get seller_product_currency_hint => 'Currency';
+
+  @override
+  String get seller_product_sku_hint => 'SKU';
+
+  @override
+  String get seller_product_status_hint => 'Status';
+
+  @override
+  String get seller_product_status_draft => 'Draft';
+
+  @override
+  String get seller_product_status_active => 'Active';
+
+  @override
+  String get seller_product_status_inactive => 'Inactive';
+
+  @override
+  String get seller_product_is_featured => 'Featured Product';
+
+  @override
+  String get seller_product_categories => 'Categories';
+
+  @override
+  String get seller_product_images => 'Product Images';
+
+  @override
+  String get seller_product_add_image => 'Add Image';
+
+  @override
+  String get seller_product_variants => 'Variants';
+
+  @override
+  String get seller_product_add_variant => 'Add Variant';
+
+  @override
+  String get seller_product_variant_title_hint =>
+      'Variant Title (e.g. Red / XL)';
+
+  @override
+  String get seller_product_variant_sku_hint => 'Variant SKU';
+
+  @override
+  String get seller_product_variant_price_hint => 'Variant Price';
+
+  @override
+  String get seller_product_attributes => 'Attributes';
+
+  @override
+  String get seller_product_attribute_name_hint =>
+      'Attribute Name (e.g. color)';
+
+  @override
+  String get seller_product_attribute_value_hint =>
+      'Attribute Value (e.g. red)';
+
+  @override
+  String get seller_product_save => 'Save Product';
+
+  @override
+  String get seller_product_update => 'Update Product';
+
+  @override
+  String get seller_product_delete => 'Delete Product';
+
+  @override
+  String get seller_product_delete_confirm_title => 'Delete Product';
+
+  @override
+  String get seller_product_delete_confirm_message =>
+      'Are you sure you want to delete this product? This action cannot be undone.';
+
+  @override
+  String get seller_product_delete_cancel => 'Cancel';
+
+  @override
+  String get seller_product_delete_confirm => 'Delete';
+
+  @override
+  String get success_seller_product_created => 'Product created successfully!';
+
+  @override
+  String get success_seller_product_updated => 'Product updated successfully!';
+
+  @override
+  String get success_seller_product_deleted => 'Product deleted successfully!';
+
+  @override
+  String get success_seller_product_status_updated =>
+      'Product status updated successfully!';
+
+  @override
+  String get error_seller_product_title_required => 'Product title is required';
+
+  @override
+  String get error_seller_product_price_required => 'Base price is required';
+
+  @override
+  String get error_seller_product_load_failed =>
+      'Failed to load products. Please try again';
+
+  @override
+  String get error_seller_product_not_found => 'Product not found';
+
+  @override
+  String get public_products_title => 'Products';
+
+  @override
+  String get public_products_empty => 'No products found';
+
+  @override
+  String get public_products_empty_subtitle =>
+      'Try adjusting your search or filters';
+
+  @override
+  String get public_products_search_hint => 'Search products...';
+
+  @override
+  String get public_products_filter_all => 'All';
+
+  @override
+  String get public_products_filter_featured => 'Featured';
+
+  @override
+  String get public_products_loading_more => 'Loading more products...';
+
+  @override
+  String get public_products_no_more => 'No more products';
+
+  @override
+  String get public_product_details_title => 'Product Details';
+
+  @override
+  String get public_product_price => 'Price';
+
+  @override
+  String get public_product_compare_price => 'Was';
+
+  @override
+  String get public_product_sku => 'SKU';
+
+  @override
+  String get public_product_variants => 'Variants';
+
+  @override
+  String get public_product_images => 'Product Images';
+
+  @override
+  String get public_product_description => 'Description';
+
+  @override
+  String get public_product_featured_badge => 'Featured';
+
+  @override
+  String get public_categories_title => 'Categories';
+
+  @override
+  String get public_categories_all => 'All Categories';
+
+  @override
+  String get public_categories_empty => 'No categories available';
+
+  @override
+  String get public_categories_error => 'Could not load categories';
+
+  @override
+  String get public_category_products_title => 'Category Products';
+
+  @override
+  String get error_public_products_load_failed =>
+      'Failed to load products. Please try again';
+
+  @override
+  String get error_public_product_not_found => 'Product not found';
+
+  @override
+  String get error_public_categories_load_failed =>
+      'Failed to load categories. Please try again';
+
+  @override
+  String get settings_page_title => 'Settings';
+
+  @override
+  String get settings_app_section => 'App Settings';
+
+  @override
+  String get settings_language => 'Language';
+
+  @override
+  String get settings_notifications => 'Enable Notifications';
+
+  @override
+  String get settings_data_section => 'Data Management';
+
+  @override
+  String get settings_delete_account => 'Delete Account';
+
+  @override
+  String get settings_delete_account_subtitle => 'Permanently delete account';
+
+  @override
+  String get settings_security_section => 'Privacy & Security';
+
+  @override
+  String get settings_change_password => 'Change Password';
+
+  @override
+  String get settings_change_password_subtitle => 'Last updated 2 months ago';
+
+  @override
+  String get settings_legal_section => 'Legal';
+
+  @override
+  String get settings_terms_of_use => 'Terms of Use';
+
+  @override
+  String get settings_privacy_policy => 'Privacy Policy';
+
+  @override
+  String get settings_about_app => 'About App';
+
+  @override
+  String get settings_app_version => 'Version 1.0.0';
+
+  @override
+  String get settings_copyright => '@2025 All rights reserved';
+
+  @override
+  String get delete_account_dialog_title => 'Confirm Account Deletion';
+
+  @override
+  String get delete_account_dialog_message => 'This action cannot be undone';
+
+  @override
+  String get delete_account_confirm_button => 'Confirm Deletion';
+
+  @override
+  String get language_dialog_title => 'Choose Language';
+
+  @override
+  String get language_dialog_subtitle =>
+      'Choose the appropriate language for you';
+
+  @override
+  String get language_arabic_full => 'Arabic';
+
+  @override
+  String get language_english_full => 'English';
+
+  @override
+  String get language_english_subtitle => 'English';
+
+  @override
+  String get change_password_current_label => 'Current Password';
+
+  @override
+  String get change_password_new_label => 'New Password';
+
+  @override
+  String get change_password_confirm_label => 'Confirm New Password';
+
+  @override
+  String get change_password_current_error =>
+      'Current password is incorrect, please try again';
+
+  @override
+  String get change_password_forgot_link => 'Forgot your password?';
+
+  @override
+  String get change_password_submit => 'Change Password';
+
+  @override
+  String get change_password_success => 'Password changed successfully';
+
+  @override
+  String get privacy_policy_title => 'Privacy Policy';
+
+  @override
+  String get privacy_policy_last_updated => 'Last updated: April 2026';
+
+  @override
+  String get privacy_policy_section1_title => '1. Data Collection';
+
+  @override
+  String get privacy_policy_section1_content =>
+      'We collect information you provide to us and data about how you use our services to improve your experience and show you the most relevant offers.';
+
+  @override
+  String get privacy_policy_section2_title => '2. Data Usage';
+
+  @override
+  String get privacy_policy_section2_content =>
+      'Your data is used to personalize your experience, process transactions, send notifications about offers, and improve our services continuously.';
+
+  @override
+  String get privacy_policy_section3_title => '3. Data Protection';
+
+  @override
+  String get privacy_policy_section3_content =>
+      'We implement industry-standard security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction.';
+
+  @override
+  String get privacy_policy_section4_title => '4. Third Parties';
+
+  @override
+  String get privacy_policy_section4_content =>
+      'We do not sell, trade, or transfer your personal information to outside parties without your consent, except as required by law or to provide our services.';
+
+  @override
+  String get privacy_policy_section5_title => '5. Your Rights';
+
+  @override
+  String get privacy_policy_section5_content =>
+      'You have the right to access, correct, or delete your personal data at any time by contacting our support team through the app.';
+
+  @override
+  String get terms_section6_title => '6. Amendments';
+
+  @override
+  String get terms_section6_content =>
+      'We reserve the right to modify these terms and conditions at any time. Continued use of the app after changes constitutes your acceptance.';
+
+  @override
+  String get terms_agree_button => 'Agree';
+
+  @override
+  String get privacy_agree_button => 'Agree';
 }

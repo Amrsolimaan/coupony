@@ -13,14 +13,17 @@ class AppConstants {
   /// Coupons cache duration (15 minutes - frequently updated)
   static const Duration couponsCacheDuration = Duration(minutes: 15);
 
+  /// Public product detail cache duration (30 minutes)
+  static const Duration productDetailCacheDuration = Duration(minutes: 30);
+
   /// Stores cache duration (1 hour - relatively stable)
   static const Duration storesCacheDuration = Duration(hours: 1);
 
   /// User data cache duration (1 day)
   static const Duration userCacheDuration = Duration(days: 1);
 
-  /// Categories cache duration (1 week - rarely changes)
-  static const Duration categoriesCacheDuration = Duration(days: 7);
+  /// Categories cache duration (2 hours)
+  static const Duration categoriesCacheDuration = Duration(hours: 2);
 
   /// Media files cache duration (7 days) ✅ ADDED
   static const Duration mediaCacheDuration = Duration(days: 7);

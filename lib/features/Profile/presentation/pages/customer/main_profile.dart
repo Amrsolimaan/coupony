@@ -1,15 +1,16 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../../config/routes/app_router.dart';
-import '../../../../../core/constants/api_constants.dart';
 import '../../../../../core/localization/l10n/app_localizations.dart';
+import '../../../../../core/utils/image_url_utils.dart';
+import '../../../../../core/widgets/images/app_cached_image.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../core/widgets/custom_bottom_nav_bar/custom_bottom_nav_bar.dart';
@@ -18,6 +19,7 @@ import '../../cubit/Customer_Profile_cubit.dart';
 import '../../cubit/Customer_Profile_state.dart';
 import '../../widgets/full_screen_photo_viewer.dart';
 import '../../widgets/profile_photo_bottom_sheet.dart';
+import '../../widgets/shared_card.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CUSTOMER MAIN PROFILE SCREEN
@@ -75,7 +77,7 @@ class MainProfile extends StatelessWidget {
         }
 
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: AppColors.surface,
           appBar: _buildAppBar(context, l10n),
           body: _buildBody(context, state, l10n),
           bottomNavigationBar: CustomBottomNavBar(
@@ -98,7 +100,7 @@ class MainProfile extends StatelessWidget {
         style: AppTextStyles.customStyle(
           context,
           fontSize: 20,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimary,
         ),
       ),
@@ -195,7 +197,7 @@ class MainProfile extends StatelessWidget {
               l10n.profile_error,
               style: TextStyle(
                 fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
                 color: AppColors.textPrimary,
               ),
               textAlign: TextAlign.center,
@@ -214,7 +216,7 @@ class MainProfile extends StatelessWidget {
                 l10n.profile_retry,
                 style: TextStyle(
                   fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                   color: Colors.white,
                 ),
               ),
@@ -261,7 +263,7 @@ class MainProfile extends StatelessWidget {
                   style: AppTextStyles.customStyle(
                     context,
                     fontSize: 18,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
                   ),
                   maxLines: 1,
@@ -320,8 +322,6 @@ class MainProfile extends StatelessWidget {
 
   // ── Avatar Widget with Camera Icon ────────────────────────────────────────
   Widget _buildAvatar(BuildContext context, String? avatarUrl, dynamic user) {
-    final imageUrl = _buildFullImageUrl(avatarUrl);
-    
     return GestureDetector(
       onTap: () => _handleAvatarTap(context, user),
       child: Hero(
@@ -342,32 +342,11 @@ class MainProfile extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.surface,
-                    width: 3.w,
-                  ),
-                ),
-                child: ClipOval(
-                  child: imageUrl != null
-                      ? CachedNetworkImage(
-                          imageUrl: imageUrl,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            color: AppColors.grey200,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.w,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          ),
-                          errorWidget: (context, url, error) => _buildAvatarPlaceholder(),
-                        )
-                      : _buildAvatarPlaceholder(),
-                ),
+              child: AppCachedImageCircular(
+                imageUrl: avatarUrl ?? '',
+                size: 80.w,
+                borderWidth: 3.w,
+                borderColor: AppColors.surface,
               ),
             ),
 
@@ -413,60 +392,10 @@ class MainProfile extends StatelessWidget {
     );
   }
 
-  /// Build full image URL from avatar path
-  String? _buildFullImageUrl(String? avatarUrl) {
-    if (avatarUrl == null || avatarUrl.isEmpty) {
-      print('🖼️ _buildFullImageUrl: avatarUrl is null or empty');
-      return null;
-    }
-    
-    print('🖼️ _buildFullImageUrl: Original avatarUrl = $avatarUrl');
-    
-    // If it's already a full URL, check if it needs path correction
-    if (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://')) {
-      // Check if the URL contains /users/avatars/ which might be wrong
-      if (avatarUrl.contains('/users/avatars/')) {
-        // Replace /users/avatars/ with /storage/avatars/
-        final correctedUrl = avatarUrl.replaceAll('/users/avatars/', '/storage/avatars/');
-        print('🖼️ _buildFullImageUrl: Corrected URL = $correctedUrl');
-        return correctedUrl;
-      }
-      
-      print('🖼️ _buildFullImageUrl: Using full URL directly');
-      return avatarUrl;
-    }
-    
-    // If it's a relative path, construct full URL
-    final baseUrl = ApiConstants.baseUrl.replaceAll('/api/v1', '');
-    
-    // Add /storage/ if not present
-    String cleanPath = avatarUrl;
-    if (!cleanPath.startsWith('/storage/') && !cleanPath.startsWith('storage/')) {
-      cleanPath = '/storage/$cleanPath';
-    } else if (!cleanPath.startsWith('/')) {
-      cleanPath = '/$cleanPath';
-    }
-    
-    final fullUrl = '$baseUrl$cleanPath';
-    print('🖼️ _buildFullImageUrl: Built full URL = $fullUrl');
-    return fullUrl;
-  }
-
-  Widget _buildAvatarPlaceholder() {
-    return Container(
-      color: AppColors.grey200,
-      child: Icon(
-        Icons.person_rounded,
-        size: 40.w,
-        color: AppColors.textSecondary,
-      ),
-    );
-  }
-
   // ── Handle Avatar Tap (Show Modern Bottom Sheet) ──────────────────────────
   Future<void> _handleAvatarTap(BuildContext context, dynamic user) async {
     final l10n = AppLocalizations.of(context)!;
-    final imageUrl = _buildFullImageUrl(user.avatar);
+    final imageUrl = ImageUrlUtils.buildFullImageUrl(user.avatar as String?);
     final hasPhoto = imageUrl != null && imageUrl.isNotEmpty;
 
     try {
@@ -590,104 +519,45 @@ class MainProfile extends StatelessWidget {
 
   // ── Menu List ──────────────────────────────────────────────────────────────
   Widget _buildMenuList(BuildContext context, AppLocalizations l10n) {
-    final menuItems = [
-      _MenuItem(
-        icon: Icons.favorite_border_rounded,
-        title: l10n.profile_favorites,
-        onTap: () {
-          // TODO: Navigate to favorites
-        },
-      ),
-      _MenuItem(
-        icon: Icons.person_add_outlined,
-        title: l10n.profile_be_seller,
-        onTap: () {
-          // TODO: Navigate to become seller
-        },
-      ),
-      _MenuItem(
-        icon: Icons.people_outline_rounded,
-        title: l10n.profile_follow,
-        onTap: () {
-          // TODO: Navigate to following
-        },
-      ),
-      _MenuItem(
-        icon: Icons.location_on_outlined,
-        title: l10n.profile_address,
-        onTap: () => context.push(AppRouter.addressManagement),
-      ),
-      _MenuItem(
-        icon: Icons.settings_outlined,
-        title: l10n.profile_settings,
-        onTap: () {
-          // TODO: Navigate to settings
-        },
-      ),
-      _MenuItem(
-        icon: Icons.help_outline_rounded,
-        title: l10n.profile_support,
-        onTap: () => context.push(AppRouter.helpSupport),
-      ),
-    ];
-
     return Column(
-      children: menuItems
-          .map((item) => _buildMenuItem(context, item))
-          .toList(),
-    );
-  }
-
-  Widget _buildMenuItem(BuildContext context, _MenuItem item) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: item.onTap,
-          borderRadius: BorderRadius.circular(12.r),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-            child: Row(
-              children: [
-                Icon(
-                  item.icon,
-                  size: 24.w,
-                  color: AppColors.textSecondary,
-                ),
-                SizedBox(width: 16.w),
-                Expanded(
-                  child: Text(
-                    item.title,
-                    style: AppTextStyles.customStyle(
-                      context,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                ),
-                Icon(
-                  Icons.arrow_back_ios_rounded,
-                  size: 16.w,
-                  color: AppColors.textSecondary,
-                ),
-              ],
-            ),
-          ),
+      children: [
+        SharedProfileCard(
+          icon: FontAwesomeIcons.heart,
+          title: l10n.profile_favorites,
+          onTap: () {
+            // TODO: Navigate to favorites
+          },
         ),
-      ),
+        SharedProfileCard(
+          icon: FontAwesomeIcons.store,
+          title: l10n.profile_be_seller,
+          onTap: () {
+            // TODO: Navigate to become seller
+          },
+        ),
+        SharedProfileCard(
+          icon: FontAwesomeIcons.userGroup,
+          title: l10n.profile_follow,
+          onTap: () {
+            // TODO: Navigate to following
+          },
+        ),
+        SharedProfileCard(
+          icon: FontAwesomeIcons.locationDot,
+          title: l10n.profile_address,
+          onTap: () => context.push(AppRouter.addressManagement),
+        ),
+        SharedProfileCard(
+          icon: FontAwesomeIcons.gear,
+          title: l10n.profile_settings,
+          onTap: () => context.push(AppRouter.settingsPage),
+        ),
+        SharedProfileCard(
+          icon: FontAwesomeIcons.circleQuestion,
+          title: l10n.profile_support,
+          onTap: () => context.push(AppRouter.helpSupport),
+        ),
+      ],
     );
   }
 
@@ -727,18 +597,4 @@ class MainProfile extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// MENU ITEM MODEL
-// ─────────────────────────────────────────────────────────────────────────────
 
-class _MenuItem {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
-
-  const _MenuItem({
-    required this.icon,
-    required this.title,
-    required this.onTap,
-  });
-}

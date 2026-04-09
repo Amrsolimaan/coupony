@@ -1,8 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coupony/config/dependency_injection/injection_container.dart'
     as di;
 import 'package:coupony/config/routes/app_router.dart';
-import 'package:coupony/core/constants/api_constants.dart';
+import 'package:coupony/core/widgets/images/app_cached_image.dart';
 import 'package:coupony/core/localization/l10n/app_localizations.dart';
 import 'package:coupony/core/theme/app_colors.dart';
 import 'package:coupony/core/theme/app_text_styles.dart';
@@ -377,45 +376,10 @@ class _StoreLogo extends StatelessWidget {
 
   static const _navy = AppColors.primaryOfSeller;
 
-  /// بناء URL كامل للصورة
-  String? _buildFullImageUrl(String? logoUrl) {
-    if (logoUrl == null || logoUrl.isEmpty) {
-      print('🖼️ _StoreLogo: logoUrl is null or empty');
-      return null;
-    }
-    
-    print('🖼️ _StoreLogo: Original logoUrl = $logoUrl');
-    
-    // إذا كان URL كامل (يبدأ بـ http أو https)، استخدمه مباشرة
-    if (logoUrl.startsWith('http://') || logoUrl.startsWith('https://')) {
-      print('🖼️ _StoreLogo: Using full URL directly');
-      return logoUrl;
-    }
-    
-    // إذا كان مسار نسبي، أضف base URL
-    // إزالة /api/v1 من base URL لأن الصور في المسار الرئيسي
-    final baseUrl = ApiConstants.baseUrl.replaceAll('/api/v1', '');
-    
-    // إضافة /storage/ إذا لم يكن موجوداً في المسار
-    String cleanPath = logoUrl;
-    if (!cleanPath.startsWith('/storage/') && !cleanPath.startsWith('storage/')) {
-      cleanPath = '/storage/$cleanPath';
-    } else if (!cleanPath.startsWith('/')) {
-      cleanPath = '/$cleanPath';
-    }
-    
-    final fullUrl = '$baseUrl$cleanPath';
-    print('🖼️ _StoreLogo: Built full URL = $fullUrl');
-    return fullUrl;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final fullImageUrl = _buildFullImageUrl(logoUrl);
-    final hasLogo = fullImageUrl != null;
     final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
-
-    print('🖼️ _StoreLogo.build: hasLogo=$hasLogo, fullImageUrl=$fullImageUrl, name=$name');
+    final hasLogo = logoUrl != null && logoUrl!.isNotEmpty;
 
     return Container(
       width: 50.w,
@@ -427,14 +391,14 @@ class _StoreLogo extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: hasLogo
-          ? CachedNetworkImage(
-              imageUrl: fullImageUrl,
-              fit: BoxFit.cover,
-              errorWidget: (context, url, error) {
-                print('❌ _StoreLogo: Failed to load image: $url, error: $error');
-                return _Initial(letter: initial);
-              },
-              placeholder: (_, __) => const Center(
+          ? AppCachedImage(
+              imageUrl: logoUrl!,
+              width: 50.w,
+              height: 50.w,
+              borderRadius: BorderRadius.zero,
+              backgroundColor: const Color(0xFFEEF2F9),
+              errorWidget: _Initial(letter: initial),
+              placeholder: Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 1.5,
                   color: _navy,

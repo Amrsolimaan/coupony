@@ -155,6 +155,7 @@ Widget _buildField({
       obscureText: obscure,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
+      textDirection: obscure ? TextDirection.ltr : null,
       maxLines: useExpands ? null : 1,
       minLines: useExpands ? null : null,
       expands: useExpands,

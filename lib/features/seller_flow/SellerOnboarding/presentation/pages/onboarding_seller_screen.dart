@@ -70,7 +70,7 @@ class SellerOnboardingPage extends StatelessWidget {
             });
           }
 
-          if (state.navigationSignal == SellerOnboardingNavigation.toLogin) {
+          if (state.navigationSignal == SellerOnboardingNavigation.toHome) {
             context.read<SellerOnboardingFlowCubit>().clearNavigationSignal();
             GoRouter.of(context).go(AppRouter.home);
           }

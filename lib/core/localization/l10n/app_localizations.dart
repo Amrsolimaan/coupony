@@ -2258,6 +2258,12 @@ abstract class AppLocalizations {
   /// **'Search for area, city...'**
   String get address_search_hint;
 
+  /// No description provided for @address_search_no_results.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found for'**
+  String get address_search_no_results;
+
   /// No description provided for @address_label_dialog_title.
   ///
   /// In en, this message translates to:
@@ -2311,6 +2317,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Set as Default'**
   String get address_set_default;
+
+  /// No description provided for @address_set_default_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Address set as default successfully'**
+  String get address_set_default_success;
 
   /// No description provided for @address_default_badge.
   ///
@@ -2713,6 +2725,708 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We respect your privacy and are committed to protecting your personal data. For more information, please review our privacy policy.'**
   String get terms_section5_content;
+
+  /// No description provided for @contact_us_heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Us'**
+  String get contact_us_heading;
+
+  /// No description provided for @contact_us_description.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re here to help you anytime'**
+  String get contact_us_description;
+
+  /// No description provided for @seller_products_title.
+  ///
+  /// In en, this message translates to:
+  /// **'My Products'**
+  String get seller_products_title;
+
+  /// No description provided for @seller_products_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No products yet'**
+  String get seller_products_empty;
+
+  /// No description provided for @seller_products_empty_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first product to start selling'**
+  String get seller_products_empty_subtitle;
+
+  /// No description provided for @seller_product_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Product'**
+  String get seller_product_add;
+
+  /// No description provided for @seller_product_title_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Product Title'**
+  String get seller_product_title_hint;
+
+  /// No description provided for @seller_product_slug_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Slug (URL-friendly name)'**
+  String get seller_product_slug_hint;
+
+  /// No description provided for @seller_product_short_desc_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Short Description'**
+  String get seller_product_short_desc_hint;
+
+  /// No description provided for @seller_product_desc_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Description'**
+  String get seller_product_desc_hint;
+
+  /// No description provided for @seller_product_type_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Product Type'**
+  String get seller_product_type_hint;
+
+  /// No description provided for @seller_product_base_price_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Base Price'**
+  String get seller_product_base_price_hint;
+
+  /// No description provided for @seller_product_compare_price_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare at Price'**
+  String get seller_product_compare_price_hint;
+
+  /// No description provided for @seller_product_currency_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get seller_product_currency_hint;
+
+  /// No description provided for @seller_product_sku_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'SKU'**
+  String get seller_product_sku_hint;
+
+  /// No description provided for @seller_product_status_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get seller_product_status_hint;
+
+  /// No description provided for @seller_product_status_draft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get seller_product_status_draft;
+
+  /// No description provided for @seller_product_status_active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get seller_product_status_active;
+
+  /// No description provided for @seller_product_status_inactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get seller_product_status_inactive;
+
+  /// No description provided for @seller_product_is_featured.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured Product'**
+  String get seller_product_is_featured;
+
+  /// No description provided for @seller_product_categories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get seller_product_categories;
+
+  /// No description provided for @seller_product_images.
+  ///
+  /// In en, this message translates to:
+  /// **'Product Images'**
+  String get seller_product_images;
+
+  /// No description provided for @seller_product_add_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Image'**
+  String get seller_product_add_image;
+
+  /// No description provided for @seller_product_variants.
+  ///
+  /// In en, this message translates to:
+  /// **'Variants'**
+  String get seller_product_variants;
+
+  /// No description provided for @seller_product_add_variant.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Variant'**
+  String get seller_product_add_variant;
+
+  /// No description provided for @seller_product_variant_title_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Variant Title (e.g. Red / XL)'**
+  String get seller_product_variant_title_hint;
+
+  /// No description provided for @seller_product_variant_sku_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Variant SKU'**
+  String get seller_product_variant_sku_hint;
+
+  /// No description provided for @seller_product_variant_price_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Variant Price'**
+  String get seller_product_variant_price_hint;
+
+  /// No description provided for @seller_product_attributes.
+  ///
+  /// In en, this message translates to:
+  /// **'Attributes'**
+  String get seller_product_attributes;
+
+  /// No description provided for @seller_product_attribute_name_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Attribute Name (e.g. color)'**
+  String get seller_product_attribute_name_hint;
+
+  /// No description provided for @seller_product_attribute_value_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Attribute Value (e.g. red)'**
+  String get seller_product_attribute_value_hint;
+
+  /// No description provided for @seller_product_save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Product'**
+  String get seller_product_save;
+
+  /// No description provided for @seller_product_update.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Product'**
+  String get seller_product_update;
+
+  /// No description provided for @seller_product_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Product'**
+  String get seller_product_delete;
+
+  /// No description provided for @seller_product_delete_confirm_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Product'**
+  String get seller_product_delete_confirm_title;
+
+  /// No description provided for @seller_product_delete_confirm_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this product? This action cannot be undone.'**
+  String get seller_product_delete_confirm_message;
+
+  /// No description provided for @seller_product_delete_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get seller_product_delete_cancel;
+
+  /// No description provided for @seller_product_delete_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get seller_product_delete_confirm;
+
+  /// No description provided for @success_seller_product_created.
+  ///
+  /// In en, this message translates to:
+  /// **'Product created successfully!'**
+  String get success_seller_product_created;
+
+  /// No description provided for @success_seller_product_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Product updated successfully!'**
+  String get success_seller_product_updated;
+
+  /// No description provided for @success_seller_product_deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Product deleted successfully!'**
+  String get success_seller_product_deleted;
+
+  /// No description provided for @success_seller_product_status_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Product status updated successfully!'**
+  String get success_seller_product_status_updated;
+
+  /// No description provided for @error_seller_product_title_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Product title is required'**
+  String get error_seller_product_title_required;
+
+  /// No description provided for @error_seller_product_price_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Base price is required'**
+  String get error_seller_product_price_required;
+
+  /// No description provided for @error_seller_product_load_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load products. Please try again'**
+  String get error_seller_product_load_failed;
+
+  /// No description provided for @error_seller_product_not_found.
+  ///
+  /// In en, this message translates to:
+  /// **'Product not found'**
+  String get error_seller_product_not_found;
+
+  /// No description provided for @public_products_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Products'**
+  String get public_products_title;
+
+  /// No description provided for @public_products_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No products found'**
+  String get public_products_empty;
+
+  /// No description provided for @public_products_empty_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your search or filters'**
+  String get public_products_empty_subtitle;
+
+  /// No description provided for @public_products_search_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search products...'**
+  String get public_products_search_hint;
+
+  /// No description provided for @public_products_filter_all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get public_products_filter_all;
+
+  /// No description provided for @public_products_filter_featured.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured'**
+  String get public_products_filter_featured;
+
+  /// No description provided for @public_products_loading_more.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading more products...'**
+  String get public_products_loading_more;
+
+  /// No description provided for @public_products_no_more.
+  ///
+  /// In en, this message translates to:
+  /// **'No more products'**
+  String get public_products_no_more;
+
+  /// No description provided for @public_product_details_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Product Details'**
+  String get public_product_details_title;
+
+  /// No description provided for @public_product_price.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get public_product_price;
+
+  /// No description provided for @public_product_compare_price.
+  ///
+  /// In en, this message translates to:
+  /// **'Was'**
+  String get public_product_compare_price;
+
+  /// No description provided for @public_product_sku.
+  ///
+  /// In en, this message translates to:
+  /// **'SKU'**
+  String get public_product_sku;
+
+  /// No description provided for @public_product_variants.
+  ///
+  /// In en, this message translates to:
+  /// **'Variants'**
+  String get public_product_variants;
+
+  /// No description provided for @public_product_images.
+  ///
+  /// In en, this message translates to:
+  /// **'Product Images'**
+  String get public_product_images;
+
+  /// No description provided for @public_product_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get public_product_description;
+
+  /// No description provided for @public_product_featured_badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured'**
+  String get public_product_featured_badge;
+
+  /// No description provided for @public_categories_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get public_categories_title;
+
+  /// No description provided for @public_categories_all.
+  ///
+  /// In en, this message translates to:
+  /// **'All Categories'**
+  String get public_categories_all;
+
+  /// No description provided for @public_categories_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories available'**
+  String get public_categories_empty;
+
+  /// No description provided for @public_categories_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load categories'**
+  String get public_categories_error;
+
+  /// No description provided for @public_category_products_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Category Products'**
+  String get public_category_products_title;
+
+  /// No description provided for @error_public_products_load_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load products. Please try again'**
+  String get error_public_products_load_failed;
+
+  /// No description provided for @error_public_product_not_found.
+  ///
+  /// In en, this message translates to:
+  /// **'Product not found'**
+  String get error_public_product_not_found;
+
+  /// No description provided for @error_public_categories_load_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load categories. Please try again'**
+  String get error_public_categories_load_failed;
+
+  /// No description provided for @settings_page_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings_page_title;
+
+  /// No description provided for @settings_app_section.
+  ///
+  /// In en, this message translates to:
+  /// **'App Settings'**
+  String get settings_app_section;
+
+  /// No description provided for @settings_language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settings_language;
+
+  /// No description provided for @settings_notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Notifications'**
+  String get settings_notifications;
+
+  /// No description provided for @settings_data_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Management'**
+  String get settings_data_section;
+
+  /// No description provided for @settings_delete_account.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get settings_delete_account;
+
+  /// No description provided for @settings_delete_account_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete account'**
+  String get settings_delete_account_subtitle;
+
+  /// No description provided for @settings_security_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & Security'**
+  String get settings_security_section;
+
+  /// No description provided for @settings_change_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get settings_change_password;
+
+  /// No description provided for @settings_change_password_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated 2 months ago'**
+  String get settings_change_password_subtitle;
+
+  /// No description provided for @settings_legal_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal'**
+  String get settings_legal_section;
+
+  /// No description provided for @settings_terms_of_use.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Use'**
+  String get settings_terms_of_use;
+
+  /// No description provided for @settings_privacy_policy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get settings_privacy_policy;
+
+  /// No description provided for @settings_about_app.
+  ///
+  /// In en, this message translates to:
+  /// **'About App'**
+  String get settings_about_app;
+
+  /// No description provided for @settings_app_version.
+  ///
+  /// In en, this message translates to:
+  /// **'Version 1.0.0'**
+  String get settings_app_version;
+
+  /// No description provided for @settings_copyright.
+  ///
+  /// In en, this message translates to:
+  /// **'@2025 All rights reserved'**
+  String get settings_copyright;
+
+  /// No description provided for @delete_account_dialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Account Deletion'**
+  String get delete_account_dialog_title;
+
+  /// No description provided for @delete_account_dialog_message.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone'**
+  String get delete_account_dialog_message;
+
+  /// No description provided for @delete_account_confirm_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Deletion'**
+  String get delete_account_confirm_button;
+
+  /// No description provided for @language_dialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Language'**
+  String get language_dialog_title;
+
+  /// No description provided for @language_dialog_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the appropriate language for you'**
+  String get language_dialog_subtitle;
+
+  /// No description provided for @language_arabic_full.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get language_arabic_full;
+
+  /// No description provided for @language_english_full.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get language_english_full;
+
+  /// No description provided for @language_english_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get language_english_subtitle;
+
+  /// No description provided for @change_password_current_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Password'**
+  String get change_password_current_label;
+
+  /// No description provided for @change_password_new_label.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get change_password_new_label;
+
+  /// No description provided for @change_password_confirm_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm New Password'**
+  String get change_password_confirm_label;
+
+  /// No description provided for @change_password_current_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password is incorrect, please try again'**
+  String get change_password_current_error;
+
+  /// No description provided for @change_password_forgot_link.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot your password?'**
+  String get change_password_forgot_link;
+
+  /// No description provided for @change_password_submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get change_password_submit;
+
+  /// No description provided for @change_password_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed successfully'**
+  String get change_password_success;
+
+  /// No description provided for @privacy_policy_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacy_policy_title;
+
+  /// No description provided for @privacy_policy_last_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: April 2026'**
+  String get privacy_policy_last_updated;
+
+  /// No description provided for @privacy_policy_section1_title.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Data Collection'**
+  String get privacy_policy_section1_title;
+
+  /// No description provided for @privacy_policy_section1_content.
+  ///
+  /// In en, this message translates to:
+  /// **'We collect information you provide to us and data about how you use our services to improve your experience and show you the most relevant offers.'**
+  String get privacy_policy_section1_content;
+
+  /// No description provided for @privacy_policy_section2_title.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Data Usage'**
+  String get privacy_policy_section2_title;
+
+  /// No description provided for @privacy_policy_section2_content.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is used to personalize your experience, process transactions, send notifications about offers, and improve our services continuously.'**
+  String get privacy_policy_section2_content;
+
+  /// No description provided for @privacy_policy_section3_title.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Data Protection'**
+  String get privacy_policy_section3_title;
+
+  /// No description provided for @privacy_policy_section3_content.
+  ///
+  /// In en, this message translates to:
+  /// **'We implement industry-standard security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction.'**
+  String get privacy_policy_section3_content;
+
+  /// No description provided for @privacy_policy_section4_title.
+  ///
+  /// In en, this message translates to:
+  /// **'4. Third Parties'**
+  String get privacy_policy_section4_title;
+
+  /// No description provided for @privacy_policy_section4_content.
+  ///
+  /// In en, this message translates to:
+  /// **'We do not sell, trade, or transfer your personal information to outside parties without your consent, except as required by law or to provide our services.'**
+  String get privacy_policy_section4_content;
+
+  /// No description provided for @privacy_policy_section5_title.
+  ///
+  /// In en, this message translates to:
+  /// **'5. Your Rights'**
+  String get privacy_policy_section5_title;
+
+  /// No description provided for @privacy_policy_section5_content.
+  ///
+  /// In en, this message translates to:
+  /// **'You have the right to access, correct, or delete your personal data at any time by contacting our support team through the app.'**
+  String get privacy_policy_section5_content;
+
+  /// No description provided for @terms_section6_title.
+  ///
+  /// In en, this message translates to:
+  /// **'6. Amendments'**
+  String get terms_section6_title;
+
+  /// No description provided for @terms_section6_content.
+  ///
+  /// In en, this message translates to:
+  /// **'We reserve the right to modify these terms and conditions at any time. Continued use of the app after changes constitutes your acceptance.'**
+  String get terms_section6_content;
+
+  /// No description provided for @terms_agree_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Agree'**
+  String get terms_agree_button;
+
+  /// No description provided for @privacy_agree_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Agree'**
+  String get privacy_agree_button;
 }
 
 class _AppLocalizationsDelegate

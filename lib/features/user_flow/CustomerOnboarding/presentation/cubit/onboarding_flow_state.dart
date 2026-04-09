@@ -10,6 +10,7 @@ enum OnboardingNavigation {
   toLoading, // Navigate to loading page after onboarding completion
   toPermissions,
   toLogin,
+  toHome, // Navigate to home after skipping all steps
 }
 
 /// Unified state for onboarding flow (Steps 1, 2, 3)

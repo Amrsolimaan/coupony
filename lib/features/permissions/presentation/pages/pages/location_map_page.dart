@@ -60,27 +60,52 @@ class _LocationMapPageState extends State<LocationMapPage> {
   void initState() {
     super.initState();
     _speech = stt.SpeechToText();
-    _checkNetworkAndLoad();
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadInitialPosition();
+    });
   }
 
-  Future<void> _checkNetworkAndLoad() async {
+  Future<void> _loadInitialPosition() async {
+    // Start with loading state
+    setState(() => _isMapLoading = true);
+
+    // Check network first
     final networkInfo = sl<NetworkInfo>();
     final connected = await networkInfo.isConnected;
-    if (mounted) {
-      setState(() {
-        _hasNetwork = connected;
-        if (!connected) _isMapLoading = false;
-      });
+    
+    if (!mounted) return;
+    
+    setState(() => _hasNetwork = connected);
+    
+    if (!connected) {
+      setState(() => _isMapLoading = false);
+      return;
     }
 
-    // If state already has a GPS position (edge-case: position arrived before
-    // the map page mounted), center on it immediately.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    try {
+      // Check if position already exists in cubit
       final position = context.read<PermissionFlowCubit>().state.userPosition;
+      
       if (position != null) {
-        _lastCameraCenter = LatLng(position.latitude, position.longitude);
+        // Position already available
+        if (mounted) {
+          final newLocation = LatLng(position.latitude, position.longitude);
+          setState(() {
+            _lastCameraCenter = newLocation;
+            _isMapLoading = false;
+          });
+        }
+        return;
       }
-    });
+    } catch (e) {
+      print('❌ Error loading initial position: $e');
+    }
+
+    // Fallback: use default location
+    if (mounted) {
+      setState(() => _isMapLoading = false);
+    }
   }
 
   void _moveCameraToPosition(LatLng position) {
@@ -226,10 +251,11 @@ class _LocationMapPageState extends State<LocationMapPage> {
         },
         child: Stack(
           children: [
-            // ── Google Map ────────────────────────────────────
+            // ── Google Map (Hidden while loading) ─────────────
             // Not wrapped in any BlocBuilder: its params are static after
             // construction. Camera is moved imperatively via _mapController.
-            GoogleMap(
+            if (!_isMapLoading)
+              GoogleMap(
               initialCameraPosition: CameraPosition(
                 target: _lastCameraCenter,
                 zoom: 15,
@@ -307,7 +333,7 @@ class _LocationMapPageState extends State<LocationMapPage> {
 
             // ── Static Center-Pin (crosshair overlay) ─────────
             // Always at the exact screen center regardless of map movements.
-            if (_isMapReady)
+            if (_isMapReady && !_isMapLoading)
               Align(
                 alignment: Alignment.center,
                 child: Padding(
@@ -334,11 +360,57 @@ class _LocationMapPageState extends State<LocationMapPage> {
               Positioned.fill(
                 child: Container(
                   color: AppColors.surface,
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.primary,
-                      strokeWidth: 3,
-                    ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Loading Icon
+                      Container(
+                        width: 80.w,
+                        height: 80.w,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.location_searching_rounded,
+                          size: 40.w,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      SizedBox(height: 24.h),
+                      
+                      // Loading Indicator
+                      SizedBox(
+                        width: 40.w,
+                        height: 40.w,
+                        child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                          strokeWidth: 3.w,
+                        ),
+                      ),
+                      SizedBox(height: 16.h),
+                      
+                      // Loading Text
+                      Text(
+                        AppLocalizations.of(context)!.permissions_location_checking,
+                        style: AppTextStyles.customStyle(
+                          context,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                        AppLocalizations.of(context)!.permissions_please_wait,
+                        style: AppTextStyles.customStyle(
+                          context,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -375,26 +447,60 @@ class _LocationMapPageState extends State<LocationMapPage> {
                 ),
               ),
 
-            // ── Top Search Bar ─────────────────────────────────
-            PositionedDirectional(
+            // ── Top Search Bar (Hidden while loading) ─────────
+            if (!_isMapLoading)
+              PositionedDirectional(
               top: MediaQuery.of(context).padding.top + 16.h,
               start: 16.w,
               end: 16.w,
               child: Row(
                 children: [
-                  // Orange location icon
-                  Container(
-                    width: 40.w,
-                    height: 40.h,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.location_on,
-                      color: AppColors.surface,
-                      size: 22.w,
-                    ),
+                  // Orange location icon (with tap functionality)
+                  BlocBuilder<PermissionFlowCubit, PermissionFlowState>(
+                    buildWhen: (prev, curr) =>
+                        prev.isRequestingLocation != curr.isRequestingLocation,
+                    builder: (context, state) {
+                      return GestureDetector(
+                        onTap: state.isRequestingLocation
+                            ? null
+                            : () async {
+                                final cubit = context.read<PermissionFlowCubit>();
+                                await cubit.useCurrentLocation();
+
+                                if (!mounted) return;
+
+                                final pos = cubit.state.userPosition;
+                                if (pos != null) {
+                                  _moveCameraToPosition(
+                                    LatLng(pos.latitude, pos.longitude),
+                                  );
+                                }
+                              },
+                        child: Container(
+                          width: 40.w,
+                          height: 40.h,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: state.isRequestingLocation
+                              ? Padding(
+                                  padding: EdgeInsets.all(10.w),
+                                  child: const CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      AppColors.surface,
+                                    ),
+                                  ),
+                                )
+                              : Icon(
+                                  Icons.location_on,
+                                  color: AppColors.surface,
+                                  size: 22.w,
+                                ),
+                        ),
+                      );
+                    },
                   ),
 
                   SizedBox(width: 12.w),
@@ -511,91 +617,6 @@ class _LocationMapPageState extends State<LocationMapPage> {
                     ),
                   ),
                 ],
-              ),
-            ),
-
-            // ── "Use Current Location" Button ─────────────────
-            PositionedDirectional(
-              bottom: 240.h,
-              start: 0,
-              end: 0,
-              child: Center(
-                // buildWhen: only toggle button state when loading flag changes.
-                child: BlocBuilder<PermissionFlowCubit, PermissionFlowState>(
-                  buildWhen: (prev, curr) =>
-                      prev.isRequestingLocation != curr.isRequestingLocation,
-                  builder: (context, state) {
-                    return GestureDetector(
-                      onTap: state.isRequestingLocation
-                          ? null
-                          : () async {
-                              final cubit =
-                                  context.read<PermissionFlowCubit>();
-                              await cubit.useCurrentLocation();
-
-                              if (!mounted) return;
-
-                              final pos = cubit.state.userPosition;
-                              if (pos != null) {
-                                _moveCameraToPosition(
-                                  LatLng(pos.latitude, pos.longitude),
-                                );
-                              }
-                            },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 14.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          borderRadius: BorderRadius.circular(25.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Theme.of(
-                                context,
-                              ).primaryColor.withValues(alpha: 0.4),
-                              blurRadius: 12,
-                              offset: Offset(0, 4.h),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              AppLocalizations.of(
-                                context,
-                              )!.location_map_use_current,
-                              style: AppTextStyles.bodyLarge.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.surface,
-                              ),
-                            ),
-                            SizedBox(width: 8.w),
-                            if (state.isRequestingLocation)
-                              SizedBox(
-                                width: 20.w,
-                                height: 20.w,
-                                child: const CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppColors.surface,
-                                  ),
-                                ),
-                              )
-                            else
-                              Icon(
-                                Icons.my_location,
-                                color: AppColors.surface,
-                                size: 20.w,
-                              ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
               ),
             ),
 

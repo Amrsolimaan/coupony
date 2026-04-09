@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/network/network_info.dart';
 import '../../core/services/saved_emails_service.dart';
+import '../../core/storage/app_image_cache_manager.dart';
 import '../../core/storage/local_cache_service.dart';
 import '../../core/storage/secure_storage_service.dart';
 
@@ -19,6 +20,8 @@ import 'features/create_store_injection.dart';
 import 'features/onboarding_injection.dart';
 import 'features/permissions_injection.dart';
 import 'features/profile_injection.dart';
+import 'features/customer_products_injection.dart';
+import 'features/seller_products_injection.dart';
 
 final sl = GetIt.instance;
 
@@ -79,6 +82,9 @@ Future<void> init() async {
     () => SavedEmailsService(sl<SharedPreferences>()),
   );
 
+  // AppImageCacheManager - Shared image cache (30-min TTL, 200-object cap)
+  sl.registerLazySingleton<AppImageCacheManager>(() => AppImageCacheManager());
+
   // Network Services
   // ─────────────────
 
@@ -131,6 +137,16 @@ Future<void> init() async {
   // 7. FEATURES - CUSTOMER PROFILE
   // ═══════════════════════════════════════════════════════════
   registerProfileDependencies(sl);
+
+  // ═══════════════════════════════════════════════════════════
+  // 8. FEATURES - SELLER PRODUCTS
+  // ═══════════════════════════════════════════════════════════
+  registerSellerProductsDependencies(sl);
+
+  // ═══════════════════════════════════════════════════════════
+  // 9. FEATURES - CUSTOMER / PUBLIC PRODUCTS
+  // ═══════════════════════════════════════════════════════════
+  registerCustomerProductsDependencies(sl);
 
   // Coupons Feature
   // ─────────────────

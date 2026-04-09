@@ -15,7 +15,7 @@ class AddressInitial extends AddressState {
   const AddressInitial();
 }
 
-/// Loading state
+/// Loading state (fetching list)
 class AddressLoading extends AddressState {
   const AddressLoading();
 }
@@ -35,6 +35,16 @@ class AddressLoaded extends AddressState {
 
   @override
   List<Object?> get props => [addresses, defaultAddress];
+}
+
+/// Saving state (creating or updating via API)
+class AddressSaving extends AddressState {
+  const AddressSaving();
+}
+
+/// Deleting state (deleting via API)
+class AddressDeleting extends AddressState {
+  const AddressDeleting();
 }
 
 /// Address operation success (save, update, delete)
@@ -59,4 +69,23 @@ class AddressError extends AddressState {
 
   @override
   List<Object?> get props => [message];
+}
+
+/// Searching state — shown while API request is in-flight
+class AddressSearching extends AddressState {
+  const AddressSearching();
+}
+
+/// Search results loaded — replaces the list UI while a query is active.
+/// Cleared (reverts to full AddressLoaded) when the query is emptied.
+class AddressSearchLoaded extends AddressState {
+  final List<SavedAddress> results;
+  final String query;
+
+  const AddressSearchLoaded({required this.results, required this.query});
+
+  bool get isEmpty => results.isEmpty;
+
+  @override
+  List<Object?> get props => [results, query];
 }

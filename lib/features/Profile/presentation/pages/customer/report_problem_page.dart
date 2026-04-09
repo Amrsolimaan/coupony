@@ -33,9 +33,9 @@ class _ReportProblemPageState extends State<ReportProblemPage> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.surface,
       appBar: _buildAppBar(context, l10n),
-      body: _buildBody(context, l10n),
+      body: SafeArea(bottom: true, child: _buildBody(context, l10n)),
     );
   }
 
@@ -44,19 +44,20 @@ class _ReportProblemPageState extends State<ReportProblemPage> {
     return AppBar(
       backgroundColor: AppColors.surface,
       elevation: 0,
+      surfaceTintColor: Colors.transparent,
       centerTitle: true,
       title: Text(
         l10n.help_report_problem_title,
         style: AppTextStyles.customStyle(
           context,
-          fontSize: 20,
+          fontSize: 18,
           fontWeight: FontWeight.w700,
           color: AppColors.textPrimary,
         ),
       ),
       leading: IconButton(
         icon: Icon(
-          Icons.arrow_back_ios_rounded,
+          Icons.arrow_forward_ios_rounded,
           size: 20.w,
           color: AppColors.textPrimary,
         ),
@@ -107,6 +108,7 @@ class _ReportProblemPageState extends State<ReportProblemPage> {
 
             // ── Submit Button ─────────────────────────────────────────────────
             _buildSubmitButton(context, l10n),
+            SizedBox(height: 24.h),
           ],
         ),
       ),
@@ -161,25 +163,16 @@ class _ReportProblemPageState extends State<ReportProblemPage> {
             filled: true,
             fillColor: AppColors.surface,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(
-                color: AppColors.divider,
-                width: 1.5.w,
-              ),
+              borderRadius: BorderRadius.circular(14.r),
+              borderSide: BorderSide(color: AppColors.divider, width: 1.5.w),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(
-                color: AppColors.divider,
-                width: 1.5.w,
-              ),
+              borderRadius: BorderRadius.circular(14.r),
+              borderSide: BorderSide(color: AppColors.divider, width: 1.5.w),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(
-                color: AppColors.primary,
-                width: 1.5.w,
-              ),
+              borderRadius: BorderRadius.circular(14.r),
+              borderSide: BorderSide(color: AppColors.primary, width: 1.5.w),
             ),
           ),
         ),
@@ -201,7 +194,7 @@ class _ReportProblemPageState extends State<ReportProblemPage> {
           begin: AlignmentDirectional.centerStart,
           end: AlignmentDirectional.centerEnd,
         ),
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(14.r),
         boxShadow: [
           BoxShadow(
             color: AppColors.primary.withValues(alpha: 0.3),
@@ -214,7 +207,7 @@ class _ReportProblemPageState extends State<ReportProblemPage> {
         color: Colors.transparent,
         child: InkWell(
           onTap: () => _handleSubmit(context, l10n),
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(14.r),
           child: Center(
             child: Text(
               l10n.report_problem_submit,

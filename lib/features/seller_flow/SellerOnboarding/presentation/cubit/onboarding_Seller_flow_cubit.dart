@@ -397,13 +397,106 @@ class SellerOnboardingFlowCubit extends Cubit<SellerOnboardingFlowState> {
     }
   }
 
-  /// Skip onboarding for the current session (session-scoped, no API call).
-  void skipOnboarding() {
-    logger.i('Seller skipped onboarding');
+  /// Skip current onboarding step and navigate to next step.
+  ///
+  /// - If on Step 1 (Price Category): Navigate to Step 2 (Customer Reach Method)
+  /// - If on Step 2 (Customer Reach Method): Navigate to Step 3 (Best Offer Time)
+  /// - If on Step 3 (Best Offer Time): Navigate to Step 4 (Target Audience)
+  /// - If on Step 4 (Target Audience): Submit empty preferences to API
+  ///   to mark onboarding as completed on the server
+  Future<void> skipOnboarding() async {
+    logger.i('Seller skipped onboarding at step ${state.currentStep}');
+
+    if (state.currentStep == 1) {
+      // Skip Step 1 → Go to Step 2
+      _safeEmit(
+        state.copyWith(
+          currentStep: 2,
+          navigationSignal: SellerOnboardingNavigation.toCustomerReachMethod,
+        ),
+      );
+      logger.i('Skipped Step 1 → Navigate to Customer Reach Method');
+    } else if (state.currentStep == 2) {
+      // Skip Step 2 → Go to Step 3
+      _safeEmit(
+        state.copyWith(
+          currentStep: 3,
+          navigationSignal: SellerOnboardingNavigation.toBestOfferTime,
+        ),
+      );
+      logger.i('Skipped Step 2 → Navigate to Best Offer Time');
+    } else if (state.currentStep == 3) {
+      // Skip Step 3 → Go to Step 4
+      _safeEmit(
+        state.copyWith(
+          currentStep: 4,
+          navigationSignal: SellerOnboardingNavigation.toTargetAudience,
+        ),
+      );
+      logger.i('Skipped Step 3 → Navigate to Target Audience');
+    } else if (state.currentStep == 4) {
+      // Skip Step 4 → Submit empty preferences to API
+      logger.i('Skipped Step 4 → Submitting empty preferences to API');
+      await _submitEmptyPreferencesAndComplete();
+    }
+  }
+
+  /// Submit empty preferences to API when seller skips all steps.
+  /// This marks onboarding as completed on the server side.
+  Future<void> _submitEmptyPreferencesAndComplete() async {
+    _safeEmit(state.copyWith(isSaving: true, isSubmittingToApi: true));
+
+    try {
+      // Save empty preferences locally first (required by repository)
+      logger.i('Saving empty seller preferences locally before API submission');
+      final saveResult = await savePreferencesUseCase(
+        priceCategory: state.priceCategory,
+        customerReachMethod: state.customerReachMethod,
+        bestOfferTime: state.bestOfferTime,
+        targetAudience: state.targetAudience,
+      );
+
+      if (saveResult.isLeft()) {
+        logger.e('Failed to save empty seller preferences locally');
+        // Continue anyway to mark as completed
+      }
+
+      // Submit to API (will send whatever is saved locally, even if empty)
+      final apiResult = await submitOnboardingUseCase(
+        userType: OnboardingSellerType.seller,
+      );
+
+      await apiResult.fold(
+        (failure) async {
+          logger.e('Failed to submit skipped seller onboarding: ${failure.message}');
+          // Even if API fails, mark as completed locally to prevent showing again
+          await authLocalDataSource.cacheOnboardingCompleted(true);
+          _navigateToHome();
+        },
+        (_) async {
+          logger.i('✅ Empty seller onboarding submitted successfully');
+          // Mark as completed locally
+          await authLocalDataSource.cacheOnboardingCompleted(true);
+          _navigateToHome();
+        },
+      );
+    } catch (e) {
+      logger.e('Error submitting empty seller onboarding: $e');
+      // Mark as completed locally anyway to prevent showing again
+      await authLocalDataSource.cacheOnboardingCompleted(true);
+      _navigateToHome();
+    } finally {
+      _safeEmit(state.copyWith(isSaving: false, isSubmittingToApi: false));
+    }
+  }
+
+  /// Navigate to home after skipping all steps
+  void _navigateToHome() {
     _safeEmit(
       state.copyWith(
         isSkipped: true,
-        navigationSignal: SellerOnboardingNavigation.toLogin,
+        isCompleted: true,
+        navigationSignal: SellerOnboardingNavigation.toHome,
       ),
     );
   }

@@ -1,10 +1,12 @@
 import 'package:coupony/features/Profile/data/datasources/profile_remote_data_source.dart';
+import 'package:coupony/features/Profile/data/datasources/address_remote_data_source.dart';
 import 'package:coupony/features/Profile/data/repositories/profile_repository_impl.dart';
 import 'package:coupony/features/Profile/domain/repositories/profile_repository.dart';
 import 'package:coupony/features/Profile/domain/use_cases/delete_account_use_case.dart';
 import 'package:coupony/features/Profile/domain/use_cases/get_profile_use_case.dart';
 import 'package:coupony/features/Profile/domain/use_cases/update_profile_use_case.dart';
 import 'package:coupony/features/Profile/presentation/cubit/Customer_Profile_cubit.dart';
+import 'package:coupony/features/Profile/presentation/cubit/change_password_cubit.dart';
 import 'package:coupony/features/Profile/data/data_sources/address_local_data_source.dart';
 import 'package:coupony/features/Profile/data/repositories/address_repository_impl.dart';
 import 'package:coupony/features/Profile/domain/repositories/address_repository.dart';
@@ -29,6 +31,14 @@ void registerProfileDependencies(GetIt sl) {
     ),
   );
 
+  // Address Remote Data Source
+  sl.registerLazySingleton<AddressRemoteDataSource>(
+    () => AddressRemoteDataSourceImpl(
+      client: sl<DioClient>(),
+      logger: sl<Logger>(),
+    ),
+  );
+
   // Address Local Data Source
   sl.registerLazySingleton<AddressLocalDataSource>(
     () => AddressLocalDataSourceImpl(),
@@ -47,10 +57,12 @@ void registerProfileDependencies(GetIt sl) {
     ),
   );
 
-  // Address Repository
+  // Address Repository (Hybrid: API + Hive)
   sl.registerLazySingleton<AddressRepository>(
     () => AddressRepositoryImpl(
-      localDataSource: sl<AddressLocalDataSource>(),
+      remoteDataSource: sl<AddressRemoteDataSource>(),
+      localDataSource:  sl<AddressLocalDataSource>(),
+      networkInfo:      sl<NetworkInfo>(),
     ),
   );
 
@@ -81,6 +93,14 @@ void registerProfileDependencies(GetIt sl) {
     () => AddressCubit(
       repository: sl<AddressRepository>(),
       logger:     sl<Logger>(),
+    ),
+  );
+
+  // Change Password Cubit
+  sl.registerFactory<ChangePasswordCubit>(
+    () => ChangePasswordCubit(
+      client: sl<DioClient>(),
+      logger: sl<Logger>(),
     ),
   );
 }

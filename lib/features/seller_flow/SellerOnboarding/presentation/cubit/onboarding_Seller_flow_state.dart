@@ -9,7 +9,8 @@ enum SellerOnboardingNavigation {
   toTargetAudience,      // Step 3 → Step 4
   showSuccessBottomSheet, // Show success bottom sheet after API submission
   toCreateStore,         // Navigate directly to Create Store after completion
-  toLogin,               // User skipped onboarding
+  toLogin,               // User skipped onboarding (deprecated - use toHome)
+  toHome,                // Navigate to home after skipping all steps
 }
 
 /// Unified state for seller onboarding flow (Steps 1 → 4)

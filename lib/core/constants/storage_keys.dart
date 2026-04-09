@@ -105,4 +105,17 @@ class StorageKeys {
   static const String user = 'user_data';
 
   static const String sellerOnboardingPreferencesKey = 'seller_onboarding_preferences';
+
+  // ── Public / Customer Products ─────────────────────────
+  /// Hive box for public product detail cache (15-min TTL).
+  static const String publicProductsBox = 'public_products_box';
+
+  /// Key prefix for individual product detail entries.
+  static const String publicProductDetailPrefix = 'public_product_';
+
+  /// Cache key for the public categories list (stored in categoriesBox).
+  static const String publicCategoriesList = 'public_categories_list';
+
+  /// Cache key for page-1 unfiltered public products (offline-first fallback).
+  static const String publicProductsPage1Key = 'public_products_page1';
 }
