@@ -29,7 +29,12 @@ class ProfileRepositoryImpl extends BaseRepository implements ProfileRepository 
   @override
   Future<Either<Failure, UserEntity>> getProfile() {
     return executeOnlineOperation<UserEntity>(
-      operation: () => remoteDataSource.getProfile(),
+      operation: () async {
+        final result = await remoteDataSource.getProfile();
+        await localDataSource.cacheStores(result.stores);
+        await localDataSource.cacheStoreCreated(result.isStoreCreated);
+        return result;
+      },
     );
   }
 

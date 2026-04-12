@@ -11,6 +11,7 @@ import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/cubit
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Seller Delivery Method Screen — Cubit Step 2 (customerReachMethod)
 /// API values: physical_store | online_only
@@ -63,7 +64,7 @@ class SellerDeliveryMethodScreen extends StatelessWidget {
                     children: [
                       SelectionOptionCard(
                         title: l10n.seller_delivery_method_physical,
-                        icon: Icons.storefront,
+                        icon: FontAwesomeIcons.store,
                         isSelected: state.customerReachMethod == 'physical_store',
                         onTap: () =>
                             cubit.selectCustomerReachMethod('physical_store'),
@@ -72,7 +73,7 @@ class SellerDeliveryMethodScreen extends StatelessWidget {
                       SizedBox(height: 12.h),
                       SelectionOptionCard(
                         title: l10n.seller_delivery_method_online,
-                        icon: Icons.phone_android,
+                        icon: FontAwesomeIcons.mobileScreen,
                         isSelected: state.customerReachMethod == 'online_only',
                         onTap: () =>
                             cubit.selectCustomerReachMethod('online_only'),

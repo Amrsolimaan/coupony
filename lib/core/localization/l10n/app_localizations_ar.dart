@@ -79,6 +79,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get startNow => 'ابدأ الآن';
 
   @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
+  String get no_categories_available => 'لا توجد تصنيفات متاحة';
+
+  @override
   String get categoryRestaurants => 'مطاعم و كافيهات';
 
   @override
@@ -642,6 +648,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get create_store_category_hint => 'اختر التصنيف المناسب';
 
   @override
+  String get create_store_category_scroll_hint => 'اسحب للأسفل لرؤية المزيد';
+
+  @override
   String get create_store_description_hint =>
       'اكتب وصفاً مختصراً عن متجرك و الخدمات';
 
@@ -785,6 +794,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get seller_onboarding_success_title => 'تم إكمال التسجيل بنجاح!';
+
+  @override
+  String get customer_onboarding_success_title => 'أهلاً بك في كوبوني!';
 
   @override
   String get seller_onboarding_start_title =>
@@ -1062,6 +1074,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get account => 'الحساب';
 
   @override
+  String get store => 'المحل';
+
+  @override
+  String get analytics => 'التحليلات';
+
+  @override
+  String get offers => 'العروض';
+
+  @override
   String get profile_title => 'الحساب الشخصى';
 
   @override
@@ -1215,6 +1236,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get loading => 'جاري التحميل...';
+
+  @override
+  String get current_location_default_name => 'موقعك الحالي';
+
+  @override
+  String get settings_notifications_open_settings =>
+      'يرجى السماح بالإشعارات من إعدادات الجهاز';
 
   @override
   String get help_support_title => 'المساعده و الدعم';
@@ -1645,7 +1673,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settings_language => 'اللغه';
 
   @override
-  String get settings_notifications => 'تفعيل الأشعارات';
+  String get settings_notifications => 'تفعيل الإشعارات تلقائياً';
 
   @override
   String get settings_data_section => 'إداره البيانات';
@@ -1655,6 +1683,40 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settings_delete_account_subtitle => 'حذف الحساب بشكل نهائى';
+
+  @override
+  String get settings_storage_section => 'إدارة التخزين';
+
+  @override
+  String get settings_clear_cache => 'مسح الكاش';
+
+  @override
+  String get settings_cache_size => 'حجم الكاش';
+
+  @override
+  String get clear_cache_dialog_title => 'مسح الكاش';
+
+  @override
+  String get clear_cache_dialog_message =>
+      'سيتم مسح الكوبونات والمتاجر والمنتجات المحفوظة مؤقتاً. لن يتم مسح بياناتك الشخصية أو إعداداتك.';
+
+  @override
+  String get clear_cache_confirm_button => 'مسح الكاش';
+
+  @override
+  String get clear_cache_success => 'تم مسح الكاش بنجاح';
+
+  @override
+  String get clear_cache_error => 'حدث خطأ أثناء مسح الكاش';
+
+  @override
+  String get cache_files_size => 'حجم الملفات:';
+
+  @override
+  String get cache_files_count => 'عدد الملفات:';
+
+  @override
+  String get cache_calculating => 'جاري الحساب...';
 
   @override
   String get settings_security_section => 'الخصوصيه و الأمان';
@@ -1782,4 +1844,184 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get privacy_agree_button => 'موافق';
+
+  @override
+  String get become_merchant_title => 'كن تاجراً';
+
+  @override
+  String get become_merchant_headline => 'ابدأ تجارتك على كوبوني';
+
+  @override
+  String get become_merchant_subtitle =>
+      'حوّل محلك لفرصة نمو جديدة،\nووصل عروضك لعملاء أكثر في منطقتك بكل سهولة.';
+
+  @override
+  String get become_merchant_button => 'إنشاء المتجر';
+
+  @override
+  String get seller_store_title => 'المحل';
+
+  @override
+  String get seller_store_content_title => 'إدارة متجرك';
+
+  @override
+  String get seller_store_content_subtitle =>
+      'هنا يمكنك إدارة معلومات متجرك، تحديث البيانات، وإضافة فروع جديدة.';
+
+  @override
+  String get seller_home_title => 'الرئيسية';
+
+  @override
+  String get seller_home_content_title => 'صفحة البائع الرئيسية';
+
+  @override
+  String get seller_home_content_subtitle =>
+      'مرحباً بك في لوحة التحكم الخاصة بك';
+
+  @override
+  String get seller_analytics_title => 'التحليلات';
+
+  @override
+  String get seller_analytics_content_title => 'تحليلات المبيعات';
+
+  @override
+  String get seller_analytics_content_subtitle =>
+      'تتبع أداء متجرك ومبيعاتك بشكل تفصيلي';
+
+  @override
+  String get seller_offers_title => 'العروض';
+
+  @override
+  String get seller_offers_content_title => 'إدارة العروض';
+
+  @override
+  String get seller_offers_content_subtitle =>
+      'أنشئ وأدر عروضك الترويجية والخصومات';
+
+  @override
+  String get merchant_review_pending_title => 'طلبك قيد المراجعة';
+
+  @override
+  String get merchant_review_pending_subtitle =>
+      'طلبك قيد المراجعة حالياً\nسيتم إشعارك فور الانتهاء.';
+
+  @override
+  String get merchant_review_pending_button => 'جاري المراجعة';
+
+  @override
+  String get merchant_review_contact_prompt => 'في حالة حدوث أي مشكلة';
+
+  @override
+  String get merchant_review_contact_link => 'تواصل معنا';
+
+  @override
+  String get merchant_incomplete_title => 'يرجى استكمال بيانات متجرك';
+
+  @override
+  String get merchant_incomplete_subtitle =>
+      'لا يمكن تفعيل المتجر بسبب نقص بعض البيانات.\nيرجى استكمالها للمتابعة.';
+
+  @override
+  String get merchant_incomplete_button => 'استكمال البيانات';
+
+  @override
+  String get merchant_rejected_title => 'تعذر استكمال تفعيل المتجر';
+
+  @override
+  String get merchant_rejected_subtitle =>
+      'يرجى مراجعة أسباب عدم الموافقة\nوإجراء التعديلات اللازمة لإعادة إرسال الطلب.';
+
+  @override
+  String get guest_seller_mode_title => 'وضع الزائر';
+
+  @override
+  String get guest_seller_welcome_title => 'ابدأ رحلتك في البيع على كوبوني';
+
+  @override
+  String get guest_seller_welcome_subtitle =>
+      'أنشئ متجرك واعرض خصوماتك وأوصل لعملاء جدد.';
+
+  @override
+  String get guest_seller_login_button => 'تسجيل دخول';
+
+  @override
+  String get seller_pending_approval_title => 'أهلا بيك';
+
+  @override
+  String get seller_pending_approval_message =>
+      'سيتم تفعيل هذه الصفحة بعد الموافقة على متجرك.';
+
+  @override
+  String get seller_pending_approval_subtitle =>
+      'نظرة سريعة على أداء محلك، أحدث التسييلات، والاقتراحات لتحسين العروض وزيادة التفاعل.';
+
+  @override
+  String get seller_pending_contact_prefix => 'في حاله حدوث أي مشكلة';
+
+  @override
+  String get seller_pending_contact_link => 'تواصل معانا';
+
+  @override
+  String get merchant_rejected_view_status_button => 'عرض حالة الطلب';
+
+  @override
+  String get merchant_status_title => 'حالة الطلب';
+
+  @override
+  String get merchant_status_headline => 'نحتاج بعض التعديلات';
+
+  @override
+  String get merchant_status_subtitle =>
+      'هناك بيانات تحتاج تصحيح لإتمام التفعيل';
+
+  @override
+  String get merchant_status_edit_button => 'تعديل البيانات';
+
+  @override
+  String get merchant_status_support_button => 'تواصل مع الدعم';
+
+  @override
+  String get merchant_approved_headline => 'متجرك نشط الآن!';
+
+  @override
+  String get merchant_approved_subtitle =>
+      'تهانينا! تم مراجعة وتفعيل متجرك بنجاح، يمكنك الآن البدء في نشر عروضك.';
+
+  @override
+  String get merchant_approved_button => 'الذهاب إلى المتجر';
+
+  @override
+  String get update_store_title => 'تعديل بيانات المتجر';
+
+  @override
+  String get update_store_button => 'تحديث البيانات';
+
+  @override
+  String get success_update_store => 'تم تحديث بيانات المتجر بنجاح!';
+
+  @override
+  String get error_update_store_server =>
+      'تعذر تحديث المتجر. يرجى المحاولة مرة أخرى';
+
+  @override
+  String get merchant_approved_switch_button => 'التحول إلى التاجر';
+
+  @override
+  String get merchant_approved_continue_button => 'متابعة كعميل';
+
+  @override
+  String get profile_switch_to_merchant => 'التحول إلى التاجر';
+
+  @override
+  String get merchant_no_changes_snackbar =>
+      'لم يتم اكتشاف أي تغييرات. يرجى إصلاح المشكلات المذكورة قبل إعادة الإرسال.';
+
+  @override
+  String get seller_welcome_title => 'أهلاً بك يا تاجر!';
+
+  @override
+  String get seller_welcome_subtitle => 'تم الموافقة على متجرك وهو جاهز للبدء';
+
+  @override
+  String get seller_dashboard_coming_soon => 'لوحة التحكم قريباً';
 }

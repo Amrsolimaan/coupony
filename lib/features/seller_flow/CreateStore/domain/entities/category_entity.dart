@@ -4,13 +4,15 @@ class CategoryEntity extends Equatable {
   final int id;
   final String name;
   final String? slug;
+  final String? iconUrl;
 
   const CategoryEntity({
     required this.id,
     required this.name,
     this.slug,
+    this.iconUrl,
   });
 
   @override
-  List<Object?> get props => [id, name, slug];
+  List<Object?> get props => [id, name, slug, iconUrl];
 }

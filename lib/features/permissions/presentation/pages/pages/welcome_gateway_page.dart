@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../auth/data/datasources/auth_local_data_source.dart';
 
@@ -38,10 +39,12 @@ class WelcomeGatewayPage extends StatelessWidget {
                   color: AppColors.primary,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Icons.group_outlined,
-                  color: Colors.white,
-                  size: 60.w,
+                child: Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.userGroup,
+                    color: Colors.white,
+                    size: 56.w,
+                  ),
                 ),
               ),
               
@@ -119,7 +122,7 @@ class WelcomeGatewayPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.15),
+                      color: AppColors.primary.withValues(alpha: 0.15),
                       blurRadius: 8,
                       offset: const Offset(0, 3),
                     ),

@@ -11,6 +11,8 @@ import '../../../features/seller_flow/CreateStore/domain/repositories/create_sto
 import '../../../features/seller_flow/CreateStore/domain/use_cases/create_store_use_case.dart';
 import '../../../features/seller_flow/CreateStore/domain/use_cases/get_categories_use_case.dart';
 import '../../../features/seller_flow/CreateStore/domain/use_cases/get_social_platforms_use_case.dart';
+import '../../../features/seller_flow/CreateStore/domain/use_cases/get_stores_use_case.dart';
+import '../../../features/seller_flow/CreateStore/domain/use_cases/update_store_use_case.dart';
 import '../../../features/seller_flow/CreateStore/presentation/cubit/create_store_cubit.dart';
 
 void registerCreateStoreDependencies(GetIt sl) {
@@ -53,6 +55,14 @@ void registerCreateStoreDependencies(GetIt sl) {
     () => GetSocialPlatformsUseCase(sl<CreateStoreRepository>()),
   );
 
+  sl.registerLazySingleton<GetStoresUseCase>(
+    () => GetStoresUseCase(sl<CreateStoreRepository>()),
+  );
+
+  sl.registerLazySingleton<UpdateStoreUseCase>(
+    () => UpdateStoreUseCase(sl<CreateStoreRepository>()),
+  );
+
   // ════════════════════════════════════════════════════════
   // CUBIT (factory — new instance per screen)
   // ════════════════════════════════════════════════════════
@@ -60,8 +70,10 @@ void registerCreateStoreDependencies(GetIt sl) {
   sl.registerFactory<CreateStoreCubit>(
     () => CreateStoreCubit(
       createStoreUseCase: sl<CreateStoreUseCase>(),
+      updateStoreUseCase: sl<UpdateStoreUseCase>(),
       getCategoriesUseCase: sl<GetCategoriesUseCase>(),
       getSocialPlatformsUseCase: sl<GetSocialPlatformsUseCase>(),
+      getStoresUseCase: sl<GetStoresUseCase>(),
       locationService: sl<LocationService>(),
       authLocalDataSource: sl<AuthLocalDataSource>(),
       logger: sl<Logger>(),

@@ -1,7 +1,6 @@
 import 'package:coupony/features/user_flow/CustomerOnboarding/domain/entities/onboarding_user_type.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/domain/repositories/onboarding_repository.dart';
 import 'package:dartz/dartz.dart';
-import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/network_info.dart';
@@ -150,24 +149,16 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
       // Delete FCM token from Firebase (non-blocking)
       notificationService.deleteFCMToken();
 
-      // 1. Clear SharedPreferences session flags FIRST.
-      //    clearSessionFlags() needs the userId from SecureStorage to resolve
-      //    user-scoped keys — it MUST run before clearUser() deletes the userId.
-      await localDataSource.clearSessionFlags();
+      // 1. Hard reset: wipe ALL Hive boxes from disk + clear SharedPreferences.
+      //    This ensures isStoreCreated, onboarding flags, and every user-scoped
+      //    key are destroyed so no data leaks to a subsequent account.
+      await cacheService.deleteAllData();
 
-      // 2. Clear SecureStorage (tokens, userId, role, fcmToken)
+      // 2. Clear SecureStorage (tokens, userId, role, selectedStoreId, fcmToken).
+      //    Done after deleteAllData() because SecureStorage is managed separately.
       await localDataSource.clearUser();
 
-      // 3. Clear Hive: customer onboarding preferences box.
-      //    Without this, a second user logging in on the same device would
-      //    inherit the previous user's cached preferences.
-      await clearFeatureCache(StorageKeys.onboardingPreferencesBox);
-
-      // 4. Clear Hive: seller onboarding preferences box.
-      //    Explicitly wiped so seller data never leaks to another account.
-      await clearFeatureCache(StorageKeys.sellerOnboardingPreferencesBox);
-
-      // 5. Revoke Google OAuth grant so the account picker appears on the
+      // 3. Revoke Google OAuth grant so the account picker appears on the
       //    next Google Sign-In instead of silently reusing the cached session.
       await GoogleSignInService().signOut();
     }

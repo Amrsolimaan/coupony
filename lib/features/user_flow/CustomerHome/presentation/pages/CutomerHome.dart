@@ -1,5 +1,5 @@
 import 'package:coupony/core/localization/l10n/app_localizations.dart';
-import 'package:coupony/core/widgets/custom_bottom_nav_bar/custom_bottom_nav_bar.dart';
+import 'package:coupony/core/widgets/custom_bottom_nav_bar/customer_bottom_nav_bar.dart';
 import 'package:coupony/features/auth/presentation/cubit/auth_state.dart';
 import 'package:coupony/features/auth/presentation/cubit/login_cubit.dart';
 import 'package:flutter/material.dart';
@@ -86,17 +86,11 @@ class CustomerHome extends StatelessWidget {
         ),
         title: Text(
           l10n.logout_dialog_title,
-          style: TextStyle(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w700,
-          ),
+          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700),
         ),
         content: Text(
           l10n.logout_dialog_message,
-          style: TextStyle(
-            fontSize: 14.sp,
-            color: Colors.grey.shade700,
-          ),
+          style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
         ),
         actions: [
           TextButton(

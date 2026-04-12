@@ -167,9 +167,9 @@ class SharedProfileCard extends StatelessWidget {
           if (trailing != null)
             trailing!
           else if (onTap != null)
-            Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 16.w,
+            FaIcon(
+              FontAwesomeIcons.chevronRight,
+              size: 14.w,
               color: AppColors.textSecondary,
             ),
         ],

@@ -11,6 +11,7 @@ import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/cubit
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Seller Target Audience Screen — Cubit Step 4 (targetAudience)
 /// API values: youth | families | all
@@ -96,7 +97,7 @@ class SellerTargetAudienceScreen extends StatelessWidget {
                         SelectionOptionCard(
                           title: l10n.seller_target_audience_youth,
                           subtitle: l10n.seller_target_audience_youth_subtitle,
-                          icon: Icons.celebration,
+                          icon: FontAwesomeIcons.champagneGlasses,
                           isSelected: state.targetAudience == 'youth',
                           onTap: () => cubit.selectTargetAudience('youth'),
                           theme: _theme,
@@ -105,7 +106,7 @@ class SellerTargetAudienceScreen extends StatelessWidget {
                         SelectionOptionCard(
                           title: l10n.seller_target_audience_families,
                           subtitle: l10n.seller_target_audience_families_subtitle,
-                          icon: Icons.home,
+                          icon: FontAwesomeIcons.house,
                           isSelected: state.targetAudience == 'families',
                           onTap: () => cubit.selectTargetAudience('families'),
                           theme: _theme,
@@ -114,7 +115,7 @@ class SellerTargetAudienceScreen extends StatelessWidget {
                         SelectionOptionCard(
                           title: l10n.seller_target_audience_everyone,
                           subtitle: l10n.seller_target_audience_everyone_subtitle,
-                          icon: Icons.groups,
+                          icon: FontAwesomeIcons.userGroup,
                           isSelected: state.targetAudience == 'all',
                           onTap: () => cubit.selectTargetAudience('all'),
                           theme: _theme,

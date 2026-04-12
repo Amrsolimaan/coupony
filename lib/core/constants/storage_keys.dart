@@ -67,6 +67,10 @@ class StorageKeys {
   /// objects cached from the last successful login response.
   static const String cachedStoresKey = 'cached_stores';
 
+  /// User-scoped SharedPreferences key: comma-separated list of user roles
+  /// (e.g., 'seller,customer' or 'seller_pending,customer')
+  static const String userRolesKey = 'user_roles';
+
   /// ⭐ INTEREST TRACKING KEYS
   static const String categoryScoresKey = 'category_scores';
   static const String seenProductsListKey = 'seen_products_list';

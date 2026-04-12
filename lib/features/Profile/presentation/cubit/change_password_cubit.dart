@@ -32,8 +32,8 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
         ApiConstants.changePassword,
         data: {
           'current_password': currentPassword,
-          'new_password': newPassword,
-          'new_password_confirmation': confirmPassword,
+          'password': newPassword,
+          'password_confirmation': confirmPassword,
         },
       );
 
@@ -41,9 +41,15 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
       emit(ChangePasswordSuccess());
     } on DioException catch (e) {
       final statusCode = e.response?.statusCode;
-      logger.e('❌ CHANGE PASSWORD ERROR: $statusCode — ${e.response?.data}');
+      final responseData = e.response?.data;
+      logger.e('❌ CHANGE PASSWORD ERROR: $statusCode');
+      logger.e('   Response body: $responseData');
 
-      if (statusCode == 422 || statusCode == 401 || statusCode == 400) {
+      // 400 / 401 / 403 / 422 → wrong current password (API may use any of these)
+      if (statusCode == 400 ||
+          statusCode == 401 ||
+          statusCode == 403 ||
+          statusCode == 422) {
         emit(ChangePasswordError(
           message: 'change_password_current_error',
           isCurrentPasswordWrong: true,

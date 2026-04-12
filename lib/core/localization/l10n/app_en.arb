@@ -25,6 +25,8 @@
   "skip": "Skip",
   "next": "Next",
   "startNow": "Start Now",
+  "retry": "Retry",
+  "no_categories_available": "No categories available",
   
   "categoryRestaurants": "Restaurants & Cafes",
   "categoryFashion": "Fashion & Style",
@@ -217,6 +219,7 @@
   "create_store_logo_format": "PNG or JPG, max size 5MB",
   "create_store_name_hint": "Store Name",
   "create_store_category_hint": "Choose the appropriate category",
+  "create_store_category_scroll_hint": "Scroll down to see more",
   "create_store_description_hint": "Write a brief description of your store and services",
   "create_store_description_error": "Maximum allowed limit exceeded",
   "create_store_city_hint": "Choose the city",
@@ -265,6 +268,7 @@
   "seller_target_audience_everyone": "Everyone",
   "seller_target_audience_everyone_subtitle": "General offers for all ages",
   "seller_onboarding_success_title": "Onboarding Completed Successfully!",
+  "customer_onboarding_success_title": "Welcome to Coupony!",
   
   "seller_onboarding_start_title": "Let's understand your business better\nto connect you with the right customers",
   "seller_onboarding_start_subtitle": "4 simple steps will help us understand your business",
@@ -361,6 +365,9 @@
   "explorer": "Explorer",
   "categories": "Categories",
   "account": "Account",
+  "store": "Store",
+  "analytics": "Analytics",
+  "offers": "Offers",
 
   "profile_title": "Personal Account",
   "profile_edit_account": "Edit Account",
@@ -415,6 +422,8 @@
   "address_delete_message": "Are you sure you want to delete this address?",
   "address_select_location_first": "Please select a location on the map first",
   "loading": "Loading...",
+  "current_location_default_name": "Your Current Location",
+  "settings_notifications_open_settings": "Please allow notifications from device settings",
 
   "help_support_title": "Help & Support",
   "help_faq_title": "FAQ",
@@ -561,10 +570,21 @@
   "settings_page_title": "Settings",
   "settings_app_section": "App Settings",
   "settings_language": "Language",
-  "settings_notifications": "Enable Notifications",
+  "settings_notifications": "Enable Notifications Automatically",
   "settings_data_section": "Data Management",
   "settings_delete_account": "Delete Account",
   "settings_delete_account_subtitle": "Permanently delete account",
+  "settings_storage_section": "Storage Management",
+  "settings_clear_cache": "Clear Cache",
+  "settings_cache_size": "Cache Size",
+  "clear_cache_dialog_title": "Clear Cache",
+  "clear_cache_dialog_message": "This will clear temporarily stored coupons, stores, and products. Your personal data and settings will not be deleted.",
+  "clear_cache_confirm_button": "Clear Cache",
+  "clear_cache_success": "Cache cleared successfully",
+  "clear_cache_error": "An error occurred while clearing cache",
+  "cache_files_size": "Files Size:",
+  "cache_files_count": "Files Count:",
+  "cache_calculating": "Calculating...",
   "settings_security_section": "Privacy & Security",
   "settings_change_password": "Change Password",
   "settings_change_password_subtitle": "Last updated 2 months ago",
@@ -609,5 +629,76 @@
   "terms_section6_title": "6. Amendments",
   "terms_section6_content": "We reserve the right to modify these terms and conditions at any time. Continued use of the app after changes constitutes your acceptance.",
   "terms_agree_button": "Agree",
-  "privacy_agree_button": "Agree"
+  "privacy_agree_button": "Agree",
+
+  "become_merchant_title": "Become a Merchant",
+  "become_merchant_headline": "Start Your Business on Coupony",
+  "become_merchant_subtitle": "Turn your store into a new growth opportunity,\nand reach more customers in your area with ease.",
+  "become_merchant_button": "Create Store",
+
+  "seller_store_title": "Store",
+  "seller_store_title": "Store",
+  "seller_store_content_title": "Manage Your Store",
+  "seller_store_content_subtitle": "Here you can manage your store information, update details, and add new branches.",
+
+  "seller_home_title": "Home",
+  "seller_home_content_title": "Seller Home Page",
+  "seller_home_content_subtitle": "Welcome to your seller dashboard",
+
+  "seller_analytics_title": "Analytics",
+  "seller_analytics_content_title": "Sales Analytics",
+  "seller_analytics_content_subtitle": "Track your store performance and sales in detail",
+
+  "seller_offers_title": "Offers",
+  "seller_offers_content_title": "Manage Offers",
+  "seller_offers_content_subtitle": "Create and manage your promotional offers and discounts",
+
+  "merchant_review_pending_title": "Your Request is Under Review",
+  "merchant_review_pending_subtitle": "Your request is currently under review.\nYou will be notified once it's done.",
+  "merchant_review_pending_button": "Under Review",
+  "merchant_review_contact_prompt": "If you experience any issue",
+  "merchant_review_contact_link": "Contact us",
+
+  "merchant_incomplete_title": "Please Complete Your Store Data",
+  "merchant_incomplete_subtitle": "The store cannot be activated due to missing data.\nPlease complete it to continue.",
+  "merchant_incomplete_button": "Complete Data",
+
+  "merchant_rejected_title": "Store Activation Could Not Be Completed",
+  "merchant_rejected_subtitle": "Please review the rejection reasons\nand make the necessary edits to resubmit.",
+
+  "guest_seller_mode_title": "Guest Mode",
+  "guest_seller_welcome_title": "Start Your Selling Journey on Coupony",
+  "guest_seller_welcome_subtitle": "Create your store, showcase your discounts, and reach new customers.",
+  "guest_seller_login_button": "Sign In",
+  
+  "seller_pending_approval_title": "Welcome",
+  "seller_pending_approval_message": "This page will be activated after your store is approved.",
+  "seller_pending_approval_subtitle": "Quick overview of your store performance, latest sales, and suggestions to improve offers and increase engagement.",
+  "seller_pending_contact_prefix": "If you experience any issue",
+  "seller_pending_contact_link": "Contact us",
+  "merchant_rejected_view_status_button": "View Request Status",
+
+  "merchant_status_title": "Request Status",
+  "merchant_status_headline": "Some Edits Needed",
+  "merchant_status_subtitle": "There is data that needs correction to complete activation",
+  "merchant_status_edit_button": "Edit Data",
+  "merchant_status_support_button": "Contact Support",
+
+  "merchant_approved_headline": "Your Store is Now Live!",
+  "merchant_approved_subtitle": "Congratulations! Your store has been reviewed and activated. You can now start publishing your offers.",
+  "merchant_approved_button": "Go to Store",
+
+  "update_store_title": "Edit Store Data",
+  "update_store_button": "Update Data",
+  "success_update_store": "Store data updated successfully!",
+  "error_update_store_server": "Could not update store. Please try again",
+
+  "merchant_approved_switch_button": "Switch to Merchant",
+  "merchant_approved_continue_button": "Continue as Customer",
+  "profile_switch_to_merchant": "Switch to Merchant",
+  "merchant_no_changes_snackbar": "No changes detected. Please fix the listed issues before resubmitting.",
+
+  "seller_welcome_title": "Welcome, Merchant!",
+  "seller_welcome_subtitle": "Your store has been approved and is ready to start",
+  "seller_dashboard_coming_soon": "Dashboard Coming Soon"
 }

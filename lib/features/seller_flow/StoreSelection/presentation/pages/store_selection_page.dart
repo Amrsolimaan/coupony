@@ -10,6 +10,7 @@ import 'package:coupony/features/auth/data/models/user_store_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class StoreSelectionPage extends StatefulWidget {
   final List<UserStoreModel> stores;
@@ -120,7 +121,7 @@ class _StoreSelectionPageState extends State<StoreSelectionPage>
     setState(() => _selectingId = store.id);
     try {
       await di.sl<AuthLocalDataSource>().saveSelectedStoreId(store.id);
-      if (mounted) context.go(AppRouter.home);
+      if (mounted) context.go(AppRouter.sellerWelcome);
     } catch (_) {
       if (mounted) setState(() => _selectingId = null);
     }
@@ -211,10 +212,10 @@ class _NavyHeader extends StatelessWidget {
                     color: Colors.white.withValues(alpha: 0.20),
                   ),
                 ),
-                child: Icon(
-                  Icons.store_rounded,
+                child: FaIcon(
+                  FontAwesomeIcons.store,
                   color: Colors.white,
-                  size: 22.w,
+                  size: 20.w,
                 ),
               ),
               SizedBox(height: 18.h),
@@ -353,9 +354,9 @@ class _StoreCard extends StatelessWidget {
                     ),
                   )
                 else
-                  Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    size: 14.w,
+                  FaIcon(
+                    FontAwesomeIcons.chevronRight,
+                    size: 12.w,
                     color: const Color(0xFFC5CEDE),
                   ),
               ],
@@ -483,9 +484,9 @@ class _EmptyState extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.store_mall_directory_outlined,
-            size: 60.w,
+          FaIcon(
+            FontAwesomeIcons.store,
+            size: 54.w,
             color: const Color(0xFFC5CEDE),
           ),
           SizedBox(height: 14.h),

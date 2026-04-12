@@ -6,6 +6,7 @@ import 'package:coupony/core/widgets/buttons/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Seller Onboarding Start Screen - Welcome/Intro page before the 4 steps
 /// This is the first screen sellers see after successful registration
@@ -72,7 +73,7 @@ class SellerOnboardingStartScreen extends StatelessWidget {
                   // Navigate to the main seller onboarding flow (4 steps)
                   context.go(AppRouter.sellerOnboardingFlow);
                 },
-                icon: Icons.arrow_forward,
+                icon: FontAwesomeIcons.arrowRight,
                 iconPosition: AppButtonIconPosition.end,
                 size: AppButtonSize.medium,
                 borderRadius: 16.r,

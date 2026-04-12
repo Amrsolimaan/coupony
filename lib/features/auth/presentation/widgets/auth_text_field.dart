@@ -15,6 +15,7 @@ class AuthTextField extends StatelessWidget {
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
   final FocusNode? focusNode;
+  final Color? overrideColor;
 
   const AuthTextField({
     super.key,
@@ -25,6 +26,7 @@ class AuthTextField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.next,
     this.focusNode,
+    this.overrideColor,
   });
 
   @override
@@ -35,6 +37,23 @@ class AuthTextField extends StatelessWidget {
         hint: hint,
         hasError: hasError,
         textInputAction: textInputAction,
+        focusNode: focusNode,
+        overrideColor: overrideColor,
+      );
+    }
+
+    // If overrideColor is provided, use it directly without animation
+    if (overrideColor != null) {
+      return _buildField(
+        context: context,
+        controller: controller,
+        hint: hint,
+        hasError: hasError,
+        obscure: false,
+        suffixIcon: null,
+        keyboardType: keyboardType,
+        textInputAction: textInputAction,
+        primaryColor: overrideColor!,
         focusNode: focusNode,
       );
     }
@@ -64,6 +83,7 @@ class _PasswordField extends StatefulWidget {
   final bool hasError;
   final TextInputAction textInputAction;
   final FocusNode? focusNode;
+  final Color? overrideColor;
 
   const _PasswordField({
     required this.controller,
@@ -71,6 +91,7 @@ class _PasswordField extends StatefulWidget {
     required this.hasError,
     required this.textInputAction,
     this.focusNode,
+    this.overrideColor,
   });
 
   @override
@@ -88,6 +109,34 @@ class _PasswordFieldState extends State<_PasswordField> {
 
   @override
   Widget build(BuildContext context) {
+    // If overrideColor is provided, use it directly without animation
+    if (widget.overrideColor != null) {
+      return ValueListenableBuilder<bool>(
+        valueListenable: _obscure,
+        builder: (context, obscure, _) {
+          return _buildField(
+            context: context,
+            controller: widget.controller,
+            hint: widget.hint,
+            hasError: widget.hasError,
+            obscure: obscure,
+            keyboardType: TextInputType.visiblePassword,
+            textInputAction: widget.textInputAction,
+            primaryColor: widget.overrideColor!,
+            focusNode: widget.focusNode,
+            suffixIcon: GestureDetector(
+              onTap: () => _obscure.value = !obscure,
+              child: Icon(
+                obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                color: AppColors.textSecondary,
+                size: 20.w,
+              ),
+            ),
+          );
+        },
+      );
+    }
+
     return AnimatedPrimaryColor(
       builder: (context, primaryColor) {
         return ValueListenableBuilder<bool>(

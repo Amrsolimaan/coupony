@@ -6,6 +6,7 @@ import 'package:coupony/core/storage/secure_storage_service.dart';
 import 'package:coupony/core/constants/storage_keys.dart';
 import 'package:coupony/core/widgets/providers_theme/coupony_theme_provider.dart';
 import 'package:coupony/config/dependency_injection/injection_container.dart' as di;
+import 'package:coupony/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/domain/entities/onboarding_user_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -38,7 +39,9 @@ class _OnboardingCompletionLoadingPageState
   Future<void> _loadUserRole() async {
     try {
       final secureStorage = di.sl<SecureStorageService>();
-      final role = await secureStorage.read(StorageKeys.userRole);
+      // ✅ Now uses getPrimaryRole() which reads from roles array
+      final authLocalDs = di.sl<AuthLocalDataSource>();
+      final role = await authLocalDs.getPrimaryRole();
       if (mounted) {
         setState(() {
           _userType = OnboardingUserType.fromRole(role);

@@ -4,6 +4,7 @@ import '../../../../core/localization/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../domain/entities/saved_address.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Address Card Widget
 /// Displays a saved address with actions
@@ -64,10 +65,10 @@ class AddressCardWidget extends StatelessWidget {
                     color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10.r),
                   ),
-                  child: Icon(
+                  child: FaIcon(
                     _getIconForLabel(address.label),
                     color: AppColors.primary,
-                    size: 20.w,
+                    size: 18.w,
                   ),
                 ),
                 SizedBox(width: 12.w),
@@ -135,101 +136,104 @@ class AddressCardWidget extends StatelessWidget {
                   ),
                 ),
 
-                // ── More Menu ──────────────────────────────────────────────
-                PopupMenuButton<String>(
-                  icon: Icon(
-                    Icons.more_vert_rounded,
-                    color: AppColors.textSecondary,
-                    size: 20.w,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  onSelected: (value) {
-                    switch (value) {
-                      case 'edit':
-                        onEdit?.call();
-                        break;
-                      case 'set_default':
-                        onSetDefault?.call();
-                        break;
-                      case 'delete':
-                        onDelete?.call();
-                        break;
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    // ── Edit ───────────────────────────────────────────────
-                    PopupMenuItem(
-                      value: 'edit',
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.edit_outlined,
-                            size: 18.w,
-                            color: AppColors.textPrimary,
-                          ),
-                          SizedBox(width: 12.w),
-                          Text(
-                            l10n.address_edit,
-                            style: AppTextStyles.customStyle(
-                              context,
-                              fontSize: 14,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                        ],
-                      ),
+                // ── More Menu (hidden when all callbacks are null — read-only card) ──
+                if (onEdit != null || onDelete != null || onSetDefault != null)
+                  PopupMenuButton<String>(
+                    icon: FaIcon(
+                      FontAwesomeIcons.ellipsisVertical,
+                      color: AppColors.textSecondary,
+                      size: 18.w,
                     ),
-
-                    // ── Set as Default ─────────────────────────────────────
-                    if (!address.isDefault)
-                      PopupMenuItem(
-                        value: 'set_default',
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.check_circle_outline_rounded,
-                              size: 18.w,
-                              color: AppColors.textPrimary,
-                            ),
-                            SizedBox(width: 12.w),
-                            Text(
-                              l10n.address_set_default,
-                              style: AppTextStyles.customStyle(
-                                context,
-                                fontSize: 14,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    onSelected: (value) {
+                      switch (value) {
+                        case 'edit':
+                          onEdit?.call();
+                          break;
+                        case 'set_default':
+                          onSetDefault?.call();
+                          break;
+                        case 'delete':
+                          onDelete?.call();
+                          break;
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      // ── Edit ─────────────────────────────────────────────
+                      if (onEdit != null)
+                        PopupMenuItem(
+                          value: 'edit',
+                          child: Row(
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.penToSquare,
+                                size: 16.w,
                                 color: AppColors.textPrimary,
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 12.w),
+                              Text(
+                                l10n.address_edit,
+                                style: AppTextStyles.customStyle(
+                                  context,
+                                  fontSize: 14,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
 
-                    // ── Delete ─────────────────────────────────────────────
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.delete_outline_rounded,
-                            size: 18.w,
-                            color: AppColors.error,
+                      // ── Set as Default ───────────────────────────────────
+                      if (onSetDefault != null && !address.isDefault)
+                        PopupMenuItem(
+                          value: 'set_default',
+                          child: Row(
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.circleCheck,
+                                size: 16.w,
+                                color: AppColors.textPrimary,
+                              ),
+                              SizedBox(width: 12.w),
+                              Text(
+                                l10n.address_set_default,
+                                style: AppTextStyles.customStyle(
+                                  context,
+                                  fontSize: 14,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(width: 12.w),
-                          Text(
-                            l10n.address_delete,
-                            style: AppTextStyles.customStyle(
-                              context,
-                              fontSize: 14,
-                              color: AppColors.error,
-                            ),
+                        ),
+
+                      // ── Delete ───────────────────────────────────────────
+                      if (onDelete != null)
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Row(
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.trashCan,
+                                size: 16.w,
+                                color: AppColors.error,
+                              ),
+                              SizedBox(width: 12.w),
+                              Text(
+                                l10n.address_delete,
+                                style: AppTextStyles.customStyle(
+                                  context,
+                                  fontSize: 14,
+                                  color: AppColors.error,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                        ),
+                    ],
+                  ),
               ],
             ),
           ),
@@ -244,13 +248,13 @@ class AddressCardWidget extends StatelessWidget {
     if (lowerLabel.contains('home') || 
         lowerLabel.contains('منزل') || 
         lowerLabel.contains('بيت')) {
-      return Icons.home_rounded;
+      return FontAwesomeIcons.house;
     } else if (lowerLabel.contains('work') || 
                lowerLabel.contains('عمل') || 
                lowerLabel.contains('شغل')) {
-      return Icons.work_rounded;
+      return FontAwesomeIcons.briefcase;
     } else {
-      return Icons.location_on_rounded;
+      return FontAwesomeIcons.locationDot;
     }
   }
 }

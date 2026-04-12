@@ -66,7 +66,8 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
   /// Load user type from secure storage and existing preferences
   Future<void> _loadUserTypeAndPreferences() async {
     // 1. Load user type first (SOURCE OF TRUTH)
-    final role = await secureStorage.read(StorageKeys.userRole);
+    // ✅ Now uses getPrimaryRole() which reads from roles array
+    final role = await authLocalDataSource.getPrimaryRole();
     final userType = OnboardingUserType.fromRole(role);
 
     _safeEmit(state.copyWith(userType: userType));
@@ -439,7 +440,8 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
       logger.i('Onboarding saved locally — Step 2: API submission');
       _safeEmit(state.copyWith(isSaving: false, isSubmittingToApi: true));
 
-      final role = await secureStorage.read(StorageKeys.userRole);
+      // ✅ Now uses getPrimaryRole() which reads from roles array
+      final role = await authLocalDataSource.getPrimaryRole();
       final userType = OnboardingUserType.fromRole(role);
 
       final apiResult = await submitOnboardingUseCase(userType: userType);
@@ -571,7 +573,8 @@ class OnboardingFlowCubit extends Cubit<OnboardingFlowState> {
         // Continue anyway to mark as completed
       }
 
-      final role = await secureStorage.read(StorageKeys.userRole);
+      // ✅ Now uses getPrimaryRole() which reads from roles array
+      final role = await authLocalDataSource.getPrimaryRole();
       final userType = OnboardingUserType.fromRole(role);
 
       // Submit to API (will send whatever is saved locally, even if empty)

@@ -478,35 +478,51 @@ class _TopBar extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.all(8.w),
               child: Icon(
-                Icons.arrow_forward_ios_rounded,
+                Icons.arrow_back_ios_rounded,
                 size:  20.w,
                 color: AppColors.textPrimary,
               ),
             ),
           ),
         ),
-        Material(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(12.r),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(12.r),
-            onTap: () => context.go(AppRouter.home),
-            child: Padding(
-              padding: EdgeInsetsDirectional.symmetric(
-                horizontal: 8.w,
-                vertical: 4.h,
-              ),
-              child: Text(
-                l10n.skip,
-                style: AppTextStyles.customStyle(
-                  context,
-                  fontSize: 16,
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w600,
+        BlocBuilder<AuthRoleCubit, AuthRoleState>(
+          builder: (context, roleState) {
+            return Material(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(12.r),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12.r),
+                onTap: () {
+                  // Check if role is seller
+                  if (roleState.role == 'seller') {
+                    // Navigate to seller home in guest mode
+                    context.go(
+                      AppRouter.sellerHome,
+                      extra: {'isGuest': true, 'isPending': false},
+                    );
+                  } else {
+                    // Navigate to customer home
+                    context.go(AppRouter.home);
+                  }
+                },
+                child: Padding(
+                  padding: EdgeInsetsDirectional.symmetric(
+                    horizontal: 8.w,
+                    vertical: 4.h,
+                  ),
+                  child: Text(
+                    l10n.skip,
+                    style: AppTextStyles.customStyle(
+                      context,
+                      fontSize: 16,
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ],
     );

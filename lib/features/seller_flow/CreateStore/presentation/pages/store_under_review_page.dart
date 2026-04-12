@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // STORE UNDER REVIEW PAGE  (redesigned — compact & modern)
@@ -149,10 +150,10 @@ class StoreUnderReviewPage extends StatelessWidget {
                     }
                     
                     return IconButton(
-                      icon: Icon(
-                        Icons.logout_rounded,
+                      icon: FaIcon(
+                        FontAwesomeIcons.arrowRightFromBracket,
                         color: _sellerColor,
-                        size: 24.w,
+                        size: 22.w,
                       ),
                       tooltip: l10n.logout,
                       onPressed: () => _handleLogout(context),
@@ -176,8 +177,8 @@ class StoreUnderReviewPage extends StatelessWidget {
                   color: _sellerColor.withValues(alpha: 0.10),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Icons.hourglass_top_rounded,
+                child: FaIcon(
+                  FontAwesomeIcons.hourglassHalf,
                   size: 48.w,
                   color: _sellerColor,
                 ),
@@ -247,7 +248,7 @@ class StoreUnderReviewPage extends StatelessWidget {
 
                     // WhatsApp button
                     _ContactButton(
-                      icon: Icons.chat_rounded,
+                      icon: FontAwesomeIcons.whatsapp,
                       label: l10n.store_under_review_whatsapp_button,
                       color: const Color(0xFF25D366),
                       onTap: () => _openWhatsApp(context),
@@ -256,7 +257,7 @@ class StoreUnderReviewPage extends StatelessWidget {
 
                     // Email button
                     _ContactButton(
-                      icon: Icons.mail_outline_rounded,
+                      icon: FontAwesomeIcons.envelope,
                       label: l10n.store_under_review_email_button,
                       color: _sellerColor,
                       onTap: () => _openEmail(context),
@@ -302,7 +303,7 @@ class _ContactButton extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
           child: Row(
             children: [
-              Icon(icon, color: color, size: 22.w),
+              FaIcon(icon, color: color, size: 20.w),
               SizedBox(width: 12.w),
               Text(
                 label,
@@ -314,10 +315,10 @@ class _ContactButton extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              Icon(
-                Icons.arrow_forward_ios_rounded,
+              FaIcon(
+                FontAwesomeIcons.chevronRight,
                 color: color.withValues(alpha: 0.6),
-                size: 14.w,
+                size: 12.w,
               ),
             ],
           ),

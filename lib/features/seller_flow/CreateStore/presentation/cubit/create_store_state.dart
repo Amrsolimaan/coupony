@@ -3,7 +3,7 @@ import '../../domain/entities/category_entity.dart';
 import '../../domain/entities/social_link_entity.dart';
 import '../../domain/entities/social_platform_entity.dart';
 
-enum CreateStoreNavigation { none, toMerchantDashboard, toStoreUnderReview }
+enum CreateStoreNavigation { none, toMerchantDashboard, toStoreUnderReview, toMerchantStatus }
 
 class CreateStoreState extends Equatable {
   // ── Categories (fetched from API) ──────────────────────────────────────

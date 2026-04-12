@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FULL SCREEN PHOTO VIEWER WITH HERO ANIMATION
@@ -87,18 +88,18 @@ class FullScreenPhotoViewer extends StatelessWidget {
               strokeWidth: 3.w,
             ),
           ),
-          errorWidget: (context, url, error) => Icon(
-            Icons.error_outline_rounded,
-            size: 64.w,
+          errorWidget: (context, url, error) => FaIcon(
+            FontAwesomeIcons.circleExclamation,
+            size: 58.w,
             color: Colors.white,
           ),
         ),
       );
     }
 
-    return Icon(
-      Icons.person_rounded,
-      size: 120.w,
+    return FaIcon(
+      FontAwesomeIcons.user,
+      size: 110.w,
       color: Colors.white.withValues(alpha: 0.5),
     );
   }
@@ -124,9 +125,9 @@ class FullScreenPhotoViewer extends StatelessWidget {
             ),
           ],
         ),
-        child: Icon(
-          Icons.close_rounded,
-          size: 24.w,
+        child: FaIcon(
+          FontAwesomeIcons.xmark,
+          size: 22.w,
           color: Colors.white,
         ),
       ),

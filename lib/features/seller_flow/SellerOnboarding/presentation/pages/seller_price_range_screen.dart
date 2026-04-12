@@ -11,6 +11,7 @@ import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/cubit
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Seller Price Range Screen — Cubit Step 1 (priceCategory)
 /// API values: budget | mid_range | premium
@@ -66,7 +67,7 @@ class SellerPriceRangeScreen extends StatelessWidget {
                       SelectionOptionCard(
                         title: l10n.seller_price_range_economic,
                         subtitle: l10n.seller_price_range_economic_subtitle,
-                        icon: Icons.percent,
+                        icon: FontAwesomeIcons.percent,
                         isSelected: state.priceCategory == 'budget',
                         onTap: () => cubit.selectPriceCategory('budget'),
                         theme: _theme,
@@ -75,7 +76,7 @@ class SellerPriceRangeScreen extends StatelessWidget {
                       SelectionOptionCard(
                         title: l10n.seller_price_range_medium,
                         subtitle: l10n.seller_price_range_medium_subtitle,
-                        icon: Icons.balance,
+                        icon: FontAwesomeIcons.scaleBalanced,
                         isSelected: state.priceCategory == 'mid_range',
                         onTap: () => cubit.selectPriceCategory('mid_range'),
                         theme: _theme,
@@ -84,7 +85,7 @@ class SellerPriceRangeScreen extends StatelessWidget {
                       SelectionOptionCard(
                         title: l10n.seller_price_range_premium,
                         subtitle: l10n.seller_price_range_premium_subtitle,
-                        icon: Icons.workspace_premium,
+                        icon: FontAwesomeIcons.crown,
                         isSelected: state.priceCategory == 'premium',
                         onTap: () => cubit.selectPriceCategory('premium'),
                         theme: _theme,

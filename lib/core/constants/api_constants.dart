@@ -14,7 +14,9 @@ class ApiConstants {
   static const String updateFcmToken = '/auth/fcm-token';
 
   // ── Stores ────────────────────────────────────────────
+  static const String stores         = '/stores';
   static const String createStore    = '/stores';
+  static String updateStore(String storeId) => '/stores/$storeId';
   static const String getCategories  = '/store-categories';
   static const String getSocials     = '/socials';
 

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/organisms/permission_content_card.dart';
+import 'package:coupony/config/dependency_injection/injection_container.dart' as di;
+import 'package:coupony/features/permissions/domain/repositories/permission_repository.dart';
 
 /// Permission Splash Page
 /// First screen that asks user if they want to go through permissions
@@ -31,8 +33,11 @@ class PermissionSplashPage extends StatelessWidget {
                 context.go(AppRouter.permissionLocationIntro);
               },
               skipButtonText: l10n.skipNow,
-              onSkipPressed: () {
-                context.go('/login');
+              onSkipPressed: () async {
+                await di.sl<PermissionRepository>().savePermissionStatus(hasCompletedFlow: true);
+                if (context.mounted) {
+                  context.go(AppRouter.welcomeGateway);
+                }
               },
             ),
           ),

@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:coupony/config/dependency_injection/injection_container.dart' as di;
+import 'package:coupony/core/widgets/custom_bottom_nav_bar/customer_bottom_nav_bar.dart';
+import 'package:coupony/features/seller_flow/CreateStore/domain/use_cases/get_stores_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,17 +12,23 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../../config/routes/app_router.dart';
 import '../../../../../core/localization/l10n/app_localizations.dart';
+import '../../../../../features/auth/data/models/user_model.dart';
+import '../../../../../features/auth/data/models/user_store_model.dart';
+import '../../../../../features/Profile/presentation/pages/customer/become_merchant_page.dart'
+    show BecomeMerchantArgs;
+import '../../../../../features/Profile/presentation/pages/customer/merchant_rejected_page.dart'
+    show MerchantStatusArgs;
 import '../../../../../core/utils/image_url_utils.dart';
 import '../../../../../core/widgets/images/app_cached_image.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../../core/widgets/custom_bottom_nav_bar/custom_bottom_nav_bar.dart';
 import '../../../domain/use_cases/update_profile_params.dart';
 import '../../cubit/Customer_Profile_cubit.dart';
 import '../../cubit/Customer_Profile_state.dart';
 import '../../widgets/full_screen_photo_viewer.dart';
 import '../../widgets/profile_photo_bottom_sheet.dart';
 import '../../widgets/shared_card.dart';
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CUSTOMER MAIN PROFILE SCREEN
@@ -51,7 +60,7 @@ class MainProfile extends StatelessWidget {
             ),
           );
         }
-        
+
         // ── Handle Profile Update Error ────────────────────────────────────
         if (state is ProfileError) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -90,7 +99,10 @@ class MainProfile extends StatelessWidget {
   }
 
   // ── AppBar ─────────────────────────────────────────────────────────────────
-  PreferredSizeWidget _buildAppBar(BuildContext context, AppLocalizations l10n) {
+  PreferredSizeWidget _buildAppBar(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
     return AppBar(
       backgroundColor: AppColors.surface,
       elevation: 0,
@@ -140,7 +152,7 @@ class MainProfile extends StatelessWidget {
             SizedBox(height: 16.h),
             _buildProfileHeader(context, user, l10n),
             SizedBox(height: 24.h),
-            _buildMenuList(context, l10n),
+            _buildMenuList(context, l10n, user as UserModel),
             SizedBox(height: 24.h),
             _buildVersionInfo(l10n),
             SizedBox(height: 24.h),
@@ -158,17 +170,11 @@ class MainProfile extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            color: AppColors.primary,
-            strokeWidth: 3.w,
-          ),
+          CircularProgressIndicator(color: AppColors.primary, strokeWidth: 3.w),
           SizedBox(height: 16.h),
           Text(
             l10n.profile_loading,
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: AppColors.textSecondary,
-            ),
+            style: TextStyle(fontSize: 14.sp, color: AppColors.textSecondary),
           ),
         ],
       ),
@@ -259,7 +265,9 @@ class MainProfile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  user.fullName.isNotEmpty ? user.fullName : l10n.profile_default_user,
+                  user.fullName.isNotEmpty
+                      ? user.fullName
+                      : l10n.profile_default_user,
                   style: AppTextStyles.customStyle(
                     context,
                     fontSize: 18,
@@ -285,7 +293,9 @@ class MainProfile extends StatelessWidget {
                 // ── Edit Account Button ────────────────────────────────────────
                 ElevatedButton(
                   onPressed: () async {
-                    final result = await context.push(AppRouter.editCustomerProfile);
+                    final result = await context.push(
+                      AppRouter.editCustomerProfile,
+                    );
                     // If profile was updated successfully, reload the profile
                     if (result == true && context.mounted) {
                       context.read<ProfileCubit>().loadProfile();
@@ -367,10 +377,7 @@ class MainProfile extends StatelessWidget {
                     end: Alignment.bottomRight,
                   ),
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.surface,
-                    width: 2.w,
-                  ),
+                  border: Border.all(color: AppColors.surface, width: 2.w),
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.primary.withValues(alpha: 0.3),
@@ -518,7 +525,49 @@ class MainProfile extends StatelessWidget {
   }
 
   // ── Menu List ──────────────────────────────────────────────────────────────
-  Widget _buildMenuList(BuildContext context, AppLocalizations l10n) {
+  Widget _buildMenuList(
+    BuildContext context,
+    AppLocalizations l10n,
+    UserModel user,
+  ) {
+    // Get roles and stores from user
+    final roles = user.roles;
+    final stores = user.stores;
+    
+    // DEBUG: Log for verification
+    print('🔍 [MainProfile] User roles: $roles');
+    print('🔍 [MainProfile] User stores: ${stores.length}');
+    if (stores.isNotEmpty) {
+      print('🔍 [MainProfile] First store status: ${stores.first.status}');
+    }
+
+    // Determine button label and action based on roles + store status
+    String merchantButtonLabel;
+    VoidCallback merchantButtonAction;
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // MERCHANT BUTTON LOGIC - ROLE + STORE STATUS HIERARCHY
+    // ══════════════════════════════════════════════════════════════════════════
+    
+    if (roles.contains('seller') && stores.any((s) => s.isActive)) {
+      // ── CASE 1: ACTIVE SELLER (approved store) ──────────────────────────────
+      print('✅ [MainProfile] CASE 1: Active Seller - Switch to Merchant');
+      merchantButtonLabel = l10n.profile_switch_to_merchant;
+      merchantButtonAction = () => _handleActiveSeller(context);
+      
+    } else if (roles.contains('seller_pending') || stores.any((s) => s.isPending || s.isRejected)) {
+      // ── CASE 2 & 3: PENDING OR REJECTED - Need to fetch full store details ──
+      print('✅ [MainProfile] CASE 2/3: Pending or Rejected - Fetching store details');
+      merchantButtonLabel = l10n.merchant_review_pending_title;
+      merchantButtonAction = () => _handlePendingOrRejectedSeller(context);
+      
+    } else {
+      // ── CASE 4: PURE CUSTOMER ───────────────────────────────────────────────
+      print('✅ [MainProfile] CASE 4: Pure Customer');
+      merchantButtonLabel = l10n.become_merchant_title;
+      merchantButtonAction = () => _handlePureCustomer(context);
+    }
+
     return Column(
       children: [
         SharedProfileCard(
@@ -530,10 +579,8 @@ class MainProfile extends StatelessWidget {
         ),
         SharedProfileCard(
           icon: FontAwesomeIcons.store,
-          title: l10n.profile_be_seller,
-          onTap: () {
-            // TODO: Navigate to become seller
-          },
+          title: merchantButtonLabel,
+          onTap: merchantButtonAction,
         ),
         SharedProfileCard(
           icon: FontAwesomeIcons.userGroup,
@@ -561,16 +608,128 @@ class MainProfile extends StatelessWidget {
     );
   }
 
+  // ══════════════════════════════════════════════════════════════════════════
+  // BECOME MERCHANT BUTTON LOGIC - ROLE + STORE STATUS HIERARCHY
+  // ══════════════════════════════════════════════════════════════════════════
+  //
+  // FLOW:
+  // 1. Active Seller (seller role + active store) → merchant_approved_page
+  // 2. Pending/Rejected Seller → Fetch full store details from GET /api/v1/stores
+  //    - If rejected → merchant_rejected_page → merchant_status_page
+  //    - If pending → merchant_pending_page
+  // 3. Pure Customer → become_merchant (create new store)
+  //
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // ── CASE 1: ACTIVE SELLER ──────────────────────────────────────────────────
+  // User has approved store - show approval page with two options:
+  // - Switch to Merchant → Dashboard
+  // - Continue as Customer → Stay in profile
+  void _handleActiveSeller(BuildContext context) {
+    print('🚀 [MainProfile] Navigating to merchant_approved_page');
+    context.push(AppRouter.merchantApproved);
+  }
+
+  // ── CASE 2 & 3: PENDING OR REJECTED SELLER ─────────────────────────────────
+  // Fetch full store details from GET /api/v1/stores to determine exact status
+  Future<void> _handlePendingOrRejectedSeller(BuildContext context) async {
+    print('🚀 [MainProfile] Fetching store details from GET /api/v1/stores');
+    
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    try {
+      // Import the use case
+      final getStoresUseCase = di.sl<GetStoresUseCase>();
+      final result = await getStoresUseCase();
+
+      if (!context.mounted) return;
+      
+      // Close loading dialog
+      Navigator.of(context).pop();
+
+      result.fold(
+        (failure) {
+          // Handle error
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to fetch store details: ${failure.message}'),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        },
+        (stores) {
+          if (stores.isEmpty) {
+            // No stores found - treat as pure customer
+            _handlePureCustomer(context);
+            return;
+          }
+
+          final store = stores.first;
+          
+          if (store.isRejected) {
+            // Navigate to rejected page
+            print('🚀 [MainProfile] Store is REJECTED - navigating to merchant_rejected_page');
+            context.push(
+              AppRouter.merchantRejected,
+              extra: MerchantStatusArgs(
+                storeId: store.id,
+                reasons: store.rejectionReason != null 
+                    ? [store.rejectionReason!] 
+                    : store.rejectionReasons,
+                store: store,
+              ),
+            );
+          } else if (store.isPending) {
+            // Navigate to pending page
+            print('🚀 [MainProfile] Store is PENDING - navigating to merchant_pending_page');
+            context.push(AppRouter.merchantPending);
+          } else if (store.isActive) {
+            // Navigate to approved page
+            print('🚀 [MainProfile] Store is ACTIVE - navigating to merchant_approved_page');
+            context.push(AppRouter.merchantApproved);
+          }
+        },
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      
+      // Close loading dialog
+      Navigator.of(context).pop();
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
+  }
+
+  // ── CASE 4: PURE CUSTOMER ──────────────────────────────────────────────────
+  // No store yet - start creation flow
+  void _handlePureCustomer(BuildContext context) {
+    print('🚀 [MainProfile] Navigating to become_merchant');
+    final profileCubit = context.read<ProfileCubit>();
+    context.push(
+      AppRouter.becomeMerchant,
+      extra: BecomeMerchantArgs(onStoreCreated: profileCubit.loadProfile),
+    );
+  }
+
   // ── Version Info ───────────────────────────────────────────────────────────
   Widget _buildVersionInfo(AppLocalizations l10n) {
     const version = '1.0.0';
     return Center(
       child: Text(
         l10n.profile_version(version),
-        style: TextStyle(
-          fontSize: 12.sp,
-          color: AppColors.textSecondary,
-        ),
+        style: TextStyle(fontSize: 12.sp, color: AppColors.textSecondary),
       ),
     );
   }
@@ -596,5 +755,3 @@ class MainProfile extends StatelessWidget {
     }
   }
 }
-
-

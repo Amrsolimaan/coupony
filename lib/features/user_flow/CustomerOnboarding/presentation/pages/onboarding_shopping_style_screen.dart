@@ -4,6 +4,7 @@ import 'package:coupony/config/routes/app_router.dart';
 import 'package:coupony/core/widgets/Shared_Onboarding/category_card.dart';
 import 'package:coupony/core/widgets/Shared_Onboarding/onboarding_action_buttons.dart';
 import 'package:coupony/core/widgets/Shared_Onboarding/onboarding_submit_button.dart';
+import 'package:coupony/features/auth/presentation/widgets/auth_success_bottom_sheet.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/cubit/onboarding_flow_cubit.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/cubit/onboarding_flow_state.dart';
 import 'package:coupony/core/utils/message_formatter.dart';
@@ -31,12 +32,31 @@ class OnboardingShoppingStyleScreen extends StatelessWidget {
       body: SafeArea(
         child: BlocConsumer<OnboardingFlowCubit, OnboardingFlowState>(
           listener: (context, state) {
+            // ── Show Success Bottom Sheet ──────────────────────────────────────
             if (state.navigationSignal == OnboardingNavigation.toLoading) {
-              final router = GoRouter.of(context);
+              final l10n = AppLocalizations.of(context)!;
               cubit.clearNavigationSignal();
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                router.go(AppRouter.onboardingCompletionLoading);
-              });
+              
+              // ✅ Capture current theme color explicitly (should be Customer Purple)
+              final theme = CouponyThemeProvider(state.userType);
+              final primaryColor = theme.primaryColor;
+              
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                isDismissible: false,
+                enableDrag: false,
+                builder: (context) => AuthSuccessBottomSheet(
+                  title: l10n.customer_onboarding_success_title,
+                  buttonText: l10n.continue_button,
+                  primaryColor: primaryColor, // ✅ Explicit color injection
+                  onContinue: () {
+                    Navigator.of(context).pop();
+                    context.go(AppRouter.home);
+                  },
+                ),
+              );
             }
 
             if (state.navigationSignal == OnboardingNavigation.toHome) {

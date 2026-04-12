@@ -69,15 +69,53 @@ class NotificationService {
   // PERMISSION CHECK
   // ════════════════════════════════════════════════════════
 
-  /// Check current notification permission status
-  /// Does NOT request permission, only checks
+  /// Check REAL OS-level notification permission status.
+  ///
+  /// Strategy (cross-platform):
+  /// - **Android < 13 (API 32-)**: Notifications are always "granted" until
+  ///   the user manually disables them; `permission_handler` captures this.
+  /// - **Android 13+ (API 33+)**: `POST_NOTIFICATIONS` is a runtime permission;
+  ///   `permission_handler` returns the correct status.
+  /// - **iOS**: Firebase `getNotificationSettings()` is more granular and handles
+  ///   `provisional` grants that `permission_handler` misses.
+  ///
+  /// We query BOTH and combine intelligently.
   Future<NotificationPermissionStatus> checkPermissionStatus() async {
     try {
-      final settings = await _messaging.getNotificationSettings();
-      
-      logger.d('Notification permission status: ${settings.authorizationStatus}');
-      
-      return _mapAuthorizationStatus(settings.authorizationStatus);
+      // ── Step 1: query permission_handler (Android 13+ & general) ──────────
+      final phStatus = await ph.Permission.notification.status;
+
+      logger.d('permission_handler notification status: $phStatus');
+
+      // ── Step 2: query Firebase (catches iOS provisional + resolves undetermined) ─
+      final fbSettings = await _messaging.getNotificationSettings();
+
+      logger.d('Firebase notification authorizationStatus: ${fbSettings.authorizationStatus}');
+
+      // ── Step 3: combine both sources ──────────────────────────────────────
+      // iOS provisional (silent notifications) — Firebase knows, ph doesn't
+      if (fbSettings.authorizationStatus == AuthorizationStatus.provisional) {
+        return NotificationPermissionStatus.provisional;
+      }
+
+      // Android / iOS — trust permission_handler for core grant/deny
+      if (phStatus.isGranted) {
+        return NotificationPermissionStatus.granted;
+      }
+
+      if (phStatus.isDenied) {
+        // isDenied on Android = can still ask again
+        return NotificationPermissionStatus.denied;
+      }
+
+      if (phStatus.isPermanentlyDenied) {
+        // on Android = user ticked "Don't ask again"
+        // on iOS    = user explicitly denied once (must go to Settings)
+        return NotificationPermissionStatus.denied;
+      }
+
+      // Fallback: map Firebase status when permission_handler is ambiguous
+      return _mapAuthorizationStatus(fbSettings.authorizationStatus);
     } catch (e) {
       logger.e('Error checking notification permission: $e');
       return NotificationPermissionStatus.error;

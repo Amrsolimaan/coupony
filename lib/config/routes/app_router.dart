@@ -1,5 +1,11 @@
 import 'package:coupony/core/widgets/Shared_Onboarding/onboarding_completion_loading_page.dart';
 import 'package:coupony/features/auth/presentation/pages/forgot_password_screen.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/become_merchant_page.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/merchant_pending_page.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/merchant_incomplete_page.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/merchant_rejected_page.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/merchant_status_page.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/merchant_approved_page.dart';
 import 'package:coupony/features/auth/presentation/pages/language_selection_page.dart';
 import 'package:coupony/features/auth/presentation/pages/register_screen.dart';
 import 'package:coupony/features/permissions/presentation/pages/permission_flow_wrapper.dart';
@@ -11,12 +17,21 @@ import 'package:coupony/features/permissions/presentation/pages/pages/notificati
 import 'package:coupony/features/permissions/presentation/pages/pages/permission_loading_page.dart';
 import 'package:coupony/features/permissions/presentation/pages/pages/permission_splash_page.dart';
 import 'package:coupony/features/seller_flow/CreateStore/presentation/cubit/create_store_cubit.dart';
-import 'package:coupony/features/seller_flow/CreateStore/presentation/pages/create_store_screen.dart';
+import 'package:coupony/features/seller_flow/CreateStore/presentation/pages/create_store_screen.dart'
+    show CreateStoreScreen, CreateStoreMode, CreateStoreArgs;
 import 'package:coupony/features/seller_flow/CreateStore/presentation/pages/store_under_review_page.dart';
 import 'package:coupony/features/seller_flow/StoreSelection/presentation/pages/store_selection_page.dart';
 import 'package:coupony/features/auth/data/models/user_store_model.dart';
 import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/pages/onboarding_seller_screen.dart';
 import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/pages/seller_onboarding_start_screen.dart';
+import 'package:coupony/features/seller_flow/dashboard_seller/presentation/pages/SellerHome.dart';
+import 'package:coupony/features/seller_flow/dashboard_seller/presentation/pages/seller_store_page.dart';
+import 'package:coupony/features/seller_flow/dashboard_seller/presentation/pages/seller_analytics_page.dart';
+import 'package:coupony/features/seller_flow/dashboard_seller/presentation/pages/seller_offers_page.dart';
+import 'package:coupony/features/seller_flow/dashboard_seller/presentation/cubit/seller_home_cubit.dart';
+import 'package:coupony/features/seller_flow/dashboard_seller/presentation/cubit/seller_store_cubit.dart';
+import 'package:coupony/features/seller_flow/dashboard_seller/presentation/cubit/seller_analytics_cubit.dart';
+import 'package:coupony/features/seller_flow/dashboard_seller/presentation/cubit/seller_offers_cubit.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_budget_screen.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_customer_screen.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_preferences_screen.dart';
@@ -157,6 +172,9 @@ const _publicRoutes = {
   AppRouter.otpVerification,
   AppRouter.forgotPassword,
   AppRouter.resetPassword,
+  AppRouter.sellerHome, // Allow guest seller access
+  AppRouter.sellerStore, // Allow guest seller access
+  AppRouter.sellerAnalytics, // Allow guest seller access
 };
 
 class AppRouter {
@@ -173,7 +191,12 @@ class AppRouter {
   static const String sellerOnboardingFlow = '/seller-onboarding-flow';
   static const String createStore = '/create-store';
   static const String storeUnderReview = '/store-under-review';
+  static const String sellerWelcome = '/seller-welcome';
   static const String storeSelection   = '/store-selection';
+  static const String sellerHome = '/seller-home';
+  static const String sellerStore = '/seller-store';
+  static const String sellerAnalytics = '/seller-analytics';
+  static const String sellerOffers = '/seller-offers';
   static const String login = '/login';
   static const String register = '/register';
   static const String otpVerification = '/otp-verification';
@@ -195,6 +218,14 @@ class AppRouter {
   static const String settingsPage = '/settings';
   static const String changePassword = '/change-password';
   static const String privacyPolicyPage = '/privacy-policy';
+
+  // Merchant registration flow (customer → seller journey)
+  static const String becomeMerchant    = '/become-merchant';
+  static const String merchantPending   = '/merchant-pending';
+  static const String merchantIncomplete = '/merchant-incomplete';
+  static const String merchantRejected  = '/merchant-rejected';
+  static const String merchantStatus    = '/merchant-status';
+  static const String merchantApproved  = '/merchant-approved';
 
   // Permission flow
   static const String permissionFlow = '/permission-flow';
@@ -319,17 +350,25 @@ class AppRouter {
       ),
       GoRoute(
         path: createStore,
-        pageBuilder: (context, state) => AppPageTransition.build(
-          context: context,
-          state: state,
-          child: MultiBlocProvider(
-            providers: [
-              BlocProvider(create: (_) => sl<CreateStoreCubit>()),
-              BlocProvider(create: (_) => sl<LoginCubit>()),
-            ],
-            child: const CreateStoreScreen(),
-          ),
-        ),
+        pageBuilder: (context, state) {
+          final args = state.extra as CreateStoreArgs?;
+          return AppPageTransition.build(
+            context: context,
+            state: state,
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => sl<CreateStoreCubit>()),
+                BlocProvider(create: (_) => sl<LoginCubit>()),
+              ],
+              child: CreateStoreScreen(
+                mode: args?.mode ?? CreateStoreMode.create,
+                storeId: args?.storeId,
+                initialStore: args?.initialStore,
+                onSuccess: args?.onSuccess,
+              ),
+            ),
+          );
+        },
       ),
       GoRoute(
         path: storeUnderReview,
@@ -342,6 +381,7 @@ class AppRouter {
           ),
         ),
       ),
+    
       GoRoute(
         path: storeSelection,
         pageBuilder: (context, state) {
@@ -350,6 +390,125 @@ class AppRouter {
             context: context,
             state: state,
             child: StoreSelectionPage(stores: stores),
+          );
+        },
+      ),
+      GoRoute(
+        path: sellerHome,
+        pageBuilder: (context, state) {
+          final args = state.extra as Map<String, bool>?;
+          final isGuest = args?['isGuest'] ?? false;
+          final isPending = args?['isPending'] ?? false;
+          return AppPageTransition.build(
+            context: context,
+            state: state,
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) => SellerHomeCubit(
+                    isGuest: isGuest,
+                    isPending: isPending,
+                  ),
+                ),
+                BlocProvider(
+                  create: (_) => sl<ProfileCubit>(),
+                ),
+                BlocProvider(
+                  create: (_) => sl<LoginCubit>(),
+                ),
+              ],
+              child: SellerHomePage(
+                isGuest: isGuest,
+                isPending: isPending,
+              ),
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        path: sellerStore,
+        pageBuilder: (context, state) {
+          final args = state.extra as Map<String, bool>?;
+          final isGuest = args?['isGuest'] ?? false;
+          final isPending = args?['isPending'] ?? false;
+          return AppPageTransition.build(
+            context: context,
+            state: state,
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) => SellerStoreCubit(
+                    isGuest: isGuest,
+                    isPending: isPending,
+                  ),
+                ),
+                BlocProvider(
+                  create: (_) => sl<ProfileCubit>(),
+                ),
+                BlocProvider(
+                  create: (_) => sl<LoginCubit>(),
+                ),
+              ],
+              child: const SellerStorePage(),
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        path: sellerAnalytics,
+        pageBuilder: (context, state) {
+          final args = state.extra as Map<String, bool>?;
+          final isGuest = args?['isGuest'] ?? false;
+          final isPending = args?['isPending'] ?? false;
+          return AppPageTransition.build(
+            context: context,
+            state: state,
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) => SellerAnalyticsCubit(
+                    isGuest: isGuest,
+                    isPending: isPending,
+                  ),
+                ),
+                BlocProvider(
+                  create: (_) => sl<ProfileCubit>(),
+                ),
+                BlocProvider(
+                  create: (_) => sl<LoginCubit>(),
+                ),
+              ],
+              child: const SellerAnalyticsPage(),
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        path: sellerOffers,
+        pageBuilder: (context, state) {
+          final args = state.extra as Map<String, bool>?;
+          final isGuest = args?['isGuest'] ?? false;
+          final isPending = args?['isPending'] ?? false;
+          return AppPageTransition.build(
+            context: context,
+            state: state,
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) => SellerOffersCubit(
+                    isGuest: isGuest,
+                    isPending: isPending,
+                  ),
+                ),
+                BlocProvider(
+                  create: (_) => sl<ProfileCubit>(),
+                ),
+                BlocProvider(
+                  create: (_) => sl<LoginCubit>(),
+                ),
+              ],
+              child: const SellerOffersPage(),
+            ),
           );
         },
       ),
@@ -656,6 +815,74 @@ class AppRouter {
           context: context,
           state: state,
           child: const PrivacyPolicyPage(),
+        ),
+      ),
+
+      // ── Merchant registration flow ──────────────────────────────────────
+      GoRoute(
+        path: becomeMerchant,
+        pageBuilder: (context, state) {
+          final args = state.extra as BecomeMerchantArgs?;
+          return AppPageTransition.build(
+            context: context,
+            state: state,
+            child: BecomeMerchantPage(
+              onStoreCreated: args?.onStoreCreated,
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        path: merchantPending,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const MerchantPendingPage(),
+        ),
+      ),
+      GoRoute(
+        path: merchantIncomplete,
+        pageBuilder: (context, state) {
+          final storeId = state.extra as String? ?? '';
+          return AppPageTransition.build(
+            context: context,
+            state: state,
+            child: MerchantIncompletePage(storeId: storeId),
+          );
+        },
+      ),
+      GoRoute(
+        path: merchantRejected,
+        pageBuilder: (context, state) {
+          final args = state.extra as MerchantStatusArgs?;
+          return AppPageTransition.build(
+            context: context,
+            state: state,
+            child: MerchantRejectedPage(
+              storeId: args?.storeId ?? '',
+              rejectionReasons: args?.reasons ?? const [],
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        path: merchantStatus,
+        pageBuilder: (context, state) {
+          final args = state.extra as MerchantStatusArgs? ??
+              const MerchantStatusArgs(storeId: '', reasons: []);
+          return AppPageTransition.build(
+            context: context,
+            state: state,
+            child: MerchantStatusPage(args: args),
+          );
+        },
+      ),
+      GoRoute(
+        path: merchantApproved,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const MerchantApprovedPage(),
         ),
       ),
     ],

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../config/routes/app_router.dart';
@@ -11,6 +12,10 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../core/widgets/buttons/buttons.dart';
 import '../../../../../core/extensions/snackbar_extension.dart';
+import '../../../../../core/storage/local_cache_service.dart';
+import '../../../../../core/constants/storage_keys.dart';
+import '../../../../permissions/data/models/permission_status_model.dart';
+import '../../../domain/entities/saved_address.dart';
 import '../../cubit/address_cubit.dart';
 import '../../cubit/address_state.dart';
 import '../../widgets/address_card_widget.dart';
@@ -29,6 +34,46 @@ class AddressManagementPage extends StatefulWidget {
 class _AddressManagementPageState extends State<AddressManagementPage> {
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
+
+  // ── GPS Location saved from permission flow ─────────────────────────────
+  SavedAddress? _gpsLocationAddress;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadGpsLocation();
+  }
+
+  /// Reads the location saved during the permission flow (location_map_page)
+  /// and builds a read-only SavedAddress to prepend to the list.
+  Future<void> _loadGpsLocation() async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final cache = LocalCacheService();
+      final model = await cache.get<PermissionStatusModel>(
+        boxName: StorageKeys.permissionsBox,
+        key: StorageKeys.permissionStatusKey,
+      );
+      if (!mounted) return;
+      if (model != null &&
+          model.latitude != null &&
+          model.longitude != null) {
+        setState(() {
+          _gpsLocationAddress = SavedAddress(
+            id: '__gps_location__',
+            label: l10n.current_location_default_name,
+            address: model.address ?? '${model.latitude!.toStringAsFixed(4)}, ${model.longitude!.toStringAsFixed(4)}',
+            latitude: model.latitude!,
+            longitude: model.longitude!,
+            isDefault: true,
+            createdAt: model.timestamp,
+          );
+        });
+      }
+    } catch (_) {
+      // Silently ignore — GPS card is optional
+    }
+  }
 
   @override
   void dispose() {
@@ -103,9 +148,9 @@ class _AddressManagementPageState extends State<AddressManagementPage> {
         ),
       ),
       leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back_ios_rounded,
-          size: 20.w,
+        icon: FaIcon(
+          FontAwesomeIcons.chevronLeft,
+          size: 18.w,
           color: AppColors.textPrimary,
         ),
         onPressed: () => context.pop(),
@@ -249,29 +294,44 @@ class _AddressManagementPageState extends State<AddressManagementPage> {
     List<dynamic> addresses,
     AppLocalizations l10n,
   ) {
+    // Merge GPS card + API addresses into one flat list
+    final items = <SavedAddress>[
+      if (_gpsLocationAddress != null) _gpsLocationAddress!,
+      ...addresses.cast<SavedAddress>(),
+    ];
+
     return ListView.builder(
       padding: EdgeInsets.only(bottom: 100.h),
-      itemCount: addresses.length,
+      itemCount: items.length,
       itemBuilder: (context, index) {
-        final address = addresses[index];
+        final address = items[index];
+        final isGps = address.id == '__gps_location__';
+
         return AddressCardWidget(
           address: address,
           onTap: () {
             // TODO: Navigate to address details or map
           },
-          onEdit: () async {
-            final result = await context.push(
-              AppRouter.addressMapPicker,
-              extra: address,
-            );
-            if (result == true && context.mounted) {
-              context.read<AddressCubit>().loadAddresses();
-            }
-          },
-          onDelete: () => _showDeleteConfirmation(context, address.id, l10n),
-          onSetDefault: () {
-            context.read<AddressCubit>().setDefaultAddress(address.id);
-          },
+          // GPS card has no edit/delete/setDefault actions
+          onEdit: isGps
+              ? null
+              : () async {
+                  final result = await context.push(
+                    AppRouter.addressMapPicker,
+                    extra: address,
+                  );
+                  if (result == true && context.mounted) {
+                    context.read<AddressCubit>().loadAddresses();
+                  }
+                },
+          onDelete: isGps
+              ? null
+              : () => _showDeleteConfirmation(context, address.id, l10n),
+          onSetDefault: isGps
+              ? null
+              : () {
+                  context.read<AddressCubit>().setDefaultAddress(address.id);
+                },
         );
       },
     );

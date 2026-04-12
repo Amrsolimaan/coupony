@@ -1,11 +1,35 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/storage/secure_storage_service.dart';
 import '../../../../core/constants/storage_keys.dart';
+import '../../../../config/dependency_injection/injection_container.dart' as di;
+import '../../../auth/data/datasources/auth_local_data_source.dart';
 import 'auth_role_state.dart';
 
 /// Auth Role Cubit
 /// Global state management for user role selection across all auth screens
 /// Persists role to secure storage for consistency across app sessions
+/// 
+/// ✅ IMPORTANT: Two-Layer Role System
+/// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/// 1. Backend Roles (Source of Truth for Permissions)
+///    - Stored in: SharedPreferences (userRolesKey)
+///    - Example: ['seller', 'customer'] or ['seller_pending', 'customer']
+///    - Set by: Backend API response during login
+///    - Purpose: Determine what features user CAN access
+/// 
+/// 2. Active Role (User's Current Choice)
+///    - Stored in: SecureStorage (userRole)
+///    - Example: 'seller' or 'customer'
+///    - Set by: User via role_toggle.dart OR backend's primary role
+///    - Purpose: Determine what UI/flow user IS CURRENTLY using
+/// 
+/// Flow:
+/// - User logs in → Backend sends roles: ['seller', 'customer']
+/// - getPrimaryRole() checks: Does user have saved preference?
+///   - YES → Validate preference against backend roles → Use it
+///   - NO  → Use backend's primary role (seller > customer)
+/// - User toggles role → setRole() saves preference → getPrimaryRole() respects it
+/// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 class AuthRoleCubit extends Cubit<AuthRoleState> {
   final SecureStorageService _secureStorage;
 
@@ -13,15 +37,16 @@ class AuthRoleCubit extends Cubit<AuthRoleState> {
 
   /// Load persisted role from secure storage
   /// Called on app initialization (splash screen)
+  /// ✅ Now reads from roles array (primary source) with fallback to single role
   Future<void> loadPersistedRole() async {
     try {
       emit(state.copyWith(isLoading: true));
       
-      final savedRole = await _secureStorage.read(StorageKeys.userRole);
+      // ✅ Use helper method to get primary role from roles array
+      final authLocalDs = di.sl<AuthLocalDataSource>();
+      final role = await authLocalDs.getPrimaryRole();
       
-      // If no saved role, default to customer
-      // Backend expects 'seller' not 'merchant'
-      final role = (savedRole == 'seller') ? 'seller' : 'customer';
+      print('✅ Loaded primary role: $role');
       
       emit(state.copyWith(
         role: role,
@@ -29,6 +54,7 @@ class AuthRoleCubit extends Cubit<AuthRoleState> {
       ));
     } catch (e) {
       // On error, default to customer
+      print('⚠️ loadPersistedRole failed, defaulting to customer: $e');
       emit(state.copyWith(
         role: 'customer',
         isLoading: false,

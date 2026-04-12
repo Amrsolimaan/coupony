@@ -26,6 +26,8 @@
   "skip": "تخطي",
   "next": "التالي",
   "startNow": "ابدأ الآن",
+  "retry": "إعادة المحاولة",
+  "no_categories_available": "لا توجد تصنيفات متاحة",
   
 
   "categoryRestaurants": "مطاعم و كافيهات",
@@ -218,6 +220,7 @@
   "create_store_logo_format": "PNG أو JPG حجم أقصى 5MB",
   "create_store_name_hint": "اسم متجرك التجاري",
   "create_store_category_hint": "اختر التصنيف المناسب",
+  "create_store_category_scroll_hint": "اسحب للأسفل لرؤية المزيد",
   "create_store_description_hint": "اكتب وصفاً مختصراً عن متجرك و الخدمات",
   "create_store_description_error": "تم تجاوز الحد المسموح للأحرف",
   "create_store_city_hint": "اختر المدينة",
@@ -266,6 +269,7 @@
   "seller_target_audience_everyone": "الجميع",
   "seller_target_audience_everyone_subtitle": "عروض عامة لكل الأعمار",
   "seller_onboarding_success_title": "تم إكمال التسجيل بنجاح!",
+  "customer_onboarding_success_title": "أهلاً بك في كوبوني!",
   
   "seller_onboarding_start_title": "خلّينا نعرف نشاطك أكتر\nعشان نوصلك للعملاء المناسبين",
   "seller_onboarding_start_subtitle": "4 خطوات بسيطة هتساعدنا نفهم نشاطك التجاري",
@@ -362,6 +366,9 @@
   "explorer": "اكسبلورر",
   "categories": "فئات",
   "account": "الحساب",
+  "store": "المحل",
+  "analytics": "التحليلات",
+  "offers": "العروض",
 
   "profile_title": "الحساب الشخصى",
   "profile_edit_account": "تعديل الحساب",
@@ -416,6 +423,8 @@
   "address_delete_message": "هل أنت متأكد من حذف هذا العنوان؟",
   "address_select_location_first": "يرجى تحديد موقع على الخريطة أولاً",
   "loading": "جاري التحميل...",
+  "current_location_default_name": "موقعك الحالي",
+  "settings_notifications_open_settings": "يرجى السماح بالإشعارات من إعدادات الجهاز",
 
   "help_support_title": "المساعده و الدعم",
   "help_faq_title": "الأسئلة الشائعة",
@@ -562,10 +571,21 @@
   "settings_page_title": "الإعدادات",
   "settings_app_section": "إعدادات التطبيق",
   "settings_language": "اللغه",
-  "settings_notifications": "تفعيل الأشعارات",
+  "settings_notifications": "تفعيل الإشعارات تلقائياً",
   "settings_data_section": "إداره البيانات",
   "settings_delete_account": "حذف الحساب",
   "settings_delete_account_subtitle": "حذف الحساب بشكل نهائى",
+  "settings_storage_section": "إدارة التخزين",
+  "settings_clear_cache": "مسح الكاش",
+  "settings_cache_size": "حجم الكاش",
+  "clear_cache_dialog_title": "مسح الكاش",
+  "clear_cache_dialog_message": "سيتم مسح الكوبونات والمتاجر والمنتجات المحفوظة مؤقتاً. لن يتم مسح بياناتك الشخصية أو إعداداتك.",
+  "clear_cache_confirm_button": "مسح الكاش",
+  "clear_cache_success": "تم مسح الكاش بنجاح",
+  "clear_cache_error": "حدث خطأ أثناء مسح الكاش",
+  "cache_files_size": "حجم الملفات:",
+  "cache_files_count": "عدد الملفات:",
+  "cache_calculating": "جاري الحساب...",
   "settings_security_section": "الخصوصيه و الأمان",
   "settings_change_password": "تغيير كلمه المرور",
   "settings_change_password_subtitle": "آخر تحديث منذ 2 أشهر",
@@ -610,5 +630,75 @@
   "terms_section6_title": "6. التعديلات",
   "terms_section6_content": "نحتفظ بالحق في تعديل هذه الشروط والأحكام في أي وقت. استمرارك في استخدام التطبيق بعد أي تغييرات يعني قبولك لها.",
   "terms_agree_button": "موافق",
-  "privacy_agree_button": "موافق"
+  "privacy_agree_button": "موافق",
+
+  "become_merchant_title": "كن تاجراً",
+  "become_merchant_headline": "ابدأ تجارتك على كوبوني",
+  "become_merchant_subtitle": "حوّل محلك لفرصة نمو جديدة،\nووصل عروضك لعملاء أكثر في منطقتك بكل سهولة.",
+  "become_merchant_button": "إنشاء المتجر",
+
+  "seller_store_title": "المحل",
+  "seller_store_content_title": "إدارة متجرك",
+  "seller_store_content_subtitle": "هنا يمكنك إدارة معلومات متجرك، تحديث البيانات، وإضافة فروع جديدة.",
+
+  "seller_home_title": "الرئيسية",
+  "seller_home_content_title": "صفحة البائع الرئيسية",
+  "seller_home_content_subtitle": "مرحباً بك في لوحة التحكم الخاصة بك",
+
+  "seller_analytics_title": "التحليلات",
+  "seller_analytics_content_title": "تحليلات المبيعات",
+  "seller_analytics_content_subtitle": "تتبع أداء متجرك ومبيعاتك بشكل تفصيلي",
+
+  "seller_offers_title": "العروض",
+  "seller_offers_content_title": "إدارة العروض",
+  "seller_offers_content_subtitle": "أنشئ وأدر عروضك الترويجية والخصومات",
+
+  "merchant_review_pending_title": "طلبك قيد المراجعة",
+  "merchant_review_pending_subtitle": "طلبك قيد المراجعة حالياً\nسيتم إشعارك فور الانتهاء.",
+  "merchant_review_pending_button": "جاري المراجعة",
+  "merchant_review_contact_prompt": "في حالة حدوث أي مشكلة",
+  "merchant_review_contact_link": "تواصل معنا",
+
+  "merchant_incomplete_title": "يرجى استكمال بيانات متجرك",
+  "merchant_incomplete_subtitle": "لا يمكن تفعيل المتجر بسبب نقص بعض البيانات.\nيرجى استكمالها للمتابعة.",
+  "merchant_incomplete_button": "استكمال البيانات",
+
+  "merchant_rejected_title": "تعذر استكمال تفعيل المتجر",
+
+  "guest_seller_mode_title": "وضع الزائر",
+  "guest_seller_welcome_title": "ابدأ رحلتك في البيع على كوبوني",
+  "guest_seller_welcome_subtitle": "أنشئ متجرك واعرض خصوماتك وأوصل لعملاء جدد.",
+  "guest_seller_login_button": "تسجيل دخول",
+  
+  "seller_pending_approval_title": "أهلا بيك",
+  "seller_pending_approval_message": "سيتم تفعيل هذه الصفحة بعد الموافقة على متجرك.",
+  "seller_pending_approval_subtitle": "نظرة سريعة على أداء محلك، أحدث التسييلات، والاقتراحات لتحسين العروض وزيادة التفاعل.",
+  "seller_pending_contact_prefix": "في حاله حدوث أي مشكلة",
+  "seller_pending_contact_link": "تواصل معانا",
+  "merchant_rejected_subtitle": "يرجى مراجعة أسباب عدم الموافقة\nوإجراء التعديلات اللازمة لإعادة إرسال الطلب.",
+  "merchant_rejected_view_status_button": "عرض حالة الطلب",
+
+  "merchant_status_title": "حالة الطلب",
+  "merchant_status_headline": "نحتاج بعض التعديلات",
+  "merchant_status_subtitle": "هناك بيانات تحتاج تصحيح لإتمام التفعيل",
+  "merchant_status_edit_button": "تعديل البيانات",
+  "merchant_status_support_button": "تواصل مع الدعم",
+
+  "merchant_approved_headline": "متجرك نشط الآن!",
+  "merchant_approved_subtitle": "تهانينا! تم مراجعة وتفعيل متجرك بنجاح، يمكنك الآن البدء في نشر عروضك.",
+  "merchant_approved_button": "الذهاب إلى المتجر",
+
+  "update_store_title": "تعديل بيانات المتجر",
+  "update_store_button": "تحديث البيانات",
+  "success_update_store": "تم تحديث بيانات المتجر بنجاح!",
+  "error_update_store_server": "تعذر تحديث المتجر. يرجى المحاولة مرة أخرى",
+
+  "merchant_approved_switch_button": "التحول إلى التاجر",
+  "merchant_approved_continue_button": "متابعة كعميل",
+  "profile_switch_to_merchant": "التحول إلى التاجر",
+  "merchant_no_changes_snackbar": "لم يتم اكتشاف أي تغييرات. يرجى إصلاح المشكلات المذكورة قبل إعادة الإرسال.",
+
+  "seller_welcome_title": "أهلاً بك يا تاجر!",
+  "seller_welcome_subtitle": "تم الموافقة على متجرك وهو جاهز للبدء",
+  "seller_dashboard_coming_soon": "لوحة التحكم قريباً"
 }

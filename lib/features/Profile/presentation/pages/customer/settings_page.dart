@@ -1,5 +1,7 @@
 import 'package:coupony/config/dependency_injection/injection_container.dart' as di;
 import 'package:coupony/core/localization/locale_cubit.dart';
+import 'package:coupony/core/services/notification_service.dart';
+import 'package:coupony/core/storage/local_cache_service.dart';
 import 'package:coupony/features/auth/presentation/cubit/auth_state.dart';
 import 'package:coupony/features/auth/presentation/cubit/login_cubit.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +29,115 @@ class SettingsPage extends StatefulWidget {
   State<SettingsPage> createState() => _SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
-  bool _notificationsEnabled = true;
+class _SettingsPageState extends State<SettingsPage>
+    with WidgetsBindingObserver {
+  // ── Notification toggle state ──────────────────────────────────────────────
+  bool _notificationsEnabled = false;
+  bool _notificationsLoading = false;
+
+  /// Whether permission was permanently denied (user must go to Settings).
+  /// - Android: user ticked "Don't ask again"
+  /// - iOS:     user denied system dialog once
+  bool _notificationsPermanentlyDenied = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _refreshNotificationStatus();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Re-check when user returns from Settings app
+    if (state == AppLifecycleState.resumed) {
+      _refreshNotificationStatus();
+    }
+  }
+
+  /// Queries the REAL OS-level notification permission and updates Switch state.
+  ///
+  /// Uses [NotificationService.checkPermissionStatus()] which internally
+  /// combines `permission_handler` (Android 13+ runtime permission) with
+  /// `firebase_messaging` (iOS provisional support) for cross-platform accuracy.
+  Future<void> _refreshNotificationStatus() async {
+    try {
+      final service = di.sl<NotificationService>();
+      final status = await service.checkPermissionStatus();
+
+      if (!mounted) return;
+      setState(() {
+        switch (status) {
+          case NotificationPermissionStatus.granted:
+          case NotificationPermissionStatus.provisional:
+            _notificationsEnabled = true;
+            _notificationsPermanentlyDenied = false;
+          case NotificationPermissionStatus.denied:
+            _notificationsEnabled = false;
+            _notificationsPermanentlyDenied = false;
+          case NotificationPermissionStatus.notRequested:
+          case NotificationPermissionStatus.error:
+            _notificationsEnabled = false;
+            _notificationsPermanentlyDenied = false;
+        }
+      });
+    } catch (_) {
+      // Silently ignore — defaults to false
+    }
+  }
+
+  /// Called when the user taps the Switch.
+  ///
+  /// Toggle logic:
+  /// - **Enabling & not permanently denied** → request OS permission dialog.
+  /// - **Enabling & permanently denied** → open app settings (must fix manually).
+  /// - **Disabling** → open app settings (cannot revoke programmatically).
+  Future<void> _onNotificationToggled(bool value, AppLocalizations l10n) async {
+    if (_notificationsLoading) return;
+    final service = di.sl<NotificationService>();
+
+    if (value) {
+      if (_notificationsPermanentlyDenied) {
+        // User previously denied permanently → send to Settings
+        await service.openAppSettings();
+        // After returning from Settings, re-check real status
+        await _refreshNotificationStatus();
+        return;
+      }
+
+      // ── Request permission (shows system dialog) ────────────────────────
+      setState(() => _notificationsLoading = true);
+      try {
+        final status = await service.requestPermission();
+        if (!mounted) return;
+
+        final granted = status == NotificationPermissionStatus.granted ||
+            status == NotificationPermissionStatus.provisional;
+
+        setState(() {
+          _notificationsEnabled = granted;
+          _notificationsLoading = false;
+          // If still denied after dialog → mark as permanently denied
+          // so next tap goes straight to Settings
+          _notificationsPermanentlyDenied =
+              !granted && status == NotificationPermissionStatus.denied;
+        });
+      } catch (_) {
+        if (mounted) setState(() => _notificationsLoading = false);
+      }
+    } else {
+      // ── Cannot revoke programmatically → open device Settings ──────────
+      await service.openAppSettings();
+      // Re-check after returning from Settings
+      await _refreshNotificationStatus();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,10 +201,12 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       ),
       leading: IconButton(
-        icon: Icon(
-          Icons.arrow_forward_ios_rounded,
-          size: 20.w,
-          color: AppColors.textPrimary,
+        icon: Center(
+          child: FaIcon(
+            FontAwesomeIcons.chevronRight,
+            size: 20.w,
+            color: AppColors.textPrimary,
+          ),
         ),
         onPressed: () => context.pop(),
       ),
@@ -123,6 +234,12 @@ class _SettingsPageState extends State<SettingsPage> {
                 // ── Data Management Section ──────────────────────────────────────────
                 _buildSectionHeader(context, l10n.settings_data_section),
                 _buildDeleteAccountCard(context, l10n),
+
+                SizedBox(height: 8.h),
+
+                // ── Storage Management Section ───────────────────────────────────────
+                _buildSectionHeader(context, l10n.settings_storage_section),
+                _buildStorageManagementCard(context, l10n),
 
                 SizedBox(height: 8.h),
 
@@ -201,10 +318,12 @@ class _SettingsPageState extends State<SettingsPage> {
               color: AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10.r),
             ),
-            child: Icon(
-              Icons.language_rounded,
-              size: 20.w,
-              color: AppColors.primary,
+            child: Center(
+              child: FaIcon(
+                FontAwesomeIcons.language,
+                size: 20.w,
+                color: AppColors.primary,
+              ),
             ),
           ),
           onTap: () => _showLanguageDialog(context, l10n, locale.languageCode),
@@ -224,21 +343,32 @@ class _SettingsPageState extends State<SettingsPage> {
           color: AppColors.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10.r),
         ),
-        child: Icon(
-          Icons.notifications_rounded,
-          size: 20.w,
-          color: AppColors.primary,
+        child: Center(
+          child: FaIcon(
+            FontAwesomeIcons.bell,
+            size: 20.w,
+            color: AppColors.primary,
+          ),
         ),
       ),
-      trailing: Transform.scale(
-        scale: 0.85,
-        child: Switch(
-          value: _notificationsEnabled,
-          onChanged: (val) => setState(() => _notificationsEnabled = val),
-          activeColor: AppColors.primary,
-          activeTrackColor: AppColors.primary.withValues(alpha: 0.3),
-        ),
-      ),
+      trailing: _notificationsLoading
+          ? SizedBox(
+              width: 24.w,
+              height: 24.w,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.primary,
+              ),
+            )
+          : Transform.scale(
+              scale: 0.85,
+              child: Switch(
+                value: _notificationsEnabled,
+                onChanged: (val) => _onNotificationToggled(val, l10n),
+                activeColor: AppColors.primary,
+                activeTrackColor: AppColors.primary.withValues(alpha: 0.3),
+              ),
+            ),
     );
   }
 
@@ -254,10 +384,12 @@ class _SettingsPageState extends State<SettingsPage> {
           color: AppColors.error.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10.r),
         ),
-        child: Icon(
-          Icons.delete_forever_rounded,
-          size: 20.w,
-          color: AppColors.error,
+        child: Center(
+          child: FaIcon(
+            FontAwesomeIcons.trashCan,
+            size: 20.w,
+            color: AppColors.error,
+          ),
         ),
       ),
       child: Row(
@@ -303,8 +435,8 @@ class _SettingsPageState extends State<SettingsPage> {
               ],
             ),
           ),
-          Icon(
-            Icons.arrow_forward_ios_rounded,
+          FaIcon(
+            FontAwesomeIcons.chevronRight,
             size: 16.w,
             color: AppColors.textSecondary,
           ),
@@ -326,14 +458,303 @@ class _SettingsPageState extends State<SettingsPage> {
           color: AppColors.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10.r),
         ),
-        child: FaIcon(
-          FontAwesomeIcons.key,
-          size: 17.w,
-          color: AppColors.primary,
+        child: Center(
+          child: FaIcon(
+            FontAwesomeIcons.key,
+            size: 19.w,
+            color: AppColors.primary,
+          ),
         ),
       ),
       onTap: () => context.push(AppRouter.changePassword),
     );
+  }
+
+  // ── Storage Management Card ────────────────────────────────────────────────
+  Widget _buildStorageManagementCard(BuildContext context, AppLocalizations l10n) {
+    return FutureBuilder<CacheStatistics>(
+      future: LocalCacheService().getCacheStatistics(),
+      builder: (context, snapshot) {
+        final stats = snapshot.data;
+        final sizeText = stats != null 
+            ? '${stats.mediaSizeMB.toStringAsFixed(1)} MB / ${stats.maxQuotaMB.toStringAsFixed(0)} MB'
+            : l10n.cache_calculating;
+        
+        return SharedProfileCard(
+          title: l10n.settings_clear_cache,
+          subtitle: sizeText,
+          leading: Container(
+            width: 36.w,
+            height: 36.w,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+            child: Center(
+              child: FaIcon(
+                FontAwesomeIcons.database,
+                size: 18.w,
+                color: AppColors.primary,
+              ),
+            ),
+          ),
+          onTap: () => _showClearCacheDialog(context, l10n, stats),
+        );
+      },
+    );
+  }
+
+  // ── Clear Cache Dialog ─────────────────────────────────────────────────────
+  void _showClearCacheDialog(
+    BuildContext context, 
+    AppLocalizations l10n,
+    CacheStatistics? stats,
+  ) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: AppColors.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(24.w),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // ── Icon ────────────────────────────────────────────────
+                Container(
+                  width: 64.w,
+                  height: 64.w,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: FaIcon(
+                      FontAwesomeIcons.database,
+                      size: 32.w,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16.h),
+
+                // ── Title ────────────────────────────────────────────────
+                Text(
+                  l10n.clear_cache_dialog_title,
+                  style: AppTextStyles.customStyle(
+                    context,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 8.h),
+
+                // ── Message ──────────────────────────────────────────────
+                Text(
+                  l10n.clear_cache_dialog_message,
+                  style: AppTextStyles.customStyle(
+                    context,
+                    fontSize: 14,
+                    color: AppColors.textSecondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 16.h),
+
+                // ── Cache Info ───────────────────────────────────────────
+                if (stats != null) ...[
+                  Container(
+                    padding: EdgeInsets.all(12.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.grey200,
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              l10n.cache_files_size,
+                              style: AppTextStyles.customStyle(
+                                context,
+                                fontSize: 13,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                            Text(
+                              '${stats.mediaSizeMB.toStringAsFixed(1)} MB',
+                              style: AppTextStyles.customStyle(
+                                context,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8.h),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              l10n.cache_files_count,
+                              style: AppTextStyles.customStyle(
+                                context,
+                                fontSize: 13,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                            Text(
+                              '${stats.mediaFileCount}',
+                              style: AppTextStyles.customStyle(
+                                context,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
+                ],
+
+                // ── Confirm Button ───────────────────────────────────────
+                Container(
+                  width: double.infinity,
+                  height: 52.h,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(14.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(14.r),
+                      onTap: () {
+                        Navigator.of(dialogContext).pop();
+                        _clearSafeCache(context);
+                      },
+                      child: Center(
+                        child: Text(
+                          l10n.clear_cache_confirm_button,
+                          style: AppTextStyles.customStyle(
+                            context,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 12.h),
+
+                // ── Cancel Button ────────────────────────────────────────
+                SizedBox(
+                  width: double.infinity,
+                  height: 52.h,
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(
+                        color: AppColors.primary,
+                        width: 1.5.w,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14.r),
+                      ),
+                    ),
+                    child: Text(
+                      l10n.address_cancel,
+                      style: AppTextStyles.customStyle(
+                        context,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // ── Clear Safe Cache ───────────────────────────────────────────────────────
+  Future<void> _clearSafeCache(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    
+    try {
+      final cacheService = LocalCacheService();
+      
+      // Clear ONLY API cache boxes (safe to delete)
+      await cacheService.clearBox('coupons_box');
+      await cacheService.clearBox('stores_box');
+      await cacheService.clearBox('categories_box');
+      await cacheService.clearBox('public_products_box');
+      
+      // Clear media files
+      await cacheService.performManualCleanup();
+      
+      // Show success message
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              l10n.clear_cache_success,
+              style: const TextStyle(color: Colors.white),
+            ),
+            backgroundColor: AppColors.success,
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(16.w),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+          ),
+        );
+        
+        // Refresh the UI to show updated cache size
+        setState(() {});
+      }
+    } catch (e) {
+      // Show error message
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${l10n.clear_cache_error}: $e',
+              style: const TextStyle(color: Colors.white),
+            ),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(16.w),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+          ),
+        );
+      }
+    }
   }
 
   // ── About Section ──────────────────────────────────────────────────────────
@@ -420,8 +841,8 @@ class _SettingsPageState extends State<SettingsPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.logout_rounded,
+                FaIcon(
+                  FontAwesomeIcons.arrowRightFromBracket,
                   size: 20.w,
                   color: AppColors.primary,
                 ),
@@ -475,10 +896,12 @@ class _SettingsPageState extends State<SettingsPage> {
                               color: AppColors.grey200,
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(
-                              Icons.close_rounded,
-                              size: 16.w,
-                              color: AppColors.textPrimary,
+                            child: Center(
+                              child: FaIcon(
+                                FontAwesomeIcons.xmark,
+                                size: 16.w,
+                                color: AppColors.textPrimary,
+                              ),
                             ),
                           ),
                         ),
@@ -647,10 +1070,12 @@ class _SettingsPageState extends State<SettingsPage> {
                         color: AppColors.error.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(
-                        Icons.delete_forever_rounded,
-                        size: 32.w,
-                        color: AppColors.error,
+                      child: Center(
+                        child: FaIcon(
+                          FontAwesomeIcons.trashCan,
+                          size: 32.w,
+                          color: AppColors.error,
+                        ),
                       ),
                     ),
                     SizedBox(height: 16.h),
@@ -703,10 +1128,10 @@ class _SettingsPageState extends State<SettingsPage> {
                           borderSide: BorderSide.none,
                         ),
                         suffixIcon: IconButton(
-                          icon: Icon(
+                          icon: FaIcon(
                             obscure
-                                ? Icons.visibility_off_rounded
-                                : Icons.visibility_rounded,
+                                ? FontAwesomeIcons.eyeSlash
+                                : FontAwesomeIcons.eye,
                             size: 20.w,
                             color: AppColors.textSecondary,
                           ),

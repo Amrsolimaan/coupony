@@ -57,7 +57,7 @@ class _ReportProblemPageState extends State<ReportProblemPage> {
       ),
       leading: IconButton(
         icon: Icon(
-          Icons.arrow_forward_ios_rounded,
+          Icons.arrow_back_ios_rounded,
           size: 20.w,
           color: AppColors.textPrimary,
         ),

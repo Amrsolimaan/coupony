@@ -2,24 +2,31 @@ import 'package:coupony/core/services/location_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import '../../../../auth/data/datasources/auth_local_data_source.dart';
+import '../../../../auth/data/models/user_store_model.dart';
 import '../../domain/entities/social_link_entity.dart';
 import '../../domain/use_cases/create_store_use_case.dart';
 import '../../domain/use_cases/get_categories_use_case.dart';
 import '../../domain/use_cases/get_social_platforms_use_case.dart';
+import '../../domain/use_cases/get_stores_use_case.dart';
+import '../../domain/use_cases/update_store_use_case.dart';
 import 'create_store_state.dart';
 
 class CreateStoreCubit extends Cubit<CreateStoreState> {
   final CreateStoreUseCase createStoreUseCase;
+  final UpdateStoreUseCase updateStoreUseCase;
   final GetCategoriesUseCase getCategoriesUseCase;
   final GetSocialPlatformsUseCase getSocialPlatformsUseCase;
+  final GetStoresUseCase getStoresUseCase;
   final LocationService locationService;
   final AuthLocalDataSource authLocalDataSource;
   final Logger logger;
 
   CreateStoreCubit({
     required this.createStoreUseCase,
+    required this.updateStoreUseCase,
     required this.getCategoriesUseCase,
     required this.getSocialPlatformsUseCase,
+    required this.getStoresUseCase,
     required this.locationService,
     required this.authLocalDataSource,
     required this.logger,
@@ -30,6 +37,35 @@ class CreateStoreCubit extends Cubit<CreateStoreState> {
 
   void _safeEmit(CreateStoreState s) {
     if (!isClosed) emit(s);
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // FETCH STORE DETAILS (for edit mode)
+  // ═══════════════════════════════════════════════════════════
+
+  /// Fetches the full store details from GET /api/v1/stores
+  /// Returns the first store found (typically the user's store)
+  Future<UserStoreModel?> fetchStoreDetails() async {
+    logger.i('Fetching store details from GET /api/v1/stores');
+    _safeEmit(state.copyWith(isSubmitting: true));
+
+    final result = await getStoresUseCase();
+
+    return result.fold(
+      (failure) {
+        logger.e('GetStores failed: ${failure.message}');
+        _safeEmit(state.copyWith(
+          isSubmitting: false,
+          errorKey: failure.message,
+        ));
+        return null;
+      },
+      (stores) {
+        logger.i('Fetched ${stores.length} stores');
+        _safeEmit(state.copyWith(isSubmitting: false));
+        return stores.isNotEmpty ? stores.first : null;
+      },
+    );
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -217,6 +253,44 @@ class CreateStoreCubit extends Cubit<CreateStoreState> {
           isSubmitting: false,
           successKey: 'success_create_store',
           navigationSignal: CreateStoreNavigation.toStoreUnderReview,
+        ));
+      },
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // UPDATE STORE
+  // ═══════════════════════════════════════════════════════════
+
+  Future<void> updateStore(String storeId, CreateStoreParams params) async {
+    if (params.name.trim().isEmpty) {
+      _safeEmit(state.copyWith(errorKey: 'error_create_store_name_required'));
+      return;
+    }
+    if (params.phone.trim().isEmpty) {
+      _safeEmit(state.copyWith(errorKey: 'error_create_store_phone_required'));
+      return;
+    }
+
+    logger.i('Submitting updateStore for store "$storeId"');
+    _safeEmit(state.copyWith(isSubmitting: true, errorKey: null, successKey: null));
+
+    final result = await updateStoreUseCase(storeId, params);
+
+    result.fold(
+      (failure) {
+        logger.e('UpdateStore API failed: ${failure.message}');
+        _safeEmit(state.copyWith(
+          isSubmitting: false,
+          errorKey: failure.message,
+        ));
+      },
+      (_) {
+        logger.i('Store updated successfully ✅');
+        _safeEmit(state.copyWith(
+          isSubmitting: false,
+          successKey: 'success_update_store',
+          navigationSignal: CreateStoreNavigation.toMerchantStatus,
         ));
       },
     );

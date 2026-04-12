@@ -5,6 +5,7 @@ class CategoryModel extends CategoryEntity {
     required super.id,
     required super.name,
     super.slug,
+    super.iconUrl,
   });
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
@@ -12,6 +13,7 @@ class CategoryModel extends CategoryEntity {
       id: json['id'] as int,
       name: json['name'] as String,
       slug: json['slug'] as String?,
+      iconUrl: json['icon_url'] as String?,
     );
   }
 
@@ -20,8 +22,14 @@ class CategoryModel extends CategoryEntity {
       'id': id,
       'name': name,
       if (slug != null) 'slug': slug,
+      if (iconUrl != null) 'icon_url': iconUrl,
     };
   }
 
-  CategoryEntity toEntity() => CategoryEntity(id: id, name: name, slug: slug);
+  CategoryEntity toEntity() => CategoryEntity(
+        id: id,
+        name: name,
+        slug: slug,
+        iconUrl: iconUrl,
+      );
 }

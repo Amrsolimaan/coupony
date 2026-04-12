@@ -11,6 +11,7 @@ import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/cubit
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Seller Best Offer Time Screen — Cubit Step 3 (bestOfferTime)
 /// API values: all_week | weekends_occasions | off_peak
@@ -64,7 +65,7 @@ class SellerStoreInfoScreen extends StatelessWidget {
                       SelectionOptionCard(
                         title: l10n.seller_best_offer_time_all_week,
                         subtitle: l10n.seller_best_offer_time_all_week_subtitle,
-                        icon: Icons.calendar_month,
+                        icon: FontAwesomeIcons.calendarDays,
                         isSelected: state.bestOfferTime == 'all_week',
                         onTap: () => cubit.selectBestOfferTime('all_week'),
                         theme: _theme,
@@ -73,7 +74,7 @@ class SellerStoreInfoScreen extends StatelessWidget {
                       SelectionOptionCard(
                         title: l10n.seller_best_offer_time_weekends,
                         subtitle: l10n.seller_best_offer_time_weekends_subtitle,
-                        icon: Icons.celebration,
+                        icon: FontAwesomeIcons.champagneGlasses,
                         isSelected: state.bestOfferTime == 'weekends_occasions',
                         onTap: () => cubit.selectBestOfferTime('weekends_occasions'),
                         theme: _theme,
@@ -82,7 +83,7 @@ class SellerStoreInfoScreen extends StatelessWidget {
                       SelectionOptionCard(
                         title: l10n.seller_best_offer_time_off_peak,
                         subtitle: l10n.seller_best_offer_time_off_peak_subtitle,
-                        icon: Icons.trending_down,
+                        icon: FontAwesomeIcons.arrowTrendDown,
                         isSelected: state.bestOfferTime == 'off_peak',
                         onTap: () => cubit.selectBestOfferTime('off_peak'),
                         theme: _theme,

@@ -236,6 +236,18 @@ abstract class AppLocalizations {
   /// **'Start Now'**
   String get startNow;
 
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @no_categories_available.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories available'**
+  String get no_categories_available;
+
   /// No description provided for @categoryRestaurants.
   ///
   /// In en, this message translates to:
@@ -1280,6 +1292,12 @@ abstract class AppLocalizations {
   /// **'Choose the appropriate category'**
   String get create_store_category_hint;
 
+  /// No description provided for @create_store_category_scroll_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Scroll down to see more'**
+  String get create_store_category_scroll_hint;
+
   /// No description provided for @create_store_description_hint.
   ///
   /// In en, this message translates to:
@@ -1549,6 +1567,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Onboarding Completed Successfully!'**
   String get seller_onboarding_success_title;
+
+  /// No description provided for @customer_onboarding_success_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Coupony!'**
+  String get customer_onboarding_success_title;
 
   /// No description provided for @seller_onboarding_start_title.
   ///
@@ -2054,6 +2078,24 @@ abstract class AppLocalizations {
   /// **'Account'**
   String get account;
 
+  /// No description provided for @store.
+  ///
+  /// In en, this message translates to:
+  /// **'Store'**
+  String get store;
+
+  /// No description provided for @analytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics'**
+  String get analytics;
+
+  /// No description provided for @offers.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers'**
+  String get offers;
+
   /// No description provided for @profile_title.
   ///
   /// In en, this message translates to:
@@ -2353,6 +2395,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loading...'**
   String get loading;
+
+  /// No description provided for @current_location_default_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Current Location'**
+  String get current_location_default_name;
+
+  /// No description provided for @settings_notifications_open_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Please allow notifications from device settings'**
+  String get settings_notifications_open_settings;
 
   /// No description provided for @help_support_title.
   ///
@@ -3167,7 +3221,7 @@ abstract class AppLocalizations {
   /// No description provided for @settings_notifications.
   ///
   /// In en, this message translates to:
-  /// **'Enable Notifications'**
+  /// **'Enable Notifications Automatically'**
   String get settings_notifications;
 
   /// No description provided for @settings_data_section.
@@ -3187,6 +3241,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Permanently delete account'**
   String get settings_delete_account_subtitle;
+
+  /// No description provided for @settings_storage_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage Management'**
+  String get settings_storage_section;
+
+  /// No description provided for @settings_clear_cache.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Cache'**
+  String get settings_clear_cache;
+
+  /// No description provided for @settings_cache_size.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache Size'**
+  String get settings_cache_size;
+
+  /// No description provided for @clear_cache_dialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Cache'**
+  String get clear_cache_dialog_title;
+
+  /// No description provided for @clear_cache_dialog_message.
+  ///
+  /// In en, this message translates to:
+  /// **'This will clear temporarily stored coupons, stores, and products. Your personal data and settings will not be deleted.'**
+  String get clear_cache_dialog_message;
+
+  /// No description provided for @clear_cache_confirm_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Cache'**
+  String get clear_cache_confirm_button;
+
+  /// No description provided for @clear_cache_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache cleared successfully'**
+  String get clear_cache_success;
+
+  /// No description provided for @clear_cache_error.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while clearing cache'**
+  String get clear_cache_error;
+
+  /// No description provided for @cache_files_size.
+  ///
+  /// In en, this message translates to:
+  /// **'Files Size:'**
+  String get cache_files_size;
+
+  /// No description provided for @cache_files_count.
+  ///
+  /// In en, this message translates to:
+  /// **'Files Count:'**
+  String get cache_files_count;
+
+  /// No description provided for @cache_calculating.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculating...'**
+  String get cache_calculating;
 
   /// No description provided for @settings_security_section.
   ///
@@ -3427,6 +3547,336 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Agree'**
   String get privacy_agree_button;
+
+  /// No description provided for @become_merchant_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Become a Merchant'**
+  String get become_merchant_title;
+
+  /// No description provided for @become_merchant_headline.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Your Business on Coupony'**
+  String get become_merchant_headline;
+
+  /// No description provided for @become_merchant_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn your store into a new growth opportunity,\nand reach more customers in your area with ease.'**
+  String get become_merchant_subtitle;
+
+  /// No description provided for @become_merchant_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Store'**
+  String get become_merchant_button;
+
+  /// No description provided for @seller_store_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Store'**
+  String get seller_store_title;
+
+  /// No description provided for @seller_store_content_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Your Store'**
+  String get seller_store_content_title;
+
+  /// No description provided for @seller_store_content_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Here you can manage your store information, update details, and add new branches.'**
+  String get seller_store_content_subtitle;
+
+  /// No description provided for @seller_home_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get seller_home_title;
+
+  /// No description provided for @seller_home_content_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Seller Home Page'**
+  String get seller_home_content_title;
+
+  /// No description provided for @seller_home_content_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to your seller dashboard'**
+  String get seller_home_content_subtitle;
+
+  /// No description provided for @seller_analytics_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics'**
+  String get seller_analytics_title;
+
+  /// No description provided for @seller_analytics_content_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sales Analytics'**
+  String get seller_analytics_content_title;
+
+  /// No description provided for @seller_analytics_content_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your store performance and sales in detail'**
+  String get seller_analytics_content_subtitle;
+
+  /// No description provided for @seller_offers_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers'**
+  String get seller_offers_title;
+
+  /// No description provided for @seller_offers_content_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Offers'**
+  String get seller_offers_content_title;
+
+  /// No description provided for @seller_offers_content_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create and manage your promotional offers and discounts'**
+  String get seller_offers_content_subtitle;
+
+  /// No description provided for @merchant_review_pending_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Request is Under Review'**
+  String get merchant_review_pending_title;
+
+  /// No description provided for @merchant_review_pending_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your request is currently under review.\nYou will be notified once it\'s done.'**
+  String get merchant_review_pending_subtitle;
+
+  /// No description provided for @merchant_review_pending_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Under Review'**
+  String get merchant_review_pending_button;
+
+  /// No description provided for @merchant_review_contact_prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'If you experience any issue'**
+  String get merchant_review_contact_prompt;
+
+  /// No description provided for @merchant_review_contact_link.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact us'**
+  String get merchant_review_contact_link;
+
+  /// No description provided for @merchant_incomplete_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Please Complete Your Store Data'**
+  String get merchant_incomplete_title;
+
+  /// No description provided for @merchant_incomplete_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The store cannot be activated due to missing data.\nPlease complete it to continue.'**
+  String get merchant_incomplete_subtitle;
+
+  /// No description provided for @merchant_incomplete_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Data'**
+  String get merchant_incomplete_button;
+
+  /// No description provided for @merchant_rejected_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Store Activation Could Not Be Completed'**
+  String get merchant_rejected_title;
+
+  /// No description provided for @merchant_rejected_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please review the rejection reasons\nand make the necessary edits to resubmit.'**
+  String get merchant_rejected_subtitle;
+
+  /// No description provided for @guest_seller_mode_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest Mode'**
+  String get guest_seller_mode_title;
+
+  /// No description provided for @guest_seller_welcome_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Your Selling Journey on Coupony'**
+  String get guest_seller_welcome_title;
+
+  /// No description provided for @guest_seller_welcome_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your store, showcase your discounts, and reach new customers.'**
+  String get guest_seller_welcome_subtitle;
+
+  /// No description provided for @guest_seller_login_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get guest_seller_login_button;
+
+  /// No description provided for @seller_pending_approval_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome'**
+  String get seller_pending_approval_title;
+
+  /// No description provided for @seller_pending_approval_message.
+  ///
+  /// In en, this message translates to:
+  /// **'This page will be activated after your store is approved.'**
+  String get seller_pending_approval_message;
+
+  /// No description provided for @seller_pending_approval_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick overview of your store performance, latest sales, and suggestions to improve offers and increase engagement.'**
+  String get seller_pending_approval_subtitle;
+
+  /// No description provided for @seller_pending_contact_prefix.
+  ///
+  /// In en, this message translates to:
+  /// **'If you experience any issue'**
+  String get seller_pending_contact_prefix;
+
+  /// No description provided for @seller_pending_contact_link.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact us'**
+  String get seller_pending_contact_link;
+
+  /// No description provided for @merchant_rejected_view_status_button.
+  ///
+  /// In en, this message translates to:
+  /// **'View Request Status'**
+  String get merchant_rejected_view_status_button;
+
+  /// No description provided for @merchant_status_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Request Status'**
+  String get merchant_status_title;
+
+  /// No description provided for @merchant_status_headline.
+  ///
+  /// In en, this message translates to:
+  /// **'Some Edits Needed'**
+  String get merchant_status_headline;
+
+  /// No description provided for @merchant_status_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'There is data that needs correction to complete activation'**
+  String get merchant_status_subtitle;
+
+  /// No description provided for @merchant_status_edit_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Data'**
+  String get merchant_status_edit_button;
+
+  /// No description provided for @merchant_status_support_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Support'**
+  String get merchant_status_support_button;
+
+  /// No description provided for @merchant_approved_headline.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Store is Now Live!'**
+  String get merchant_approved_headline;
+
+  /// No description provided for @merchant_approved_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Congratulations! Your store has been reviewed and activated. You can now start publishing your offers.'**
+  String get merchant_approved_subtitle;
+
+  /// No description provided for @merchant_approved_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Store'**
+  String get merchant_approved_button;
+
+  /// No description provided for @update_store_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Store Data'**
+  String get update_store_title;
+
+  /// No description provided for @update_store_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Data'**
+  String get update_store_button;
+
+  /// No description provided for @success_update_store.
+  ///
+  /// In en, this message translates to:
+  /// **'Store data updated successfully!'**
+  String get success_update_store;
+
+  /// No description provided for @error_update_store_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update store. Please try again'**
+  String get error_update_store_server;
+
+  /// No description provided for @merchant_approved_switch_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to Merchant'**
+  String get merchant_approved_switch_button;
+
+  /// No description provided for @merchant_approved_continue_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as Customer'**
+  String get merchant_approved_continue_button;
+
+  /// No description provided for @profile_switch_to_merchant.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to Merchant'**
+  String get profile_switch_to_merchant;
+
+  /// No description provided for @merchant_no_changes_snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'No changes detected. Please fix the listed issues before resubmitting.'**
+  String get merchant_no_changes_snackbar;
+
+  /// No description provided for @seller_welcome_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome, Merchant!'**
+  String get seller_welcome_title;
+
+  /// No description provided for @seller_welcome_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your store has been approved and is ready to start'**
+  String get seller_welcome_subtitle;
+
+  /// No description provided for @seller_dashboard_coming_soon.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard Coming Soon'**
+  String get seller_dashboard_coming_soon;
 }
 
 class _AppLocalizationsDelegate

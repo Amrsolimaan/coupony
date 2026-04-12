@@ -19,6 +19,7 @@ import 'package:coupony/features/seller_flow/CreateStore/data/models/social_plat
 import 'package:coupony/features/seller_flow/CreateStore/domain/use_cases/create_store_use_case.dart';
 import 'package:coupony/features/seller_flow/CreateStore/presentation/cubit/create_store_cubit.dart';
 import 'package:coupony/features/seller_flow/CreateStore/presentation/cubit/create_store_state.dart';
+import 'package:coupony/features/auth/data/models/user_store_model.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -26,11 +27,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPER FUNCTIONS
@@ -57,16 +60,46 @@ String? _buildFullImageUrl(String? imageUrl) {
   }
   
   final fullUrl = '$baseUrl$cleanPath';
-  print('🔗 Social Icon URL: $imageUrl → $fullUrl');
   return fullUrl;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CREATE STORE MODE  (Strategy Pattern — decouples create vs. edit flows)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Controls which flow is active inside [CreateStoreScreen].
+///
+/// [create]  — seller is registering a brand-new store.
+///             Navigation on success → StoreUnderReview.
+///
+/// [edit]    — seller is correcting rejected/incomplete data.
+///             Navigation on success → MerchantStatus.
+///             Requires [storeId] to be supplied.
+enum CreateStoreMode { create, edit }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CREATE STORE SCREEN
 // ─────────────────────────────────────────────────────────────────────────────
 
 class CreateStoreScreen extends HookWidget {
-  const CreateStoreScreen({super.key});
+  final CreateStoreMode mode;
+  final String? storeId;
+  /// Store snapshot used to pre-fill all form fields in edit mode.
+  final UserStoreModel? initialStore;
+  /// Optional override for post-success navigation.
+  /// Null → default seller flow (→ storeUnderReview / merchantStatus).
+  /// Non-null → caller-controlled destination (e.g. rejection loop → merchantPending).
+  final VoidCallback? onSuccess;
+
+  const CreateStoreScreen({
+    super.key,
+    this.mode = CreateStoreMode.create,
+    this.storeId,
+    this.initialStore,
+    this.onSuccess,
+  });
+
+  bool get _isEditMode => mode == CreateStoreMode.edit;
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +121,45 @@ class CreateStoreScreen extends HookWidget {
     final taxCard            = useValueNotifier<File?>(null);
     final idCardFront        = useValueNotifier<File?>(null);
     final idCardBack         = useValueNotifier<File?>(null);
+    
+    // Store the fetched store data for comparison in edit mode
+    final fetchedStore = useValueNotifier<UserStoreModel?>(null);
+
+    // ── Pre-fill from initialStore (edit mode only, runs once on mount) ────
+    useEffect(() {
+      if (!_isEditMode) return null;
+      
+      // If initialStore is provided and has data, use it
+      if (initialStore != null) {
+        final s = initialStore!;
+        fetchedStore.value = s; // Store for comparison
+        if (s.name.isNotEmpty)               storeNameController.text   = s.name;
+        if (s.phone?.isNotEmpty ?? false)     phoneController.text       = s.phone!;
+        if (s.description?.isNotEmpty ?? false) descriptionController.text = s.description!;
+        if (s.city?.isNotEmpty ?? false)      cityController.text        = s.city!;
+        if (s.area?.isNotEmpty ?? false)      areaController.text        = s.area!;
+        if (s.branches != null)               branchesController.text    = s.branches.toString();
+        return null;
+      }
+      
+      // Otherwise, fetch store details from API
+      final cubit = context.read<CreateStoreCubit>();
+      Future.microtask(() async {
+        final store = await cubit.fetchStoreDetails();
+        
+        if (store != null) {
+          fetchedStore.value = store; // Store for comparison
+          if (store.name.isNotEmpty)               storeNameController.text   = store.name;
+          if (store.phone?.isNotEmpty ?? false)     phoneController.text       = store.phone!;
+          if (store.description?.isNotEmpty ?? false) descriptionController.text = store.description!;
+          if (store.city?.isNotEmpty ?? false)      cityController.text        = store.city!;
+          if (store.area?.isNotEmpty ?? false)      areaController.text        = store.area!;
+          if (store.branches != null)               branchesController.text    = store.branches.toString();
+        }
+      });
+      
+      return null;
+    }, const []);
 
     // ── Reactive derivations ───────────────────────────────────────────────
     final storeNameValue   = useValueListenable(storeNameController);
@@ -98,6 +170,7 @@ class CreateStoreScreen extends HookWidget {
     final areaValue        = useValueListenable(areaController);
     final categoryValue    = useValueListenable(selectedCategory);
     final termsValue       = useValueListenable(agreeToTerms);
+    final fetchedStoreValue = useValueListenable(fetchedStore);
 
     final descriptionLength    = descriptionValue.text.length;
     const maxDescriptionLength = 500;
@@ -120,13 +193,29 @@ class CreateStoreScreen extends HookWidget {
             if (state.navigationSignal == CreateStoreNavigation.toStoreUnderReview) {
               context.read<CreateStoreCubit>().clearNavigationSignal();
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (context.mounted) context.go(AppRouter.storeUnderReview);
+                if (!context.mounted) return;
+                if (onSuccess != null) {
+                  onSuccess!();
+                } else {
+                  context.go(AppRouter.storeUnderReview);
+                }
               });
             }
             if (state.navigationSignal == CreateStoreNavigation.toMerchantDashboard) {
               context.read<CreateStoreCubit>().clearNavigationSignal();
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (context.mounted) context.go(AppRouter.merchantDashboard);
+              });
+            }
+            if (state.navigationSignal == CreateStoreNavigation.toMerchantStatus) {
+              context.read<CreateStoreCubit>().clearNavigationSignal();
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (!context.mounted) return;
+                if (onSuccess != null) {
+                  onSuccess!();
+                } else {
+                  context.go(AppRouter.merchantStatus);
+                }
               });
             }
             if (state.errorKey != null) {
@@ -165,7 +254,7 @@ class CreateStoreScreen extends HookWidget {
 
                   // ── Title ───────────────────────────────────────────
                   Text(
-                    l10n.create_store_title,
+                    _isEditMode ? l10n.update_store_title : l10n.create_store_title,
                     style: AppTextStyles.customStyle(
                       context,
                       fontSize: 26,
@@ -188,6 +277,7 @@ class CreateStoreScreen extends HookWidget {
                     hint: l10n.create_store_name_hint,
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.next,
+                    overrideColor: AppColors.primaryOfSeller,
                   ),
                   SizedBox(height: 12.h),
 
@@ -197,6 +287,7 @@ class CreateStoreScreen extends HookWidget {
                     hint: l10n.create_store_phone_hint,
                     keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.next,
+                    overrideColor: AppColors.primaryOfSeller,
                   ),
                   SizedBox(height: 12.h),
 
@@ -226,6 +317,7 @@ class CreateStoreScreen extends HookWidget {
                           hint: l10n.create_store_city_hint,
                           keyboardType: TextInputType.text,
                           textInputAction: TextInputAction.next,
+                          overrideColor: AppColors.primaryOfSeller,
                         ),
                       ),
                       SizedBox(width: 12.w),
@@ -235,6 +327,7 @@ class CreateStoreScreen extends HookWidget {
                           hint: l10n.create_store_area_hint,
                           keyboardType: TextInputType.text,
                           textInputAction: TextInputAction.next,
+                          overrideColor: AppColors.primaryOfSeller,
                         ),
                       ),
                     ],
@@ -247,6 +340,7 @@ class CreateStoreScreen extends HookWidget {
                     hint: l10n.create_store_branches_hint,
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.done,
+                    overrideColor: AppColors.primaryOfSeller,
                   ),
                   SizedBox(height: 20.h),
 
@@ -272,13 +366,15 @@ class CreateStoreScreen extends HookWidget {
                   _TermsCheckbox(agreeToTerms: agreeToTerms, l10n: l10n),
                   SizedBox(height: 24.h),
 
-                  // ── Create Store button ─────────────────────────────
+                  // ── Create / Update Store button ────────────────────
                   BlocBuilder<CreateStoreCubit, CreateStoreState>(
                     buildWhen: (prev, next) =>
                         prev.isSubmitting != next.isSubmitting,
                     builder: (context, state) {
                       return AppPrimaryButton(
-                        text: l10n.create_store_button,
+                        text: _isEditMode
+                            ? l10n.update_store_button
+                            : l10n.create_store_button,
                         isLoading: state.isSubmitting,
                         onPressed: hasContent && !state.isSubmitting
                             ? () => _onSubmit(
@@ -294,11 +390,12 @@ class CreateStoreScreen extends HookWidget {
                                   taxCard.value,
                                   idCardFront.value,
                                   idCardBack.value,
+                                  fetchedStoreData: fetchedStoreValue,
                                 )
                             : null,
                         height: 56.h,
                         backgroundColor: hasContent && !state.isSubmitting
-                            ? Theme.of(context).primaryColor
+                            ? AppColors.primaryOfSeller
                             : AppColors.textDisabled,
                         textStyle: AppTextStyles.customStyle(
                           context,
@@ -331,8 +428,9 @@ class CreateStoreScreen extends HookWidget {
     File? commercialRegister,
     File? taxCard,
     File? idCardFront,
-    File? idCardBack,
-  ) {
+    File? idCardBack, {
+    UserStoreModel? fetchedStoreData,
+  }) {
     final cubit = context.read<CreateStoreCubit>();
     final params = CreateStoreParams(
       name: name,
@@ -350,8 +448,91 @@ class CreateStoreScreen extends HookWidget {
       idCardFront: idCardFront,
       idCardBack: idCardBack,
     );
-    cubit.createStore(params);
+
+    if (_isEditMode && storeId != null) {
+      // ══════════════════════════════════════════════════════════════════════
+ 
+      final storeToCompare = fetchedStoreData ?? initialStore;
+      
+      if (storeToCompare != null && storeToCompare.isRejected) {
+        final textFieldsUnchanged =
+            name        == storeToCompare.name &&
+            phone       == (storeToCompare.phone ?? '') &&
+            description == (storeToCompare.description ?? '') &&
+            city        == (storeToCompare.city ?? '') &&
+            area        == (storeToCompare.area ?? '');
+
+        // Check if logo was changed (new file selected)
+        final logoUnchanged = logo == null;
+
+        // Check if location was changed
+        // Note: We don't have initial lat/lng in UserStoreModel, so we assume
+        // if user didn't pick a new location, it's unchanged
+        final locationUnchanged = 
+            cubit.state.latitude == '0.0' && cubit.state.longitude == '0.0';
+
+        // Check if social links were changed
+        // Note: We don't have initial socials in UserStoreModel, so we assume
+        // if user didn't add new socials, it's unchanged
+        final socialsUnchanged = cubit.state.socialLinks.isEmpty;
+
+        // Check if verification docs were changed
+        final docsUnchanged = 
+            commercialRegister == null &&
+            taxCard == null &&
+            idCardFront == null &&
+            idCardBack == null;
+
+        // If ALL fields are unchanged, block submission
+        if (textFieldsUnchanged && 
+            logoUnchanged && 
+            locationUnchanged && 
+            socialsUnchanged && 
+            docsUnchanged) {
+          final l10n = AppLocalizations.of(context)!;
+          
+          // Get rejection reason (prefer single reason, fallback to list)
+          String message;
+          if (storeToCompare.rejectionReason != null && storeToCompare.rejectionReason!.isNotEmpty) {
+            message = '${l10n.merchant_no_changes_snackbar}\n\n${storeToCompare.rejectionReason}';
+          } else if (storeToCompare.rejectionReasons.isNotEmpty) {
+            message = '${l10n.merchant_no_changes_snackbar}\n\n${storeToCompare.rejectionReasons.join('\n')}';
+          } else {
+            message = l10n.merchant_no_changes_snackbar;
+          }
+          
+          context.showErrorSnackBar(message);
+          return;
+        }
+      }
+      cubit.updateStore(storeId!, params);
+    } else {
+      cubit.createStore(params);
+    }
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CREATE STORE ROUTE ARGS  (passed as GoRouter `extra`)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class CreateStoreArgs {
+  final CreateStoreMode mode;
+  final String? storeId;
+  /// Store snapshot used to pre-fill the form in edit mode.
+  final UserStoreModel? initialStore;
+  /// Called after a successful submission instead of the default
+  /// [AppRouter.storeUnderReview] redirect.  When null the screen
+  /// falls back to the original seller-onboarding destination so the
+  /// existing flow is fully preserved.
+  final VoidCallback? onSuccess;
+
+  const CreateStoreArgs({
+    this.mode = CreateStoreMode.create,
+    this.storeId,
+    this.initialStore,
+    this.onSuccess,
+  });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -447,9 +628,9 @@ class _TopBar extends StatelessWidget {
                 onTap: () => _handleLogout(context),
                 child: Padding(
                   padding: EdgeInsets.all(8.w),
-                  child: Icon(
-                    Icons.logout_rounded,
-                    size: 20.w,
+                  child: FaIcon(
+                    FontAwesomeIcons.arrowRightFromBracket,
+                    size: 18.w,
                     color: AppColors.primaryOfSeller,
                   ),
                 ),
@@ -487,26 +668,52 @@ class _LogoUploadArea extends HookWidget {
   Widget build(BuildContext context) {
     final logoValue = useValueListenable(storeLogo);
 
-    return Align(
-      alignment: AlignmentDirectional.centerEnd,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text(
-            l10n.create_store_logo_label,
-            style: AppTextStyles.customStyle(
-              context,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.create_store_logo_label,
+          style: AppTextStyles.customStyle(
+            context,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
           ),
-          SizedBox(height: 8.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+        ),
+        SizedBox(height: 8.h),
+        Row(
+          children: [
+            // ── Logo Box (Left/Start) ──────────────────────────────────────
+            GestureDetector(
+              onTap: _pickImage,
+              child: Container(
+                width: 80.w,
+                height: 80.w,
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: AppColors.divider, width: 1.5.w),
+                ),
+                child: logoValue != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(12.r),
+                        child: Image.file(logoValue, fit: BoxFit.cover),
+                      )
+                    : Center(
+                        child: FaIcon(
+                          FontAwesomeIcons.image,
+                          size: 32.w,
+                          color: AppColors.textDisabled,
+                        ),
+                      ),
+              ),
+            ),
+            SizedBox(width: 12.w),
+            
+            // ── Description Text (Right/End) ────────────────────────────────
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     l10n.create_store_logo_hint,
@@ -515,7 +722,6 @@ class _LogoUploadArea extends HookWidget {
                       fontSize: 12,
                       color: AppColors.textSecondary,
                     ),
-                    textAlign: TextAlign.end,
                   ),
                   SizedBox(height: 4.h),
                   Text(
@@ -525,37 +731,13 @@ class _LogoUploadArea extends HookWidget {
                       fontSize: 12,
                       color: AppColors.textSecondary,
                     ),
-                    textAlign: TextAlign.end,
                   ),
                 ],
               ),
-              SizedBox(width: 12.w),
-              GestureDetector(
-                onTap: _pickImage,
-                child: Container(
-                  width: 80.w,
-                  height: 80.w,
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(color: AppColors.divider, width: 1.5.w),
-                  ),
-                  child: logoValue != null
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(12.r),
-                          child: Image.file(logoValue, fit: BoxFit.cover),
-                        )
-                      : Icon(
-                          Icons.add_photo_alternate_outlined,
-                          size: 32.w,
-                          color: AppColors.textDisabled,
-                        ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -568,6 +750,92 @@ class _CategoryDropdown extends StatelessWidget {
 
   const _CategoryDropdown({required this.l10n, required this.selectedCategory});
 
+  void _showCategoryMenu(
+    BuildContext context,
+    List<CategoryEntity> categories,
+    RenderBox renderBox,
+  ) async {
+    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+    final position = renderBox.localToGlobal(Offset.zero, ancestor: overlay);
+    
+    final selected = await showMenu<CategoryEntity>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy + renderBox.size.height + 4.h,
+        position.dx + renderBox.size.width,
+        position.dy + renderBox.size.height + 4.h,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      elevation: 8,
+      color: AppColors.surface,
+      constraints: BoxConstraints(
+        maxHeight: 280.h,
+        minWidth: renderBox.size.width,
+      ),
+      items: [
+        // ── Scroll Indicator Header ────────────────────────────────────────
+        PopupMenuItem<CategoryEntity>(
+          enabled: false,
+          height: 32.h,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.unfold_more_rounded,
+                size: 16.w,
+                color: AppColors.textDisabled,
+              ),
+              SizedBox(width: 4.w),
+              Text(
+                l10n.create_store_category_scroll_hint,
+                style: AppTextStyles.customStyle(
+                  context,
+                  fontSize: 11,
+                  color: AppColors.textDisabled,
+                ),
+              ),
+            ],
+          ),
+        ),
+        
+        // ── Categories ─────────────────────────────────────────────────────
+        ...categories.map((category) {
+          return PopupMenuItem<CategoryEntity>(
+            value: category,
+            height: 52.h,
+            child: Row(
+              children: [
+                // ── Category Icon ──────────────────────────────────────────
+                _CategoryIcon(category: category),
+                SizedBox(width: 12.w),
+                
+                // ── Category Name ──────────────────────────────────────────
+                Expanded(
+                  child: Text(
+                    category.name,
+                    style: AppTextStyles.customStyle(
+                      context,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
+      ],
+    );
+
+    if (selected != null) {
+      selectedCategory.value = selected;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CreateStoreCubit, CreateStoreState>(
@@ -578,74 +846,169 @@ class _CategoryDropdown extends StatelessWidget {
         return ValueListenableBuilder<CategoryEntity?>(
           valueListenable: selectedCategory,
           builder: (context, value, _) {
-            return Container(
-              height: 56.r,
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: AppColors.divider, width: 1.5.w),
-              ),
-              child: state.isCategoriesLoading
-                  ? Center(
-                      child: SizedBox(
-                        width: 20.w,
-                        height: 20.w,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
-                    )
-                  : DropdownButtonHideUnderline(
-                      child: DropdownButton<CategoryEntity>(
-                        value: value,
-                        hint: Padding(
-                          padding: EdgeInsetsDirectional.only(start: 16.w),
-                          child: Text(
-                            l10n.create_store_category_hint,
-                            style: AppTextStyles.customStyle(
-                              context,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textDisabled,
-                            ),
-                          ),
-                        ),
-                        isExpanded: true,
-                        icon: Padding(
-                          padding: EdgeInsetsDirectional.only(end: 12.w),
-                          child: Icon(
-                            Icons.keyboard_arrow_down_rounded,
-                            color: AppColors.textSecondary,
-                            size: 24.w,
-                          ),
-                        ),
-                        items: state.categories.map((category) {
-                          return DropdownMenuItem<CategoryEntity>(
-                            value: category,
-                            child: Padding(
-                              padding: EdgeInsetsDirectional.only(start: 16.w),
-                              child: Text(
-                                category.name,
-                                style: AppTextStyles.customStyle(
-                                  context,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textPrimary,
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (newValue) {
-                          selectedCategory.value = newValue;
+            return Builder(
+              builder: (context) {
+                return GestureDetector(
+                  onTap: state.isCategoriesLoading || state.categories.isEmpty
+                      ? null
+                      : () {
+                          final renderBox = context.findRenderObject() as RenderBox;
+                          _showCategoryMenu(context, state.categories, renderBox);
                         },
-                      ),
+                  child: Container(
+                    height: 56.r,
+                    padding: EdgeInsetsDirectional.symmetric(horizontal: 16.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(color: AppColors.divider, width: 1.5.w),
                     ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: state.isCategoriesLoading
+                              ? Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 20.w,
+                                      height: 20.w,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: AppColors.primaryOfSeller,
+                                      ),
+                                    ),
+                                    SizedBox(width: 12.w),
+                                    Text(
+                                      l10n.create_store_category_hint,
+                                      style: AppTextStyles.customStyle(
+                                        context,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.textDisabled,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Text(
+                                  value?.name ?? l10n.create_store_category_hint,
+                                  style: AppTextStyles.customStyle(
+                                    context,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: value != null
+                                        ? AppColors.textPrimary
+                                        : AppColors.textDisabled,
+                                  ),
+                                ),
+                        ),
+                        FaIcon(
+                          FontAwesomeIcons.chevronDown,
+                          color: AppColors.textSecondary,
+                          size: 16.w,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             );
           },
         );
       },
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CATEGORY ICON WIDGET
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _CategoryIcon extends StatelessWidget {
+  final CategoryEntity category;
+
+  const _CategoryIcon({required this.category});
+
+  @override
+  Widget build(BuildContext context) {
+    // If icon_url is available, show network image
+    if (category.iconUrl != null && category.iconUrl!.isNotEmpty) {
+      return _buildNetworkIcon(context);
+    }
+
+    // Fallback to default icon
+    return _buildFallbackIcon();
+  }
+
+  Widget _buildNetworkIcon(BuildContext context) {
+    final iconUrl = category.iconUrl!;
+    final isSvg = iconUrl.toLowerCase().endsWith('.svg');
+
+    return Container(
+      width: 36.w,
+      height: 36.w,
+      padding: EdgeInsets.all(8.w),
+      decoration: BoxDecoration(
+        color: AppColors.primaryOfSeller.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: isSvg
+          ? SvgPicture.network(
+              iconUrl,
+              width: 20.w,
+              height: 20.w,
+              fit: BoxFit.contain,
+              placeholderBuilder: (context) => _buildLoadingIcon(),
+              // ✅ Try to apply color filter (works only for monochrome SVGs)
+              colorFilter: ColorFilter.mode(
+                AppColors.primaryOfSeller,
+                BlendMode.srcIn,
+              ),
+            )
+          : CachedNetworkImage(
+              imageUrl: iconUrl,
+              width: 20.w,
+              height: 20.w,
+              fit: BoxFit.contain,
+              placeholder: (context, url) => _buildLoadingIcon(),
+              errorWidget: (context, url, error) => _buildFallbackIcon(),
+              // ✅ Try to apply color filter for PNG/JPG
+              color: AppColors.primaryOfSeller,
+              colorBlendMode: BlendMode.srcIn,
+            ),
+    );
+  }
+
+  Widget _buildLoadingIcon() {
+    return SizedBox(
+      width: 20.w,
+      height: 20.w,
+      child: Center(
+        child: SizedBox(
+          width: 14.w,
+          height: 14.w,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: AppColors.primaryOfSeller,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFallbackIcon() {
+    return Container(
+      width: 36.w,
+      height: 36.w,
+      padding: EdgeInsets.all(8.w),
+      decoration: BoxDecoration(
+        color: AppColors.primaryOfSeller.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: FaIcon(
+        FontAwesomeIcons.tag,
+        size: 16.w,
+        color: AppColors.primaryOfSeller,
+      ),
     );
   }
 }
@@ -670,7 +1033,7 @@ class _DescriptionField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderColor        = isOverLimit ? AppColors.error : AppColors.divider;
-    final focusedBorderColor = isOverLimit ? AppColors.error : Theme.of(context).primaryColor;
+    final focusedBorderColor = isOverLimit ? AppColors.error : AppColors.primaryOfSeller;
 
     final border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(12.r),
@@ -778,13 +1141,13 @@ class _SocialLinksSection extends StatelessWidget {
                 ),
                 TextButton.icon(
                   onPressed: () => _showAddSocialDialog(context),
-                  icon: Icon(Icons.add, size: 18.w, color: Theme.of(context).primaryColor),
+                  icon: FaIcon(FontAwesomeIcons.plus, size: 16.w, color: AppColors.primaryOfSeller),
                   label: Text(
                     l10n.create_store_add_social,
                     style: AppTextStyles.customStyle(
                       context,
                       fontSize: 13,
-                      color: Theme.of(context).primaryColor,
+                      color: AppColors.primaryOfSeller,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -881,13 +1244,13 @@ class _SocialLinksSection extends StatelessWidget {
                             Container(
                               padding: EdgeInsets.all(10.w),
                               decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                                color: AppColors.primaryOfSeller.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
-                              child: Icon(
-                                Icons.link,
-                                color: Theme.of(context).primaryColor,
-                                size: 24.w,
+                              child: FaIcon(
+                                FontAwesomeIcons.link,
+                                color: AppColors.primaryOfSeller,
+                                size: 22.w,
                               ),
                             ),
                             SizedBox(width: 12.w),
@@ -927,7 +1290,7 @@ class _SocialLinksSection extends StatelessWidget {
                             padding: EdgeInsets.all(32.h),
                             child: CircularProgressIndicator(
                               strokeWidth: 2.5,
-                              color: Theme.of(context).primaryColor,
+                              color: AppColors.primaryOfSeller,
                             ),
                           ),
                         )
@@ -937,9 +1300,9 @@ class _SocialLinksSection extends StatelessWidget {
                           child: Center(
                             child: Column(
                               children: [
-                                Icon(
-                                  Icons.link_off,
-                                  size: 48.w,
+                                FaIcon(
+                                  FontAwesomeIcons.linkSlash,
+                                  size: 44.w,
                                   color: AppColors.textDisabled,
                                 ),
                                 SizedBox(height: 12.h),
@@ -984,12 +1347,12 @@ class _SocialLinksSection extends StatelessWidget {
                                       duration: const Duration(milliseconds: 200),
                                       decoration: BoxDecoration(
                                         color: isSelected
-                                            ? Theme.of(context).primaryColor.withValues(alpha: 0.12)
+                                            ? AppColors.primaryOfSeller.withValues(alpha: 0.12)
                                             : AppColors.surface,
                                         borderRadius: BorderRadius.circular(16.r),
                                         border: Border.all(
                                           color: isSelected
-                                              ? Theme.of(context).primaryColor
+                                              ? AppColors.primaryOfSeller
                                               : AppColors.divider,
                                           width: isSelected ? 2.w : 1.w,
                                         ),
@@ -1016,11 +1379,11 @@ class _SocialLinksSection extends StatelessWidget {
                                                 width: 40.w,
                                                 height: 40.w,
                                                 fit: BoxFit.contain,
-                                                errorWidget: (context, url, error) => Icon(
-                                                  Icons.link,
-                                                  size: 40.w,
+                                                errorWidget: (context, url, error) => FaIcon(
+                                                  FontAwesomeIcons.link,
+                                                  size: 36.w,
                                                   color: isSelected
-                                                      ? Theme.of(context).primaryColor
+                                                      ? AppColors.primaryOfSeller
                                                       : AppColors.textDisabled,
                                                 ),
                                                 placeholder: (context, url) => SizedBox(
@@ -1029,18 +1392,18 @@ class _SocialLinksSection extends StatelessWidget {
                                                   child: Center(
                                                     child: CircularProgressIndicator(
                                                       strokeWidth: 2,
-                                                      color: Theme.of(context).primaryColor,
+                                                      color: AppColors.primaryOfSeller,
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                             )
                                           else
-                                            Icon(
-                                              Icons.link,
-                                              size: 40.w,
+                                            FaIcon(
+                                              FontAwesomeIcons.link,
+                                              size: 36.w,
                                               color: isSelected
-                                                  ? Theme.of(context).primaryColor
+                                                  ? AppColors.primaryOfSeller
                                                   : AppColors.textDisabled,
                                             ),
                                           SizedBox(height: 8.h),
@@ -1053,7 +1416,7 @@ class _SocialLinksSection extends StatelessWidget {
                                                   ? FontWeight.w600
                                                   : FontWeight.w500,
                                               color: isSelected
-                                                  ? Theme.of(context).primaryColor
+                                                  ? AppColors.primaryOfSeller
                                                   : AppColors.textPrimary,
                                             ),
                                             textAlign: TextAlign.center,
@@ -1063,10 +1426,10 @@ class _SocialLinksSection extends StatelessWidget {
                                           if (isSelected)
                                             Padding(
                                               padding: EdgeInsets.only(top: 4.h),
-                                              child: Icon(
-                                                Icons.check_circle,
-                                                size: 16.w,
-                                                color: Theme.of(context).primaryColor,
+                                              child: FaIcon(
+                                                FontAwesomeIcons.circleCheck,
+                                                size: 14.w,
+                                                color: AppColors.primaryOfSeller,
                                               ),
                                             ),
                                         ],
@@ -1113,10 +1476,13 @@ class _SocialLinksSection extends StatelessWidget {
                                   fontSize: 14,
                                   color: AppColors.textDisabled,
                                 ),
-                                prefixIcon: Icon(
-                                  Icons.link,
-                                  color: AppColors.textSecondary,
-                                  size: 20.w,
+                                prefixIcon: Padding(
+                                  padding: EdgeInsets.all(12.w),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.link,
+                                    color: AppColors.textSecondary,
+                                    size: 18.w,
+                                  ),
                                 ),
                                 filled: true,
                                 fillColor: AppColors.surface,
@@ -1137,7 +1503,7 @@ class _SocialLinksSection extends StatelessWidget {
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12.r),
                                   borderSide: BorderSide(
-                                    color: Theme.of(context).primaryColor,
+                                    color: AppColors.primaryOfSeller,
                                     width: 2.w,
                                   ),
                                 ),
@@ -1205,7 +1571,7 @@ class _SocialLinksSection extends StatelessWidget {
                                         : null,
                                     height: 50.h,
                                     backgroundColor: selectedPlatform != null
-                                        ? Theme.of(context).primaryColor
+                                        ? AppColors.primaryOfSeller
                                         : AppColors.textDisabled,
                                     textStyle: AppTextStyles.customStyle(
                                       context,
@@ -1275,25 +1641,25 @@ class _SocialLinkTile extends StatelessWidget {
                   width: 20.w,
                   height: 20.w,
                   fit: BoxFit.contain,
-                  errorWidget: (context, url, error) => Icon(
-                    Icons.link,
-                    size: 20.w,
-                    color: Theme.of(context).primaryColor,
+                  errorWidget: (context, url, error) => FaIcon(
+                    FontAwesomeIcons.link,
+                    size: 18.w,
+                    color: AppColors.primaryOfSeller,
                   ),
                   placeholder: (context, url) => SizedBox(
                     width: 20.w,
                     height: 20.w,
                     child: CircularProgressIndicator(
                       strokeWidth: 1.5,
-                      color: Theme.of(context).primaryColor,
+                      color: AppColors.primaryOfSeller,
                     ),
                   ),
                 )
               else
-                Icon(
-                  Icons.link,
-                  size: 20.w,
-                  color: Theme.of(context).primaryColor,
+                FaIcon(
+                  FontAwesomeIcons.link,
+                  size: 18.w,
+                  color: AppColors.primaryOfSeller,
                 ),
               SizedBox(width: 8.w),
               Expanded(
@@ -1324,7 +1690,7 @@ class _SocialLinkTile extends StatelessWidget {
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.close, size: 18.w, color: AppColors.error),
+                icon: FaIcon(FontAwesomeIcons.xmark, size: 16.w, color: AppColors.error),
                 onPressed: onRemove,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
@@ -1422,20 +1788,20 @@ class _DocPickerRow extends HookWidget {
         padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
         decoration: BoxDecoration(
           color: hasFile
-              ? Theme.of(context).primaryColor.withValues(alpha: 0.06)
+              ? AppColors.primaryOfSeller.withValues(alpha: 0.06)
               : AppColors.surface,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: hasFile ? Theme.of(context).primaryColor : AppColors.divider,
+            color: hasFile ? AppColors.primaryOfSeller : AppColors.divider,
             width: 1.5.w,
           ),
         ),
         child: Row(
           children: [
-            Icon(
-              hasFile ? Icons.check_circle_outline : Icons.upload_file_outlined,
-              size: 22.w,
-              color: hasFile ? Theme.of(context).primaryColor : AppColors.textDisabled,
+            FaIcon(
+              hasFile ? FontAwesomeIcons.circleCheck : FontAwesomeIcons.fileArrowUp,
+              size: 20.w,
+              color: hasFile ? AppColors.primaryOfSeller : AppColors.textDisabled,
             ),
             SizedBox(width: 10.w),
             Expanded(
@@ -1456,7 +1822,7 @@ class _DocPickerRow extends HookWidget {
             if (hasFile)
               GestureDetector(
                 onTap: () => fileNotifier.value = null,
-                child: Icon(Icons.close, size: 18.w, color: AppColors.error),
+                child: FaIcon(FontAwesomeIcons.xmark, size: 16.w, color: AppColors.error),
               ),
           ],
         ),
@@ -1527,12 +1893,12 @@ class _LocationPickerSection extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
                 decoration: BoxDecoration(
                   color: hasLocation
-                      ? Theme.of(context).primaryColor.withValues(alpha: 0.06)
+                      ? AppColors.primaryOfSeller.withValues(alpha: 0.06)
                       : AppColors.surface,
                   borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(
                     color: hasLocation
-                        ? Theme.of(context).primaryColor
+                        ? AppColors.primaryOfSeller
                         : AppColors.divider,
                     width: 1.5.w,
                   ),
@@ -1545,7 +1911,7 @@ class _LocationPickerSection extends StatelessWidget {
                             height: 18.w,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Theme.of(context).primaryColor,
+                              color: AppColors.primaryOfSeller,
                             ),
                           ),
                           SizedBox(width: 10.w),
@@ -1562,13 +1928,13 @@ class _LocationPickerSection extends StatelessWidget {
                       )
                     : Row(
                         children: [
-                          Icon(
+                          FaIcon(
                             hasLocation
-                                ? Icons.location_on
-                                : Icons.my_location_outlined,
-                            size: 20.w,
+                                ? FontAwesomeIcons.locationDot
+                                : FontAwesomeIcons.locationCrosshairs,
+                            size: 18.w,
                             color: hasLocation
-                                ? Theme.of(context).primaryColor
+                                ? AppColors.primaryOfSeller
                                 : AppColors.textDisabled,
                           ),
                           SizedBox(width: 10.w),
@@ -1588,10 +1954,10 @@ class _LocationPickerSection extends StatelessWidget {
                             ),
                           ),
                           if (hasLocation)
-                            Icon(
-                              Icons.check_circle,
-                              size: 18.w,
-                              color: Theme.of(context).primaryColor,
+                            FaIcon(
+                              FontAwesomeIcons.circleCheck,
+                              size: 16.w,
+                              color: AppColors.primaryOfSeller,
                             ),
                         ],
                       ),
@@ -1877,13 +2243,13 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
                         width: 40.w,
                         height: 40.h,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
+                          color: AppColors.primaryOfSeller,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
-                          Icons.location_on,
+                        child: FaIcon(
+                          FontAwesomeIcons.locationDot,
                           color: AppColors.surface,
-                          size: 22.w,
+                          size: 20.w,
                         ),
                       ),
                     ),
@@ -1916,10 +2282,10 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
                               },
                               child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 12.w),
-                                child: Icon(
-                                  Icons.search,
+                                child: FaIcon(
+                                  FontAwesomeIcons.magnifyingGlass,
                                   color: AppColors.textSecondary,
-                                  size: 22.w,
+                                  size: 18.w,
                                 ),
                               ),
                             ),
@@ -1960,12 +2326,12 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
                               onTap: _isListening ? _stopListening : _startListening,
                               child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 12.w),
-                                child: Icon(
-                                  _isListening ? Icons.mic : Icons.mic_none,
+                                child: FaIcon(
+                                  _isListening ? FontAwesomeIcons.microphone : FontAwesomeIcons.microphoneLines,
                                   color: _isListening
-                                      ? Theme.of(context).primaryColor
+                                      ? AppColors.primaryOfSeller
                                       : AppColors.textSecondary,
-                                  size: 22.w,
+                                  size: 18.w,
                                 ),
                               ),
                             ),
@@ -2049,7 +2415,7 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
                           padding: EdgeInsets.only(bottom: 36.h),
                           child: Icon(
                             Icons.location_pin,
-                            color: Theme.of(context).primaryColor,
+                            color: AppColors.primaryOfSeller,
                             size: 48.w,
                             shadows: [
                               Shadow(
@@ -2075,13 +2441,13 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
                                 width: 80.w,
                                 height: 80.w,
                                 decoration: BoxDecoration(
-                                  color: AppColors.primary.withValues(alpha: 0.1),
+                                  color: AppColors.primaryOfSeller.withValues(alpha: 0.1),
                                   shape: BoxShape.circle,
                                 ),
-                                child: Icon(
-                                  Icons.location_searching_rounded,
-                                  size: 40.w,
-                                  color: AppColors.primary,
+                                child: FaIcon(
+                                  FontAwesomeIcons.locationCrosshairs,
+                                  size: 36.w,
+                                  color: AppColors.primaryOfSeller,
                                 ),
                               ),
                               SizedBox(height: 24.h),
@@ -2091,7 +2457,7 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
                                 width: 40.w,
                                 height: 40.w,
                                 child: CircularProgressIndicator(
-                                  color: AppColors.primary,
+                                  color: AppColors.primaryOfSeller,
                                   strokeWidth: 3.w,
                                 ),
                               ),
@@ -2147,10 +2513,10 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
                     children: [
                       Row(
                         children: [
-                          Icon(
-                            Icons.location_on,
-                            color: Theme.of(context).primaryColor,
-                            size: 20.w,
+                          FaIcon(
+                            FontAwesomeIcons.locationDot,
+                            color: AppColors.primaryOfSeller,
+                            size: 18.w,
                           ),
                           SizedBox(width: 8.w),
                           Text(
@@ -2159,7 +2525,7 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
                               context,
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: Theme.of(context).primaryColor,
+                              color: AppColors.primaryOfSeller,
                             ),
                           ),
                         ],
@@ -2174,7 +2540,7 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
                                   height: 14.w,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: AppColors.primary,
+                                    color: AppColors.primaryOfSeller,
                                   ),
                                 ),
                                 SizedBox(width: 8.w),
@@ -2211,7 +2577,7 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
                             : null,
                         height: 48.h,
                         backgroundColor: _selectedLatLng != null
-                            ? Theme.of(context).primaryColor
+                            ? AppColors.primaryOfSeller
                             : AppColors.textDisabled,
                         textStyle: AppTextStyles.customStyle(
                           context,
@@ -2258,7 +2624,7 @@ class _TermsCheckbox extends StatelessWidget {
                   child: Checkbox(
                     value: checked,
                     onChanged: (v) => agreeToTerms.value = v ?? false,
-                    activeColor: Theme.of(context).primaryColor,
+                    activeColor: AppColors.primaryOfSeller,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4.r),
                     ),

@@ -42,6 +42,32 @@ class SellerRoutingResolver {
       return;
     }
 
+    // ── Check roles before proceeding ────────────────────────────────────────
+    // If user is UserModel, check the roles array to determine seller status
+    if (user is UserModel) {
+      // Check if seller_pending → redirect to seller home with pending state
+      if (user.roles.contains('seller_pending')) {
+        if (context.mounted) {
+          context.go(
+            AppRouter.sellerHome,
+            extra: {'isGuest': false, 'isPending': true},
+          );
+        }
+        return;
+      }
+      
+      // Check if seller (approved) → redirect to seller home (normal mode)
+      if (user.roles.contains('seller') && !user.roles.contains('seller_pending')) {
+        if (context.mounted) {
+          context.go(
+            AppRouter.sellerHome,
+            extra: {'isGuest': false, 'isPending': false},
+          );
+        }
+        return;
+      }
+    }
+
     // Prefer fresh stores from the API model; fall back to cache.
     final List<UserStoreModel> stores;
     if (user is UserModel && user.stores.isNotEmpty) {
@@ -56,6 +82,7 @@ class SellerRoutingResolver {
       isStoreCreated: user.isStoreCreated,
       stores:         stores,
       authLocalDs:    authLocalDs,
+      userRoles:     user is UserModel ? user.roles : [],
     );
   }
 
@@ -68,9 +95,31 @@ class SellerRoutingResolver {
     required bool isOnboardingCompleted,
     required bool isStoreCreated,
     required AuthLocalDataSource authLocalDs,
+    List<String> userRoles = const [],
   }) async {
     if (!isOnboardingCompleted) {
       if (context.mounted) context.go(AppRouter.sellerOnboarding);
+      return;
+    }
+
+    // ── Check roles from cache if available ──────────────────────────────────
+    if (userRoles.contains('seller_pending')) {
+      if (context.mounted) {
+        context.go(
+          AppRouter.sellerHome,
+          extra: {'isGuest': false, 'isPending': true},
+        );
+      }
+      return;
+    }
+    
+    if (userRoles.contains('seller') && !userRoles.contains('seller_pending')) {
+      if (context.mounted) {
+        context.go(
+          AppRouter.sellerHome,
+          extra: {'isGuest': false, 'isPending': false},
+        );
+      }
       return;
     }
 
@@ -82,6 +131,7 @@ class SellerRoutingResolver {
       isStoreCreated: isStoreCreated,
       stores:         stores,
       authLocalDs:    authLocalDs,
+      userRoles:      userRoles,
     );
   }
 
@@ -92,30 +142,73 @@ class SellerRoutingResolver {
     required bool isStoreCreated,
     required List<UserStoreModel> stores,
     required AuthLocalDataSource authLocalDs,
+    List<String> userRoles = const [],
   }) async {
+    // ── Priority Check: Roles-based routing ──────────────────────────────────
+    // This takes precedence over store-based routing
+    if (userRoles.contains('seller_pending')) {
+      context.go(
+        AppRouter.sellerHome,
+        extra: {'isGuest': false, 'isPending': true},
+      );
+      return;
+    }
+    
+    if (userRoles.contains('seller') && !userRoles.contains('seller_pending')) {
+      context.go(
+        AppRouter.sellerHome,
+        extra: {'isGuest': false, 'isPending': false},
+      );
+      return;
+    }
+
+    // ── Fallback: Store-based routing (legacy logic) ─────────────────────────
     // Scenario 1 — no stores in the list
     if (stores.isEmpty) {
-      context.go(
-        isStoreCreated ? AppRouter.storeUnderReview : AppRouter.createStore,
-      );
+      // If no stores and not created yet, go to create store
+      // Otherwise, they might be waiting for approval
+      if (!isStoreCreated) {
+        context.go(AppRouter.createStore);
+      } else {
+        // Store created but not in list yet → probably pending
+        context.go(
+          AppRouter.sellerHome,
+          extra: {'isGuest': false, 'isPending': true},
+        );
+      }
       return;
     }
 
     // Scenario 2 — every store is still pending review
     if (stores.every((s) => s.isPending)) {
-      context.go(AppRouter.storeUnderReview);
+      context.go(
+        AppRouter.sellerHome,
+        extra: {'isGuest': false, 'isPending': true},
+      );
       return;
     }
 
     final activeStores = stores.where((s) => s.isActive).toList();
 
     if (activeStores.length == 1) {
-      // Scenario 3 — exactly one active store: auto-select and go home
+      // Scenario 3 — exactly one active store: auto-select and go to seller home
       await authLocalDs.saveSelectedStoreId(activeStores.first.id);
-      if (context.mounted) context.go(AppRouter.home);
-    } else {
+      if (context.mounted) {
+        context.go(
+          AppRouter.sellerHome,
+          extra: {'isGuest': false, 'isPending': false},
+        );
+      }
+    } else if (activeStores.length > 1) {
       // Scenario 4 — multiple active stores: let the seller pick
+      // After selection in StoreSelectionPage, they will be redirected to seller home
       context.go(AppRouter.storeSelection, extra: activeStores);
+    } else {
+      // No active stores but has stores → all must be pending/rejected
+      context.go(
+        AppRouter.sellerHome,
+        extra: {'isGuest': false, 'isPending': true},
+      );
     }
   }
 }

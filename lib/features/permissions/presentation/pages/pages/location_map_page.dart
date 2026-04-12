@@ -13,6 +13,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../../../core/widgets/buttons/buttons.dart';
 import '../../../../../../config/dependency_injection/injection_container.dart';
 
@@ -371,10 +372,12 @@ class _LocationMapPageState extends State<LocationMapPage> {
                           color: AppColors.primary.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
-                          Icons.location_searching_rounded,
-                          size: 40.w,
-                          color: AppColors.primary,
+                        child: Center(
+                          child: FaIcon(
+                            FontAwesomeIcons.locationCrosshairs,
+                            size: 36.w,
+                            color: AppColors.primary,
+                          ),
                         ),
                       ),
                       SizedBox(height: 24.h),
@@ -433,7 +436,7 @@ class _LocationMapPageState extends State<LocationMapPage> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.wifi_off, color: AppColors.surface, size: 18.w),
+                      FaIcon(FontAwesomeIcons.wifi, color: AppColors.surface, size: 18.w),
                       SizedBox(width: 8.w),
                       Text(
                         AppLocalizations.of(context)!.networkError,
@@ -493,10 +496,12 @@ class _LocationMapPageState extends State<LocationMapPage> {
                                     ),
                                   ),
                                 )
-                              : Icon(
-                                  Icons.location_on,
-                                  color: AppColors.surface,
-                                  size: 22.w,
+                              : Center(
+                                  child: FaIcon(
+                                    FontAwesomeIcons.locationDot,
+                                    color: AppColors.surface,
+                                    size: 20.w,
+                                  ),
                                 ),
                         ),
                       );
@@ -536,10 +541,12 @@ class _LocationMapPageState extends State<LocationMapPage> {
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(horizontal: 12.w),
-                              child: Icon(
-                                Icons.search,
-                                color: AppColors.grey600,
-                                size: 22.w,
+                              child: Center(
+                                child: FaIcon(
+                                  FontAwesomeIcons.magnifyingGlass,
+                                  color: AppColors.grey600,
+                                  size: 20.w,
+                                ),
                               ),
                             ),
                           ),
@@ -583,12 +590,14 @@ class _LocationMapPageState extends State<LocationMapPage> {
                                 : _startListening,
                             child: Container(
                               padding: EdgeInsets.symmetric(horizontal: 12.w),
-                              child: Icon(
-                                _isListening ? Icons.mic : Icons.mic_none,
-                                color: _isListening
-                                    ? Theme.of(context).primaryColor
-                                    : AppColors.grey600,
-                                size: 22.w,
+                              child: Center(
+                                child: FaIcon(
+                                  _isListening ? FontAwesomeIcons.microphone : FontAwesomeIcons.microphoneLines,
+                                  color: _isListening
+                                      ? Theme.of(context).primaryColor
+                                      : AppColors.grey600,
+                                  size: 20.w,
+                                ),
                               ),
                             ),
                           ),
@@ -609,10 +618,12 @@ class _LocationMapPageState extends State<LocationMapPage> {
                         color: AppColors.surface,
                         borderRadius: BorderRadius.circular(8.r),
                       ),
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        color: AppColors.grey800,
-                        size: 18.w,
+                      child: Center(
+                        child: FaIcon(
+                          FontAwesomeIcons.chevronLeft,
+                          color: AppColors.grey800,
+                          size: 18.w,
+                        ),
                       ),
                     ),
                   ),
@@ -659,8 +670,8 @@ class _LocationMapPageState extends State<LocationMapPage> {
                           // Location label
                           Row(
                             children: [
-                              Icon(
-                                Icons.location_on,
+                              FaIcon(
+                                FontAwesomeIcons.locationDot,
                                 color: Theme.of(context).primaryColor,
                                 size: 22.w,
                               ),

@@ -3,16 +3,16 @@ import 'package:logger/logger.dart';
 
 import '../../../core/network/dio_client.dart';
 import '../../../core/network/network_info.dart';
-import '../../../features/seller_flow/SellerProducts/data/datasources/seller_products_remote_data_source.dart';
-import '../../../features/seller_flow/SellerProducts/data/repositories/seller_products_repository_impl.dart';
-import '../../../features/seller_flow/SellerProducts/domain/repositories/seller_products_repository.dart';
-import '../../../features/seller_flow/SellerProducts/domain/use_cases/create_product_use_case.dart';
-import '../../../features/seller_flow/SellerProducts/domain/use_cases/delete_product_use_case.dart';
-import '../../../features/seller_flow/SellerProducts/domain/use_cases/get_product_use_case.dart';
-import '../../../features/seller_flow/SellerProducts/domain/use_cases/list_products_use_case.dart';
-import '../../../features/seller_flow/SellerProducts/domain/use_cases/update_product_status_use_case.dart';
-import '../../../features/seller_flow/SellerProducts/domain/use_cases/update_product_use_case.dart';
-import '../../../features/seller_flow/SellerProducts/presentation/cubit/seller_products_cubit.dart';
+import '../../../features/seller_flow/SellerCreateProduct/data/datasources/seller_products_remote_data_source.dart';
+import '../../../features/seller_flow/SellerCreateProduct/data/repositories/seller_products_repository_impl.dart';
+import '../../../features/seller_flow/SellerCreateProduct/domain/repositories/seller_products_repository.dart';
+import '../../../features/seller_flow/SellerCreateProduct/domain/use_cases/create_product_use_case.dart';
+import '../../../features/seller_flow/SellerCreateProduct/domain/use_cases/delete_product_use_case.dart';
+import '../../../features/seller_flow/SellerCreateProduct/domain/use_cases/get_product_use_case.dart';
+import '../../../features/seller_flow/SellerCreateProduct/domain/use_cases/list_products_use_case.dart';
+import '../../../features/seller_flow/SellerCreateProduct/domain/use_cases/update_product_status_use_case.dart';
+import '../../../features/seller_flow/SellerCreateProduct/domain/use_cases/update_product_use_case.dart';
+import '../../../features/seller_flow/SellerCreateProduct/presentation/cubit/seller_products_cubit.dart';
 
 void registerSellerProductsDependencies(GetIt sl) {
   // ════════════════════════════════════════════════════════

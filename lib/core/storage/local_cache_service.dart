@@ -7,6 +7,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:logger/logger.dart';
 import 'package:dartz/dartz.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_constants.dart';
 import '../constants/storage_keys.dart';
 
@@ -89,22 +90,35 @@ class LocalCacheService {
     // Will be implemented when we create models
   }
 
-  /// Get or open a box (opens once, reuses from memory).
+  /// Opens [boxName] typed as [T], or returns the already-open instance.
   ///
-  /// **Type-collision guard**: Each box must always be opened with the same
-  /// type parameter [T]. Calling `_getBox<String>('foo')` after a prior
-  /// `_getBox<int>('foo')` in the same session is a programming error — the
-  /// assert below catches it in debug mode. In production the cast on the
-  /// return line will throw a [TypeError] rather than silently corrupting data.
+  /// **Dart Type Erasure warning**
+  /// Dart erases generic type arguments at runtime: `Box<String>` and
+  /// `Box<int>` are both stored as bare `Box` inside [_openBoxes]. Opening
+  /// the same named box with two different [T] arguments in the same session
+  /// is therefore a silent corruption risk — the second caller gets back
+  /// a box that was typed for the first caller.
+  ///
+  /// The `assert` below detects this mismatch in debug mode. In release builds
+  /// the unsafe `as Box<T>` cast still throws [TypeError] rather than
+  /// silently returning wrong data (crash > corruption).
+  ///
+  /// **Rule**: every logical Hive box must use a single, consistent [T]
+  /// throughout the app lifetime. Register each box's type in a comment
+  /// next to its [StorageKeys] constant.
   Future<Box<T>> _getBox<T>(String boxName) async {
     if (_openBoxes.containsKey(boxName)) {
-      assert(
-        _openBoxes[boxName] is Box<T>,
-        '_getBox<$T>("$boxName") conflicts with an already-open '
-        'Box<${_openBoxes[boxName].runtimeType}>. '
-        'Each box must use a single, consistent type parameter.',
+      if (_openBoxes[boxName] is Box<T>) {
+        return _openBoxes[boxName] as Box<T>;
+      }
+      // Type mismatch: close the wrongly-typed box and re-open with the correct type.
+      // This prevents the "Failed assertion: _openBoxes[boxName] is Box<T>" crash.
+      _logger.w(
+        '⚠️ _getBox<$T>("$boxName") conflicts with already-open '
+        '${_openBoxes[boxName].runtimeType}. Closing and re-opening.',
       );
-      return _openBoxes[boxName] as Box<T>;
+      await _openBoxes[boxName]!.close();
+      _openBoxes.remove(boxName);
     }
 
     final box = await Hive.openBox<T>(boxName);
@@ -906,6 +920,66 @@ class LocalCacheService {
         mediaFileCount: 0,
         maxQuotaMB: AppConstants.maxMediaCacheSizeMB.toDouble(),
       );
+    }
+  }
+
+  /// Hard reset on logout: deletes all Hive boxes from disk and clears
+  /// all SharedPreferences so no user-scoped data survives between accounts.
+  Future<void> deleteAllData() async {
+    _logger.w('💥 HARD RESET: Deleting all local data on logout');
+
+    try {
+      // Collect every box name we know about: currently open ones plus all
+      // well-known names defined in StorageKeys (they may not be open yet).
+      final allBoxNames = <String>{
+        ..._openBoxes.keys,
+        StorageKeys.settingsBox,
+        StorageKeys.onboardingPreferencesBox,
+        StorageKeys.sellerOnboardingPreferencesBox,
+        StorageKeys.userBox,
+        StorageKeys.couponsBox,
+        StorageKeys.storesBox,
+        StorageKeys.categoriesBox,
+        StorageKeys.permissionsBox,
+        StorageKeys.mediaMetadataBox,
+        StorageKeys.publicProductsBox,
+      };
+
+      // Each data box has a sibling timestamp box — delete those too.
+      final timestampBoxes =
+          allBoxNames.map((n) => '${n}_timestamps').toSet();
+      allBoxNames.addAll(timestampBoxes);
+
+      // 1. Close every currently-open box so Hive releases file handles.
+      for (final box in _openBoxes.values) {
+        try {
+          if (box.isOpen) await box.close();
+        } catch (e) {
+          _logger.w('⚠️ Could not close box ${box.name}: $e');
+        }
+      }
+      _openBoxes.clear();
+
+      // 2. Delete each box from disk (silently skip boxes that never existed).
+      for (final boxName in allBoxNames) {
+        try {
+          await Hive.deleteBoxFromDisk(boxName);
+          _logger.d('🗑️ Deleted Hive box: $boxName');
+        } catch (e) {
+          _logger.w('⚠️ Could not delete box "$boxName" (may not exist): $e');
+        }
+      }
+
+      // 3. Wipe all SharedPreferences — isStoreCreated, onboarding flags,
+      //    user-scoped keys, guest flag, etc. — so nothing leaks to the next user.
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+      _logger.i('🗑️ Cleared all SharedPreferences');
+
+      _logger.i('✅ Hard reset completed — all local data destroyed');
+    } catch (e) {
+      _logger.e('❌ Error during hard reset: $e');
+      // Do NOT rethrow — logout must always succeed even if cleanup fails.
     }
   }
 

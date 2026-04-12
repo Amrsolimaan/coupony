@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../widgets/organisms/permission_content_card.dart';
 
 /// Location Error Page
@@ -153,9 +154,9 @@ class _LocationErrorPageState extends State<LocationErrorPage>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Icon matching permission_loading_page style
-          Icon(
-            Icons.location_searching,
-            size: 100.w,
+          FaIcon(
+            FontAwesomeIcons.locationCrosshairs,
+            size: 90.w,
             color: Theme.of(context).primaryColor,
           ),
 

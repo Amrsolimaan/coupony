@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Permission Loading Page
 /// Final loading screen after permissions are completed
@@ -47,9 +48,9 @@ class PermissionLoadingPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // App Logo or Icon
-                      Icon(
-                        Icons.check_circle_outline,
-                        size: 100.w,
+                      FaIcon(
+                        FontAwesomeIcons.circleCheck,
+                        size: 90.w,
                         color: Theme.of(context).primaryColor,
                       ),
 

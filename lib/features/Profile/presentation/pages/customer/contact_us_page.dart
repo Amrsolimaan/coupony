@@ -52,10 +52,12 @@ class ContactUsPage extends StatelessWidget {
         ),
       ),
       leading: IconButton(
-        icon: Icon(
-          Icons.arrow_forward_ios_rounded,
-          size: 20.w,
-          color: AppColors.textPrimary,
+        icon: Center(
+          child: FaIcon(
+            FontAwesomeIcons.chevronRight,
+            size: 20.w,
+            color: AppColors.textPrimary,
+          ),
         ),
         onPressed: () => context.pop(),
       ),
@@ -96,10 +98,12 @@ class ContactUsPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Icon(
-                    Icons.support_agent_rounded,
-                    size: 40.w,
-                    color: Colors.white,
+                  child: Center(
+                    child: FaIcon(
+                      FontAwesomeIcons.headset,
+                      size: 38.w,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -199,7 +203,7 @@ class ContactUsPage extends StatelessWidget {
             child: Center(
               child: FaIcon(
                 icon,
-                size: 22.w,
+                size: 24.w,
                 color: color,
               ),
             ),
@@ -221,7 +225,7 @@ class ContactUsPage extends StatelessWidget {
 
           // ── Arrow Icon ──────────────────────────────────────────────────────
           Icon(
-            Icons.arrow_forward_ios_rounded,
+            Icons.arrow_back_ios_rounded,
             size: 16.w,
             color: AppColors.textSecondary,
           ),

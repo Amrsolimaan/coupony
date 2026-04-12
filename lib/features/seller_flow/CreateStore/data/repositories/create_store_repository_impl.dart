@@ -1,6 +1,7 @@
 import 'package:coupony/core/errors/exceptions.dart';
 import 'package:coupony/core/errors/failures.dart';
 import 'package:coupony/core/network/network_info.dart';
+import 'package:coupony/features/auth/data/models/user_store_model.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
@@ -32,6 +33,36 @@ class CreateStoreRepositoryImpl implements CreateStoreRepository {
       return Right(result);
     } catch (e) {
       logger.e('CreateStore failed: $e');
+      return Left(_mapToFailure(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> updateStore(String storeId, CreateStoreParams params) async {
+    if (!await networkInfo.isConnected) {
+      return const Left(NetworkFailure('error_no_internet_check_network'));
+    }
+
+    try {
+      final result = await remoteDataSource.updateStore(storeId, params);
+      return Right(result);
+    } catch (e) {
+      logger.e('UpdateStore failed: $e');
+      return Left(_mapToFailure(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<UserStoreModel>>> getStores() async {
+    if (!await networkInfo.isConnected) {
+      return const Left(NetworkFailure('error_no_internet_check_network'));
+    }
+
+    try {
+      final stores = await remoteDataSource.getStores();
+      return Right(stores);
+    } catch (e) {
+      logger.e('GetStores failed: $e');
       return Left(_mapToFailure(e));
     }
   }

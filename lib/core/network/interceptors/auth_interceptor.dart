@@ -52,6 +52,12 @@ class AuthInterceptor extends Interceptor {
       return handler.next(err);
     }
 
+    // Don't try to refresh for change-password — 401 here means wrong
+    // current password, NOT an expired token. Pass it through as-is.
+    if (err.requestOptions.path.contains(ApiConstants.changePassword)) {
+      return handler.next(err);
+    }
+
     // If already refreshing, queue this request
     if (_isRefreshing) {
       return _queueRequest(err.requestOptions, handler);

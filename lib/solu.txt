@@ -1,0 +1,452 @@
+بص المستخدم لما يسجل دخول لاول مرة بيكون
+rule : customer 
+******
+بعد لما بيقدم على محل بييكون : 
+{
+    "message": "Login successful.",
+    "data": {
+        "user": {
+            "id": "3d1d4b73-c732-4c82-bd0c-21f87a23a64a",
+            "email": "amrsoliman820@gmail.com",
+            "status": "active",
+            "language": "ar",
+            "full_name": "عمرو سليمان",
+            "phone_number": "01008864664",
+            "roles": [
+                "seller_pending",
+                "customer"
+            ],
+            "profile": {
+                "first_name": "عمرو",
+                "last_name": "سليمان",
+                "avatar": "https://api.coupony.shop/users/avatars/default.svg",
+                "date_of_birth": null,
+                "bio": null,
+                "gender": "male"
+            },
+            "points": null,
+            "created_at": "2026-04-08T22:44:27.000000Z"
+        },
+        "session": {
+            "token": "3f6d76c9fda01c93255b33791509a4bba79ec8ad296fc0d91c435016a47af2ba",
+            "ip_address": "3.220.220.230",
+            "user_agent": "Apidog/1.0.0 (https://apidog.com)",
+            "device_type": "desktop",
+            "expires_at": "2026-04-10T06:44:27.292251Z",
+            "last_activity": 1775799867,
+            "user_id": "3d1d4b73-c732-4c82-bd0c-21f87a23a64a",
+            "id": "a808cfa2-16c0-437d-ba05-d3bd476e909f",
+            "updated_at": "2026-04-10T05:44:27.000000Z",
+            "created_at": "2026-04-10T05:44:27.000000Z"
+        },
+        "role": "customer",
+        "is_onboarding_completed": true,
+        "access_token": "33|O6abhXW3EhWD4zwaBd71H7n3xD9e3Sd62lxAehZc7144c5e3",
+        "refresh_token": "e3a46e3501396620d23e86a4b6d5bece1cb7e3780735c1615ace1f08a6cd9c41",
+        "token_type": "Bearer",
+        "expires_in": 3600
+    }
+}
+
+****************
+بعد ما يتم الموافقه على المحل بيكون : 
+"
+    "message": "Login successful.",
+    "data": {
+        "user": {
+            "id": "3d1d4b73-c732-4c82-bd0c-21f87a23a64a",
+            "email": "amrsoliman820@gmail.com",
+            "status": "active",
+            "language": "ar",
+            "full_name": "عمرو سليمان",
+            "phone_number": "01008864664",
+            "roles": [
+                "seller",
+                "customer"
+            ],
+            "profile": {
+                "first_name": "عمرو",
+                "last_name": "سليمان",
+                "avatar": "https://api.coupony.shop/users/avatars/default.svg",
+                "date_of_birth": null,
+                "bio": null,
+                "gender": "male"
+            },
+            "points": null,
+            "created_at": "2026-04-08T22:44:27.000000Z"
+        },
+        "session": {
+            "token": "55ed0b1f36c0a9d41a5319746674cbd5e97f344c39ac21540298251030932436",
+            "ip_address": "3.220.220.230",
+            "user_agent": "Apidog/1.0.0 (https://apidog.com)",
+            "device_type": "desktop",
+            "expires_at": "2026-04-10T06:47:24.328447Z",
+            "last_activity": 1775800044,
+            "user_id": "3d1d4b73-c732-4c82-bd0c-21f87a23a64a",
+            "id": "03fc99c1-faa0-4bb7-9f53-261cf6cc1c70",
+            "updated_at": "2026-04-10T05:47:24.000000Z",
+            "created_at": "2026-04-10T05:47:24.000000Z"
+        },
+        "role": "customer",
+        "is_onboarding_completed": true,
+        "access_token": "35|y5L0OsWe4vDwlRxrZO41lC0Ev9FeFvMm9MKL0Uu46a31024d",
+        "refresh_token": "0a2242fffb0dd198bb450647775a181e63a89c3731af5755ee813a2cc17e0cb4",
+        "token_type": "Bearer",
+        "expires_in": 3600
+    }" 
+فا هنا  بكل سهوله لازم استخدم البيانات للتحد لو هو لسه 
+ 
+customer only : 
+
+
+[GoRouter] pushing /become-merchant
+
+"
+اما لو 
+            "roles": [
+                "seller_pending",
+                "customer"
+            ],
+"
+اعرضه صفحة  :merchant_pending_page.dart
+
+
+اما لو 
+ 
+"
+            "roles": [
+                "seller",
+                "customer"
+            ],
+ "
+نحوله 
+merchant_approved_page.dart 
+
+
+لكن هناك بعض السيناريوهات : 
+
+عندما يرسل الطلب يكون 
+لو عملنا  get :"/api/v1/stores"
+"
+"success": true,
+    "message": "تم جلب المتاجر بنجاح.",
+    "data": {
+        "data": [
+            {
+                "id": "8c3c3a9d-e182-41dc-ae21-0328595f2f03",
+                "name": "الطيب للعقرات",
+                "description": "عروض على حصرية على تأجير الڤلل والفنادق والييوت",
+                "logo_url": "https://api.coupony.shop/storage/stores/8c3c3a9d-e182-41dc-ae21-0328595f2f03/logo/Grn7zbk6iGvinSwBqjtqgtr0Z4sDxQ2T0MFPHDR3.jpg",
+                "banner_url": null,
+                "email": "amrsoliman820@gmail.com",
+                "phone": "0100866355",
+                "tax_id": null,
+                "status": "pending",
+                "subscription_tier": "free",
+                "is_verified": false,
+                "verified_at": null,
+                "rating_avg": "0.00",
+                "rating_count": 0,
+                "created_at": "2026-04-10T08:23:47+02:00",
+                "updated_at": "2026-04-10T08:23:47+02:00",
+                "owner": {
+                    "id": "3d1d4b73-c732-4c82-bd0c-21f87a23a64a",
+                    "email": "amrsoliman820@gmail.com",
+                    "status": "active",
+                    "language": "ar",
+                    "full_name": "عمرو سليمان",
+                    "phone_number": "01008864664",
+                    "profile": {
+                        "first_name": "عمرو",
+                        "last_name": "سليمان",
+                        "avatar": "https://api.coupony.shop/users/avatars/default.svg",
+                        "date_of_birth": null,
+                        "bio": null,
+                        "gender": "male"
+                    },
+                    "points": null,
+                    "created_at": "2026-04-08T22:44:27.000000Z"
+                },
+                "categories": [
+                    {
+                        "id": 4,
+                        "name": "المنزل والحديقة",
+                        "name_ar": "المنزل والحديقة",
+                        "name_en": "Home & Garden",
+                        "slug": "home-garden",
+                        "sort_order": null,
+                        "is_active": true
+                    }
+                ],
+                "addresses": [
+                    {
+                        "id": 17,
+                        "address_line1": "..",
+                        "address_line2": null,
+                        "city": "فيوم",
+                        "state_province": null,
+                        "postal_code": null,
+                        "country_code": null,
+                        "phone_number": null,
+                        "latitude": "30.04440012",
+                        "longitude": "31.23569995",
+                        "delivery_instructions": null,
+                        "label": "branch",
+                        "is_default_shipping": false,
+                        "is_default_billing": false,
+                        "created_at": "2026-04-10T06:23:47.000000Z",
+                        "updated_at": "2026-04-10T06:23:47.000000Z"
+                    }
+                ],
+                "verifications": [],
+                "socials": [],
+                "hours": [
+                    {
+                        "id": 78,
+                        "store_id": "8c3c3a9d-e182-41dc-ae21-0328595f2f03",
+                        "day_of_week": 1,
+                        "open_time": "09:00:00",
+                        "close_time": "17:00:00",
+                        "is_closed": 0,
+                        "created_at": "2026-04-10T06:23:47.000000Z",
+                        "updated_at": "2026-04-10T06:23:47.000000Z"
+                    },
+                    {
+                        "id": 79,
+                        "store_id": "8c3c3a9d-e182-41dc-ae21-0328595f2f03",
+                        "day_of_week": 2,
+                        "open_time": "09:00:00",
+                        "close_time": "17:00:00",
+                        "is_closed": 0,
+                        "created_at": "2026-04-10T06:23:47.000000Z",
+                        "updated_at": "2026-04-10T06:23:47.000000Z"
+                    },
+                    {
+                        "id": 80,
+                        "store_id": "8c3c3a9d-e182-41dc-ae21-0328595f2f03",
+                        "day_of_week": 3,
+                        "open_time": "09:00:00",
+                        "close_time": "17:00:00",
+                        "is_closed": 0,
+                        "created_at": "2026-04-10T06:23:47.000000Z",
+                        "updated_at": "2026-04-10T06:23:47.000000Z"
+                    },
+                    {
+                        "id": 81,
+                        "store_id": "8c3c3a9d-e182-41dc-ae21-0328595f2f03",
+                        "day_of_week": 4,
+                        "open_time": "09:00:00",
+                        "close_time": "17:00:00",
+                        "is_closed": 0,
+                        "created_at": "2026-04-10T06:23:47.000000Z",
+                        "updated_at": "2026-04-10T06:23:47.000000Z"
+                    },
+                    {
+                        "id": 82,
+                        "store_id": "8c3c3a9d-e182-41dc-ae21-0328595f2f03",
+                        "day_of_week": 5,
+                        "open_time": "09:00:00",
+                        "close_time": "17:00:00",
+                        "is_closed": 0,
+                        "created_at": "2026-04-10T06:23:47.000000Z",
+                        "updated_at": "2026-04-10T06:23:47.000000Z"
+                    },
+                    {
+                        "id": 83,
+                        "store_id": "8c3c3a9d-e182-41dc-ae21-0328595f2f03",
+                        "day_of_week": 6,
+                        "open_time": "09:00:00",
+                        "close_time": "17:00:00",
+                        "is_closed": 1,
+                        "created_at": "2026-04-10T06:23:47.000000Z",
+                        "updated_at": "2026-04-10T06:23:47.000000Z"
+                    },
+                    {
+                        "id": 84,
+                        "store_id": "8c3c3a9d-e182-41dc-ae21-0328595f2f03",
+                        "day_of_week": 0,
+                        "open_time": "09:00:00",
+                        "close_time": "17:00:00",
+                        "is_closed": 1,
+                        "created_at": "2026-04-10T06:23:47.000000Z",
+                        "updated_at": "2026-04-10T06:23:47.000000Z"
+                    }
+                ]
+            },
+",
+
+كما ترى انه "                "status": "pending",
+" 
+فمعنى هذا فيجب ان يتم اظهار صفحة : "merchant_pending_page.dart "
+
+اما لو  لو تم الرفض 
+"status": "Reject",
+: "
+"data": [
+            {
+                "id": "3c0c3852-16cf-48be-b3b0-be1f10f43c7a",
+                "name": "HM",
+                "description": "",
+                "logo_url": null,
+                "banner_url": null,
+                "email": "amrsoliman820@gmail.com",
+                "phone": "01025250321",
+                "tax_id": null,
+                "status": "rejected",
+                "subscription_tier": "free",
+                "is_verified": false,
+                "verified_at": null,
+                "rating_avg": "0.00",
+                "rating_count": 0,
+                "created_at": "2026-04-10T08:32:25+02:00",
+                "updated_at": "2026-04-10T11:02:03+02:00",
+                "approved_at": null,
+                "approved_by": null,
+                "rejected_at": "2026-04-10T11:02:03+02:00",
+                "rejected_by": "5cefcb69-40f1-4555-9634-edba6e7c99b5",
+                "rejection_reason": "Incomplete documentation",
+                "admin_notes": null,
+                "owner": {
+                    "id": "3d1d4b73-c732-4c82-bd0c-21f87a23a64a",
+                    "email": "amrsoliman820@gmail.com",
+                    "status": "active",
+                    "language": "ar",
+                    "full_name": "عمرو سليمان",
+                    "phone_number": "01008864664",
+                    "profile": {
+                        "first_name": "عمرو",
+                        "last_name": "سليمان",
+                        "avatar": "https://api.coupony.shop/users/avatars/default.svg",
+                        "date_of_birth": null,
+                        "bio": null,
+                        "gender": "male"
+                    },
+                    "points": null,
+                    "created_at": "2026-04-08T22:44:27.000000Z"
+                },
+                "categories": [
+                    {
+                        "id": 2,
+                        "name": "أزياء وملابس",
+                        "name_ar": "أزياء وملابس",
+                        "name_en": "Fashion & Clothing",
+                        "slug": "fashion-clothing",
+                        "sort_order": null,
+                        "is_active": true
+                    }
+                ],
+                "addresses": [
+                    {
+                        "id": 18,
+                        "address_line1": "gamal street",
+                        "address_line2": null,
+                        "city": "fayoum",
+                        "state_province": null,
+                        "postal_code": null,
+                        "country_code": null,
+                        "phone_number": null,
+                        "latitude": "32.13413000",
+                        "longitude": "56.12434000",
+                        "delivery_instructions": null,
+                        "label": "branch",
+                        "is_default_shipping": false,
+                        "is_default_billing": false,
+                        "created_at": "2026-04-10T06:32:25.000000Z",
+                        "updated_at": "2026-04-10T06:32:25.000000Z"
+                    }
+                ],
+                "verifications": [],
+                "socials": [
+                    {
+                        "id": 1,
+                        "name": "Facebook",
+                        "icon": "https://api.coupony.shop/storage/socials/icons/facebook.png",
+                        "url": "https://facebook.com/page"
+                    }
+                ],
+                "hours": [
+                    {
+                        "id": 85,
+                        "store_id": "3c0c3852-16cf-48be-b3b0-be1f10f43c7a",
+                        "day_of_week": 1,
+                        "open_time": "09:00:00",
+                        "close_time": "17:00:00",
+                        "is_closed": 0,
+                        "created_at": "2026-04-10T06:32:25.000000Z",
+                        "updated_at": "2026-04-10T06:32:25.000000Z"
+                    },
+                    {
+                        "id": 86,
+                        "store_id": "3c0c3852-16cf-48be-b3b0-be1f10f43c7a",
+                        "day_of_week": 2,
+                        "open_time": "09:00:00",
+                        "close_time": "17:00:00",
+                        "is_closed": 0,
+                        "created_at": "2026-04-10T06:32:25.000000Z",
+                        "updated_at": "2026-04-10T06:32:25.000000Z"
+                    },
+                    {
+                        "id": 87,
+                        "store_id": "3c0c3852-16cf-48be-b3b0-be1f10f43c7a",
+                        "day_of_week": 3,
+                        "open_time": "09:00:00",
+                        "close_time": "17:00:00",
+                        "is_closed": 0,
+                        "created_at": "2026-04-10T06:32:25.000000Z",
+                        "updated_at": "2026-04-10T06:32:25.000000Z"
+                    },
+                    {
+                        "id": 88,
+                        "store_id": "3c0c3852-16cf-48be-b3b0-be1f10f43c7a",
+                        "day_of_week": 4,
+                        "open_time": "09:00:00",
+                        "close_time": "17:00:00",
+                        "is_closed": 0,
+                        "created_at": "2026-04-10T06:32:25.000000Z",
+                        "updated_at": "2026-04-10T06:32:25.000000Z"
+                    },
+                    {
+                        "id": 89,
+                        "store_id": "3c0c3852-16cf-48be-b3b0-be1f10f43c7a",
+                        "day_of_week": 5,
+                        "open_time": "09:00:00",
+                        "close_time": "17:00:00",
+                        "is_closed": 0,
+                        "created_at": "2026-04-10T06:32:25.000000Z",
+                        "updated_at": "2026-04-10T06:32:25.000000Z"
+                    },
+                    {
+                        "id": 90,
+                        "store_id": "3c0c3852-16cf-48be-b3b0-be1f10f43c7a",
+                        "day_of_week": 6,
+                        "open_time": "09:00:00",
+                        "close_time": "17:00:00",
+                        "is_closed": 1,
+                        "created_at": "2026-04-10T06:32:25.000000Z",
+                        "updated_at": "2026-04-10T06:32:25.000000Z"
+                    },
+                    {
+                        "id": 91,
+                        "store_id": "3c0c3852-16cf-48be-b3b0-be1f10f43c7a",
+                        "day_of_week": 0,
+                        "open_time": "09:00:00",
+                        "close_time": "17:00:00",
+                        "is_closed": 1,
+                        "created_at": "2026-04-10T06:32:25.000000Z",
+                        "updated_at": "2026-04-10T06:32:25.000000Z"
+                    }
+                ]
+            },
+"
+
+كما ترى                 "status": "rejected",
+فتعرض له صفحة "merchant_rejected_page.dart "  ومنها ينتقل لما يضغط على الزر الذي فيها الى صفحة 
+merchant_status_page.dart: وهناك يعرض له سبب الرفض : "والذ يكون موجود في الرد االسابق " : "                "rejection_reason": "Incomplete documentation",
+ " و "                "rejected_at": "2026-04-10T11:02:03+02:00",
+"  وثم يعرف السبب الرفض وضغط على الزر فيتوجه الى  صفحة "create_store_screen.dart" ولكن بمنطق جديد منفصل عن السابق الذ سلكه اول مره فهذه المره يتم عمل 
+get : "/api/v1/stores"  ويتم ملىء الحقول الذي ادخلها سابقا  بحيث تظهر قدامه ليعدل الحقل المطلوب 
+الذي رأه سابقا وارسل له "rejection_reason " ولكن لتجنب عدم ارسال الطلب مره اخرى دون تعديل يحدث  validation على الطلب قبل ارساله بحيث لو كل الداتا الجديده  = الداتا القديمه لا يتم الارسال ويظهر له خطأ في السناك بار المخصص يقول له الرسالة المرسلة في "rejection_reason"  وان غير اي حقل من الحقول في الداتا يتم ارسال الطلب بنجاح ويحول الى صفحة merchant_pending_page.dart 
+اوتظل العملية تتكرر الى ان ياتي الرد "                 "status": "active",
+"  فيتم تحويله الى صفحةmerchant_approved_page.dart
+وتلك الصفحة يكون في زرين زر "كمل ما مستخدم" و التاني "حول لتاجر و لو دواس على كمل كا مستخدم يرجع الى صفحة " "main_profile.dart" ويتغير  الجملة التي داخل زر كن تاجر الى  حول الى "التحويل الى تاجر عند الضغط عليه بدلا من الدخول في مسار انشاء متجر يتم تغير ال roleمن  "customer  الى  seller " " , ويتم التحويل الى صفحة افتراضيه فارغه كانها الداش بورد لكن فارغه تقول له اهلا بك يا تاجر فقط   وان ضغط على الزر "حول الى تاجر في صفحة " merchant_approved_page.dart" ينتقل الى نفس الصفحة اتفقنا ؟"
+

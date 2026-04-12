@@ -79,6 +79,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get startNow => 'Start Now';
 
   @override
+  String get retry => 'Retry';
+
+  @override
+  String get no_categories_available => 'No categories available';
+
+  @override
   String get categoryRestaurants => 'Restaurants & Cafes';
 
   @override
@@ -649,6 +655,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get create_store_category_hint => 'Choose the appropriate category';
 
   @override
+  String get create_store_category_scroll_hint => 'Scroll down to see more';
+
+  @override
   String get create_store_description_hint =>
       'Write a brief description of your store and services';
 
@@ -800,6 +809,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get seller_onboarding_success_title =>
       'Onboarding Completed Successfully!';
+
+  @override
+  String get customer_onboarding_success_title => 'Welcome to Coupony!';
 
   @override
   String get seller_onboarding_start_title =>
@@ -1082,6 +1094,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get account => 'Account';
 
   @override
+  String get store => 'Store';
+
+  @override
+  String get analytics => 'Analytics';
+
+  @override
+  String get offers => 'Offers';
+
+  @override
   String get profile_title => 'Personal Account';
 
   @override
@@ -1238,6 +1259,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loading => 'Loading...';
+
+  @override
+  String get current_location_default_name => 'Your Current Location';
+
+  @override
+  String get settings_notifications_open_settings =>
+      'Please allow notifications from device settings';
 
   @override
   String get help_support_title => 'Help & Support';
@@ -1674,7 +1702,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings_language => 'Language';
 
   @override
-  String get settings_notifications => 'Enable Notifications';
+  String get settings_notifications => 'Enable Notifications Automatically';
 
   @override
   String get settings_data_section => 'Data Management';
@@ -1684,6 +1712,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings_delete_account_subtitle => 'Permanently delete account';
+
+  @override
+  String get settings_storage_section => 'Storage Management';
+
+  @override
+  String get settings_clear_cache => 'Clear Cache';
+
+  @override
+  String get settings_cache_size => 'Cache Size';
+
+  @override
+  String get clear_cache_dialog_title => 'Clear Cache';
+
+  @override
+  String get clear_cache_dialog_message =>
+      'This will clear temporarily stored coupons, stores, and products. Your personal data and settings will not be deleted.';
+
+  @override
+  String get clear_cache_confirm_button => 'Clear Cache';
+
+  @override
+  String get clear_cache_success => 'Cache cleared successfully';
+
+  @override
+  String get clear_cache_error => 'An error occurred while clearing cache';
+
+  @override
+  String get cache_files_size => 'Files Size:';
+
+  @override
+  String get cache_files_count => 'Files Count:';
+
+  @override
+  String get cache_calculating => 'Calculating...';
 
   @override
   String get settings_security_section => 'Privacy & Security';
@@ -1812,4 +1874,186 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacy_agree_button => 'Agree';
+
+  @override
+  String get become_merchant_title => 'Become a Merchant';
+
+  @override
+  String get become_merchant_headline => 'Start Your Business on Coupony';
+
+  @override
+  String get become_merchant_subtitle =>
+      'Turn your store into a new growth opportunity,\nand reach more customers in your area with ease.';
+
+  @override
+  String get become_merchant_button => 'Create Store';
+
+  @override
+  String get seller_store_title => 'Store';
+
+  @override
+  String get seller_store_content_title => 'Manage Your Store';
+
+  @override
+  String get seller_store_content_subtitle =>
+      'Here you can manage your store information, update details, and add new branches.';
+
+  @override
+  String get seller_home_title => 'Home';
+
+  @override
+  String get seller_home_content_title => 'Seller Home Page';
+
+  @override
+  String get seller_home_content_subtitle => 'Welcome to your seller dashboard';
+
+  @override
+  String get seller_analytics_title => 'Analytics';
+
+  @override
+  String get seller_analytics_content_title => 'Sales Analytics';
+
+  @override
+  String get seller_analytics_content_subtitle =>
+      'Track your store performance and sales in detail';
+
+  @override
+  String get seller_offers_title => 'Offers';
+
+  @override
+  String get seller_offers_content_title => 'Manage Offers';
+
+  @override
+  String get seller_offers_content_subtitle =>
+      'Create and manage your promotional offers and discounts';
+
+  @override
+  String get merchant_review_pending_title => 'Your Request is Under Review';
+
+  @override
+  String get merchant_review_pending_subtitle =>
+      'Your request is currently under review.\nYou will be notified once it\'s done.';
+
+  @override
+  String get merchant_review_pending_button => 'Under Review';
+
+  @override
+  String get merchant_review_contact_prompt => 'If you experience any issue';
+
+  @override
+  String get merchant_review_contact_link => 'Contact us';
+
+  @override
+  String get merchant_incomplete_title => 'Please Complete Your Store Data';
+
+  @override
+  String get merchant_incomplete_subtitle =>
+      'The store cannot be activated due to missing data.\nPlease complete it to continue.';
+
+  @override
+  String get merchant_incomplete_button => 'Complete Data';
+
+  @override
+  String get merchant_rejected_title =>
+      'Store Activation Could Not Be Completed';
+
+  @override
+  String get merchant_rejected_subtitle =>
+      'Please review the rejection reasons\nand make the necessary edits to resubmit.';
+
+  @override
+  String get guest_seller_mode_title => 'Guest Mode';
+
+  @override
+  String get guest_seller_welcome_title =>
+      'Start Your Selling Journey on Coupony';
+
+  @override
+  String get guest_seller_welcome_subtitle =>
+      'Create your store, showcase your discounts, and reach new customers.';
+
+  @override
+  String get guest_seller_login_button => 'Sign In';
+
+  @override
+  String get seller_pending_approval_title => 'Welcome';
+
+  @override
+  String get seller_pending_approval_message =>
+      'This page will be activated after your store is approved.';
+
+  @override
+  String get seller_pending_approval_subtitle =>
+      'Quick overview of your store performance, latest sales, and suggestions to improve offers and increase engagement.';
+
+  @override
+  String get seller_pending_contact_prefix => 'If you experience any issue';
+
+  @override
+  String get seller_pending_contact_link => 'Contact us';
+
+  @override
+  String get merchant_rejected_view_status_button => 'View Request Status';
+
+  @override
+  String get merchant_status_title => 'Request Status';
+
+  @override
+  String get merchant_status_headline => 'Some Edits Needed';
+
+  @override
+  String get merchant_status_subtitle =>
+      'There is data that needs correction to complete activation';
+
+  @override
+  String get merchant_status_edit_button => 'Edit Data';
+
+  @override
+  String get merchant_status_support_button => 'Contact Support';
+
+  @override
+  String get merchant_approved_headline => 'Your Store is Now Live!';
+
+  @override
+  String get merchant_approved_subtitle =>
+      'Congratulations! Your store has been reviewed and activated. You can now start publishing your offers.';
+
+  @override
+  String get merchant_approved_button => 'Go to Store';
+
+  @override
+  String get update_store_title => 'Edit Store Data';
+
+  @override
+  String get update_store_button => 'Update Data';
+
+  @override
+  String get success_update_store => 'Store data updated successfully!';
+
+  @override
+  String get error_update_store_server =>
+      'Could not update store. Please try again';
+
+  @override
+  String get merchant_approved_switch_button => 'Switch to Merchant';
+
+  @override
+  String get merchant_approved_continue_button => 'Continue as Customer';
+
+  @override
+  String get profile_switch_to_merchant => 'Switch to Merchant';
+
+  @override
+  String get merchant_no_changes_snackbar =>
+      'No changes detected. Please fix the listed issues before resubmitting.';
+
+  @override
+  String get seller_welcome_title => 'Welcome, Merchant!';
+
+  @override
+  String get seller_welcome_subtitle =>
+      'Your store has been approved and is ready to start';
+
+  @override
+  String get seller_dashboard_coming_soon => 'Dashboard Coming Soon';
 }

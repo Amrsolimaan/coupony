@@ -106,52 +106,68 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
     try {
       final authLocalDs = di.sl<AuthLocalDataSource>();
 
-      final results = await Future.wait([
-        authLocalDs.getAccessToken(),
-        authLocalDs.getGuestStatus(),
-        authLocalDs.getOnboardingCompleted(),
-        authLocalDs.getStoreCreated(),
-      ]);
+      // ✅ Read token and guest status first (no userId dependency)
+      final token = await authLocalDs.getAccessToken();
+      final isGuest = await authLocalDs.getGuestStatus();
 
       if (!mounted) return;
 
-      final token                = results[0] as String?;
-      final isGuest              = results[1] as bool;
-      final isOnboardingCompleted = results[2] as bool;
-      final isStoreCreated       = results[3] as bool;
-
+      // Guest user → go to home immediately
       if (isGuest) {
         context.go(AppRouter.home);
         return;
       }
 
-      if (token != null && token.isNotEmpty) {
-        final authRoleCubit = context.read<AuthRoleCubit>();
-
-        if (authRoleCubit.state.isSeller) {
-          // Step 1: seller must complete onboarding before store decisions
-          if (!isOnboardingCompleted) {
-            context.go(AppRouter.sellerOnboarding);
-            return;
-          }
-
-          // Step 2: delegate to the shared 4-scenario resolver
-          await SellerRoutingResolver.resolveFromCache(
-            context:               context,
-            isOnboardingCompleted: isOnboardingCompleted,
-            isStoreCreated:        isStoreCreated,
-            authLocalDs:           authLocalDs,
-          );
-          return;
-        }
-
-        // Customer path
-        context.go(isOnboardingCompleted ? AppRouter.home : AppRouter.onboarding);
+      // No token → not authenticated → go to login
+      if (token == null || token.isEmpty) {
+        context.go(AppRouter.login);
         return;
       }
 
-      context.go(AppRouter.login);
-    } catch (_) {
+      // ✅ Authenticated user: safely read user-scoped flags
+      // These may fail if userId is missing (e.g., after corrupted logout)
+      bool isOnboardingCompleted = false;
+      bool isStoreCreated = false;
+
+      try {
+        final results = await Future.wait([
+          authLocalDs.getOnboardingCompleted(),
+          authLocalDs.getStoreCreated(),
+        ]);
+        isOnboardingCompleted = results[0] as bool;
+        isStoreCreated = results[1] as bool;
+      } catch (e) {
+        // userId missing or other cache error - treat as fresh user
+        print('⚠️ Could not read user-scoped flags (treating as fresh user): $e');
+        isOnboardingCompleted = false;
+        isStoreCreated = false;
+      }
+
+      if (!mounted) return;
+
+      final authRoleCubit = context.read<AuthRoleCubit>();
+
+      if (authRoleCubit.state.isSeller) {
+        // Seller must complete onboarding before store decisions
+        if (!isOnboardingCompleted) {
+          context.go(AppRouter.sellerOnboarding);
+          return;
+        }
+
+        // Delegate to the shared 4-scenario resolver
+        await SellerRoutingResolver.resolveFromCache(
+          context: context,
+          isOnboardingCompleted: isOnboardingCompleted,
+          isStoreCreated: isStoreCreated,
+          authLocalDs: authLocalDs,
+        );
+        return;
+      }
+
+      // Customer path
+      context.go(isOnboardingCompleted ? AppRouter.home : AppRouter.onboarding);
+    } catch (e) {
+      print('❌ _checkOnboardingStatus error: $e');
       if (mounted) context.go(AppRouter.login);
     }
   }
