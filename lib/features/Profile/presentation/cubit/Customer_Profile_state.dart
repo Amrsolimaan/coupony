@@ -51,6 +51,11 @@ class ProfileDeleteSuccess extends ProfileState {
   const ProfileDeleteSuccess();
 }
 
+/// Logout completed successfully — UI should navigate to login.
+class ProfileLogoutSuccess extends ProfileState {
+  const ProfileLogoutSuccess();
+}
+
 /// An operation failed.
 class ProfileError extends ProfileState {
   final String message;

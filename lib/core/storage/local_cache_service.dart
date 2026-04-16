@@ -53,8 +53,10 @@ class LocalCacheService {
     }
 
     try {
-      // Initialize Hive
-      await Hive.initFlutter();
+      // NOTE: Hive.initFlutter() and adapter registration are performed in
+      // main() before di.init() is called. We must NOT call initFlutter() here
+      // again because in hive 2.x a second call can race with already-open
+      // boxes and cause subtle corruption. We only set up the directory paths.
 
       // Get application directories
       final appDir = await getApplicationDocumentsDirectory();
@@ -926,21 +928,26 @@ class LocalCacheService {
   /// Hard reset on logout: deletes all Hive boxes from disk and clears
   /// all SharedPreferences so no user-scoped data survives between accounts.
   Future<void> deleteAllData() async {
-    _logger.w('💥 HARD RESET: Deleting all local data on logout');
+    _logger.w('💥 HARD RESET: Deleting user-scoped local data on logout');
 
     try {
-      // Collect every box name we know about: currently open ones plus all
-      // well-known names defined in StorageKeys (they may not be open yet).
+      // Collect every USER-SCOPED box name (things that belong to an account).
+      // ⚠️  INTENTIONALLY EXCLUDED from this list:
+      //   - permissionsBox  → device-level (location/notification grants survive
+      //                       logout — the OS doesn't revoke them when a user
+      //                       switches accounts, so neither should we).
+      //   - settingsBox     → contains device-level last-cleanup timestamp.
       final allBoxNames = <String>{
-        ..._openBoxes.keys,
-        StorageKeys.settingsBox,
+        // Remove only currently-open boxes that are NOT device-level.
+        ..._openBoxes.keys.where(
+          (n) => n != StorageKeys.permissionsBox && n != StorageKeys.settingsBox,
+        ),
         StorageKeys.onboardingPreferencesBox,
         StorageKeys.sellerOnboardingPreferencesBox,
         StorageKeys.userBox,
         StorageKeys.couponsBox,
         StorageKeys.storesBox,
         StorageKeys.categoriesBox,
-        StorageKeys.permissionsBox,
         StorageKeys.mediaMetadataBox,
         StorageKeys.publicProductsBox,
       };
@@ -950,17 +957,19 @@ class LocalCacheService {
           allBoxNames.map((n) => '${n}_timestamps').toSet();
       allBoxNames.addAll(timestampBoxes);
 
-      // 1. Close every currently-open box so Hive releases file handles.
-      for (final box in _openBoxes.values) {
-        try {
-          if (box.isOpen) await box.close();
-        } catch (e) {
-          _logger.w('⚠️ Could not close box ${box.name}: $e');
+      // 1. Close every currently-open user-scoped box so Hive releases file handles.
+      for (final entry in _openBoxes.entries.toList()) {
+        if (allBoxNames.contains(entry.key)) {
+          try {
+            if (entry.value.isOpen) await entry.value.close();
+          } catch (e) {
+            _logger.w('⚠️ Could not close box ${entry.key}: $e');
+          }
+          _openBoxes.remove(entry.key);
         }
       }
-      _openBoxes.clear();
 
-      // 2. Delete each box from disk (silently skip boxes that never existed).
+      // 2. Delete each user-scoped box from disk (silently skip boxes that never existed).
       for (final boxName in allBoxNames) {
         try {
           await Hive.deleteBoxFromDisk(boxName);
@@ -970,13 +979,33 @@ class LocalCacheService {
         }
       }
 
-      // 3. Wipe all SharedPreferences — isStoreCreated, onboarding flags,
-      //    user-scoped keys, guest flag, etc. — so nothing leaks to the next user.
+      // 3. Remove only USER-SCOPED SharedPreferences keys so nothing leaks to
+      //    the next account. Device-level keys (language, dark-mode, welcome
+      //    gateway flag, etc.) are intentionally preserved.
       final prefs = await SharedPreferences.getInstance();
-      await prefs.clear();
-      _logger.i('🗑️ Cleared all SharedPreferences');
+      final allKeys = prefs.getKeys().toList();
+      final deviceLevelPrefixes = <String>[]; // keys that must survive logout
+      final deviceLevelExact = <String>{
+        StorageKeys.hasPassedWelcomeGateway,
+        StorageKeys.language,
+        StorageKeys.isDarkMode,
+        StorageKeys.notificationsEnabled,
+        StorageKeys.lastCleanupDate,
+        StorageKeys.preferredRole, // ✅ User's role preference survives logout
+        'saved_login_emails', // ✅ Saved emails for "Remember Me" feature
+      };
 
-      _logger.i('✅ Hard reset completed — all local data destroyed');
+      for (final key in allKeys) {
+        final isDeviceLevel = deviceLevelExact.contains(key) ||
+            deviceLevelPrefixes.any((p) => key.startsWith(p));
+        if (!isDeviceLevel) {
+          await prefs.remove(key);
+          _logger.d('🗑️ Removed SharedPreferences key: $key');
+        }
+      }
+      _logger.i('🗑️ Cleared user-scoped SharedPreferences (device-level keys preserved)');
+
+      _logger.i('✅ Hard reset completed — user-scoped data destroyed, device-level data preserved');
     } catch (e) {
       _logger.e('❌ Error during hard reset: $e');
       // Do NOT rethrow — logout must always succeed even if cleanup fails.

@@ -94,6 +94,10 @@ class StorageKeys {
   static const String language = 'app_locale';
   static const String notificationsEnabled = 'notifications_enabled';
   static const String lastCleanupDate = 'last_cleanup_date';
+  
+  /// User's preferred role (customer/seller) - persists across logout
+  /// Stored in SharedPreferences (non-sensitive preference)
+  static const String preferredRole = 'preferred_role';
 
   // Legacy keys (for backward compatibility)
   @Deprecated('Use authToken instead')

@@ -1,4 +1,8 @@
 import 'package:coupony/core/widgets/Shared_Onboarding/onboarding_completion_loading_page.dart';
+import 'package:coupony/core/widgets/notifications/notification.dart';
+import 'package:coupony/core/widgets/notifications/notification_details.dart';
+import 'package:coupony/features/notifications/domain/entities/notification_entity.dart';
+import 'package:coupony/features/notifications/presentation/cubit/notification_cubit.dart';
 import 'package:coupony/features/auth/presentation/pages/forgot_password_screen.dart';
 import 'package:coupony/features/Profile/presentation/pages/customer/become_merchant_page.dart';
 import 'package:coupony/features/Profile/presentation/pages/customer/merchant_pending_page.dart';
@@ -25,13 +29,22 @@ import 'package:coupony/features/auth/data/models/user_store_model.dart';
 import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/pages/onboarding_seller_screen.dart';
 import 'package:coupony/features/seller_flow/SellerOnboarding/presentation/pages/seller_onboarding_start_screen.dart';
 import 'package:coupony/features/seller_flow/dashboard_seller/presentation/pages/SellerHome.dart';
+import 'package:coupony/features/seller_flow/dashboard_seller/domain/entities/offer_entity.dart';
+import 'package:coupony/features/seller_flow/dashboard_seller/domain/entities/store_display_entity.dart';
 import 'package:coupony/features/seller_flow/dashboard_seller/presentation/pages/seller_store_page.dart';
 import 'package:coupony/features/seller_flow/dashboard_seller/presentation/pages/seller_analytics_page.dart';
+import 'package:coupony/features/seller_flow/dashboard_seller/presentation/pages/create_offer.dart';
 import 'package:coupony/features/seller_flow/dashboard_seller/presentation/pages/seller_offers_page.dart';
+import 'package:coupony/features/seller_flow/dashboard_seller/presentation/pages/display_detailsOffers.dart';
+import 'package:coupony/features/seller_flow/dashboard_seller/presentation/pages/edit_info_shop.dart';
+import 'package:coupony/features/seller_flow/dashboard_seller/presentation/pages/followers_shop.dart';
+import 'package:coupony/features/seller_flow/shop_stuff/presentation/pages/display_stuff_details.dart';
+import 'package:coupony/features/seller_flow/dashboard_seller/presentation/cubit/edit_store_info_cubit.dart';
 import 'package:coupony/features/seller_flow/dashboard_seller/presentation/cubit/seller_home_cubit.dart';
 import 'package:coupony/features/seller_flow/dashboard_seller/presentation/cubit/seller_store_cubit.dart';
 import 'package:coupony/features/seller_flow/dashboard_seller/presentation/cubit/seller_analytics_cubit.dart';
 import 'package:coupony/features/seller_flow/dashboard_seller/presentation/cubit/seller_offers_cubit.dart';
+import 'package:coupony/features/seller_flow/dashboard_seller/presentation/cubit/manage_offer_cubit.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_budget_screen.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_customer_screen.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/pages/onboarding_preferences_screen.dart';
@@ -43,6 +56,8 @@ import 'package:coupony/config/dependency_injection/injection_container.dart';
 import 'package:coupony/core/constants/storage_keys.dart';
 import 'package:coupony/core/storage/secure_storage_service.dart';
 import 'package:coupony/core/navigation/app_page_transition.dart';
+import 'package:coupony/features/auth/presentation/cubit/persona_cubit.dart';
+import 'package:coupony/features/auth/domain/entities/user_persona.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Auth screens
@@ -63,6 +78,7 @@ import 'package:coupony/features/permissions/presentation/pages/pages/welcome_ga
 import 'package:coupony/features/user_flow/CustomerHome/presentation/pages/CutomerHome.dart';
 import 'package:coupony/features/Profile/presentation/pages/customer/EditProfilePage.dart';
 import 'package:coupony/features/Profile/presentation/pages/customer/main_profile.dart';
+import 'package:coupony/features/Profile/presentation/pages/customer/following_customer.dart';
 import 'package:coupony/features/Profile/presentation/pages/customer/address_management_page.dart';
 import 'package:coupony/features/Profile/presentation/pages/customer/address_map_picker_page.dart';
 import 'package:coupony/features/Profile/presentation/pages/customer/help_support_page.dart';
@@ -152,9 +168,7 @@ class MerchantDashboardScreen extends StatelessWidget {
   }
 }
 
-// ── Routes accessible WITHOUT an auth token ───────────────────────────────
-// Onboarding routes are intentionally excluded — they require a logged-in user.
-// The redirect guard will send unauthenticated users to /welcome-gateway.
+// ── Routes accessible without an auth token ──────────────────────────────────
 const _publicRoutes = {
   AppRouter.splash,
   AppRouter.languageSelection,
@@ -172,9 +186,24 @@ const _publicRoutes = {
   AppRouter.otpVerification,
   AppRouter.forgotPassword,
   AppRouter.resetPassword,
-  AppRouter.sellerHome, // Allow guest seller access
-  AppRouter.sellerStore, // Allow guest seller access
-  AppRouter.sellerAnalytics, // Allow guest seller access
+};
+
+// ── Routes that require SellerPersona ────────────────────────────────────────
+// A valid auth token is NOT sufficient — the user's resolved persona must be
+// SellerPersona. Customers and PendingSellerPersona are redirected to /home.
+// This closes the deep-link attack surface that existed when these routes were
+// listed in _publicRoutes with only isGuest/isPending flag defaults.
+const _sellerOnlyRoutes = {
+  AppRouter.sellerHome,
+  AppRouter.sellerStore,
+  AppRouter.sellerAnalytics,
+  AppRouter.sellerOffers,
+  AppRouter.sellerManageOffer,
+  AppRouter.sellerOfferDetails,
+  AppRouter.sellerEditStore,
+  AppRouter.sellerFollowers,
+  AppRouter.displayStaffDetails,
+  AppRouter.storeSelection,
 };
 
 class AppRouter {
@@ -197,6 +226,11 @@ class AppRouter {
   static const String sellerStore = '/seller-store';
   static const String sellerAnalytics = '/seller-analytics';
   static const String sellerOffers = '/seller-offers';
+  static const String sellerManageOffer = '/seller-manage-offer';
+  static const String sellerOfferDetails = '/seller-offer-details';
+  static const String sellerEditStore = '/seller-edit-store';
+  static const String sellerFollowers = '/seller-followers';
+  static const String displayStaffDetails = '/display-staff-details';
   static const String login = '/login';
   static const String register = '/register';
   static const String otpVerification = '/otp-verification';
@@ -218,6 +252,9 @@ class AppRouter {
   static const String settingsPage = '/settings';
   static const String changePassword = '/change-password';
   static const String privacyPolicyPage = '/privacy-policy';
+  static const String customerFollowing = '/customer-following';
+  static const String notificationsPage = '/notifications';
+  static const String notificationDetails = '/notification-details';
 
   // Merchant registration flow (customer → seller journey)
   static const String becomeMerchant    = '/become-merchant';
@@ -245,29 +282,42 @@ class AppRouter {
     initialLocation: splash,
     debugLogDiagnostics: true,
 
-    // ── Auth guard ──────────────────────────────────────────────────────────
+    // ── Auth + Persona guard ────────────────────────────────────────────────
     redirect: (context, state) async {
       final location = state.matchedLocation;
 
-      // Public routes (splash, onboarding, permissions, auth screens) are
-      // always accessible — skip the session check entirely.
+      // Public routes are always accessible — skip all checks.
       if (_publicRoutes.contains(location)) return null;
 
-      // 1. Authenticated user — token present and non-empty.
-      final token = await sl<SecureStorageService>().read(
-        StorageKeys.authToken,
-      );
-      if (token != null && token.isNotEmpty) return null;
-
-      // 2. Guest user — explicit visitor session persisted in SharedPreferences.
-      //    getBool() is synchronous once SharedPreferences is initialised.
+      // ── Session check ───────────────────────────────────────────────────
+      final token = await sl<SecureStorageService>().read(StorageKeys.authToken);
       final isGuest =
           sl<SharedPreferences>().getBool(StorageKeys.isGuest) ?? false;
-      if (isGuest) return null;
 
-      // 3. No session — redirect to the gateway so the user can sign in or
-      //    choose guest mode again.
-      return welcomeGateway;
+      if (token == null && !isGuest) return welcomeGateway;
+
+      // ── Seller-only route guard ─────────────────────────────────────────
+      // A valid token is not sufficient — PersonaCubit must hold SellerPersona.
+      // LoadingPersona is allowed through so the splash can resolve first.
+      // CustomerPersona is blocked on all seller routes.
+      //
+      // Exception: GuestPersona is allowed through to /seller-home only.
+      // SellerHomePage reads PersonaCubit directly and renders GuestSellerViewWidget
+      // for GuestPersona — no manual flag passing required.
+      //
+      // ✅ SellerPersona(isPending: true) is ALLOWED through to /seller-home.
+      // SellerHome.dart internally shows PendingApprovalViewWidget.
+      if (_sellerOnlyRoutes.contains(location)) {
+        final persona = sl<PersonaCubit>().state;
+        if (persona is GuestPersona && location == AppRouter.sellerHome) {
+          return null; // Guest sees guest-seller view inside SellerHomePage
+        }
+        if (persona is CustomerPersona || persona is GuestPersona) {
+          return home;
+        }
+      }
+
+      return null;
     },
 
     routes: [
@@ -395,35 +445,20 @@ class AppRouter {
       ),
       GoRoute(
         path: sellerHome,
-        pageBuilder: (context, state) {
-          final args = state.extra as Map<String, bool>?;
-          final isGuest = args?['isGuest'] ?? false;
-          final isPending = args?['isPending'] ?? false;
-          return AppPageTransition.build(
-            context: context,
-            state: state,
-            child: MultiBlocProvider(
-              providers: [
-                BlocProvider(
-                  create: (_) => SellerHomeCubit(
-                    isGuest: isGuest,
-                    isPending: isPending,
-                  ),
-                ),
-                BlocProvider(
-                  create: (_) => sl<ProfileCubit>(),
-                ),
-                BlocProvider(
-                  create: (_) => sl<LoginCubit>(),
-                ),
-              ],
-              child: SellerHomePage(
-                isGuest: isGuest,
-                isPending: isPending,
-              ),
-            ),
-          );
-        },
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: MultiBlocProvider(
+            providers: [
+              // SellerHomeCubit no longer receives isGuest/isPending flags —
+              // SellerHomePage reads PersonaCubit (root singleton) directly.
+              BlocProvider(create: (_) => SellerHomeCubit()),
+              BlocProvider(create: (_) => sl<ProfileCubit>()),
+              BlocProvider(create: (_) => sl<LoginCubit>()),
+            ],
+            child: const SellerHomePage(),
+          ),
+        ),
       ),
       GoRoute(
         path: sellerStore,
@@ -437,9 +472,9 @@ class AppRouter {
             child: MultiBlocProvider(
               providers: [
                 BlocProvider(
-                  create: (_) => SellerStoreCubit(
-                    isGuest: isGuest,
-                    isPending: isPending,
+                  create: (_) => sl<SellerStoreCubit>(
+                    param1: isGuest,
+                    param2: isPending,
                   ),
                 ),
                 BlocProvider(
@@ -511,6 +546,83 @@ class AppRouter {
             ),
           );
         },
+      ),
+
+      GoRoute(
+        path: sellerManageOffer,
+        pageBuilder: (context, state) {
+          final offer = state.extra as OfferEntity?;
+          return AppPageTransition.build(
+            context: context,
+            state: state,
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) => SellerOffersCubit(
+                    isGuest: false,
+                    isPending: false,
+                  ),
+                ),
+                BlocProvider(
+                  create: (_) => ManageOfferCubit(initialOffer: offer),
+                ),
+              ],
+              child: const CreateSellerPage(),
+            ),
+          );
+        },
+      ),
+
+      GoRoute(
+        path: sellerOfferDetails,
+        pageBuilder: (context, state) {
+          final offer = state.extra as OfferEntity;
+          return AppPageTransition.build(
+            context: context,
+            state: state,
+            child: OfferDetailsPage(offer: offer),
+          );
+        },
+      ),
+
+      GoRoute(
+        path: sellerEditStore,
+        pageBuilder: (context, state) {
+          final store = state.extra as StoreDisplayEntity;
+          return AppPageTransition.build(
+            context: context,
+            state: state,
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) => sl<EditStoreInfoCubit>(),
+                ),
+                BlocProvider(
+                  create: (_) => sl<CreateStoreCubit>(),
+                ),
+              ],
+              child: EditInfoShopPage(store: store),
+            ),
+          );
+        },
+      ),
+
+      GoRoute(
+        path: sellerFollowers,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const FollowersShopPage(),
+        ),
+      ),
+
+      GoRoute(
+        path: displayStaffDetails,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const DisplayStaffDetailsPage(),
+        ),
       ),
 
       // 4. Permission flow
@@ -815,6 +927,40 @@ class AppRouter {
           context: context,
           state: state,
           child: const PrivacyPolicyPage(),
+        ),
+      ),
+
+      // ── Notifications ───────────────────────────────────────────────────
+      GoRoute(
+        path: notificationsPage,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: BlocProvider(
+            create: (_) => NotificationCubit(),
+            child: const NotificationsPage(),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: notificationDetails,
+        pageBuilder: (context, state) {
+          final notification = state.extra as NotificationEntity;
+          return AppPageTransition.build(
+            context: context,
+            state: state,
+            child: NotificationDetailsPage(notification: notification),
+          );
+        },
+      ),
+
+      // ── Customer following shops ────────────────────────────────────────
+      GoRoute(
+        path: customerFollowing,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: const FollowingCustomerPage(),
         ),
       ),
 

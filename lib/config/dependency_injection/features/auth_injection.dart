@@ -29,6 +29,8 @@ import '../../../features/auth/presentation/cubit/register_cubit.dart';
 import '../../../features/auth/presentation/cubit/reset_password_cubit.dart';
 import '../../../features/auth/presentation/cubit/google_sign_in_cubit.dart';
 import '../../../features/auth/presentation/cubit/auth_role_cubit.dart';
+import '../../../features/auth/presentation/cubit/persona_cubit.dart';
+import '../../../features/auth/domain/use_cases/resolve_persona_use_case.dart';
 
 void registerAuthDependencies(GetIt sl) {
   // ════════════════════════════════════════════════════════
@@ -81,9 +83,26 @@ void registerAuthDependencies(GetIt sl) {
   // CUBITS
   // ════════════════════════════════════════════════════════
 
-  // AuthRoleCubit - Singleton to persist role across all auth screens
+  // ── PersonaCubit — single authority for Theme + Route ─────────────────────
+  // Registered FIRST so ProfileRemoteDataSource can inject it.
+  sl.registerLazySingleton<ResolvePersonaUseCase>(
+    () => const ResolvePersonaUseCase(),
+  );
+
+  sl.registerLazySingleton<PersonaCubit>(
+    () => PersonaCubit(
+      resolvePersonaUseCase: sl<ResolvePersonaUseCase>(),
+      authLocalDs:           sl<AuthLocalDataSource>(),
+      secureStorage:         sl<SecureStorageService>(),
+      prefs:                 sl<SharedPreferences>(),
+    ),
+  );
+
+  // AuthRoleCubit — kept for backward compatibility during migration.
+  // @deprecated: use PersonaCubit for all new code.
+  // ✅ Now uses SharedPreferences to persist role preference across logout
   sl.registerLazySingleton<AuthRoleCubit>(
-    () => AuthRoleCubit(sl<SecureStorageService>()),
+    () => AuthRoleCubit(sl<SharedPreferences>()),
   );
 
   // Other Cubits - Factory (new instance per screen)

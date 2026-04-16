@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
@@ -6,6 +7,9 @@ import '../../../../../core/localization/l10n/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../core/widgets/buttons/app_primary_button.dart';
+import '../../../../auth/domain/entities/user_persona.dart';
+import '../../../../auth/presentation/cubit/persona_cubit.dart';
+import '../../../../auth/presentation/widgets/role_animation_wrapper.dart';
 import '../../widgets/shared_card.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -56,83 +60,120 @@ class TermsPage extends StatelessWidget {
 
   // ── Body ───────────────────────────────────────────────────────────────────
   Widget _buildBody(BuildContext context, AppLocalizations l10n) {
-    final termsSections = [
-      _TermsSection(
-        title: l10n.terms_section1_title,
-        content: l10n.terms_section1_content,
-      ),
-      _TermsSection(
-        title: l10n.terms_section2_title,
-        content: l10n.terms_section2_content,
-      ),
-      _TermsSection(
-        title: l10n.terms_section3_title,
-        content: l10n.terms_section3_content,
-      ),
-      _TermsSection(
-        title: l10n.terms_section4_title,
-        content: l10n.terms_section4_content,
-      ),
-      _TermsSection(
-        title: l10n.terms_section5_title,
-        content: l10n.terms_section5_content,
-      ),
-      _TermsSection(
-        title: l10n.terms_section6_title,
-        content: l10n.terms_section6_content,
-      ),
-    ];
+    return BlocBuilder<PersonaCubit, UserPersona>(
+      builder: (context, persona) {
+        final isSeller = persona is SellerPersona;
 
-    return Column(
-      children: [
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 12.h),
-
-                // ── Last Updated ────────────────────────────────────────────
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  child: Text(
-                    l10n.terms_last_updated,
-                    style: AppTextStyles.customStyle(
-                      context,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
+        final termsSections = isSeller
+            ? [
+                _TermsSection(
+                  title: l10n.terms_seller_section1_title,
+                  content: l10n.terms_seller_section1_content,
                 ),
-                SizedBox(height: 12.h),
+                _TermsSection(
+                  title: l10n.terms_seller_section2_title,
+                  content: l10n.terms_seller_section2_content,
+                ),
+                _TermsSection(
+                  title: l10n.terms_seller_section3_title,
+                  content: l10n.terms_seller_section3_content,
+                ),
+                _TermsSection(
+                  title: l10n.terms_seller_section4_title,
+                  content: l10n.terms_seller_section4_content,
+                ),
+                _TermsSection(
+                  title: l10n.terms_seller_section5_title,
+                  content: l10n.terms_seller_section5_content,
+                ),
+                _TermsSection(
+                  title: l10n.terms_seller_section6_title,
+                  content: l10n.terms_seller_section6_content,
+                ),
+              ]
+            : [
+                _TermsSection(
+                  title: l10n.terms_section1_title,
+                  content: l10n.terms_section1_content,
+                ),
+                _TermsSection(
+                  title: l10n.terms_section2_title,
+                  content: l10n.terms_section2_content,
+                ),
+                _TermsSection(
+                  title: l10n.terms_section3_title,
+                  content: l10n.terms_section3_content,
+                ),
+                _TermsSection(
+                  title: l10n.terms_section4_title,
+                  content: l10n.terms_section4_content,
+                ),
+                _TermsSection(
+                  title: l10n.terms_section5_title,
+                  content: l10n.terms_section5_content,
+                ),
+                _TermsSection(
+                  title: l10n.terms_section6_title,
+                  content: l10n.terms_section6_content,
+                ),
+              ];
 
-                // ── Terms Sections ──────────────────────────────────────────
-                ...termsSections.map((section) =>
-                    _buildSection(context, section)),
-                SizedBox(height: 24.h),
-              ],
-            ),
-          ),
-        ),
+        return Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 12.h),
 
-        // ── Agree Button ──────────────────────────────────────────────────────
-        Padding(
-          padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 20.h),
-          child: AppPrimaryButton(
-            text: l10n.terms_agree_button,
-            height: 56.h,
-            backgroundColor: AppColors.primary,
-            textStyle: AppTextStyles.customStyle(
-              context,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
+                    // ── Last Updated ────────────────────────────────────────────
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: Text(
+                        l10n.terms_last_updated,
+                        style: AppTextStyles.customStyle(
+                          context,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 12.h),
+
+                    // ── Terms Sections ──────────────────────────────────────────
+                    ...termsSections
+                        .map((section) => _buildSection(context, section)),
+                    SizedBox(height: 24.h),
+                  ],
+                ),
+              ),
             ),
-            onPressed: () => context.pop(),
-          ),
-        ),
-      ],
+
+            // ── Agree Button ──────────────────────────────────────────────────────
+            AnimatedPrimaryColor(
+              builder: (context, primaryColor) {
+                return Padding(
+                  padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 20.h),
+                  child: AppPrimaryButton(
+                    text: l10n.terms_agree_button,
+                    height: 56.h,
+                    backgroundColor: primaryColor,
+                    textStyle: AppTextStyles.customStyle(
+                      context,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                    onPressed: () => context.pop(),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 

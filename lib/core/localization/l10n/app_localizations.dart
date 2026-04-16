@@ -2582,6 +2582,66 @@ abstract class AppLocalizations {
   /// **'Absolutely! You can register as a merchant from the profile page by tapping \"Become a Seller\" to create your store.'**
   String get faq_a5;
 
+  /// No description provided for @faq_seller_q1.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I create my first offer?'**
+  String get faq_seller_q1;
+
+  /// No description provided for @faq_seller_a1.
+  ///
+  /// In en, this message translates to:
+  /// **'From your store dashboard, tap \"Add Offer\", fill in the offer details including discount percentage, validity period, and terms. Your offer will be reviewed before going live.'**
+  String get faq_seller_a1;
+
+  /// No description provided for @faq_seller_q2.
+  ///
+  /// In en, this message translates to:
+  /// **'How long does store approval take?'**
+  String get faq_seller_q2;
+
+  /// No description provided for @faq_seller_a2.
+  ///
+  /// In en, this message translates to:
+  /// **'Store approval typically takes 24-48 hours. You\'ll receive a notification once your store is approved and ready to publish offers.'**
+  String get faq_seller_a2;
+
+  /// No description provided for @faq_seller_q3.
+  ///
+  /// In en, this message translates to:
+  /// **'Are there any fees for sellers?'**
+  String get faq_seller_q3;
+
+  /// No description provided for @faq_seller_a3.
+  ///
+  /// In en, this message translates to:
+  /// **'Currently, Coupony is free for all sellers. We may introduce premium features in the future, but basic store and offer management will remain free.'**
+  String get faq_seller_a3;
+
+  /// No description provided for @faq_seller_q4.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I track my offer performance?'**
+  String get faq_seller_q4;
+
+  /// No description provided for @faq_seller_a4.
+  ///
+  /// In en, this message translates to:
+  /// **'Your dashboard provides detailed analytics including views, coupon usage, and customer engagement. You can track performance for each offer individually.'**
+  String get faq_seller_a4;
+
+  /// No description provided for @faq_seller_q5.
+  ///
+  /// In en, this message translates to:
+  /// **'Can I edit or delete published offers?'**
+  String get faq_seller_q5;
+
+  /// No description provided for @faq_seller_a5.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes! You can edit offer details or delete offers anytime from your store management page. Changes to active offers take effect immediately.'**
+  String get faq_seller_a5;
+
   /// No description provided for @guide_step1_title.
   ///
   /// In en, this message translates to:
@@ -2641,6 +2701,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Present the coupon at checkout and enjoy savings whether online or in-store.'**
   String get guide_step5_desc;
+
+  /// No description provided for @guide_seller_step1_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Your Store'**
+  String get guide_seller_step1_title;
+
+  /// No description provided for @guide_seller_step1_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Register as a seller and create your store by adding store information and logo.'**
+  String get guide_seller_step1_desc;
+
+  /// No description provided for @guide_seller_step2_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Offers'**
+  String get guide_seller_step2_title;
+
+  /// No description provided for @guide_seller_step2_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Create attractive offers and coupons for your customers with discount rates and duration.'**
+  String get guide_seller_step2_desc;
+
+  /// No description provided for @guide_seller_step3_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Offers'**
+  String get guide_seller_step3_title;
+
+  /// No description provided for @guide_seller_step3_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your offers performance, views, and usage from the dashboard.'**
+  String get guide_seller_step3_desc;
+
+  /// No description provided for @guide_seller_step4_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Engage with Customers'**
+  String get guide_seller_step4_title;
+
+  /// No description provided for @guide_seller_step4_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive notifications when customers use your coupons and interact with them.'**
+  String get guide_seller_step4_desc;
+
+  /// No description provided for @guide_seller_step5_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Boost Sales'**
+  String get guide_seller_step5_title;
+
+  /// No description provided for @guide_seller_step5_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Leverage analytics to improve your offers and attract more customers.'**
+  String get guide_seller_step5_desc;
 
   /// No description provided for @report_problem_description.
   ///
@@ -2779,6 +2899,396 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We respect your privacy and are committed to protecting your personal data. For more information, please review our privacy policy.'**
   String get terms_section5_content;
+
+  /// No description provided for @terms_seller_section1_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Seller Terms Acceptance'**
+  String get terms_seller_section1_title;
+
+  /// No description provided for @terms_seller_section1_content.
+  ///
+  /// In en, this message translates to:
+  /// **'By registering as a seller on Coupony, you agree to comply with these seller-specific terms and conditions. If you do not agree, please do not create a store.'**
+  String get terms_seller_section1_content;
+
+  /// No description provided for @terms_seller_section2_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Seller Responsibilities'**
+  String get terms_seller_section2_title;
+
+  /// No description provided for @terms_seller_section2_content.
+  ///
+  /// In en, this message translates to:
+  /// **'You are responsible for the accuracy of information and offers you publish. All coupons must be valid and usable. Any misleading content may result in account suspension.'**
+  String get terms_seller_section2_content;
+
+  /// No description provided for @terms_seller_section3_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Store Management'**
+  String get terms_seller_section3_title;
+
+  /// No description provided for @terms_seller_section3_content.
+  ///
+  /// In en, this message translates to:
+  /// **'You must keep your store information up-to-date and manage your offers regularly. You are responsible for responding to customer inquiries and resolving issues related to your offers.'**
+  String get terms_seller_section3_content;
+
+  /// No description provided for @terms_seller_section4_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers & Coupons'**
+  String get terms_seller_section4_title;
+
+  /// No description provided for @terms_seller_section4_content.
+  ///
+  /// In en, this message translates to:
+  /// **'You must honor the terms of offers you publish. Coupony reserves the right to remove any offer that violates policies or receives repeated customer complaints.'**
+  String get terms_seller_section4_content;
+
+  /// No description provided for @terms_seller_section5_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Fees & Payments'**
+  String get terms_seller_section5_title;
+
+  /// No description provided for @terms_seller_section5_content.
+  ///
+  /// In en, this message translates to:
+  /// **'Platform usage is currently free for sellers. We reserve the right to implement future fees with advance notice. Any pricing model changes will be communicated to you.'**
+  String get terms_seller_section5_content;
+
+  /// No description provided for @terms_seller_section6_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Termination'**
+  String get terms_seller_section6_title;
+
+  /// No description provided for @terms_seller_section6_content.
+  ///
+  /// In en, this message translates to:
+  /// **'We reserve the right to suspend or terminate seller accounts for terms violations or repeated complaints. You may close your account anytime from store settings.'**
+  String get terms_seller_section6_content;
+
+  /// No description provided for @staff_list_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff'**
+  String get staff_list_title;
+
+  /// No description provided for @staff_filter_all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get staff_filter_all;
+
+  /// No description provided for @staff_filter_active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Staff'**
+  String get staff_filter_active;
+
+  /// No description provided for @staff_filter_stopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped Staff'**
+  String get staff_filter_stopped;
+
+  /// No description provided for @staff_status_active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get staff_status_active;
+
+  /// No description provided for @staff_status_stopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped'**
+  String get staff_status_stopped;
+
+  /// No description provided for @staff_role_cashier.
+  ///
+  /// In en, this message translates to:
+  /// **'Cashier'**
+  String get staff_role_cashier;
+
+  /// No description provided for @staff_branch_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch'**
+  String get staff_branch_label;
+
+  /// No description provided for @staff_joined_since.
+  ///
+  /// In en, this message translates to:
+  /// **'Since'**
+  String get staff_joined_since;
+
+  /// No description provided for @staff_menu_edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get staff_menu_edit;
+
+  /// No description provided for @staff_menu_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get staff_menu_delete;
+
+  /// No description provided for @staff_delete_confirm_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Staff Deletion'**
+  String get staff_delete_confirm_title;
+
+  /// No description provided for @staff_delete_confirm_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this staff member?'**
+  String get staff_delete_confirm_message;
+
+  /// No description provided for @staff_delete_confirm_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Deletion'**
+  String get staff_delete_confirm_button;
+
+  /// No description provided for @staff_delete_cancel_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get staff_delete_cancel_button;
+
+  /// No description provided for @staff_empty_message.
+  ///
+  /// In en, this message translates to:
+  /// **'No staff members found'**
+  String get staff_empty_message;
+
+  /// No description provided for @staff_search_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for staff...'**
+  String get staff_search_hint;
+
+  /// No description provided for @staff_no_search_results.
+  ///
+  /// In en, this message translates to:
+  /// **'No search results found'**
+  String get staff_no_search_results;
+
+  /// No description provided for @staff_edit_save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get staff_edit_save;
+
+  /// No description provided for @staff_edit_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get staff_edit_cancel;
+
+  /// No description provided for @staff_name_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff Name'**
+  String get staff_name_hint;
+
+  /// No description provided for @staff_role_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get staff_role_hint;
+
+  /// No description provided for @staff_branch_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch'**
+  String get staff_branch_hint;
+
+  /// No description provided for @staff_update_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff updated successfully'**
+  String get staff_update_success;
+
+  /// No description provided for @staff_update_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update staff'**
+  String get staff_update_error;
+
+  /// No description provided for @notifications_page_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications_page_title;
+
+  /// No description provided for @notifications_sort_newest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest'**
+  String get notifications_sort_newest;
+
+  /// No description provided for @notifications_sort_oldest.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest'**
+  String get notifications_sort_oldest;
+
+  /// No description provided for @notifications_filter_all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get notifications_filter_all;
+
+  /// No description provided for @notifications_filter_offer.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer'**
+  String get notifications_filter_offer;
+
+  /// No description provided for @notifications_filter_coupon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupon'**
+  String get notifications_filter_coupon;
+
+  /// No description provided for @notifications_filter_system.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get notifications_filter_system;
+
+  /// No description provided for @notifications_filter_general.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get notifications_filter_general;
+
+  /// No description provided for @notifications_empty_title.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications'**
+  String get notifications_empty_title;
+
+  /// No description provided for @notifications_empty_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll let you know when there\'s something new'**
+  String get notifications_empty_subtitle;
+
+  /// No description provided for @notifications_type_coupon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupon'**
+  String get notifications_type_coupon;
+
+  /// No description provided for @notifications_type_offer.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer'**
+  String get notifications_type_offer;
+
+  /// No description provided for @notifications_type_system.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get notifications_type_system;
+
+  /// No description provided for @notifications_type_general.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get notifications_type_general;
+
+  /// No description provided for @notifications_details_page_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Details'**
+  String get notifications_details_page_title;
+
+  /// No description provided for @notifications_details_message_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get notifications_details_message_label;
+
+  /// No description provided for @seller_notifications_filter_order.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders'**
+  String get seller_notifications_filter_order;
+
+  /// No description provided for @seller_notifications_filter_store.
+  ///
+  /// In en, this message translates to:
+  /// **'Store'**
+  String get seller_notifications_filter_store;
+
+  /// No description provided for @seller_notifications_filter_analytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics'**
+  String get seller_notifications_filter_analytics;
+
+  /// No description provided for @seller_notifications_filter_employee.
+  ///
+  /// In en, this message translates to:
+  /// **'Employees'**
+  String get seller_notifications_filter_employee;
+
+  /// No description provided for @seller_notifications_type_order.
+  ///
+  /// In en, this message translates to:
+  /// **'Order'**
+  String get seller_notifications_type_order;
+
+  /// No description provided for @seller_notifications_type_store.
+  ///
+  /// In en, this message translates to:
+  /// **'Store'**
+  String get seller_notifications_type_store;
+
+  /// No description provided for @seller_notifications_type_analytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics'**
+  String get seller_notifications_type_analytics;
+
+  /// No description provided for @seller_notifications_type_employee.
+  ///
+  /// In en, this message translates to:
+  /// **'Employee'**
+  String get seller_notifications_type_employee;
+
+  /// No description provided for @notification_badge_approved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get notification_badge_approved;
+
+  /// No description provided for @notification_badge_rejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get notification_badge_rejected;
+
+  /// No description provided for @notification_badge_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get notification_badge_pending;
+
+  /// No description provided for @notification_badge_used.
+  ///
+  /// In en, this message translates to:
+  /// **'Used'**
+  String get notification_badge_used;
 
   /// No description provided for @contact_us_heading.
   ///
@@ -3173,7 +3683,7 @@ abstract class AppLocalizations {
   /// No description provided for @public_categories_error.
   ///
   /// In en, this message translates to:
-  /// **'Could not load categories'**
+  /// **'Failed to load categories'**
   String get public_categories_error;
 
   /// No description provided for @public_category_products_title.
@@ -3361,6 +3871,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'@2025 All rights reserved'**
   String get settings_copyright;
+
+  /// No description provided for @offer_success_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer saved successfully'**
+  String get offer_success_message;
+
+  /// No description provided for @offer_edit_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Offer'**
+  String get offer_edit_title;
+
+  /// No description provided for @offer_create_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Offer'**
+  String get offer_create_title;
+
+  /// No description provided for @offer_save_action.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get offer_save_action;
+
+  /// No description provided for @offer_title_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer Title'**
+  String get offer_title_label;
+
+  /// No description provided for @offer_description_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer Description'**
+  String get offer_description_label;
+
+  /// No description provided for @offer_discount_type_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount Type'**
+  String get offer_discount_type_label;
+
+  /// No description provided for @offer_discount_type_percentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Percentage'**
+  String get offer_discount_type_percentage;
+
+  /// No description provided for @offer_discount_type_buy_get.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy & Get'**
+  String get offer_discount_type_buy_get;
+
+  /// No description provided for @offer_discount_type_fixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed Amount'**
+  String get offer_discount_type_fixed;
+
+  /// No description provided for @offer_category_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get offer_category_label;
+
+  /// No description provided for @offer_sub_category_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Sub-Category'**
+  String get offer_sub_category_label;
+
+  /// No description provided for @offer_select_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get offer_select_hint;
+
+  /// No description provided for @offer_sizes_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Sizes'**
+  String get offer_sizes_label;
+
+  /// No description provided for @offer_colors_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Colors'**
+  String get offer_colors_label;
+
+  /// No description provided for @offer_original_price_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Original Price'**
+  String get offer_original_price_label;
+
+  /// No description provided for @offer_discounted_price_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Discounted Price'**
+  String get offer_discounted_price_label;
+
+  /// No description provided for @offer_discount_value_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount Value'**
+  String get offer_discount_value_label;
+
+  /// No description provided for @offer_publish_settings_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish Settings'**
+  String get offer_publish_settings_label;
+
+  /// No description provided for @offer_publish_now.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish Now'**
+  String get offer_publish_now;
+
+  /// No description provided for @offer_schedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule'**
+  String get offer_schedule;
+
+  /// No description provided for @offer_start_date_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
+  String get offer_start_date_label;
+
+  /// No description provided for @offer_end_date_label.
+  ///
+  /// In en, this message translates to:
+  /// **'End Date'**
+  String get offer_end_date_label;
+
+  /// No description provided for @offer_image_picker_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to upload offer image'**
+  String get offer_image_picker_hint;
+
+  /// No description provided for @offer_image_picker_sub.
+  ///
+  /// In en, this message translates to:
+  /// **'PNG or JPG, max size 5MB'**
+  String get offer_image_picker_sub;
+
+  /// No description provided for @offer_update.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Offer'**
+  String get offer_update;
+
+  /// No description provided for @offer_save_publish.
+  ///
+  /// In en, this message translates to:
+  /// **'Save & Publish'**
+  String get offer_save_publish;
+
+  /// No description provided for @offer_delete_confirm_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Offer'**
+  String get offer_delete_confirm_title;
+
+  /// No description provided for @offer_delete_confirm_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this offer? This action cannot be undone.'**
+  String get offer_delete_confirm_message;
+
+  /// No description provided for @offer_delete_confirm_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get offer_delete_confirm_button;
+
+  /// No description provided for @offer_delete_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get offer_delete_cancel;
+
+  /// No description provided for @offer_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No offers yet'**
+  String get offer_empty;
 
   /// No description provided for @delete_account_dialog_title.
   ///
@@ -3854,6 +4556,132 @@ abstract class AppLocalizations {
   /// **'Switch to Merchant'**
   String get profile_switch_to_merchant;
 
+  /// No description provided for @profile_track_request.
+  ///
+  /// In en, this message translates to:
+  /// **'Track Your Request'**
+  String get profile_track_request;
+
+  /// No description provided for @profile_switch_to_customer.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to Customer'**
+  String get profile_switch_to_customer;
+
+  /// No description provided for @profile_my_stores.
+  ///
+  /// In en, this message translates to:
+  /// **'My Stores'**
+  String get profile_my_stores;
+
+  /// No description provided for @profile_add_store.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Store'**
+  String get profile_add_store;
+
+  /// No description provided for @profile_stores_load_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load stores'**
+  String get profile_stores_load_failed;
+
+  /// No description provided for @profile_store_fetch_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to fetch store details'**
+  String get profile_store_fetch_failed;
+
+  /// No description provided for @profile_switched_to_customer.
+  ///
+  /// In en, this message translates to:
+  /// **'Switched to customer mode'**
+  String get profile_switched_to_customer;
+
+  /// No description provided for @profile_store_added_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Store added successfully'**
+  String get profile_store_added_success;
+
+  /// No description provided for @store_selection_sheet_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Your Store'**
+  String get store_selection_sheet_title;
+
+  /// No description provided for @store_selection_sheet_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the store you want to manage'**
+  String get store_selection_sheet_subtitle;
+
+  /// No description provided for @store_status_active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get store_status_active;
+
+  /// No description provided for @store_status_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Review'**
+  String get store_status_pending;
+
+  /// No description provided for @store_status_rejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get store_status_rejected;
+
+  /// No description provided for @store_not_active_pending_message.
+  ///
+  /// In en, this message translates to:
+  /// **'This store cannot be selected because it is pending approval'**
+  String get store_not_active_pending_message;
+
+  /// No description provided for @store_not_active_rejected_message.
+  ///
+  /// In en, this message translates to:
+  /// **'This store cannot be selected because it was rejected'**
+  String get store_not_active_rejected_message;
+
+  /// No description provided for @store_already_active.
+  ///
+  /// In en, this message translates to:
+  /// **'This is already your active store'**
+  String get store_already_active;
+
+  /// No description provided for @store_switched_to.
+  ///
+  /// In en, this message translates to:
+  /// **'Switched to {name}'**
+  String store_switched_to(String name);
+
+  /// No description provided for @store_delete_dialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Store'**
+  String get store_delete_dialog_title;
+
+  /// No description provided for @store_delete_dialog_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{name}\"?'**
+  String store_delete_dialog_message(String name);
+
+  /// No description provided for @store_delete_dialog_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get store_delete_dialog_confirm;
+
+  /// No description provided for @store_delete_coming_soon.
+  ///
+  /// In en, this message translates to:
+  /// **'Store deletion will be available in a future update'**
+  String get store_delete_coming_soon;
+
   /// No description provided for @merchant_no_changes_snackbar.
   ///
   /// In en, this message translates to:
@@ -3877,6 +4705,940 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dashboard Coming Soon'**
   String get seller_dashboard_coming_soon;
+
+  /// No description provided for @seller_analytics_greeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello'**
+  String get seller_analytics_greeting;
+
+  /// No description provided for @seller_analytics_filter_all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get seller_analytics_filter_all;
+
+  /// No description provided for @seller_analytics_filter_today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get seller_analytics_filter_today;
+
+  /// No description provided for @seller_analytics_filter_last_7_days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 Days'**
+  String get seller_analytics_filter_last_7_days;
+
+  /// No description provided for @seller_analytics_filter_last_30_days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 Days'**
+  String get seller_analytics_filter_last_30_days;
+
+  /// No description provided for @seller_analytics_filter_custom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Date...'**
+  String get seller_analytics_filter_custom;
+
+  /// No description provided for @seller_analytics_filter_this_month.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get seller_analytics_filter_this_month;
+
+  /// No description provided for @seller_analytics_filter_this_year.
+  ///
+  /// In en, this message translates to:
+  /// **'This Year'**
+  String get seller_analytics_filter_this_year;
+
+  /// No description provided for @seller_analytics_monthly_goal_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Coupons Goal'**
+  String get seller_analytics_monthly_goal_title;
+
+  /// No description provided for @seller_analytics_goal_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal'**
+  String get seller_analytics_goal_label;
+
+  /// No description provided for @seller_analytics_achieved_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Achieved'**
+  String get seller_analytics_achieved_label;
+
+  /// No description provided for @seller_analytics_goal_completion.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% of goal achieved'**
+  String seller_analytics_goal_completion(Object percent);
+
+  /// No description provided for @seller_analytics_new_followers_title.
+  ///
+  /// In en, this message translates to:
+  /// **'New Followers'**
+  String get seller_analytics_new_followers_title;
+
+  /// No description provided for @seller_analytics_this_month.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month  +{count}'**
+  String seller_analytics_this_month(Object count);
+
+  /// No description provided for @seller_analytics_offer_distribution_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer Types Distribution'**
+  String get seller_analytics_offer_distribution_title;
+
+  /// No description provided for @seller_analytics_top_offers_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Performing Offers'**
+  String get seller_analytics_top_offers_title;
+
+  /// No description provided for @seller_analytics_usage_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Uses'**
+  String seller_analytics_usage_count(Object count);
+
+  /// No description provided for @seller_analytics_retry_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get seller_analytics_retry_button;
+
+  /// No description provided for @shop_display_edit_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Store Info'**
+  String get shop_display_edit_button;
+
+  /// No description provided for @shop_display_rating_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get shop_display_rating_label;
+
+  /// No description provided for @shop_display_followers_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Followers'**
+  String get shop_display_followers_label;
+
+  /// No description provided for @shop_display_coupons_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupons'**
+  String get shop_display_coupons_label;
+
+  /// No description provided for @shop_display_description_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Store Description'**
+  String get shop_display_description_title;
+
+  /// No description provided for @shop_display_category_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get shop_display_category_title;
+
+  /// No description provided for @shop_display_hours_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Hours'**
+  String get shop_display_hours_title;
+
+  /// No description provided for @shop_display_reviews_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Ratings'**
+  String get shop_display_reviews_title;
+
+  /// No description provided for @shop_display_total_reviews.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} ratings'**
+  String shop_display_total_reviews(Object count);
+
+  /// No description provided for @shop_display_open.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get shop_display_open;
+
+  /// No description provided for @shop_display_closed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get shop_display_closed;
+
+  /// No description provided for @shop_display_no_description.
+  ///
+  /// In en, this message translates to:
+  /// **'No description available'**
+  String get shop_display_no_description;
+
+  /// No description provided for @shop_display_no_category.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories added yet'**
+  String get shop_display_no_category;
+
+  /// No description provided for @shop_display_day_sun.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunday'**
+  String get shop_display_day_sun;
+
+  /// No description provided for @shop_display_day_mon.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday'**
+  String get shop_display_day_mon;
+
+  /// No description provided for @shop_display_day_tue.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuesday'**
+  String get shop_display_day_tue;
+
+  /// No description provided for @shop_display_day_wed.
+  ///
+  /// In en, this message translates to:
+  /// **'Wednesday'**
+  String get shop_display_day_wed;
+
+  /// No description provided for @shop_display_day_thu.
+  ///
+  /// In en, this message translates to:
+  /// **'Thursday'**
+  String get shop_display_day_thu;
+
+  /// No description provided for @shop_display_day_fri.
+  ///
+  /// In en, this message translates to:
+  /// **'Friday'**
+  String get shop_display_day_fri;
+
+  /// No description provided for @shop_display_day_sat.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturday'**
+  String get shop_display_day_sat;
+
+  /// No description provided for @shop_display_customer_reviews_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Reviews'**
+  String get shop_display_customer_reviews_title;
+
+  /// No description provided for @shop_display_no_reviews.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet'**
+  String get shop_display_no_reviews;
+
+  /// No description provided for @shop_display_verified_badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get shop_display_verified_badge;
+
+  /// No description provided for @followers_page_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Followers'**
+  String get followers_page_title;
+
+  /// No description provided for @followers_page_follow_btn.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow'**
+  String get followers_page_follow_btn;
+
+  /// No description provided for @following_page_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get following_page_title;
+
+  /// No description provided for @following_page_search_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search stores...'**
+  String get following_page_search_hint;
+
+  /// No description provided for @following_page_empty_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Not following anyone yet'**
+  String get following_page_empty_title;
+
+  /// No description provided for @following_page_empty_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore stores and follow the ones you love to see their latest offers here.'**
+  String get following_page_empty_subtitle;
+
+  /// No description provided for @following_page_unfollow_btn.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfollow'**
+  String get following_page_unfollow_btn;
+
+  /// No description provided for @following_page_unfollow_confirm_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfollow store?'**
+  String get following_page_unfollow_confirm_title;
+
+  /// No description provided for @following_page_unfollow_confirm_body.
+  ///
+  /// In en, this message translates to:
+  /// **'You will stop receiving updates from this store.'**
+  String get following_page_unfollow_confirm_body;
+
+  /// No description provided for @following_page_unfollow_confirm_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get following_page_unfollow_confirm_cancel;
+
+  /// No description provided for @following_page_unfollow_confirm_ok.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfollow'**
+  String get following_page_unfollow_confirm_ok;
+
+  /// No description provided for @following_page_no_results.
+  ///
+  /// In en, this message translates to:
+  /// **'No stores match your search'**
+  String get following_page_no_results;
+
+  /// No description provided for @home_greeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Morning'**
+  String get home_greeting;
+
+  /// No description provided for @home_delivery_to.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery to'**
+  String get home_delivery_to;
+
+  /// No description provided for @home_search_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for offers and stores...'**
+  String get home_search_hint;
+
+  /// No description provided for @home_categories_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get home_categories_title;
+
+  /// No description provided for @home_promo_on_going.
+  ///
+  /// In en, this message translates to:
+  /// **'Promo on Going'**
+  String get home_promo_on_going;
+
+  /// No description provided for @home_shop_now.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop Now'**
+  String get home_shop_now;
+
+  /// No description provided for @home_personalized_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers for You'**
+  String get home_personalized_title;
+
+  /// No description provided for @home_brands_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Brands'**
+  String get home_brands_title;
+
+  /// No description provided for @home_category_offers_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Category Offers'**
+  String get home_category_offers_title;
+
+  /// No description provided for @home_favorites_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Favorites'**
+  String get home_favorites_title;
+
+  /// No description provided for @home_travel_offers_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel Offers'**
+  String get home_travel_offers_title;
+
+  /// No description provided for @home_egypt_offers_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured Offers in Egypt'**
+  String get home_egypt_offers_title;
+
+  /// No description provided for @home_see_all.
+  ///
+  /// In en, this message translates to:
+  /// **'See All'**
+  String get home_see_all;
+
+  /// No description provided for @home_save_badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Save {percent}%'**
+  String home_save_badge(Object percent);
+
+  /// No description provided for @home_discount_up_to.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount up to'**
+  String get home_discount_up_to;
+
+  /// No description provided for @home_min_transaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Min. transaction'**
+  String get home_min_transaction;
+
+  /// No description provided for @nav_home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get nav_home;
+
+  /// No description provided for @nav_categories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get nav_categories;
+
+  /// No description provided for @nav_explore.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore'**
+  String get nav_explore;
+
+  /// No description provided for @nav_coupons.
+  ///
+  /// In en, this message translates to:
+  /// **'My Coupons'**
+  String get nav_coupons;
+
+  /// No description provided for @nav_account.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get nav_account;
+
+  /// No description provided for @home_stores_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Stores'**
+  String get home_stores_title;
+
+  /// No description provided for @home_featured_offers_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers'**
+  String get home_featured_offers_title;
+
+  /// No description provided for @seller_home_subscription_renew_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Renewal'**
+  String get seller_home_subscription_renew_title;
+
+  /// No description provided for @seller_home_subscription_renew_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Your subscription expires in 2 days. Renew to keep your benefits.'**
+  String get seller_home_subscription_renew_body;
+
+  /// No description provided for @seller_home_stat_active_offers.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Offers'**
+  String get seller_home_stat_active_offers;
+
+  /// No description provided for @seller_home_stat_used_coupons.
+  ///
+  /// In en, this message translates to:
+  /// **'Used Coupons'**
+  String get seller_home_stat_used_coupons;
+
+  /// No description provided for @seller_home_stat_views.
+  ///
+  /// In en, this message translates to:
+  /// **'Views'**
+  String get seller_home_stat_views;
+
+  /// No description provided for @seller_home_stat_shares.
+  ///
+  /// In en, this message translates to:
+  /// **'Shares'**
+  String get seller_home_stat_shares;
+
+  /// No description provided for @seller_home_quick_actions_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get seller_home_quick_actions_title;
+
+  /// No description provided for @seller_home_add_offer_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Offer'**
+  String get seller_home_add_offer_label;
+
+  /// No description provided for @seller_home_add_offer_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish a new offer now'**
+  String get seller_home_add_offer_subtitle;
+
+  /// No description provided for @seller_home_add_product_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Product'**
+  String get seller_home_add_product_label;
+
+  /// No description provided for @seller_home_add_product_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish a new product now'**
+  String get seller_home_add_product_subtitle;
+
+  /// No description provided for @seller_home_scan_qr.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR'**
+  String get seller_home_scan_qr;
+
+  /// No description provided for @seller_home_add_employee.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Employee'**
+  String get seller_home_add_employee;
+
+  /// No description provided for @seller_home_manage_employees_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Employees'**
+  String get seller_home_manage_employees_title;
+
+  /// No description provided for @seller_home_manage_employees_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'View and manage employees'**
+  String get seller_home_manage_employees_subtitle;
+
+  /// No description provided for @staff_delete_dialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Staff Deletion'**
+  String get staff_delete_dialog_title;
+
+  /// No description provided for @staff_delete_dialog_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Deletion'**
+  String get staff_delete_dialog_confirm;
+
+  /// No description provided for @staff_delete_dialog_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get staff_delete_dialog_cancel;
+
+  /// No description provided for @seller_home_active_offers_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Offers'**
+  String get seller_home_active_offers_section;
+
+  /// No description provided for @seller_home_no_active_offers.
+  ///
+  /// In en, this message translates to:
+  /// **'No active offers currently'**
+  String get seller_home_no_active_offers;
+
+  /// No description provided for @seller_home_sidebar_active_seller.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Seller'**
+  String get seller_home_sidebar_active_seller;
+
+  /// No description provided for @seller_home_sidebar_notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get seller_home_sidebar_notifications;
+
+  /// No description provided for @seller_home_offer_usage_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Uses'**
+  String seller_home_offer_usage_count(Object count);
+
+  /// No description provided for @seller_offers_tab_all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get seller_offers_tab_all;
+
+  /// No description provided for @seller_offers_tab_active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get seller_offers_tab_active;
+
+  /// No description provided for @seller_offers_tab_expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get seller_offers_tab_expired;
+
+  /// No description provided for @seller_offers_tab_scheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get seller_offers_tab_scheduled;
+
+  /// No description provided for @seller_offers_page_title.
+  ///
+  /// In en, this message translates to:
+  /// **'My Offers'**
+  String get seller_offers_page_title;
+
+  /// No description provided for @seller_offers_empty_all.
+  ///
+  /// In en, this message translates to:
+  /// **'No offers'**
+  String get seller_offers_empty_all;
+
+  /// No description provided for @seller_offers_empty_active.
+  ///
+  /// In en, this message translates to:
+  /// **'No active offers'**
+  String get seller_offers_empty_active;
+
+  /// No description provided for @seller_offers_empty_expired.
+  ///
+  /// In en, this message translates to:
+  /// **'No expired offers'**
+  String get seller_offers_empty_expired;
+
+  /// No description provided for @seller_offers_empty_scheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'No scheduled offers'**
+  String get seller_offers_empty_scheduled;
+
+  /// No description provided for @seller_offers_add_new.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Offer +'**
+  String get seller_offers_add_new;
+
+  /// No description provided for @seller_offer_status_active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get seller_offer_status_active;
+
+  /// No description provided for @seller_offer_status_expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get seller_offer_status_expired;
+
+  /// No description provided for @seller_offer_status_scheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get seller_offer_status_scheduled;
+
+  /// No description provided for @seller_offer_chip_percentage.
+  ///
+  /// In en, this message translates to:
+  /// **'% Discount'**
+  String get seller_offer_chip_percentage;
+
+  /// No description provided for @seller_offer_action_details.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get seller_offer_action_details;
+
+  /// No description provided for @seller_offer_delete_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Delete'**
+  String get seller_offer_delete_title;
+
+  /// No description provided for @seller_offer_delete_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this offer?\nThis action cannot be undone.'**
+  String get seller_offer_delete_message;
+
+  /// No description provided for @edit_store_field_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Store Name'**
+  String get edit_store_field_name;
+
+  /// No description provided for @edit_store_field_name_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter store name'**
+  String get edit_store_field_name_hint;
+
+  /// No description provided for @edit_store_field_name_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Store name is required'**
+  String get edit_store_field_name_required;
+
+  /// No description provided for @edit_store_field_description_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get edit_store_field_description_label;
+
+  /// No description provided for @edit_store_field_description_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter store description'**
+  String get edit_store_field_description_hint;
+
+  /// No description provided for @edit_store_field_email_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter email address'**
+  String get edit_store_field_email_hint;
+
+  /// No description provided for @edit_store_field_phone_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter phone number'**
+  String get edit_store_field_phone_hint;
+
+  /// No description provided for @edit_store_working_hours_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Working Hours'**
+  String get edit_store_working_hours_title;
+
+  /// No description provided for @edit_store_category_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer Category'**
+  String get edit_store_category_label;
+
+  /// No description provided for @edit_store_select_category.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Category'**
+  String get edit_store_select_category;
+
+  /// No description provided for @edit_store_loading_categories.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading categories...'**
+  String get edit_store_loading_categories;
+
+  /// No description provided for @edit_store_categories_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading categories'**
+  String get edit_store_categories_error;
+
+  /// No description provided for @edit_store_save_loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get edit_store_save_loading;
+
+  /// No description provided for @edit_store_save_changes.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get edit_store_save_changes;
+
+  /// No description provided for @edit_store_time_from.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get edit_store_time_from;
+
+  /// No description provided for @edit_store_time_to.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get edit_store_time_to;
+
+  /// No description provided for @offer_details_status_active_now.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Now'**
+  String get offer_details_status_active_now;
+
+  /// No description provided for @offer_details_category_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Category:'**
+  String get offer_details_category_label;
+
+  /// No description provided for @offer_details_sizes_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Sizes'**
+  String get offer_details_sizes_title;
+
+  /// No description provided for @offer_details_colors_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Colors'**
+  String get offer_details_colors_title;
+
+  /// No description provided for @offer_details_valid_until.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid Until'**
+  String get offer_details_valid_until;
+
+  /// No description provided for @offer_details_terms_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & Conditions'**
+  String get offer_details_terms_title;
+
+  /// No description provided for @offer_details_edit_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Offer Details'**
+  String get offer_details_edit_button;
+
+  /// No description provided for @offer_details_date_placeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'DD/MM/YYYY'**
+  String get offer_details_date_placeholder;
+
+  /// No description provided for @offer_terms_validity_date.
+  ///
+  /// In en, this message translates to:
+  /// **'This offer is valid until {date} only, and will not be accepted after this date under any circumstances.'**
+  String offer_terms_validity_date(String date);
+
+  /// No description provided for @offer_terms_validity_open.
+  ///
+  /// In en, this message translates to:
+  /// **'The offer is valid until further notice, and the store reserves the right to stop it at any time.'**
+  String get offer_terms_validity_open;
+
+  /// No description provided for @offer_terms_discount_percentage.
+  ///
+  /// In en, this message translates to:
+  /// **'This offer grants a {pct}% discount on the original price ({original}), making the final price {discounted}.'**
+  String offer_terms_discount_percentage(
+    String pct,
+    String original,
+    String discounted,
+  );
+
+  /// No description provided for @offer_terms_discount_fixed.
+  ///
+  /// In en, this message translates to:
+  /// **'A fixed discount of {saved} is applied to the original price.'**
+  String offer_terms_discount_fixed(String saved);
+
+  /// No description provided for @offer_terms_discount_buy_get.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy & Get offer; automatically applied when the purchase condition is met.'**
+  String get offer_terms_discount_buy_get;
+
+  /// No description provided for @offer_terms_category_scope.
+  ///
+  /// In en, this message translates to:
+  /// **'This offer is exclusive to the \"{scope}\" category and does not include other products.'**
+  String offer_terms_category_scope(String scope);
+
+  /// No description provided for @offer_terms_sizes.
+  ///
+  /// In en, this message translates to:
+  /// **'The discount applies to available sizes ({sizes}) only, and prices may differ for other sizes.'**
+  String offer_terms_sizes(String sizes);
+
+  /// No description provided for @offer_terms_start_date.
+  ///
+  /// In en, this message translates to:
+  /// **'The offer officially activates on {date}, and will not be accepted before this date.'**
+  String offer_terms_start_date(String date);
+
+  /// No description provided for @offer_terms_no_combine.
+  ///
+  /// In en, this message translates to:
+  /// **'This offer cannot be combined with any other discounts or offers at the same time.'**
+  String get offer_terms_no_combine;
+
+  /// No description provided for @offer_terms_store_rights.
+  ///
+  /// In en, this message translates to:
+  /// **'{storeName} reserves the right to modify the offer terms or cancel it without prior notice.'**
+  String offer_terms_store_rights(String storeName);
+
+  /// No description provided for @offer_terms_return_policy.
+  ///
+  /// In en, this message translates to:
+  /// **'In case of return or exchange, the amount will be recalculated according to the store\'s approved policy without being bound by the offer price.'**
+  String get offer_terms_return_policy;
+
+  /// No description provided for @guest_profile_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Your Journey on Coupony'**
+  String get guest_profile_title;
+
+  /// No description provided for @guest_profile_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your store, showcase your offers, and reach new customers.'**
+  String get guest_profile_subtitle;
+
+  /// No description provided for @guest_login_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get guest_login_button;
+
+  /// No description provided for @itch_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to Merchant'**
+  String get itch_button;
 }
 
 class _AppLocalizationsDelegate

@@ -90,7 +90,9 @@ class GoogleSignInButton extends StatelessWidget {
   }
 
   void _handleGoogleSignIn(BuildContext context) {
-    logger.i("Google Sign-In started...");
+    logger.i("🔵 Google Sign-In Button Pressed");
+    logger.i("🔵 Role being passed: $role");
+    logger.i("🔵 Calling GoogleSignInCubit.signInWithGoogle(role: $role)");
     context.read<GoogleSignInCubit>().signInWithGoogle(role: role);
   }
 }

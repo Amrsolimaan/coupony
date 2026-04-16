@@ -9,7 +9,7 @@ class AppTextStyles {
   // Font Constants for Manual Usage
   static const String Main_Font_arabic = 'PlaypenSansArabic';
   static const String Sec_Font_arabic = 'Amiri';
-  static const String Main_Font_english = 'Urbanist';
+  static const String Main_Font_english = 'Inter';
   static const String Main_Font_logo = 'Pacifico';
 
   // Base Font Family

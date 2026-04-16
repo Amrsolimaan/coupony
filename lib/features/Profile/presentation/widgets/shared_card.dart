@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../auth/presentation/widgets/role_animation_wrapper.dart';
 
 /// Reusable profile card widget with unified design system
 /// Maintains 100% visual consistency across all profile pages
@@ -111,17 +112,21 @@ class SharedProfileCard extends StatelessWidget {
           if (leading != null)
             leading!
           else if (icon != null)
-            useFontAwesome
-                ? FaIcon(
-                    icon,
-                    size: 19.w,
-                    color: AppColors.primary,
-                  )
-                : Icon(
-                    icon,
-                    size: 24.w,
-                    color: AppColors.primary,
-                  ),
+            AnimatedPrimaryColor(
+              builder: (context, primaryColor) {
+                return useFontAwesome
+                    ? FaIcon(
+                        icon,
+                        size: 19.w,
+                        color: primaryColor,
+                      )
+                    : Icon(
+                        icon,
+                        size: 24.w,
+                        color: primaryColor,
+                      );
+              },
+            ),
           
           if (leading != null || icon != null) SizedBox(width: 16.w),
 

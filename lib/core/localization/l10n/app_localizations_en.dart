@@ -1361,6 +1361,41 @@ class AppLocalizationsEn extends AppLocalizations {
       'Absolutely! You can register as a merchant from the profile page by tapping \"Become a Seller\" to create your store.';
 
   @override
+  String get faq_seller_q1 => 'How do I create my first offer?';
+
+  @override
+  String get faq_seller_a1 =>
+      'From your store dashboard, tap \"Add Offer\", fill in the offer details including discount percentage, validity period, and terms. Your offer will be reviewed before going live.';
+
+  @override
+  String get faq_seller_q2 => 'How long does store approval take?';
+
+  @override
+  String get faq_seller_a2 =>
+      'Store approval typically takes 24-48 hours. You\'ll receive a notification once your store is approved and ready to publish offers.';
+
+  @override
+  String get faq_seller_q3 => 'Are there any fees for sellers?';
+
+  @override
+  String get faq_seller_a3 =>
+      'Currently, Coupony is free for all sellers. We may introduce premium features in the future, but basic store and offer management will remain free.';
+
+  @override
+  String get faq_seller_q4 => 'How do I track my offer performance?';
+
+  @override
+  String get faq_seller_a4 =>
+      'Your dashboard provides detailed analytics including views, coupon usage, and customer engagement. You can track performance for each offer individually.';
+
+  @override
+  String get faq_seller_q5 => 'Can I edit or delete published offers?';
+
+  @override
+  String get faq_seller_a5 =>
+      'Yes! You can edit offer details or delete offers anytime from your store management page. Changes to active offers take effect immediately.';
+
+  @override
   String get guide_step1_title => 'Create an Account';
 
   @override
@@ -1394,6 +1429,41 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get guide_step5_desc =>
       'Present the coupon at checkout and enjoy savings whether online or in-store.';
+
+  @override
+  String get guide_seller_step1_title => 'Create Your Store';
+
+  @override
+  String get guide_seller_step1_desc =>
+      'Register as a seller and create your store by adding store information and logo.';
+
+  @override
+  String get guide_seller_step2_title => 'Add Offers';
+
+  @override
+  String get guide_seller_step2_desc =>
+      'Create attractive offers and coupons for your customers with discount rates and duration.';
+
+  @override
+  String get guide_seller_step3_title => 'Manage Offers';
+
+  @override
+  String get guide_seller_step3_desc =>
+      'Track your offers performance, views, and usage from the dashboard.';
+
+  @override
+  String get guide_seller_step4_title => 'Engage with Customers';
+
+  @override
+  String get guide_seller_step4_desc =>
+      'Receive notifications when customers use your coupons and interact with them.';
+
+  @override
+  String get guide_seller_step5_title => 'Boost Sales';
+
+  @override
+  String get guide_seller_step5_desc =>
+      'Leverage analytics to improve your offers and attract more customers.';
 
   @override
   String get report_problem_description =>
@@ -1471,6 +1541,209 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get terms_section5_content =>
       'We respect your privacy and are committed to protecting your personal data. For more information, please review our privacy policy.';
+
+  @override
+  String get terms_seller_section1_title => 'Seller Terms Acceptance';
+
+  @override
+  String get terms_seller_section1_content =>
+      'By registering as a seller on Coupony, you agree to comply with these seller-specific terms and conditions. If you do not agree, please do not create a store.';
+
+  @override
+  String get terms_seller_section2_title => 'Seller Responsibilities';
+
+  @override
+  String get terms_seller_section2_content =>
+      'You are responsible for the accuracy of information and offers you publish. All coupons must be valid and usable. Any misleading content may result in account suspension.';
+
+  @override
+  String get terms_seller_section3_title => 'Store Management';
+
+  @override
+  String get terms_seller_section3_content =>
+      'You must keep your store information up-to-date and manage your offers regularly. You are responsible for responding to customer inquiries and resolving issues related to your offers.';
+
+  @override
+  String get terms_seller_section4_title => 'Offers & Coupons';
+
+  @override
+  String get terms_seller_section4_content =>
+      'You must honor the terms of offers you publish. Coupony reserves the right to remove any offer that violates policies or receives repeated customer complaints.';
+
+  @override
+  String get terms_seller_section5_title => 'Fees & Payments';
+
+  @override
+  String get terms_seller_section5_content =>
+      'Platform usage is currently free for sellers. We reserve the right to implement future fees with advance notice. Any pricing model changes will be communicated to you.';
+
+  @override
+  String get terms_seller_section6_title => 'Account Termination';
+
+  @override
+  String get terms_seller_section6_content =>
+      'We reserve the right to suspend or terminate seller accounts for terms violations or repeated complaints. You may close your account anytime from store settings.';
+
+  @override
+  String get staff_list_title => 'Staff';
+
+  @override
+  String get staff_filter_all => 'All';
+
+  @override
+  String get staff_filter_active => 'Active Staff';
+
+  @override
+  String get staff_filter_stopped => 'Stopped Staff';
+
+  @override
+  String get staff_status_active => 'Active';
+
+  @override
+  String get staff_status_stopped => 'Stopped';
+
+  @override
+  String get staff_role_cashier => 'Cashier';
+
+  @override
+  String get staff_branch_label => 'Branch';
+
+  @override
+  String get staff_joined_since => 'Since';
+
+  @override
+  String get staff_menu_edit => 'Edit';
+
+  @override
+  String get staff_menu_delete => 'Delete';
+
+  @override
+  String get staff_delete_confirm_title => 'Confirm Staff Deletion';
+
+  @override
+  String get staff_delete_confirm_message =>
+      'Are you sure you want to delete this staff member?';
+
+  @override
+  String get staff_delete_confirm_button => 'Confirm Deletion';
+
+  @override
+  String get staff_delete_cancel_button => 'Cancel';
+
+  @override
+  String get staff_empty_message => 'No staff members found';
+
+  @override
+  String get staff_search_hint => 'Search for staff...';
+
+  @override
+  String get staff_no_search_results => 'No search results found';
+
+  @override
+  String get staff_edit_save => 'Save';
+
+  @override
+  String get staff_edit_cancel => 'Cancel';
+
+  @override
+  String get staff_name_hint => 'Staff Name';
+
+  @override
+  String get staff_role_hint => 'Role';
+
+  @override
+  String get staff_branch_hint => 'Branch';
+
+  @override
+  String get staff_update_success => 'Staff updated successfully';
+
+  @override
+  String get staff_update_error => 'Failed to update staff';
+
+  @override
+  String get notifications_page_title => 'Notifications';
+
+  @override
+  String get notifications_sort_newest => 'Newest';
+
+  @override
+  String get notifications_sort_oldest => 'Oldest';
+
+  @override
+  String get notifications_filter_all => 'All';
+
+  @override
+  String get notifications_filter_offer => 'Offer';
+
+  @override
+  String get notifications_filter_coupon => 'Coupon';
+
+  @override
+  String get notifications_filter_system => 'System';
+
+  @override
+  String get notifications_filter_general => 'General';
+
+  @override
+  String get notifications_empty_title => 'No notifications';
+
+  @override
+  String get notifications_empty_subtitle =>
+      'We\'ll let you know when there\'s something new';
+
+  @override
+  String get notifications_type_coupon => 'Coupon';
+
+  @override
+  String get notifications_type_offer => 'Offer';
+
+  @override
+  String get notifications_type_system => 'System';
+
+  @override
+  String get notifications_type_general => 'General';
+
+  @override
+  String get notifications_details_page_title => 'Notification Details';
+
+  @override
+  String get notifications_details_message_label => 'Message';
+
+  @override
+  String get seller_notifications_filter_order => 'Orders';
+
+  @override
+  String get seller_notifications_filter_store => 'Store';
+
+  @override
+  String get seller_notifications_filter_analytics => 'Analytics';
+
+  @override
+  String get seller_notifications_filter_employee => 'Employees';
+
+  @override
+  String get seller_notifications_type_order => 'Order';
+
+  @override
+  String get seller_notifications_type_store => 'Store';
+
+  @override
+  String get seller_notifications_type_analytics => 'Analytics';
+
+  @override
+  String get seller_notifications_type_employee => 'Employee';
+
+  @override
+  String get notification_badge_approved => 'Approved';
+
+  @override
+  String get notification_badge_rejected => 'Rejected';
+
+  @override
+  String get notification_badge_pending => 'Pending';
+
+  @override
+  String get notification_badge_used => 'Used';
 
   @override
   String get contact_us_heading => 'Contact Us';
@@ -1676,7 +1949,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get public_categories_empty => 'No categories available';
 
   @override
-  String get public_categories_error => 'Could not load categories';
+  String get public_categories_error => 'Failed to load categories';
 
   @override
   String get public_category_products_title => 'Category Products';
@@ -1773,6 +2046,103 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings_copyright => '@2025 All rights reserved';
+
+  @override
+  String get offer_success_message => 'Offer saved successfully';
+
+  @override
+  String get offer_edit_title => 'Edit Offer';
+
+  @override
+  String get offer_create_title => 'Create New Offer';
+
+  @override
+  String get offer_save_action => 'Save';
+
+  @override
+  String get offer_title_label => 'Offer Title';
+
+  @override
+  String get offer_description_label => 'Offer Description';
+
+  @override
+  String get offer_discount_type_label => 'Discount Type';
+
+  @override
+  String get offer_discount_type_percentage => 'Percentage';
+
+  @override
+  String get offer_discount_type_buy_get => 'Buy & Get';
+
+  @override
+  String get offer_discount_type_fixed => 'Fixed Amount';
+
+  @override
+  String get offer_category_label => 'Category';
+
+  @override
+  String get offer_sub_category_label => 'Sub-Category';
+
+  @override
+  String get offer_select_hint => 'Select';
+
+  @override
+  String get offer_sizes_label => 'Sizes';
+
+  @override
+  String get offer_colors_label => 'Colors';
+
+  @override
+  String get offer_original_price_label => 'Original Price';
+
+  @override
+  String get offer_discounted_price_label => 'Discounted Price';
+
+  @override
+  String get offer_discount_value_label => 'Discount Value';
+
+  @override
+  String get offer_publish_settings_label => 'Publish Settings';
+
+  @override
+  String get offer_publish_now => 'Publish Now';
+
+  @override
+  String get offer_schedule => 'Schedule';
+
+  @override
+  String get offer_start_date_label => 'Start Date';
+
+  @override
+  String get offer_end_date_label => 'End Date';
+
+  @override
+  String get offer_image_picker_hint => 'Tap to upload offer image';
+
+  @override
+  String get offer_image_picker_sub => 'PNG or JPG, max size 5MB';
+
+  @override
+  String get offer_update => 'Update Offer';
+
+  @override
+  String get offer_save_publish => 'Save & Publish';
+
+  @override
+  String get offer_delete_confirm_title => 'Delete Offer';
+
+  @override
+  String get offer_delete_confirm_message =>
+      'Are you sure you want to delete this offer? This action cannot be undone.';
+
+  @override
+  String get offer_delete_confirm_button => 'Delete';
+
+  @override
+  String get offer_delete_cancel => 'Cancel';
+
+  @override
+  String get offer_empty => 'No offers yet';
 
   @override
   String get delete_account_dialog_title => 'Confirm Account Deletion';
@@ -2044,6 +2414,77 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profile_switch_to_merchant => 'Switch to Merchant';
 
   @override
+  String get profile_track_request => 'Track Your Request';
+
+  @override
+  String get profile_switch_to_customer => 'Switch to Customer';
+
+  @override
+  String get profile_my_stores => 'My Stores';
+
+  @override
+  String get profile_add_store => 'Add Store';
+
+  @override
+  String get profile_stores_load_failed => 'Failed to load stores';
+
+  @override
+  String get profile_store_fetch_failed => 'Failed to fetch store details';
+
+  @override
+  String get profile_switched_to_customer => 'Switched to customer mode';
+
+  @override
+  String get profile_store_added_success => 'Store added successfully';
+
+  @override
+  String get store_selection_sheet_title => 'Select Your Store';
+
+  @override
+  String get store_selection_sheet_subtitle =>
+      'Choose the store you want to manage';
+
+  @override
+  String get store_status_active => 'Active';
+
+  @override
+  String get store_status_pending => 'Pending Review';
+
+  @override
+  String get store_status_rejected => 'Rejected';
+
+  @override
+  String get store_not_active_pending_message =>
+      'This store cannot be selected because it is pending approval';
+
+  @override
+  String get store_not_active_rejected_message =>
+      'This store cannot be selected because it was rejected';
+
+  @override
+  String get store_already_active => 'This is already your active store';
+
+  @override
+  String store_switched_to(String name) {
+    return 'Switched to $name';
+  }
+
+  @override
+  String get store_delete_dialog_title => 'Delete Store';
+
+  @override
+  String store_delete_dialog_message(String name) {
+    return 'Are you sure you want to delete \"$name\"?';
+  }
+
+  @override
+  String get store_delete_dialog_confirm => 'Delete';
+
+  @override
+  String get store_delete_coming_soon =>
+      'Store deletion will be available in a future update';
+
+  @override
   String get merchant_no_changes_snackbar =>
       'No changes detected. Please fix the listed issues before resubmitting.';
 
@@ -2056,4 +2497,510 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get seller_dashboard_coming_soon => 'Dashboard Coming Soon';
+
+  @override
+  String get seller_analytics_greeting => 'Hello';
+
+  @override
+  String get seller_analytics_filter_all => 'All';
+
+  @override
+  String get seller_analytics_filter_today => 'Today';
+
+  @override
+  String get seller_analytics_filter_last_7_days => 'Last 7 Days';
+
+  @override
+  String get seller_analytics_filter_last_30_days => 'Last 30 Days';
+
+  @override
+  String get seller_analytics_filter_custom => 'Custom Date...';
+
+  @override
+  String get seller_analytics_filter_this_month => 'This Month';
+
+  @override
+  String get seller_analytics_filter_this_year => 'This Year';
+
+  @override
+  String get seller_analytics_monthly_goal_title => 'Monthly Coupons Goal';
+
+  @override
+  String get seller_analytics_goal_label => 'Goal';
+
+  @override
+  String get seller_analytics_achieved_label => 'Achieved';
+
+  @override
+  String seller_analytics_goal_completion(Object percent) {
+    return '$percent% of goal achieved';
+  }
+
+  @override
+  String get seller_analytics_new_followers_title => 'New Followers';
+
+  @override
+  String seller_analytics_this_month(Object count) {
+    return 'This Month  +$count';
+  }
+
+  @override
+  String get seller_analytics_offer_distribution_title =>
+      'Offer Types Distribution';
+
+  @override
+  String get seller_analytics_top_offers_title => 'Top Performing Offers';
+
+  @override
+  String seller_analytics_usage_count(Object count) {
+    return '$count Uses';
+  }
+
+  @override
+  String get seller_analytics_retry_button => 'Retry';
+
+  @override
+  String get shop_display_edit_button => 'Edit Store Info';
+
+  @override
+  String get shop_display_rating_label => 'Rating';
+
+  @override
+  String get shop_display_followers_label => 'Followers';
+
+  @override
+  String get shop_display_coupons_label => 'Coupons';
+
+  @override
+  String get shop_display_description_title => 'Store Description';
+
+  @override
+  String get shop_display_category_title => 'Category';
+
+  @override
+  String get shop_display_hours_title => 'Business Hours';
+
+  @override
+  String get shop_display_reviews_title => 'Ratings';
+
+  @override
+  String shop_display_total_reviews(Object count) {
+    return '$count ratings';
+  }
+
+  @override
+  String get shop_display_open => 'Open';
+
+  @override
+  String get shop_display_closed => 'Closed';
+
+  @override
+  String get shop_display_no_description => 'No description available';
+
+  @override
+  String get shop_display_no_category => 'No categories added yet';
+
+  @override
+  String get shop_display_day_sun => 'Sunday';
+
+  @override
+  String get shop_display_day_mon => 'Monday';
+
+  @override
+  String get shop_display_day_tue => 'Tuesday';
+
+  @override
+  String get shop_display_day_wed => 'Wednesday';
+
+  @override
+  String get shop_display_day_thu => 'Thursday';
+
+  @override
+  String get shop_display_day_fri => 'Friday';
+
+  @override
+  String get shop_display_day_sat => 'Saturday';
+
+  @override
+  String get shop_display_customer_reviews_title => 'Customer Reviews';
+
+  @override
+  String get shop_display_no_reviews => 'No reviews yet';
+
+  @override
+  String get shop_display_verified_badge => 'Verified';
+
+  @override
+  String get followers_page_title => 'Followers';
+
+  @override
+  String get followers_page_follow_btn => 'Follow';
+
+  @override
+  String get following_page_title => 'Following';
+
+  @override
+  String get following_page_search_hint => 'Search stores...';
+
+  @override
+  String get following_page_empty_title => 'Not following anyone yet';
+
+  @override
+  String get following_page_empty_subtitle =>
+      'Explore stores and follow the ones you love to see their latest offers here.';
+
+  @override
+  String get following_page_unfollow_btn => 'Unfollow';
+
+  @override
+  String get following_page_unfollow_confirm_title => 'Unfollow store?';
+
+  @override
+  String get following_page_unfollow_confirm_body =>
+      'You will stop receiving updates from this store.';
+
+  @override
+  String get following_page_unfollow_confirm_cancel => 'Cancel';
+
+  @override
+  String get following_page_unfollow_confirm_ok => 'Unfollow';
+
+  @override
+  String get following_page_no_results => 'No stores match your search';
+
+  @override
+  String get home_greeting => 'Good Morning';
+
+  @override
+  String get home_delivery_to => 'Delivery to';
+
+  @override
+  String get home_search_hint => 'Search for offers and stores...';
+
+  @override
+  String get home_categories_title => 'Categories';
+
+  @override
+  String get home_promo_on_going => 'Promo on Going';
+
+  @override
+  String get home_shop_now => 'Shop Now';
+
+  @override
+  String get home_personalized_title => 'Offers for You';
+
+  @override
+  String get home_brands_title => 'Brands';
+
+  @override
+  String get home_category_offers_title => 'Category Offers';
+
+  @override
+  String get home_favorites_title => 'Recent Favorites';
+
+  @override
+  String get home_travel_offers_title => 'Travel Offers';
+
+  @override
+  String get home_egypt_offers_title => 'Featured Offers in Egypt';
+
+  @override
+  String get home_see_all => 'See All';
+
+  @override
+  String home_save_badge(Object percent) {
+    return 'Save $percent%';
+  }
+
+  @override
+  String get home_discount_up_to => 'Discount up to';
+
+  @override
+  String get home_min_transaction => 'Min. transaction';
+
+  @override
+  String get nav_home => 'Home';
+
+  @override
+  String get nav_categories => 'Categories';
+
+  @override
+  String get nav_explore => 'Explore';
+
+  @override
+  String get nav_coupons => 'My Coupons';
+
+  @override
+  String get nav_account => 'Account';
+
+  @override
+  String get home_stores_title => 'Stores';
+
+  @override
+  String get home_featured_offers_title => 'Offers';
+
+  @override
+  String get seller_home_subscription_renew_title => 'Subscription Renewal';
+
+  @override
+  String get seller_home_subscription_renew_body =>
+      'Your subscription expires in 2 days. Renew to keep your benefits.';
+
+  @override
+  String get seller_home_stat_active_offers => 'Active Offers';
+
+  @override
+  String get seller_home_stat_used_coupons => 'Used Coupons';
+
+  @override
+  String get seller_home_stat_views => 'Views';
+
+  @override
+  String get seller_home_stat_shares => 'Shares';
+
+  @override
+  String get seller_home_quick_actions_title => 'Quick Actions';
+
+  @override
+  String get seller_home_add_offer_label => 'Add New Offer';
+
+  @override
+  String get seller_home_add_offer_subtitle => 'Publish a new offer now';
+
+  @override
+  String get seller_home_add_product_label => 'Add New Product';
+
+  @override
+  String get seller_home_add_product_subtitle => 'Publish a new product now';
+
+  @override
+  String get seller_home_scan_qr => 'Scan QR';
+
+  @override
+  String get seller_home_add_employee => 'Add Employee';
+
+  @override
+  String get seller_home_manage_employees_title => 'Manage Employees';
+
+  @override
+  String get seller_home_manage_employees_subtitle =>
+      'View and manage employees';
+
+  @override
+  String get staff_delete_dialog_title => 'Confirm Staff Deletion';
+
+  @override
+  String get staff_delete_dialog_confirm => 'Confirm Deletion';
+
+  @override
+  String get staff_delete_dialog_cancel => 'Cancel';
+
+  @override
+  String get seller_home_active_offers_section => 'Active Offers';
+
+  @override
+  String get seller_home_no_active_offers => 'No active offers currently';
+
+  @override
+  String get seller_home_sidebar_active_seller => 'Active Seller';
+
+  @override
+  String get seller_home_sidebar_notifications => 'Notifications';
+
+  @override
+  String seller_home_offer_usage_count(Object count) {
+    return '$count Uses';
+  }
+
+  @override
+  String get seller_offers_tab_all => 'All';
+
+  @override
+  String get seller_offers_tab_active => 'Active';
+
+  @override
+  String get seller_offers_tab_expired => 'Expired';
+
+  @override
+  String get seller_offers_tab_scheduled => 'Scheduled';
+
+  @override
+  String get seller_offers_page_title => 'My Offers';
+
+  @override
+  String get seller_offers_empty_all => 'No offers';
+
+  @override
+  String get seller_offers_empty_active => 'No active offers';
+
+  @override
+  String get seller_offers_empty_expired => 'No expired offers';
+
+  @override
+  String get seller_offers_empty_scheduled => 'No scheduled offers';
+
+  @override
+  String get seller_offers_add_new => 'Add New Offer +';
+
+  @override
+  String get seller_offer_status_active => 'Active';
+
+  @override
+  String get seller_offer_status_expired => 'Expired';
+
+  @override
+  String get seller_offer_status_scheduled => 'Scheduled';
+
+  @override
+  String get seller_offer_chip_percentage => '% Discount';
+
+  @override
+  String get seller_offer_action_details => 'Details';
+
+  @override
+  String get seller_offer_delete_title => 'Confirm Delete';
+
+  @override
+  String get seller_offer_delete_message =>
+      'Are you sure you want to delete this offer?\nThis action cannot be undone.';
+
+  @override
+  String get edit_store_field_name => 'Store Name';
+
+  @override
+  String get edit_store_field_name_hint => 'Enter store name';
+
+  @override
+  String get edit_store_field_name_required => 'Store name is required';
+
+  @override
+  String get edit_store_field_description_label => 'Description';
+
+  @override
+  String get edit_store_field_description_hint => 'Enter store description';
+
+  @override
+  String get edit_store_field_email_hint => 'Enter email address';
+
+  @override
+  String get edit_store_field_phone_hint => 'Enter phone number';
+
+  @override
+  String get edit_store_working_hours_title => 'Working Hours';
+
+  @override
+  String get edit_store_category_label => 'Offer Category';
+
+  @override
+  String get edit_store_select_category => 'Choose Category';
+
+  @override
+  String get edit_store_loading_categories => 'Loading categories...';
+
+  @override
+  String get edit_store_categories_error => 'Error loading categories';
+
+  @override
+  String get edit_store_save_loading => 'Saving...';
+
+  @override
+  String get edit_store_save_changes => 'Save Changes';
+
+  @override
+  String get edit_store_time_from => 'From';
+
+  @override
+  String get edit_store_time_to => 'To';
+
+  @override
+  String get offer_details_status_active_now => 'Active Now';
+
+  @override
+  String get offer_details_category_label => 'Category:';
+
+  @override
+  String get offer_details_sizes_title => 'Available Sizes';
+
+  @override
+  String get offer_details_colors_title => 'Available Colors';
+
+  @override
+  String get offer_details_valid_until => 'Valid Until';
+
+  @override
+  String get offer_details_terms_title => 'Terms & Conditions';
+
+  @override
+  String get offer_details_edit_button => 'Edit Offer Details';
+
+  @override
+  String get offer_details_date_placeholder => 'DD/MM/YYYY';
+
+  @override
+  String offer_terms_validity_date(String date) {
+    return 'This offer is valid until $date only, and will not be accepted after this date under any circumstances.';
+  }
+
+  @override
+  String get offer_terms_validity_open =>
+      'The offer is valid until further notice, and the store reserves the right to stop it at any time.';
+
+  @override
+  String offer_terms_discount_percentage(
+    String pct,
+    String original,
+    String discounted,
+  ) {
+    return 'This offer grants a $pct% discount on the original price ($original), making the final price $discounted.';
+  }
+
+  @override
+  String offer_terms_discount_fixed(String saved) {
+    return 'A fixed discount of $saved is applied to the original price.';
+  }
+
+  @override
+  String get offer_terms_discount_buy_get =>
+      'Buy & Get offer; automatically applied when the purchase condition is met.';
+
+  @override
+  String offer_terms_category_scope(String scope) {
+    return 'This offer is exclusive to the \"$scope\" category and does not include other products.';
+  }
+
+  @override
+  String offer_terms_sizes(String sizes) {
+    return 'The discount applies to available sizes ($sizes) only, and prices may differ for other sizes.';
+  }
+
+  @override
+  String offer_terms_start_date(String date) {
+    return 'The offer officially activates on $date, and will not be accepted before this date.';
+  }
+
+  @override
+  String get offer_terms_no_combine =>
+      'This offer cannot be combined with any other discounts or offers at the same time.';
+
+  @override
+  String offer_terms_store_rights(String storeName) {
+    return '$storeName reserves the right to modify the offer terms or cancel it without prior notice.';
+  }
+
+  @override
+  String get offer_terms_return_policy =>
+      'In case of return or exchange, the amount will be recalculated according to the store\'s approved policy without being bound by the offer price.';
+
+  @override
+  String get guest_profile_title => 'Start Your Journey on Coupony';
+
+  @override
+  String get guest_profile_subtitle =>
+      'Create your store, showcase your offers, and reach new customers.';
+
+  @override
+  String get guest_login_button => 'Sign In';
+
+  @override
+  String get itch_button => 'Switch to Merchant';
 }

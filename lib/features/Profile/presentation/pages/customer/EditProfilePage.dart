@@ -19,6 +19,7 @@ import '../../cubit/Customer_Profile_cubit.dart';
 import '../../cubit/Customer_Profile_state.dart';
 import '../../widgets/full_screen_photo_viewer.dart';
 import '../../widgets/profile_photo_bottom_sheet.dart';
+import '../../../../auth/presentation/widgets/role_animation_wrapper.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // EDIT PROFILE PAGE
@@ -99,7 +100,7 @@ class EditProfilePage extends HookWidget {
     }, [selectedImage, isEditMode]);
 
     return BlocConsumer<ProfileCubit, ProfileState>(
-      listener: (context, state) {
+        listener: (context, state) {
         // ── Handle Success ─────────────────────────────────────────────────
         if (state is ProfileUpdateSuccess) {
           isNavigating.value = true; // Start navigation state
@@ -213,23 +214,27 @@ class EditProfilePage extends HookWidget {
 
             return Padding(
               padding: EdgeInsetsDirectional.only(end: 8.w),
-              child: TextButton(
-                onPressed: isLoading ? null : onSave,
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                ),
-                child: Text(
-                  l10n.save,
-                  style: AppTextStyles.customStyle(
-                    context,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: isLoading ? AppColors.textDisabled : AppColors.primary,
-                  ),
-                ),
+              child: AnimatedPrimaryColor(
+                builder: (context, primaryColor) {
+                  return TextButton(
+                    onPressed: isLoading ? null : onSave,
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                    ),
+                    child: Text(
+                      l10n.save,
+                      style: AppTextStyles.customStyle(
+                        context,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: isLoading ? AppColors.textDisabled : primaryColor,
+                      ),
+                    ),
+                  );
+                },
               ),
             );
           },
@@ -375,9 +380,13 @@ class EditProfilePage extends HookWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            color: AppColors.primary,
-            strokeWidth: 3.w,
+          AnimatedPrimaryColor(
+            builder: (context, primaryColor) {
+              return CircularProgressIndicator(
+                color: primaryColor,
+                strokeWidth: 3.w,
+              );
+            },
           ),
           SizedBox(height: 16.h),
           Text(
@@ -448,36 +457,40 @@ class EditProfilePage extends HookWidget {
                 Positioned(
                   bottom: 0,
                   right: 0,
-                  child: Container(
-                    width: 36.w,
-                    height: 36.w,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColors.primary,
-                          AppColors.primary.withValues(alpha: 0.8),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppColors.surface,
-                        width: 3.w,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
+                  child: AnimatedPrimaryColor(
+                    builder: (context, primaryColor) {
+                      return Container(
+                        width: 36.w,
+                        height: 36.w,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              primaryColor,
+                              primaryColor.withValues(alpha: 0.8),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppColors.surface,
+                            width: 3.w,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: primaryColor.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: Icon(
-                      Icons.camera_alt_rounded,
-                      size: 18.w,
-                      color: Colors.white,
-                    ),
+                        child: Icon(
+                          Icons.camera_alt_rounded,
+                          size: 18.w,
+                          color: Colors.white,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -566,7 +579,7 @@ class EditProfilePage extends HookWidget {
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.r),
                 borderSide: BorderSide(
-                  color: AppColors.primary,
+                  color: Theme.of(context).primaryColor,
                   width: 1.5.w,
                 ),
               ),
@@ -584,45 +597,49 @@ class EditProfilePage extends HookWidget {
     bool isLoading,
     ValueNotifier<bool> isEditMode,
   ) {
-    return Container(
-      width: double.infinity,
-      height: 56.h,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.primary,
-            AppColors.primary.withValues(alpha: 0.8),
-          ],
-          begin: AlignmentDirectional.centerStart,
-          end: AlignmentDirectional.centerEnd,
-        ),
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+    return AnimatedPrimaryColor(
+      builder: (context, primaryColor) {
+        return Container(
+          width: double.infinity,
+          height: 56.h,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                primaryColor,
+                primaryColor.withValues(alpha: 0.8),
+              ],
+              begin: AlignmentDirectional.centerStart,
+              end: AlignmentDirectional.centerEnd,
+            ),
+            borderRadius: BorderRadius.circular(12.r),
+            boxShadow: [
+              BoxShadow(
+                color: primaryColor.withValues(alpha: 0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: isLoading ? null : () => isEditMode.value = true,
-          borderRadius: BorderRadius.circular(12.r),
-          child: Center(
-            child: Text(
-              l10n.edit_account,
-              style: AppTextStyles.customStyle(
-                context,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: isLoading ? null : () => isEditMode.value = true,
+              borderRadius: BorderRadius.circular(12.r),
+              child: Center(
+                child: Text(
+                  l10n.edit_account,
+                  style: AppTextStyles.customStyle(
+                    context,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

@@ -25,9 +25,24 @@ class UserModel extends UserEntity {
     super.language,
     super.isOnboardingCompleted,
     super.isStoreCreated,
+    super.isStoreOwner,
     this.roles  = const [],
     this.stores = const [],
   });
+
+  /// True ONLY when this user is an approved, active seller.
+  ///
+  /// Rules (all three must hold):
+  ///   1. isStoreOwner == true  (backend-confirmed approval)
+  ///   2. roles contains 'seller'
+  ///   3. roles does NOT contain 'seller_pending'
+  ///
+  /// A seller_pending user always returns false here and must be treated
+  /// as a customer throughout the app until the backend promotes them.
+  bool get isActiveSeller =>
+      isStoreOwner &&
+      roles.contains('seller') &&
+      !roles.contains('seller_pending');
 
   /// Handles flat { first_name, access_token }, nested { data: {...} } and
   /// triple-nested { data: { user: {...} } } API shapes.
@@ -56,10 +71,26 @@ class UserModel extends UserEntity {
     final rolesRaw  = userInfo['roles'] as List<dynamic>? ?? [];
     final rolesList = rolesRaw.map((e) => e.toString()).toList();
 
+    // ── is_store_owner ───────────────────────────────────────────────────────
+    // Parse directly from the API, then fall back to role-based derivation.
+    // An approved seller has the 'seller' role WITHOUT 'seller_pending'.
+    // A seller_pending user is NOT a store owner yet.
+    final bool finalIsStoreOwner =
+        (json['is_store_owner']         as bool?) ??
+        (data['is_store_owner']         as bool?) ??
+        (userObject?['is_store_owner']  as bool?) ??
+        // Derived fallback: approved iff they have 'seller' but NOT 'seller_pending'
+        (rolesList.contains('seller') && !rolesList.contains('seller_pending'));
+
+    // ── roleFromArray ────────────────────────────────────────────────────────
+    // STRICT: seller_pending is NOT 'seller'. Only an approved seller gets
+    // 'seller'. This prevents any ambiguity in caching and routing.
     String? roleFromArray;
     if (rolesList.isNotEmpty) {
-      if (rolesList.contains('seller_pending') || rolesList.contains('seller')) {
-        roleFromArray = 'seller';
+      if (rolesList.contains('seller') && !rolesList.contains('seller_pending')) {
+        roleFromArray = 'seller';          // approved seller
+      } else if (rolesList.contains('seller_pending')) {
+        roleFromArray = 'seller_pending';  // pending — still a customer functionally
       } else if (rolesList.contains('customer')) {
         roleFromArray = 'customer';
       } else {
@@ -73,7 +104,7 @@ class UserModel extends UserEntity {
         (userObject?['role'] as String?) ??
         (userInfo['role']    as String?) ??
         roleFromArray ??
-        'customer';  // Default to 'customer' instead of 'user' to avoid confusion
+        'customer';
 
     // ── stores ───────────────────────────────────────────────────────────────
     final storesRaw  = userInfo['stores'] as List<dynamic>? ?? [];
@@ -99,6 +130,7 @@ class UserModel extends UserEntity {
       language:              profile?['language'] as String?,
       isOnboardingCompleted: finalOnboardingStatus,
       isStoreCreated:        finalStoreCreated,
+      isStoreOwner:          finalIsStoreOwner,
       roles:                 rolesList,
       stores:                storesList,
     );
@@ -120,6 +152,7 @@ class UserModel extends UserEntity {
     'language':                language,
     'is_onboarding_completed': isOnboardingCompleted,
     'is_store_created':        isStoreCreated,
+    'is_store_owner':          isStoreOwner,
     'roles':                   roles,
     'stores':                  stores.map((s) => s.toJson()).toList(),
   };
@@ -140,6 +173,7 @@ class UserModel extends UserEntity {
     String?               language,
     bool?                 isOnboardingCompleted,
     bool?                 isStoreCreated,
+    bool?                 isStoreOwner,
     List<String>?         roles,
     List<UserStoreModel>? stores,
   }) {
@@ -159,6 +193,7 @@ class UserModel extends UserEntity {
       language:              language              ?? this.language,
       isOnboardingCompleted: isOnboardingCompleted ?? this.isOnboardingCompleted,
       isStoreCreated:        isStoreCreated        ?? this.isStoreCreated,
+      isStoreOwner:          isStoreOwner          ?? this.isStoreOwner,
       roles:                 roles                 ?? this.roles,
       stores:                stores                ?? this.stores,
     );

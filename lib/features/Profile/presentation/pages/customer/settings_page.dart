@@ -2,8 +2,6 @@ import 'package:coupony/config/dependency_injection/injection_container.dart' as
 import 'package:coupony/core/localization/locale_cubit.dart';
 import 'package:coupony/core/services/notification_service.dart';
 import 'package:coupony/core/storage/local_cache_service.dart';
-import 'package:coupony/features/auth/presentation/cubit/auth_state.dart';
-import 'package:coupony/features/auth/presentation/cubit/login_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,6 +15,8 @@ import '../../../../../core/theme/app_text_styles.dart';
 import '../../cubit/Customer_Profile_cubit.dart';
 import '../../cubit/Customer_Profile_state.dart';
 import '../../widgets/shared_card.dart';
+import '../../../../auth/domain/entities/user_persona.dart';
+import '../../../../auth/presentation/cubit/persona_cubit.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SETTINGS PAGE
@@ -143,53 +143,52 @@ class _SettingsPageState extends State<SettingsPage>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return BlocProvider<LoginCubit>(
-      create: (_) => di.sl<LoginCubit>(),
-      child: BlocListener<LoginCubit, AuthState>(
-        listener: (context, state) {
-          if (state.navSignal == AuthNavigation.toLogin) {
-            context.go(AppRouter.login);
-          }
+    return BlocBuilder<PersonaCubit, UserPersona>(
+        builder: (context, persona) {
+          final primaryColor = persona is SellerPersona
+              ? AppColors.primaryOfSeller
+              : AppColors.primary;
+
+          return BlocListener<ProfileCubit, ProfileState>(
+            listener: (context, state) {
+              if (state is ProfileDeleteSuccess ||
+                  state is ProfileLogoutSuccess) {
+                context.go(AppRouter.login);
+              }
+              if (state is ProfileError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      state.message,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    backgroundColor: AppColors.error,
+                    behavior: SnackBarBehavior.floating,
+                    margin: EdgeInsets.all(16.w),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                  ),
+                );
+              }
+            },
+            child: Scaffold(
+              backgroundColor: AppColors.surface,
+              appBar: _buildAppBar(context, l10n, primaryColor),
+              body: _buildBody(context, l10n, primaryColor),
+            ),
+          );
         },
-        child: BlocListener<ProfileCubit, ProfileState>(
-          listener: (context, state) {
-            if (state is ProfileDeleteSuccess) {
-              context.go(AppRouter.login);
-            }
-            if (state is ProfileError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    state.message,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  backgroundColor: AppColors.error,
-                  behavior: SnackBarBehavior.floating,
-                  margin: EdgeInsets.all(16.w),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                ),
-              );
-            }
-          },
-          child: Scaffold(
-            backgroundColor: AppColors.surface,
-            appBar: _buildAppBar(context, l10n),
-            body: _buildBody(context, l10n),
-          ),
-        ),
-      ),
-    );
+      );
   }
 
   // ── AppBar ─────────────────────────────────────────────────────────────────
   PreferredSizeWidget _buildAppBar(
-      BuildContext context, AppLocalizations l10n) {
+      BuildContext context, AppLocalizations l10n, Color primaryColor) {
     return AppBar(
       backgroundColor: AppColors.surface,
       elevation: 0,
-      surfaceTintColor: Colors.transparent,
+      surfaceTintColor: primaryColor,
       centerTitle: true,
       title: Text(
         l10n.settings_page_title,
@@ -214,7 +213,7 @@ class _SettingsPageState extends State<SettingsPage>
   }
 
   // ── Body ───────────────────────────────────────────────────────────────────
-  Widget _buildBody(BuildContext context, AppLocalizations l10n) {
+  Widget _buildBody(BuildContext context, AppLocalizations l10n, Color primaryColor) {
     return Column(
       children: [
         Expanded(
@@ -226,26 +225,26 @@ class _SettingsPageState extends State<SettingsPage>
 
                 // ── App Settings Section ─────────────────────────────────────────────
                 _buildSectionHeader(context, l10n.settings_app_section),
-                _buildLanguageCard(context, l10n),
-                _buildNotificationsCard(context, l10n),
+                _buildLanguageCard(context, l10n, primaryColor),
+                _buildNotificationsCard(context, l10n, primaryColor),
 
                 SizedBox(height: 8.h),
 
                 // ── Data Management Section ──────────────────────────────────────────
                 _buildSectionHeader(context, l10n.settings_data_section),
-                _buildDeleteAccountCard(context, l10n),
+                _buildDeleteAccountCard(context, l10n, primaryColor),
 
                 SizedBox(height: 8.h),
 
                 // ── Storage Management Section ───────────────────────────────────────
                 _buildSectionHeader(context, l10n.settings_storage_section),
-                _buildStorageManagementCard(context, l10n),
+                _buildStorageManagementCard(context, l10n, primaryColor),
 
                 SizedBox(height: 8.h),
 
                 // ── Privacy & Security Section ───────────────────────────────────────
                 _buildSectionHeader(context, l10n.settings_security_section),
-                _buildChangePasswordCard(context, l10n),
+                _buildChangePasswordCard(context, l10n, primaryColor),
 
                 SizedBox(height: 8.h),
 
@@ -301,7 +300,7 @@ class _SettingsPageState extends State<SettingsPage>
   }
 
   // ── Language Card ──────────────────────────────────────────────────────────
-  Widget _buildLanguageCard(BuildContext context, AppLocalizations l10n) {
+  Widget _buildLanguageCard(BuildContext context, AppLocalizations l10n, Color primaryColor) {
     return BlocBuilder<LocaleCubit, Locale>(
       builder: (context, locale) {
         final currentLang = locale.languageCode == 'ar'
@@ -315,14 +314,14 @@ class _SettingsPageState extends State<SettingsPage>
             width: 36.w,
             height: 36.w,
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: primaryColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10.r),
             ),
             child: Center(
               child: FaIcon(
                 FontAwesomeIcons.language,
                 size: 20.w,
-                color: AppColors.primary,
+                color: primaryColor,
               ),
             ),
           ),
@@ -333,21 +332,21 @@ class _SettingsPageState extends State<SettingsPage>
   }
 
   // ── Notifications Card ─────────────────────────────────────────────────────
-  Widget _buildNotificationsCard(BuildContext context, AppLocalizations l10n) {
+  Widget _buildNotificationsCard(BuildContext context, AppLocalizations l10n, Color primaryColor) {
     return SharedProfileCard(
       title: l10n.settings_notifications,
       leading: Container(
         width: 36.w,
         height: 36.w,
         decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.1),
+          color: primaryColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10.r),
         ),
         child: Center(
           child: FaIcon(
             FontAwesomeIcons.bell,
             size: 20.w,
-            color: AppColors.primary,
+            color: primaryColor,
           ),
         ),
       ),
@@ -357,7 +356,7 @@ class _SettingsPageState extends State<SettingsPage>
               height: 24.w,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: AppColors.primary,
+                color: primaryColor,
               ),
             )
           : Transform.scale(
@@ -365,15 +364,15 @@ class _SettingsPageState extends State<SettingsPage>
               child: Switch(
                 value: _notificationsEnabled,
                 onChanged: (val) => _onNotificationToggled(val, l10n),
-                activeColor: AppColors.primary,
-                activeTrackColor: AppColors.primary.withValues(alpha: 0.3),
+                activeColor: primaryColor,
+                activeTrackColor: primaryColor.withValues(alpha: 0.3),
               ),
             ),
     );
   }
 
   // ── Delete Account Card ────────────────────────────────────────────────────
-  Widget _buildDeleteAccountCard(BuildContext context, AppLocalizations l10n) {
+  Widget _buildDeleteAccountCard(BuildContext context, AppLocalizations l10n, Color primaryColor) {
     return SharedProfileCard(
       title: l10n.settings_delete_account,
       subtitle: l10n.settings_delete_account_subtitle,
@@ -447,7 +446,7 @@ class _SettingsPageState extends State<SettingsPage>
   }
 
   // ── Change Password Card ───────────────────────────────────────────────────
-  Widget _buildChangePasswordCard(BuildContext context, AppLocalizations l10n) {
+  Widget _buildChangePasswordCard(BuildContext context, AppLocalizations l10n, Color primaryColor) {
     return SharedProfileCard(
       title: l10n.settings_change_password,
       subtitle: l10n.settings_change_password_subtitle,
@@ -455,14 +454,14 @@ class _SettingsPageState extends State<SettingsPage>
         width: 36.w,
         height: 36.w,
         decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.1),
+          color: primaryColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10.r),
         ),
         child: Center(
           child: FaIcon(
             FontAwesomeIcons.key,
             size: 19.w,
-            color: AppColors.primary,
+            color: primaryColor,
           ),
         ),
       ),
@@ -471,7 +470,7 @@ class _SettingsPageState extends State<SettingsPage>
   }
 
   // ── Storage Management Card ────────────────────────────────────────────────
-  Widget _buildStorageManagementCard(BuildContext context, AppLocalizations l10n) {
+  Widget _buildStorageManagementCard(BuildContext context, AppLocalizations l10n, Color primaryColor) {
     return FutureBuilder<CacheStatistics>(
       future: LocalCacheService().getCacheStatistics(),
       builder: (context, snapshot) {
@@ -1289,7 +1288,7 @@ class _SettingsPageState extends State<SettingsPage>
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(dialogContext).pop();
-                      context.read<LoginCubit>().logout();
+                      context.read<ProfileCubit>().logout();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,

@@ -1,0 +1,306 @@
+ENDPONT  : /api/v1/stores/db1b1ff7-6b09-4c2c-a7e3-bfe14d7d4700/profile
+**********
+example : 
+
+body of request:
+
+
+noneform-datax-www-form-urlencodedJSONXMLTextBinaryGraphQLmsgpack
+Name
+Value
+Type
+Description
+name
+الزهري
+More
+description
+الحق عروض الورد عندنا كل جديد
+More
+email
+amrsoliman820@gmail.com
+More
+phone
+01116410004
+More
+socials[0][social_id]
+1
+More
+socials[0][link]
+https://facebook.com/my-store
+More
+socials[1][social_id]
+2
+More
+socials[1][link]
+https://instagram.com/my-store
+More
+hours[0][day_of_week]
+0
+More
+hours[0][open_time]
+00:00
+More
+hours[0][close_time]
+12:00
+More
+hours[0][is_closed]
+1
+More
+hours[1][day_of_week]
+1
+More
+hours[1][open_time]
+09:00
+More
+hours[1][close_time]
+17:00
+More
+hours[1][is_closed]
+0
+More
+hours[2][day_of_week]
+2
+More
+hours[2][open_time]
+09:00
+More
+hours[2][close_time]
+17:00
+More
+hours[2][is_closed]
+0
+More
+hours[3][day_of_week]
+3
+More
+hours[3][open_time]
+09:00
+More
+hours[3][close_time]
+17:00
+More
+hours[3][is_closed]
+0
+More
+hours[4][day_of_week]
+4
+More
+hours[4][open_time]
+09:00
+More
+hours[4][close_time]
+17:00
+More
+hours[4][is_closed]
+0
+More
+hours[5][day_of_week]
+5
+More
+hours[5][open_time]
+09:00
+More
+hours[5][close_time]
+17:00
+More
+hours[5][is_closed]
+0
+More
+hours[6][day_of_week]
+6
+More
+hours[6][open_time]
+10:00
+More
+hours[6][close_time]
+16:00
+More
+hours[6][is_closed]
+0
+More
+logo_url
+1726256002133.jpg
+More
+banner_url
+More
+_method
+PATCH
+
+*****************
+RESPONSE: 
+{
+    "success": true,
+    "message": "تم تحديث ملف المتجر بنجاح.",
+    "data": {
+        "id": "db1b1ff7-6b09-4c2c-a7e3-bfe14d7d4700",
+        "name": "الزهري",
+        "description": "الحق عروض الورد عندنا كل جديد",
+        "logo_url": "https://api.coupony.shop/storage/stores/db1b1ff7-6b09-4c2c-a7e3-bfe14d7d4700/logo/u4zvbs3aPhjnrzSCH7z5uAf3YoyqB6gbBgfGYdkZ.jpg",
+        "banner_url": null,
+        "email": "amrsoliman820@gmail.com",
+        "phone": "01116410004",
+        "tax_id": null,
+        "status": "pending",
+        "subscription_tier": "free",
+        "is_verified": false,
+        "verified_at": null,
+        "rating_avg": "0.00",
+        "rating_count": 0,
+        "created_at": "2026-04-15T05:24:53+02:00",
+        "updated_at": "2026-04-15T21:06:46+02:00",
+        "approved_at": null,
+        "approved_by": null,
+        "rejected_at": null,
+        "rejected_by": null,
+        "rejection_reason": null,
+        "admin_notes": null,
+        "owner": {
+            "id": "b71db87b-cd1b-4410-9312-c219d61715d5",
+            "email": "amrsoliman820@gmail.com",
+            "status": "active",
+            "language": "ar",
+            "full_name": "Amr Soli",
+            "phone_number": "01008864664",
+            "profile": {
+                "first_name": "Amr",
+                "last_name": "Soli",
+                "avatar": "https://api.coupony.shop/storage/users/b71db87b-cd1b-4410-9312-c219d61715d5/avatar/IYgGesIoLlPqSImiYox6bINZMvANQbwYRWSo3uko.jpg",
+                "date_of_birth": null,
+                "bio": null,
+                "gender": "male"
+            },
+            "is_store_owner": true,
+            "is_onboarding_completed": true,
+            "sessions": {
+                "token": "b79f7e081d97815fabf0b26dcf621cfcbc9a32b1899c223b36bb4a1af7ffc7a3",
+                "ip_address": "41.46.52.168",
+                "user_agent": "Apidog/1.0.0 (https://apidog.com)",
+                "device_type": "desktop",
+                "expires_at": "2026-04-15 21:38:37",
+                "last_activity": 1776278317
+            },
+            "points": null,
+            "created_at": "2026-04-12T00:51:36.000000Z"
+        },
+        "categories": [
+            {
+                "id": 4,
+                "name": "المنزل والحديقة",
+                "name_ar": "المنزل والحديقة",
+                "name_en": "Home & Garden",
+                "slug": "home-garden",
+                "icon_path": "store-categories/4/icon/sboCfp9di5NsCdqidhCHPbI7wjveTVOGCgMzUSZU.svg",
+                "icon_url": "https://api.coupony.shop/storage/store-categories/4/icon/sboCfp9di5NsCdqidhCHPbI7wjveTVOGCgMzUSZU.svg",
+                "sort_order": null,
+                "is_active": true
+            }
+        ],
+        "addresses": [
+            {
+                "id": 28,
+                "address_line1": "فيوم",
+                "address_line2": null,
+                "city": "فيوم",
+                "state_province": null,
+                "postal_code": null,
+                "country_code": null,
+                "phone_number": null,
+                "latitude": "29.33012343",
+                "longitude": "30.84171865",
+                "delivery_instructions": null,
+                "label": "branch",
+                "is_default_shipping": false,
+                "is_default_billing": false,
+                "created_at": "2026-04-15T03:24:53.000000Z",
+                "updated_at": "2026-04-15T03:24:53.000000Z"
+            }
+        ],
+        "verifications": [],
+        "socials": [
+            {
+                "id": 4,
+                "name": "Facebook",
+                "icon": "https://api.coupony.shop/storage/socials/icons/facebook.png",
+                "url": "https://facebook.com/my-store"
+            },
+            {
+                "id": 5,
+                "name": "Instagram",
+                "icon": "https://api.coupony.shop/storage/socials/icons/instagram.png",
+                "url": "https://instagram.com/my-store"
+            }
+        ],
+        "hours": [
+            {
+                "id": 147,
+                "store_id": "db1b1ff7-6b09-4c2c-a7e3-bfe14d7d4700",
+                "day_of_week": 0,
+                "open_time": "00:00:00",
+                "close_time": "00:00:00",
+                "is_closed": 1,
+                "created_at": "2026-04-15T03:24:53.000000Z",
+                "updated_at": "2026-04-15T19:06:46.000000Z"
+            },
+            {
+                "id": 141,
+                "store_id": "db1b1ff7-6b09-4c2c-a7e3-bfe14d7d4700",
+                "day_of_week": 1,
+                "open_time": "09:00:00",
+                "close_time": "17:00:00",
+                "is_closed": 0,
+                "created_at": "2026-04-15T03:24:53.000000Z",
+                "updated_at": "2026-04-15T19:06:46.000000Z"
+            },
+            {
+                "id": 142,
+                "store_id": "db1b1ff7-6b09-4c2c-a7e3-bfe14d7d4700",
+                "day_of_week": 2,
+                "open_time": "09:00:00",
+                "close_time": "17:00:00",
+                "is_closed": 0,
+                "created_at": "2026-04-15T03:24:53.000000Z",
+                "updated_at": "2026-04-15T19:06:46.000000Z"
+            },
+            {
+                "id": 143,
+                "store_id": "db1b1ff7-6b09-4c2c-a7e3-bfe14d7d4700",
+                "day_of_week": 3,
+                "open_time": "09:00:00",
+                "close_time": "17:00:00",
+                "is_closed": 0,
+                "created_at": "2026-04-15T03:24:53.000000Z",
+                "updated_at": "2026-04-15T19:06:46.000000Z"
+            },
+            {
+                "id": 144,
+                "store_id": "db1b1ff7-6b09-4c2c-a7e3-bfe14d7d4700",
+                "day_of_week": 4,
+                "open_time": "09:00:00",
+                "close_time": "17:00:00",
+                "is_closed": 0,
+                "created_at": "2026-04-15T03:24:53.000000Z",
+                "updated_at": "2026-04-15T19:06:46.000000Z"
+            },
+            {
+                "id": 145,
+                "store_id": "db1b1ff7-6b09-4c2c-a7e3-bfe14d7d4700",
+                "day_of_week": 5,
+                "open_time": "09:00:00",
+                "close_time": "17:00:00",
+                "is_closed": 0,
+                "created_at": "2026-04-15T03:24:53.000000Z",
+                "updated_at": "2026-04-15T19:06:46.000000Z"
+            },
+            {
+                "id": 146,
+                "store_id": "db1b1ff7-6b09-4c2c-a7e3-bfe14d7d4700",
+                "day_of_week": 6,
+                "open_time": "10:00:00",
+                "close_time": "16:00:00",
+                "is_closed": 0,
+                "created_at": "2026-04-15T03:24:53.000000Z",
+                "updated_at": "2026-04-15T19:06:46.000000Z"
+            }
+        ]
+    }
+}

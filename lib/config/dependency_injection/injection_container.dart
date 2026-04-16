@@ -22,6 +22,8 @@ import 'features/permissions_injection.dart';
 import 'features/profile_injection.dart';
 import 'features/customer_products_injection.dart';
 import 'features/seller_products_injection.dart';
+import 'features/seller_store_injection.dart';
+import 'features/customer_home_injection.dart';
 
 final sl = GetIt.instance;
 
@@ -147,6 +149,16 @@ Future<void> init() async {
   // 9. FEATURES - CUSTOMER / PUBLIC PRODUCTS
   // ═══════════════════════════════════════════════════════════
   registerCustomerProductsDependencies(sl);
+
+  // ═══════════════════════════════════════════════════════════
+  // 10. FEATURES - SELLER STORE DISPLAY
+  // ═══════════════════════════════════════════════════════════
+  registerSellerStoreDependencies(sl);
+
+  // ═══════════════════════════════════════════════════════════
+  // 11. FEATURES - CUSTOMER HOME
+  // ═══════════════════════════════════════════════════════════
+  registerCustomerHomeDependencies(sl);
 
   // Coupons Feature
   // ─────────────────

@@ -10,8 +10,8 @@ class SharpRevealConfig {
   // ── Timing ────────────────────────────────────────────────────────────────
 
   /// سريع ومتجاوب — إحساس بالتطبيق الاحترافي
-  static const Duration duration = Duration(milliseconds: 240);
-  static const Duration reverseDuration = Duration(milliseconds: 220);
+  static const Duration duration = Duration(milliseconds: 180);
+  static const Duration reverseDuration = Duration(milliseconds: 160);
 
   // ── Incoming Page (الصفحة الجديدة) ────────────────────────────────────────
 
@@ -36,7 +36,7 @@ class SharpRevealConfig {
   static const double outgoingFinalOpacity = 0.0;
 
   /// تختفي بحسم — مش بتتردد
-  static const Curve outgoingCurve = Curves.easeInQuart;
+  static const Curve outgoingCurve = Curves.easeInCubic;
 
   // ── Route Settings ─────────────────────────────────────────────────────────
   static const bool maintainState = true;

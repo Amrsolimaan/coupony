@@ -1,8 +1,15 @@
 import 'package:equatable/equatable.dart';
+import '../../domain/entities/seller_analytics_entity.dart';
 
-// ════════════════════════════════════════════════════════
-// SELLER ANALYTICS STATE
-// ════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════════════
+// ANALYTICS FILTER ENUM
+// ════════════════════════════════════════════════════════════════════════════
+
+enum AnalyticsFilter { all, today, last7Days, thisMonth, thisYear }
+
+// ════════════════════════════════════════════════════════════════════════════
+// SELLER ANALYTICS STATES
+// ════════════════════════════════════════════════════════════════════════════
 
 abstract class SellerAnalyticsState extends Equatable {
   const SellerAnalyticsState();
@@ -11,7 +18,7 @@ abstract class SellerAnalyticsState extends Equatable {
   List<Object?> get props => [];
 }
 
-/// Initial state - no operation has started yet.
+/// Initial — cubit just created, no operation started yet.
 class SellerAnalyticsInitial extends SellerAnalyticsState {
   final bool isGuest;
   final bool isPending;
@@ -25,31 +32,31 @@ class SellerAnalyticsInitial extends SellerAnalyticsState {
   List<Object?> get props => [isGuest, isPending];
 }
 
-/// Loading analytics data.
+/// Fetching analytics data.
 class SellerAnalyticsLoading extends SellerAnalyticsState {
   const SellerAnalyticsLoading();
 }
 
-/// Analytics data successfully loaded.
-class SellerAnalyticsLoaded extends SellerAnalyticsState {
-  final bool isGuest;
-  final bool isPending;
+/// Analytics data loaded successfully.
+class SellerAnalyticsDataLoaded extends SellerAnalyticsState {
+  final SellerAnalyticsEntity analytics;
+  final AnalyticsFilter selectedFilter;
 
-  const SellerAnalyticsLoaded({
-    this.isGuest = false,
-    this.isPending = false,
+  const SellerAnalyticsDataLoaded({
+    required this.analytics,
+    this.selectedFilter = AnalyticsFilter.all,
   });
 
   @override
-  List<Object?> get props => [isGuest, isPending];
+  List<Object?> get props => [analytics, selectedFilter];
 }
 
-/// Guest seller view.
+/// Seller has not set up an account yet (guest view).
 class SellerAnalyticsGuest extends SellerAnalyticsState {
   const SellerAnalyticsGuest();
 }
 
-/// Pending approval view.
+/// Store submitted but still under review.
 class SellerAnalyticsPending extends SellerAnalyticsState {
   const SellerAnalyticsPending();
 }

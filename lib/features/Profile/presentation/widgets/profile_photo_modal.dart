@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../core/localization/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../auth/presentation/widgets/role_animation_wrapper.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MODERN PROFILE PHOTO MODAL BOTTOM SHEET
@@ -174,20 +175,24 @@ class _ProfilePhotoModalContent extends StatelessWidget {
           child: Row(
             children: [
               // ── Icon Container ─────────────────────────────────────────────
-              Container(
-                width: 44.w,
-                height: 44.w,
-                decoration: BoxDecoration(
-                  color: isDestructive
-                      ? AppColors.error.withValues(alpha: 0.1)
-                      : AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Icon(
-                  icon,
-                  size: 22.w,
-                  color: isDestructive ? AppColors.error : AppColors.primary,
-                ),
+              AnimatedPrimaryColor(
+                builder: (context, primaryColor) {
+                  return Container(
+                    width: 44.w,
+                    height: 44.w,
+                    decoration: BoxDecoration(
+                      color: isDestructive
+                          ? AppColors.error.withValues(alpha: 0.1)
+                          : primaryColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Icon(
+                      icon,
+                      size: 22.w,
+                      color: isDestructive ? AppColors.error : primaryColor,
+                    ),
+                  );
+                },
               ),
               SizedBox(width: 16.w),
 
@@ -213,6 +218,69 @@ class _ProfilePhotoModalContent extends StatelessWidget {
                   size: 16.w,
                   color: AppColors.textSecondary,
                 ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ── Build Sub Option Widget (for nested sheets) ───────────────────────────
+  Widget _buildSubOption({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16.r),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+          decoration: BoxDecoration(
+            color: AppColors.grey200.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(
+              color: AppColors.divider,
+              width: 1.w,
+            ),
+          ),
+          child: Row(
+            children: [
+              // ── Icon Container ─────────────────────────────────────────────
+              AnimatedPrimaryColor(
+                builder: (context, primaryColor) {
+                  return Container(
+                    width: 44.w,
+                    height: 44.w,
+                    decoration: BoxDecoration(
+                      color: primaryColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Icon(
+                      icon,
+                      size: 22.w,
+                      color: primaryColor,
+                    ),
+                  );
+                },
+              ),
+              SizedBox(width: 16.w),
+
+              // ── Label ──────────────────────────────────────────────────────
+              Expanded(
+                child: Text(
+                  label,
+                  style: AppTextStyles.customStyle(
+                    context,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -256,7 +324,7 @@ class _ProfilePhotoModalContent extends StatelessWidget {
                 child: Column(
                   children: [
                     // Camera Option
-                    _buildOption(
+                    _buildSubOption(
                       context: context,
                       icon: Icons.camera_alt_outlined,
                       label: l10n.profile_photo_camera,
@@ -268,7 +336,7 @@ class _ProfilePhotoModalContent extends StatelessWidget {
                     SizedBox(height: 8.h),
 
                     // Gallery Option
-                    _buildOption(
+                    _buildSubOption(
                       context: context,
                       icon: Icons.photo_library_outlined,
                       label: l10n.profile_photo_gallery,
@@ -480,11 +548,15 @@ class _FullScreenPhotoViewer extends StatelessWidget {
                   child: CachedNetworkImage(
                     imageUrl: imageUrl,
                     fit: BoxFit.contain,
-                    placeholder: (context, url) => Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.primary,
-                        strokeWidth: 3.w,
-                      ),
+                    placeholder: (context, url) => AnimatedPrimaryColor(
+                      builder: (context, primaryColor) {
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: primaryColor,
+                            strokeWidth: 3.w,
+                          ),
+                        );
+                      },
                     ),
                     errorWidget: (context, url, error) => Icon(
                       Icons.error_outline_rounded,

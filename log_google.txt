@@ -1,0 +1,213 @@
+GoRouter] going to /login
+I/flutter (16052): ✅ Loaded preferred role: seller
+W/WindowOnBackDispatcher(16052): OnBackInvokedCallback is not enabled for the application.
+W/WindowOnBackDispatcher(16052): Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+V/ImeFocusController(16052): onWindowFocus: io.flutter.embedding.android.FlutterView{899fc9e VFE...... .F...... 0,0-1080,2400 #1 aid=1073741824} softInputMode=STATE_UNSPECIFIED|ADJUST_RESIZE
+D/VRI[SignInHubActivity](16052): visibilityChanged oldVisibility=true newVisibility=false
+D/ViewRootImpl(16052): AppSizeAfterRelayout, size: Point(1080, 2400), rotation: ROTATION_0
+W/WindowOnBackDispatcher(16052): sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@103ac12
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   GoogleSignInButton._handleGoogleSignIn (package:coupony/features/auth/presentation/widgets/google_sign_in_button.dart:93:12)
+google_sign_in_button.dart:93
+I/flutter (16052): │ #1   GoogleSignInButton.build.<anonymous closure>.<anonymous closure> (package:coupony/features/auth/presentation/widgets/google_sign_in_button.dart:48:25)
+google_sign_in_button.dart:48
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 🔵 Google Sign-In Button Pressed
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   GoogleSignInButton._handleGoogleSignIn (package:coupony/features/auth/presentation/widgets/google_sign_in_button.dart:94:12)
+google_sign_in_button.dart:94
+I/flutter (16052): │ #1   GoogleSignInButton.build.<anonymous closure>.<anonymous closure> (package:coupony/features/auth/presentation/widgets/google_sign_in_button.dart:48:25)
+google_sign_in_button.dart:48
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 🔵 Role being passed: seller
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   GoogleSignInButton._handleGoogleSignIn (package:coupony/features/auth/presentation/widgets/google_sign_in_button.dart:95:12)
+google_sign_in_button.dart:95
+I/flutter (16052): │ #1   GoogleSignInButton.build.<anonymous closure>.<anonymous closure> (package:coupony/features/auth/presentation/widgets/google_sign_in_button.dart:48:25)
+google_sign_in_button.dart:48
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 🔵 Calling GoogleSignInCubit.signInWithGoogle(role: seller)
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   GoogleSignInCubit.signInWithGoogle (package:coupony/features/auth/presentation/cubit/google_sign_in_cubit.dart:24:12)
+google_sign_in_cubit.dart:24
+I/flutter (16052): │ #1   GoogleSignInButton._handleGoogleSignIn (package:coupony/features/auth/presentation/widgets/google_sign_in_button.dart:96:39)
+google_sign_in_button.dart:96
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 🔐 [CUBIT] Starting Google Sign-In for role: seller
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   GoogleSignInCubit.signInWithGoogle (package:coupony/features/auth/presentation/cubit/google_sign_in_cubit.dart:34:14)
+google_sign_in_cubit.dart:34
+I/flutter (16052): │ #1   GoogleSignInButton._handleGoogleSignIn (package:coupony/features/auth/presentation/widgets/google_sign_in_button.dart:96:39)
+google_sign_in_button.dart:96
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 🔐 [CUBIT] Calling googleSignInUseCase...
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): 🔐 [USE_CASE] Starting Google Sign-In use case for role: seller
+I/flutter (16052): 🔐 [REPOSITORY] Starting Google Sign-In for role: seller
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   GoogleSignInService.signInWithGoogleAndGetIdToken (package:coupony/core/services/google_sign_in_service.dart:17:15)
+google_sign_in_service.dart:17
+I/flutter (16052): │ #1   AuthRepositoryImpl.googleSignIn (package:coupony/features/auth/data/repositories/auth_repository_impl.dart:239:12)
+auth_repository_impl.dart:239
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 🔐 [SERVICE] Starting Google Sign-In process...
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   GoogleSignInService.signInWithGoogleAndGetIdToken (package:coupony/core/services/google_sign_in_service.dart:20:15)
+google_sign_in_service.dart:20
+I/flutter (16052): │ #1   AuthRepositoryImpl.googleSignIn (package:coupony/features/auth/data/repositories/auth_repository_impl.dart:239:12)
+auth_repository_impl.dart:239
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 🔐 [SERVICE] Signing out first to force account picker...
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   GoogleSignInService.signInWithGoogleAndGetIdToken (package:coupony/core/services/google_sign_in_service.dart:24:15)
+google_sign_in_service.dart:24
+I/flutter (16052): │ #1   <asynchronous suspension>
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 🔐 [SERVICE] Calling _googleSignIn.signIn()...
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+W/com.coupony(16052): type=1400 audit(0.0:760514): avc:  denied  { read } for  name="u:object_r:vendor_display_prop:s0" dev="tmpfs" ino=13375 scontext=u:r:untrusted_app:s0:c142,c257,c512,c768 tcontext=u:object_r:vendor_display_prop:s0 tclass=file permissive=0 app=com.coupony
+D/ViewRootImpl(16052): AppSizeAfterRelayout, size: Point(1080, 2400), rotation: ROTATION_0
+W/libc    (16052): Access denied finding property "vendor.display.enable_optimal_refresh_rate"
+I/BLASTBufferQueue(16052): QoSAllocBuff Successful. Ret 0 
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   GoogleSignInService.signInWithGoogleAndGetIdToken (package:coupony/core/services/google_sign_in_service.dart:32:15)
+google_sign_in_service.dart:32
+I/flutter (16052): │ #1   <asynchronous suspension>
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 ✅ [SERVICE] Google user signed in: amrsoliman820@gmail.com
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   GoogleSignInService.signInWithGoogleAndGetIdToken (package:coupony/core/services/google_sign_in_service.dart:35:15)
+google_sign_in_service.dart:35
+I/flutter (16052): │ #1   <asynchronous suspension>
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 🔐 [SERVICE] Getting authentication details...
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+V/ImeFocusController(16052): onWindowFocus: com.android.internal.policy.DecorView{34e116e V.E...... R.....I. 0,0-1080,2400}[SignInHubActivity] softInputMode=STATE_UNSPECIFIED|ADJUST_PAN
+D/VRI[SignInHubActivity](16052): visibilityChanged oldVisibility=true newVisibility=false
+D/ViewRootImpl(16052): AppSizeAfterRelayout, size: Point(1080, 2400), rotation: ROTATION_0
+V/ImeFocusController(16052): onWindowFocus: io.flutter.embedding.android.FlutterView{899fc9e VFE...... .F...... 0,0-1080,2400 #1 aid=1073741824} softInputMode=STATE_UNSPECIFIED|ADJUST_RESIZE
+W/WindowOnBackDispatcher(16052): sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@c59ae2b
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   GoogleSignInService.signInWithGoogleAndGetIdToken (package:coupony/core/services/google_sign_in_service.dart:43:15)
+google_sign_in_service.dart:43
+I/flutter (16052): │ #1   <asynchronous suspension>
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 ✅ [SERVICE] Got Google ID token
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ✅ [REPOSITORY] Got Google ID token
+I/flutter (16052): 📤 [REPOSITORY] ID Token length: 1108
+I/flutter (16052): 📤 [REPOSITORY] Role being sent: seller
+I/flutter (16052): 🔐 [REPOSITORY] Calling /auth/google endpoint...
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   AuthRemoteDataSourceImpl.googleSignIn (package:coupony/features/auth/data/datasources/auth_remote_data_source.dart:102:14)
+auth_remote_data_source.dart:102
+I/flutter (16052): │ #1   AuthRepositoryImpl.googleSignIn (package:coupony/features/auth/data/repositories/auth_repository_impl.dart:252:43)
+auth_repository_impl.dart:252
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 🔐 GOOGLE AUTH REQUEST - Role: seller
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   AuthRemoteDataSourceImpl.googleSignIn (package:coupony/features/auth/data/datasources/auth_remote_data_source.dart:103:14)
+auth_remote_data_source.dart:103
+I/flutter (16052): │ #1   AuthRepositoryImpl.googleSignIn (package:coupony/features/auth/data/repositories/auth_repository_impl.dart:252:43)
+auth_repository_impl.dart:252
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 📤 ID Token length: 1108
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   AuthRemoteDataSourceImpl.googleSignIn (package:coupony/features/auth/data/datasources/auth_remote_data_source.dart:104:14)
+auth_remote_data_source.dart:104
+I/flutter (16052): │ #1   AuthRepositoryImpl.googleSignIn (package:coupony/features/auth/data/repositories/auth_repository_impl.dart:252:43)
+auth_repository_impl.dart:252
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 📤 ID Token (first 50 chars): eyJhbGciOiJSUzI1NiIsImtpZCI6ImIzZDk1Yjk1ZmE0OGQxOD...
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   AuthRemoteDataSourceImpl.googleSignIn (package:coupony/features/auth/data/datasources/auth_remote_data_source.dart:111:14)
+auth_remote_data_source.dart:111
+I/flutter (16052): │ #1   AuthRepositoryImpl.googleSignIn (package:coupony/features/auth/data/repositories/auth_repository_impl.dart:252:43)
+auth_repository_impl.dart:252
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 📤 FULL REQUEST BODY: {id_token: eyJhbGciOiJSUzI1NiIsImtpZCI6ImIzZDk1Yjk1ZmE0OGQxODBiODVmZmU4MDgyZmNmYTIxNzRiMDQ2NjciLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI2MDE2ODIwNDMxOTYtbmpvMGhla2hzMGxycWNrYXJvMm1xZmYwM2w3MzFwM3YuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI2MDE2ODIwNDMxOTYtNTcydTBrZTNkZGtwbDVtOGQ2Y3JxN3Y0MDZqMGk2cHIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDcxODM1NTczMzI5MjMxNzYyNjgiLCJlbWFpbCI6ImFtcnNvbGltYW44MjBAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJBbXIgU29saW1hbiIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NLcGp5SlFaaG9BelgxbHlYbEpLdjR3Mkx2YlgzeDN0cE5vU1hzZ2Z2a205N3hQWGhxYmlnPXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6IkFtciIsImZhbWlseV9uYW1lIjoiU29saW1hbiIsImlhdCI6MTc3NjMyMDc2MiwiZXhwIjoxNzc2MzI0MzYyfQ.UPGFFapVHydKbwe5HgL-hJfnc1SrOAkhsGD1431iPalyQVEplOULXB_b5x2RYLNNx4Uhtchd-MhmuTPfOLYZNjJugJQvxlRHzGy_8-e1qrHPOsXF2lVhDgYu80kYpVDnD9e2OB-GzRd-MaoIcQ2rOPXD_xJGw4HohIlq5_wyykGaPZn6nvz9tbY0xIBgm1VfTJdQ97trr3T
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   AuthRemoteDataSourceImpl.googleSignIn (package:coupony/features/auth/data/datasources/auth_remote_data_source.dart:112:14)
+auth_remote_data_source.dart:112
+I/flutter (16052): │ #1   AuthRepositoryImpl.googleSignIn (package:coupony/features/auth/data/repositories/auth_repository_impl.dart:252:43)
+auth_repository_impl.dart:252
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 📤 Endpoint: /auth/google
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   LocaleInterceptor.onRequest (package:coupony/core/network/interceptors/locale_interceptor.dart:24:13)
+locale_interceptor.dart:24
+I/flutter (16052): │ #1   DioMixin.fetch.requestInterceptorWrapper.<anonymous closure>.<anonymous closure> (package:dio/src/dio_mixin.dart:401:17)
+dio_mixin.dart:401
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 🌍 LocaleInterceptor: Added Accept-Language: ar to /auth/google
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ┌──────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ 💡 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+I/flutter (16052): │ 💡 🌐 REQUEST 
+I/flutter (16052): │ 💡 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+I/flutter (16052): │ 💡 🔹 Method: POST
+I/flutter (16052): │ 💡 🔹 URL: https://api.coupony.shop/api/v1/auth/google
+I/flutter (16052): │ 💡 🔹 Headers: {Content-Type: application/json, Accept: application/json, Accept-Language: ar}
+I/flutter (16052): │ 💡 🔹 Body: {id_token: eyJhbGciOiJSUzI1NiIsImtpZCI6ImIzZDk1Yjk1ZmE0OGQxODBiODVmZmU4MDgyZmNmYTIxNzRiMDQ2NjciLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI2MDE2ODIwNDMxOTYtbmpvMGhla2hzMGxycWNrYXJvMm1xZmYwM2w3MzFwM3YuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI2MDE2ODIwNDMxOTYtNTcydTBrZTNkZGtwbDVtOGQ2Y3JxN3Y0MDZqMGk2cHIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDcxODM1NTczMzI5MjMxNzYyNjgiLCJlbWFpbCI6ImFtcnNvbGltYW44MjBAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJBbXIgU29saW1hbiIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NLcGp5SlFaaG9BelgxbHlYbEpLdjR3Mkx2YlgzeDN0cE5vU1hzZ2Z2a205N3hQWGhxYmlnPXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6IkFtciIsImZhbWlseV9uYW1lIjoiU29saW1hbiIsImlhdCI6MTc3NjMyMDc2MiwiZXhwIjoxNzc2MzI0MzYyfQ.UPGFFapVHydKbwe5HgL-hJfnc1SrOAkhsGD1431iPalyQVEplOULXB_b5x2RYLNNx4Uhtchd-MhmuTPfOLYZNjJugJQvxlRHzGy_8-e1qrHPOsXF2lVhDgYu80kYpVDnD9e2OB-GzRd-MaoIcQ2rOPXD_xJGw4HohIlq5_wyykGaPZn6nvz9tbY0xIBgm1VfTJdQ97trr3THiGohXGVSZ-vQ
+I/flutter (16052): │ 💡 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+I/flutter (16052): │ 💡 
+I/flutter (16052): └──────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   AuthRemoteDataSourceImpl.googleSignIn (package:coupony/features/auth/data/datasources/auth_remote_data_source.dart:132:14)
+auth_remote_data_source.dart:132
+I/flutter (16052): │ #1   <asynchronous suspension>
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ ⛔ ❌ GOOGLE AUTH ERROR - DioException: 401 - {message: بيانات الاعتماد غير صحيحة., errors: {id_token: [بيانات الاعتماد غير صحيحة.]}}
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ❌ [REPOSITORY] Unexpected error in googleSignIn: Instance of 'ServerException'
+I/flutter (16052): #0      AuthRemoteDataSourceImpl._rethrowAs422Or (package:coupony/features/auth/data/datasources/auth_remote_data_source.dart:501:5)
+auth_remote_data_source.dart:501
+I/flutter (16052): #1      AuthRemoteDataSourceImpl.googleSignIn (package:coupony/features/auth/data/datasources/auth_remote_data_source.dart:133:7)
+auth_remote_data_source.dart:133
+I/flutter (16052): <asynchronous suspension>
+I/flutter (16052): #2      AuthRepositoryImpl.googleSignIn (package:coupony/features/auth/data/repositories/auth_repository_impl.dart:252:20)
+auth_repository_impl.dart:252
+I/flutter (16052): <asynchronous suspension>
+I/flutter (16052): #3      GoogleSignInUseCase.call (package:coupony/features/auth/domain/use_cases/google_sign_in_use_case.dart:22:22)
+google_sign_in_use_case.dart:22
+I/flutter (16052): <asynchronous suspension>
+I/flutter (16052): #4      GoogleSignInCubit.signInWithGoogle (package:coupony/features/auth/presentation/cubit/google_sign_in_cubit.dart:35:22)
+google_sign_in_cubit.dart:35
+I/flutter (16052): <asynchronous suspension>
+I/flutter (16052): 🔐 [USE_CASE] Repository returned result
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   GoogleSignInCubit.signInWithGoogle (package:coupony/features/auth/presentation/cubit/google_sign_in_cubit.dart:36:14)
+google_sign_in_cubit.dart:36
+I/flutter (16052): │ #1   <asynchronous suspension>
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ 💡 🔐 [CUBIT] UseCase returned result
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   GoogleSignInCubit.signInWithGoogle.<anonymous closure> (package:coupony/features/auth/presentation/cubit/google_sign_in_cubit.dart:40:18)
+google_sign_in_cubit.dart:40
+I/flutter (16052): │ #1   Left.fold (package:dartz/src/either.dart:191:63)
+either.dart:191
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ ⛔ ❌ [CUBIT] Google Sign-In failed: بيانات الاعتماد غير صحيحة.
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+I/flutter (16052): │ #0   GoogleSignInCubit.signInWithGoogle.<anonymous closure> (package:coupony/features/auth/presentation/cubit/google_sign_in_cubit.dart:41:18)
+google_sign_in_cubit.dart:41
+I/flutter (16052): │ #1   Left.fold (package:dartz/src/either.dart:191:63)
+either.dart:191
+I/flutter (16052): ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+I/flutter (16052): │ ⛔ ❌ [CUBIT] Failure type: ServerFailure
+I/flutter (16052): └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+D/ViewRootImpl(16052): AppSizeAfterRelayout, size: Point(1080, 2400), rotation: ROTATION_0

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/localization/l10n/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
+import '../../../../auth/domain/entities/user_persona.dart';
+import '../../../../auth/presentation/cubit/persona_cubit.dart';
 import '../../widgets/shared_card.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -54,22 +57,41 @@ class FaqPage extends StatelessWidget {
 
   // ── Body ───────────────────────────────────────────────────────────────────
   Widget _buildBody(BuildContext context, AppLocalizations l10n) {
-    final faqItems = [
-      _FaqItem(question: l10n.faq_q1, answer: l10n.faq_a1),
-      _FaqItem(question: l10n.faq_q2, answer: l10n.faq_a2),
-      _FaqItem(question: l10n.faq_q3, answer: l10n.faq_a3),
-      _FaqItem(question: l10n.faq_q4, answer: l10n.faq_a4),
-      _FaqItem(question: l10n.faq_q5, answer: l10n.faq_a5),
-    ];
+    return BlocBuilder<PersonaCubit, UserPersona>(
+      builder: (context, persona) {
+        final isSeller = persona is SellerPersona;
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(height: 12.h),
-          ...faqItems.map((item) => _buildFaqTile(context, item)),
-          SizedBox(height: 24.h),
-        ],
-      ),
+        final faqItems = isSeller
+            ? [
+                _FaqItem(
+                    question: l10n.faq_seller_q1, answer: l10n.faq_seller_a1),
+                _FaqItem(
+                    question: l10n.faq_seller_q2, answer: l10n.faq_seller_a2),
+                _FaqItem(
+                    question: l10n.faq_seller_q3, answer: l10n.faq_seller_a3),
+                _FaqItem(
+                    question: l10n.faq_seller_q4, answer: l10n.faq_seller_a4),
+                _FaqItem(
+                    question: l10n.faq_seller_q5, answer: l10n.faq_seller_a5),
+              ]
+            : [
+                _FaqItem(question: l10n.faq_q1, answer: l10n.faq_a1),
+                _FaqItem(question: l10n.faq_q2, answer: l10n.faq_a2),
+                _FaqItem(question: l10n.faq_q3, answer: l10n.faq_a3),
+                _FaqItem(question: l10n.faq_q4, answer: l10n.faq_a4),
+                _FaqItem(question: l10n.faq_q5, answer: l10n.faq_a5),
+              ];
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 12.h),
+              ...faqItems.map((item) => _buildFaqTile(context, item)),
+              SizedBox(height: 24.h),
+            ],
+          ),
+        );
+      },
     );
   }
 

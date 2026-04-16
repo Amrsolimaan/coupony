@@ -2,8 +2,8 @@ import 'package:coupony/core/localization/l10n/app_localizations.dart';
 import 'package:coupony/core/localization/locale_cubit.dart';
 import 'package:coupony/core/network/global_network_listener.dart';
 import 'package:coupony/core/theme/app_colors.dart';
-import 'package:coupony/features/auth/presentation/cubit/auth_role_cubit.dart';
-import 'package:coupony/features/auth/presentation/cubit/auth_role_state.dart';
+import 'package:coupony/features/auth/presentation/cubit/persona_cubit.dart';
+import 'package:coupony/features/auth/domain/entities/user_persona.dart';
 import 'package:coupony/features/permissions/presentation/cubit/permission_flow_cubit.dart';
 import 'package:coupony/features/user_flow/CustomerOnboarding/presentation/cubit/onboarding_flow_cubit.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +27,8 @@ class MyApp extends StatelessWidget {
         return MultiBlocProvider(
           providers: [
             BlocProvider<LocaleCubit>(create: (context) => sl<LocaleCubit>()),
-            BlocProvider<AuthRoleCubit>(
-              create: (context) => sl<AuthRoleCubit>(),
+            BlocProvider<PersonaCubit>(
+              create: (context) => sl<PersonaCubit>(),
             ),
             BlocProvider<OnboardingFlowCubit>(
               create: (context) => sl<OnboardingFlowCubit>(),
@@ -86,14 +86,15 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return BlocBuilder<LocaleCubit, Locale>(
       builder: (context, locale) {
-        return BlocBuilder<AuthRoleCubit, AuthRoleState>(
-          builder: (context, roleState) {
-            // Neutral theme during loading to prevent flickering
-            final primaryColor = roleState.isLoading
-                ? Colors.white  // Neutral color during loading
-                : (roleState.isSeller
-                    ? AppColors.primaryOfSeller
-                    : AppColors.primary);
+        return BlocBuilder<PersonaCubit, UserPersona>(
+          builder: (context, persona) {
+            // Theme is driven exclusively by PersonaCubit — structurally
+            // in sync with the route because both observe the same state.
+            final primaryColor = switch (persona) {
+              LoadingPersona() => Colors.white, // neutral during cache read
+              SellerPersona()  => AppColors.primaryOfSeller,
+              _                => AppColors.primary,
+            };
             
             final theme = AppTheme.lightTheme.copyWith(
               primaryColor: primaryColor,

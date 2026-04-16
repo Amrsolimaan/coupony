@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../domain/entities/saved_address.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../../auth/presentation/widgets/role_animation_wrapper.dart';
 
 /// Address Card Widget
 /// Displays a saved address with actions
@@ -28,14 +29,16 @@ class AddressCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Container(
+    return AnimatedPrimaryColor(
+      builder: (context, primaryColor) {
+        return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(12.r),
         border: address.isDefault
             ? Border.all(
-                color: AppColors.primary.withValues(alpha: 0.3),
+                color: primaryColor.withValues(alpha: 0.3),
                 width: 1.5.w,
               )
             : null,
@@ -58,18 +61,22 @@ class AddressCardWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ── Icon ───────────────────────────────────────────────────
-                Container(
-                  width: 40.w,
-                  height: 40.w,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                  child: FaIcon(
-                    _getIconForLabel(address.label),
-                    color: AppColors.primary,
-                    size: 18.w,
-                  ),
+                AnimatedPrimaryColor(
+                  builder: (context, primaryColor) {
+                    return Container(
+                      width: 40.w,
+                      height: 40.w,
+                      decoration: BoxDecoration(
+                        color: primaryColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: FaIcon(
+                        _getIconForLabel(address.label),
+                        color: primaryColor,
+                        size: 18.w,
+                      ),
+                    );
+                  },
                 ),
                 SizedBox(width: 12.w),
 
@@ -102,7 +109,7 @@ class AddressCardWidget extends StatelessWidget {
                                 vertical: 4.h,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.primary,
+                                color: primaryColor,
                                 borderRadius: BorderRadius.circular(4.r),
                               ),
                               child: Text(
@@ -239,6 +246,8 @@ class AddressCardWidget extends StatelessWidget {
           ),
         ),
       ),
+      );
+      },
     );
   }
 

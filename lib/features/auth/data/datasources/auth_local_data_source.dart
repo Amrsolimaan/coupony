@@ -96,19 +96,69 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       if (user.refreshToken != null) await secureStorage.write(StorageKeys.refreshToken, user.refreshToken!);
       if (user.fcmToken     != null) await secureStorage.write(StorageKeys.fcmToken,     user.fcmToken!);
 
-      final scopedId = user.email.isNotEmpty ? user.email : user.id.toString();
-      await secureStorage.write(StorageKeys.userId,   scopedId);
-      
-      // ✅ ALWAYS use backend role as source of truth
-      // The backend determines the user's actual role based on their account status
-      await secureStorage.write(StorageKeys.userRole, user.role);
-      print('💾 Saved backend role: ${user.role}');
+      // ── userId ────────────────────────────────────────────────────────────
+      // Only write if we have a meaningful value. An empty email AND id==0
+      // (common from profile-only API responses) must NOT overwrite the login-
+      // time userId, which would corrupt every user-scoped SharedPrefs key.
+      final String? scopedId = user.email.isNotEmpty
+          ? user.email
+          : (user.id > 0 ? user.id.toString() : null);
+      if (scopedId != null) {
+        await secureStorage.write(StorageKeys.userId, scopedId);
+      }
+
+      // ── roles & active-seller flag ────────────────────────────────────────
+      // CRITICAL GUARDS:
+      //   1. Profile endpoints (GET /auth/me) return NO roles array — skip the
+      //      write entirely so the login-time cache is never wiped.
+      //   2. seller_pending users are NOT active sellers; cache them as
+      //      'customer' so the theme, splash color, and routing are all correct.
+      //   3. ✅ RESPECT USER PREFERENCE: Check preferredRole from SharedPreferences
+      //      first. Only default to 'seller' if user has no saved preference.
+      if (user.roles.isNotEmpty) {
+        // Check if user has a saved preference
+        final preferredRole = sharedPrefs.getString(StorageKeys.preferredRole);
+        
+        // isActiveSeller is a computed getter on UserModel (requires all 3 checks)
+        final bool activeSeller = user.isActiveSeller;
+        
+        String effectiveRole;
+        
+        if (preferredRole != null && (preferredRole == 'customer' || preferredRole == 'seller')) {
+          // User has a saved preference - validate it against backend roles
+          if (preferredRole == 'seller' && activeSeller) {
+            effectiveRole = 'seller';
+          } else if (preferredRole == 'customer' && user.roles.contains('customer')) {
+            effectiveRole = 'customer';
+          } else {
+            // Preference is invalid, fall back to backend default
+            effectiveRole = activeSeller ? 'seller' : 'customer';
+          }
+          print('✅ Using user preference: $preferredRole → effective: $effectiveRole');
+        } else {
+          // No preference saved, use backend default (seller priority)
+          effectiveRole = activeSeller ? 'seller' : 'customer';
+          print('ℹ️ No user preference, using backend default: $effectiveRole');
+        }
+
+        await secureStorage.write(StorageKeys.userRole, effectiveRole);
+        print(
+          '💾 Saved effective role: $effectiveRole '
+          '(isActiveSeller: $activeSeller, '
+          'isStoreOwner: ${user.isStoreOwner}, '
+          'roles: ${user.roles})',
+        );
+        await cacheUserRoles(user.roles);
+      } else {
+        print('⚠️ cacheUser — roles list empty, preserving cached roles from login');
+      }
 
       // Sync flags from the backend source of truth
       await cacheOnboardingCompleted(user.isOnboardingCompleted);
       await cacheStoreCreated(user.isStoreCreated);
-      await cacheStores(user.stores);
-      await cacheUserRoles(user.roles);
+      if (user.stores.isNotEmpty) {
+        await cacheStores(user.stores);
+      }
 
       print('✅ AuthLocalDataSource.cacheUser — all data cached');
     } catch (e) {
@@ -134,7 +184,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
         lastName:    '',
         email:       '',
         phoneNumber: '',
-        role:        role ?? 'user',
+        role:        role ?? 'customer',
         accessToken: accessToken,
         refreshToken: await secureStorage.read(StorageKeys.refreshToken),
         fcmToken:    await secureStorage.read(StorageKeys.fcmToken),
@@ -287,61 +337,23 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   // ── getPrimaryRole ───────────────────────────────────────────────────────
 
-  /// ✅ FIXED: Get primary role with user preference support
-  /// 
-  /// Logic:
-  /// 1. Check if user has manually selected a role (via role_toggle)
-  /// 2. If yes, validate it against backend roles and return it
-  /// 3. If no, return backend's primary role (seller > customer)
-  /// 
-  /// This allows users with multiple roles to choose which one to use
+  /// Returns the user's effective UI role: 'seller' or 'customer'.
+  ///
+  /// Single source of truth: [StorageKeys.userRole] written by [cacheUser].
+  /// That write is strict — it is set to 'seller' ONLY when the backend
+  /// confirms [isStoreOwner] = true AND the roles list contains 'seller'
+  /// WITHOUT 'seller_pending'.
+  ///
+  /// 'seller_pending' users are therefore always returned as 'customer' here,
+  /// preventing them from receiving the seller theme or entering the seller flow.
   @override
   Future<String> getPrimaryRole() async {
     try {
-      // Step 1: Get backend roles (source of truth for permissions)
-      final backendRoles = await getCachedUserRoles();
-      
-      // Step 2: Get user's active role preference (from role_toggle)
-      final userSelectedRole = await secureStorage.read(StorageKeys.userRole);
-      
-      // Step 3: If user has selected a role, validate it against backend roles
-      if (userSelectedRole != null && userSelectedRole.isNotEmpty) {
-        // Validate: user can only use roles they have from backend
-        if (backendRoles.isEmpty) {
-          // No backend roles cached yet, trust user selection
-          return (userSelectedRole == 'seller') ? 'seller' : 'customer';
-        }
-        
-        // Check if user's selection is valid
-        if (userSelectedRole == 'seller') {
-          // User wants seller role - check if they have it
-          if (backendRoles.contains('seller') || backendRoles.contains('seller_pending')) {
-            return 'seller';
-          }
-          // User doesn't have seller role, fallback to customer
-          return 'customer';
-        } else {
-          // User wants customer role - always allowed if they have any role
-          return 'customer';
-        }
-      }
-      
-      // Step 4: No user preference, use backend's primary role
-      if (backendRoles.isEmpty) {
-        // Fallback to single role storage for backward compatibility
-        final savedRole = await secureStorage.read(StorageKeys.userRole);
-        return (savedRole == 'seller') ? 'seller' : 'customer';
-      }
-      
-      // Determine primary role from backend roles array
-      if (backendRoles.contains('seller') || backendRoles.contains('seller_pending')) {
-        return 'seller';
-      }
-      
-      return 'customer';
+      final savedRole = await secureStorage.read(StorageKeys.userRole);
+      return (savedRole == 'seller') ? 'seller' : 'customer';
     } catch (e) {
       print('⚠️ getPrimaryRole failed, defaulting to customer: $e');
-      return 'customer'; // Safe default
+      return 'customer';
     }
   }
 

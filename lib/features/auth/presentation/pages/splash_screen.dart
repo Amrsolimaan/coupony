@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/localization/locale_cubit.dart';
@@ -10,10 +11,11 @@ import '../../../../config/routes/app_router.dart';
 import '../../../../core/constants/storage_keys.dart';
 import '../../../../config/dependency_injection/injection_container.dart' as di;
 import '../../../permissions/domain/repositories/permission_repository.dart';
+import '../../../Profile/domain/repositories/profile_repository.dart';
 import '../../data/datasources/auth_local_data_source.dart';
-import '../cubit/auth_role_cubit.dart';
-import '../cubit/auth_role_state.dart';
-import '../utils/seller_routing_resolver.dart';
+import '../../data/models/user_model.dart';
+import '../../domain/entities/user_persona.dart';
+import '../cubit/persona_cubit.dart';
 
 class AnimatedSplashScreen extends StatefulWidget {
   const AnimatedSplashScreen({super.key});
@@ -39,138 +41,152 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
     );
 
     _dropAnimation = Tween<double>(begin: -0.5, end: 0.0).animate(
-      CurvedAnimation(parent: _controller, curve: const Interval(0.0, 0.4, curve: Curves.bounceOut)),
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.4, curve: Curves.bounceOut),
+      ),
     );
     _expandAnimation = Tween<double>(begin: 1.0, end: 30.0).animate(
-      CurvedAnimation(parent: _controller, curve: const Interval(0.5, 0.8, curve: Curves.easeInOut)),
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.5, 0.8, curve: Curves.easeInOut),
+      ),
     );
     _logoOpacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: const Interval(0.8, 1.0, curve: Curves.easeIn)),
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.8, 1.0, curve: Curves.easeIn),
+      ),
     );
 
-    _loadRoleAndStart();
+    _loadAndStart();
   }
 
-  Future<void> _loadRoleAndStart() async {
-    try {
-      await di.sl<AuthRoleCubit>().loadPersistedRole();
-    } catch (_) {}
+  // ── Entry point ─────────────────────────────────────────────────────────────
 
+  Future<void> _loadAndStart() async {
+    final personaCubit = di.sl<PersonaCubit>();
+
+    // ── Phase 1: Cache read BEFORE animation ───────────────────────────────
+    // Reads two SecureStorage keys (~2 ms). The BlocBuilder below rebuilds
+    // immediately with the correct role color before the first frame of the
+    // animation is painted — eliminating the Seller-color / Customer-route
+    // visual contradiction that existed in the previous implementation.
+    await personaCubit.preloadFromCache();
     if (!mounted) return;
 
-    _controller.forward().then((_) async {
-      try {
-        final localeCubit = context.read<LocaleCubit>();
-        if (!await localeCubit.hasManualPreference()) {
-          if (mounted) context.go(AppRouter.languageSelection);
-          return;
-        }
+    // Animation now starts with the correct persona color already set.
+    _controller.forward().then((_) => _resolveAfterAnimation());
+  }
 
-        final permissionRepository = di.sl<PermissionRepository>();
-        final permissionResult     = await permissionRepository.getPermissionStatus();
+  // ── Phase 2: API validation after the animation completes ───────────────────
 
-        permissionResult.fold(
-          (failure) {
-            if (mounted) context.go(AppRouter.permissionSplash);
-          },
-          (permissionStatus) {
-            if (permissionStatus != null && permissionStatus.hasCompletedFlow) {
-              _checkWelcomeGatewayStatus();
-            } else {
-              if (mounted) context.go(AppRouter.permissionSplash);
-            }
-          },
-        );
-      } catch (e) {
+  Future<void> _resolveAfterAnimation() async {
+    if (!mounted) return;
+
+    try {
+      // ── Locale gate ────────────────────────────────────────────────────────
+      final localeCubit = context.read<LocaleCubit>();
+      if (!await localeCubit.hasManualPreference()) {
         if (mounted) context.go(AppRouter.languageSelection);
-      }
-    });
-  }
-
-  Future<void> _checkWelcomeGatewayStatus() async {
-    try {
-      final prefs           = di.sl<SharedPreferences>();
-      final hasPassedGateway = prefs.getBool(StorageKeys.hasPassedWelcomeGateway) ?? false;
-      if (!mounted) return;
-      if (hasPassedGateway) {
-        _checkOnboardingStatus();
-      } else {
-        context.go(AppRouter.welcomeGateway);
-      }
-    } catch (_) {
-      if (mounted) context.go(AppRouter.welcomeGateway);
-    }
-  }
-
-  Future<void> _checkOnboardingStatus() async {
-    try {
-      final authLocalDs = di.sl<AuthLocalDataSource>();
-
-      // ✅ Read token and guest status first (no userId dependency)
-      final token = await authLocalDs.getAccessToken();
-      final isGuest = await authLocalDs.getGuestStatus();
-
-      if (!mounted) return;
-
-      // Guest user → go to home immediately
-      if (isGuest) {
-        context.go(AppRouter.home);
         return;
       }
 
-      // No token → not authenticated → go to login
-      if (token == null || token.isEmpty) {
-        context.go(AppRouter.login);
+      // ── Permission gate ────────────────────────────────────────────────────
+      final authLocalDs     = di.sl<AuthLocalDataSource>();
+      final existingToken   = await authLocalDs.getAccessToken();
+      final isAuthenticated = existingToken != null && existingToken.isNotEmpty;
+
+      final permissionRepo   = di.sl<PermissionRepository>();
+      final permissionResult = await permissionRepo.getPermissionStatus();
+      final bool permissionsComplete = permissionResult.fold(
+        (_) => false,
+        (status) => status?.hasCompletedFlow ?? false,
+      );
+
+      // Heal the permissions flag for authenticated users whose flag was wiped
+      // (e.g., after a logout that cleared the Hive box).
+      if (!permissionsComplete && isAuthenticated) {
+        await permissionRepo.savePermissionStatus(hasCompletedFlow: true);
+      }
+      if (!permissionsComplete && !isAuthenticated) {
+        if (mounted) context.go(AppRouter.permissionSplash);
         return;
       }
 
-      // ✅ Authenticated user: safely read user-scoped flags
-      // These may fail if userId is missing (e.g., after corrupted logout)
-      bool isOnboardingCompleted = false;
-      bool isStoreCreated = false;
-
-      try {
-        final results = await Future.wait([
-          authLocalDs.getOnboardingCompleted(),
-          authLocalDs.getStoreCreated(),
-        ]);
-        isOnboardingCompleted = results[0] as bool;
-        isStoreCreated = results[1] as bool;
-      } catch (e) {
-        // userId missing or other cache error - treat as fresh user
-        print('⚠️ Could not read user-scoped flags (treating as fresh user): $e');
-        isOnboardingCompleted = false;
-        isStoreCreated = false;
+      // ── Welcome gateway gate ───────────────────────────────────────────────
+      final prefs             = di.sl<SharedPreferences>();
+      final hasPassedGateway  =
+          prefs.getBool(StorageKeys.hasPassedWelcomeGateway) ?? false;
+      if (!hasPassedGateway) {
+        if (mounted) context.go(AppRouter.welcomeGateway);
+        return;
       }
+
+      // ── Auth gate ──────────────────────────────────────────────────────────
+      // ✅ Only check token - PersonaCubit handles guest state
+      if (!isAuthenticated) {
+        if (mounted) context.go(AppRouter.login);
+        return;
+      }
+
+      // ── API validation ─────────────────────────────────────────────────────
+      // Fetch fresh profile data. On success, PersonaCubit re-resolves using
+      // the canonical backend state and corrects any stale-cache mismatch.
+      // On failure, the Phase-1 cached persona is kept — routing is consistent.
+      final personaCubit  = di.sl<PersonaCubit>();
+      final profileRepo   = di.sl<ProfileRepository>();
+      final result        = await profileRepo.getProfile();
 
       if (!mounted) return;
 
-      final authRoleCubit = context.read<AuthRoleCubit>();
+      await result.fold(
+        (_) async {
+          // API failed — Phase-1 persona is already correct for the session.
+          print('⚠️ [Splash] API failed — routing from cached persona');
+        },
+        (userEntity) async {
+          if (userEntity is UserModel) {
+            await personaCubit.resolveFromApi(userEntity);
+          }
+        },
+      );
 
-      if (authRoleCubit.state.isSeller) {
-        // Seller must complete onboarding before store decisions
-        if (!isOnboardingCompleted) {
-          context.go(AppRouter.sellerOnboarding);
-          return;
-        }
+      if (!mounted) return;
 
-        // Delegate to the shared 4-scenario resolver
-        await SellerRoutingResolver.resolveFromCache(
-          context: context,
-          isOnboardingCompleted: isOnboardingCompleted,
-          isStoreCreated: isStoreCreated,
-          authLocalDs: authLocalDs,
-        );
-        return;
-      }
-
-      // Customer path
-      context.go(isOnboardingCompleted ? AppRouter.home : AppRouter.onboarding);
+      // ── Navigate strictly: /seller-home or /home ───────────────────────────
+      _navigateFromPersona(personaCubit.state);
     } catch (e) {
-      print('❌ _checkOnboardingStatus error: $e');
+      print('❌ [Splash] _resolveAfterAnimation error: $e');
       if (mounted) context.go(AppRouter.login);
     }
   }
+
+  // ── Fixed routing — no intermediate redirects ────────────────────────────────
+
+  void _navigateFromPersona(UserPersona persona) {
+    switch (persona) {
+      case SellerPersona(:final isPending, :final isGuest):
+        // ✅ ALL sellers (pending or approved) go to /seller-home
+        // SellerHome.dart internally shows PendingApprovalViewWidget if isPending = true
+        context.go(
+          AppRouter.sellerHome,
+          extra: {'isGuest': isGuest, 'isPending': isPending},
+        );
+
+      case CustomerPersona(:final onboardingCompleted):
+        context.go(onboardingCompleted ? AppRouter.home : AppRouter.onboarding);
+
+      case GuestPersona():
+        context.go(AppRouter.home);
+
+      case LoadingPersona():
+        // Should never reach navigation in loading state — safety fallback.
+        context.go(AppRouter.login);
+    }
+  }
+
+  // ── Lifecycle ────────────────────────────────────────────────────────────────
 
   @override
   void dispose() {
@@ -178,15 +194,20 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
     super.dispose();
   }
 
+  // ── UI ───────────────────────────────────────────────────────────────────────
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthRoleCubit, AuthRoleState>(
-      builder: (context, roleState) {
-        final gradientColor = roleState.isLoading
-            ? Colors.white
-            : (roleState.isSeller
-                ? AppColors.primaryOfSeller
-                : AppColors.splashGradientStart);
+    // PersonaCubit is the ONLY source of truth for the splash gradient color.
+    // Because preloadFromCache() runs before the animation starts, the color
+    // is already correct on the very first frame — no post-animation flicker.
+    return BlocBuilder<PersonaCubit, UserPersona>(
+      builder: (context, persona) {
+        final gradientColor = switch (persona) {
+          LoadingPersona() => Colors.white,
+          SellerPersona()  => AppColors.primaryOfSeller,
+          _                => AppColors.splashGradientStart,
+        };
 
         return Scaffold(
           backgroundColor: Colors.white,
@@ -216,7 +237,9 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
                   opacity: _logoOpacityAnimation,
                   child: Text(
                     'Coupony',
-                    style: AppTextStyles.logoStyle.copyWith(color: Colors.white),
+                    style: AppTextStyles.logoStyle.copyWith(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),

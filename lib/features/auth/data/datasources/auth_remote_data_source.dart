@@ -100,14 +100,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) async {
     try {
       logger.i('🔐 GOOGLE AUTH REQUEST - Role: $role');
-      logger.i('📤 ID Token (first 20 chars): ${idToken.substring(0, 20)}...');
+      logger.i('📤 ID Token length: ${idToken.length}');
+      logger.i('📤 ID Token (first 50 chars): ${idToken.length > 50 ? idToken.substring(0, 50) : idToken}...');
+      
+      final requestBody = {
+        'id_token': idToken,
+        'role': role,
+      };
+      
+      logger.i('📤 FULL REQUEST BODY: $requestBody');
+      logger.i('📤 Endpoint: ${ApiConstants.googleAuth}');
       
       final response = await client.post(
         ApiConstants.googleAuth,
-        data: {
-          'id_token': idToken,
-          'role': role,
-        },
+        data: requestBody,
       );
       
       final data = response.data as Map<String, dynamic>? ?? {};

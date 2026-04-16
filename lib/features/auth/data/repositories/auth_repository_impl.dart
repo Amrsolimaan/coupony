@@ -244,6 +244,8 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
       }
 
       print('✅ [REPOSITORY] Got Google ID token');
+      print('📤 [REPOSITORY] ID Token length: ${idToken.length}');
+      print('📤 [REPOSITORY] Role being sent: $role');
 
       // ── Step 2: Send idToken to backend ────────────────────────────────────
       print('🔐 [REPOSITORY] Calling /auth/google endpoint...');
@@ -316,8 +318,10 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
     print('💾 _persistUserAndRegisterFcm - Completed successfully');
 
     if (user.isOnboardingCompleted) {
+      // isActiveSeller is the strict gate: seller_pending users are typed as
+      // customer until the backend approves them (isStoreOwner = true).
       _onboardingRepository.fetchAndCacheFromServer(
-        userType: user.role == 'seller'
+        userType: user.isActiveSeller
             ? OnboardingUserType.seller
             : OnboardingUserType.customer,
       );

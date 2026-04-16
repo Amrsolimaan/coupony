@@ -10,6 +10,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../core/extensions/snackbar_extension.dart';
 import '../../cubit/change_password_cubit.dart';
+import '../../../../auth/presentation/widgets/role_animation_wrapper.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CHANGE PASSWORD PAGE
@@ -291,7 +292,7 @@ class ChangePasswordPage extends HookWidget {
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.r),
                 borderSide: BorderSide(
-                  color: hasError ? AppColors.error : AppColors.primary,
+                  color: hasError ? AppColors.error : Theme.of(context).primaryColor,
                   width: 1.5.w,
                 ),
               ),
@@ -336,28 +337,32 @@ class ChangePasswordPage extends HookWidget {
     required String label,
     required bool passed,
   }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          passed ? Icons.check_rounded : Icons.circle,
-          size: passed ? 16.w : 8.w,
-          color: passed ? AppColors.primary : AppColors.textDisabled,
-        ),
-        if (!passed) SizedBox(width: 4.w),
-        SizedBox(width: passed ? 6.w : 2.w),
-        Flexible(
-          child: Text(
-            label,
-            style: AppTextStyles.customStyle(
-              context,
-              fontSize: 12,
-              color: passed ? AppColors.primary : AppColors.textSecondary,
+    return AnimatedPrimaryColor(
+      builder: (context, primaryColor) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              passed ? Icons.check_rounded : Icons.circle,
+              size: passed ? 16.w : 8.w,
+              color: passed ? primaryColor : AppColors.textDisabled,
             ),
-          ),
-        ),
-      ],
+            if (!passed) SizedBox(width: 4.w),
+            SizedBox(width: passed ? 6.w : 2.w),
+            Flexible(
+              child: Text(
+                label,
+                style: AppTextStyles.customStyle(
+                  context,
+                  fontSize: 12,
+                  color: passed ? primaryColor : AppColors.textSecondary,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -369,52 +374,56 @@ class ChangePasswordPage extends HookWidget {
     required bool isLoading,
     required VoidCallback onTap,
   }) {
-    return SizedBox(
-      width: double.infinity,
-      height: 56.h,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        decoration: BoxDecoration(
-          color: isEnabled ? AppColors.primary : AppColors.textDisabled,
-          borderRadius: BorderRadius.circular(14.r),
-          boxShadow: isEnabled
-              ? [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : [],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: isEnabled ? onTap : null,
-            borderRadius: BorderRadius.circular(14.r),
-            child: Center(
-              child: isLoading
-                  ? SizedBox(
-                      width: 24.w,
-                      height: 24.w,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5.w,
-                        color: Colors.white,
+    return AnimatedPrimaryColor(
+      builder: (context, primaryColor) {
+        return SizedBox(
+          width: double.infinity,
+          height: 56.h,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            decoration: BoxDecoration(
+              color: isEnabled ? primaryColor : AppColors.textDisabled,
+              borderRadius: BorderRadius.circular(14.r),
+              boxShadow: isEnabled
+                  ? [
+                      BoxShadow(
+                        color: primaryColor.withValues(alpha: 0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
                       ),
-                    )
-                  : Text(
-                      l10n.change_password_submit,
-                      style: AppTextStyles.customStyle(
-                        context,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
+                    ]
+                  : [],
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: isEnabled ? onTap : null,
+                borderRadius: BorderRadius.circular(14.r),
+                child: Center(
+                  child: isLoading
+                      ? SizedBox(
+                          width: 24.w,
+                          height: 24.w,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5.w,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          l10n.change_password_submit,
+                          style: AppTextStyles.customStyle(
+                            context,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

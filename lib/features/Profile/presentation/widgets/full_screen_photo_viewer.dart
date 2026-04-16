@@ -4,8 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../../auth/presentation/widgets/role_animation_wrapper.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FULL SCREEN PHOTO VIEWER WITH HERO ANIMATION
@@ -82,11 +82,15 @@ class FullScreenPhotoViewer extends StatelessWidget {
         child: CachedNetworkImage(
           imageUrl: imageUrl!,
           fit: BoxFit.contain,
-          placeholder: (context, url) => Center(
-            child: CircularProgressIndicator(
-              color: AppColors.primary,
-              strokeWidth: 3.w,
-            ),
+          placeholder: (context, url) => AnimatedPrimaryColor(
+            builder: (context, primaryColor) {
+              return Center(
+                child: CircularProgressIndicator(
+                  color: primaryColor,
+                  strokeWidth: 3.w,
+                ),
+              );
+            },
           ),
           errorWidget: (context, url, error) => FaIcon(
             FontAwesomeIcons.circleExclamation,

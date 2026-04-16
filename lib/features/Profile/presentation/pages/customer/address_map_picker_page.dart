@@ -19,6 +19,7 @@ import '../../cubit/address_state.dart';
 import '../../cubit/Customer_Profile_cubit.dart';
 import '../../cubit/Customer_Profile_state.dart';
 import '../../widgets/address_label_dialog.dart';
+import '../../../../auth/presentation/widgets/role_animation_wrapper.dart';
 
 /// Address Map Picker Page
 /// Allows user to pick a location on the map and save it as an address.
@@ -396,23 +397,27 @@ class _AddressMapPickerPageState extends State<AddressMapPickerPage> {
 
             // ── Static Center-Pin ─────────────────────────────────────────
             if (_isMapReady && !_isMapLoading)
-              Align(
-                alignment: Alignment.center,
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 36.h),
-                  child: Icon(
-                    Icons.location_pin,
-                    color: Theme.of(context).primaryColor,
-                    size: 48.w,
-                    shadows: [
-                      Shadow(
-                        color: AppColors.shadow.withValues(alpha: 0.4),
-                        blurRadius: 8,
-                        offset: Offset(0, 4.h),
+              AnimatedPrimaryColor(
+                builder: (context, primaryColor) {
+                  return Align(
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 36.h),
+                      child: Icon(
+                        Icons.location_pin,
+                        color: primaryColor,
+                        size: 48.w,
+                        shadows: [
+                          Shadow(
+                            color: AppColors.shadow.withValues(alpha: 0.4),
+                            blurRadius: 8,
+                            offset: Offset(0, 4.h),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
 
             // ── Map Loading Overlay ───────────────────────────────────────
@@ -440,13 +445,17 @@ class _AddressMapPickerPageState extends State<AddressMapPickerPage> {
                       SizedBox(height: 24.h),
                       
                       // Loading Indicator
-                      SizedBox(
-                        width: 40.w,
-                        height: 40.w,
-                        child: CircularProgressIndicator(
-                          color: AppColors.primary,
-                          strokeWidth: 3.w,
-                        ),
+                      AnimatedPrimaryColor(
+                        builder: (context, primaryColor) {
+                          return SizedBox(
+                            width: 40.w,
+                            height: 40.w,
+                            child: CircularProgressIndicator(
+                              color: primaryColor,
+                              strokeWidth: 3.w,
+                            ),
+                          );
+                        },
                       ),
                       SizedBox(height: 16.h),
                       
@@ -484,33 +493,37 @@ class _AddressMapPickerPageState extends State<AddressMapPickerPage> {
               child: Row(
                 children: [
                   // Orange location icon (with tap functionality)
-                  GestureDetector(
-                    onTap: () async {
-                      final cubit = context.read<PermissionFlowCubit>();
-                      await cubit.useCurrentLocation();
+                  AnimatedPrimaryColor(
+                    builder: (context, primaryColor) {
+                      return GestureDetector(
+                        onTap: () async {
+                          final cubit = context.read<PermissionFlowCubit>();
+                          await cubit.useCurrentLocation();
 
-                      if (!mounted) return;
+                          if (!mounted) return;
 
-                      final pos = cubit.state.userPosition;
-                      if (pos != null) {
-                        _moveCameraToPosition(
-                          LatLng(pos.latitude, pos.longitude),
-                        );
-                      }
+                          final pos = cubit.state.userPosition;
+                          if (pos != null) {
+                            _moveCameraToPosition(
+                              LatLng(pos.latitude, pos.longitude),
+                            );
+                          }
+                        },
+                        child: Container(
+                          width: 40.w,
+                          height: 40.h,
+                          decoration: BoxDecoration(
+                            color: primaryColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.location_on,
+                            color: AppColors.surface,
+                            size: 22.w,
+                          ),
+                        ),
+                      );
                     },
-                    child: Container(
-                      width: 40.w,
-                      height: 40.h,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.location_on,
-                        color: AppColors.surface,
-                        size: 22.w,
-                      ),
-                    ),
                   ),
 
                   SizedBox(width: 12.w),
@@ -585,18 +598,22 @@ class _AddressMapPickerPageState extends State<AddressMapPickerPage> {
                           ),
 
                           // Microphone icon
-                          GestureDetector(
-                            onTap: _isListening ? _stopListening : _startListening,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 12.w),
-                              child: Icon(
-                                _isListening ? Icons.mic : Icons.mic_none,
-                                color: _isListening
-                                    ? Theme.of(context).primaryColor
-                                    : AppColors.grey600,
-                                size: 22.w,
-                              ),
-                            ),
+                          AnimatedPrimaryColor(
+                            builder: (context, primaryColor) {
+                              return GestureDetector(
+                                onTap: _isListening ? _stopListening : _startListening,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                                  child: Icon(
+                                    _isListening ? Icons.mic : Icons.mic_none,
+                                    color: _isListening
+                                        ? primaryColor
+                                        : AppColors.grey600,
+                                    size: 22.w,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -654,21 +671,25 @@ class _AddressMapPickerPageState extends State<AddressMapPickerPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Location label
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            color: Theme.of(context).primaryColor,
-                            size: 22.w,
-                          ),
-                          SizedBox(width: 8.w),
-                          Text(
-                            l10n.location_map_your_location,
-                            style: AppTextStyles.h4.copyWith(
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        ],
+                      AnimatedPrimaryColor(
+                        builder: (context, primaryColor) {
+                          return Row(
+                            children: [
+                              Icon(
+                                Icons.location_on,
+                                color: primaryColor,
+                                size: 22.w,
+                              ),
+                              SizedBox(width: 8.w),
+                              Text(
+                                l10n.location_map_your_location,
+                                style: AppTextStyles.h4.copyWith(
+                                  color: primaryColor,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
 
                       SizedBox(height: 12.h),
@@ -677,24 +698,28 @@ class _AddressMapPickerPageState extends State<AddressMapPickerPage> {
                       Padding(
                         padding: EdgeInsetsDirectional.only(end: 30.w),
                         child: _isAddressLoading
-                            ? Row(
-                                children: [
-                                  SizedBox(
-                                    width: 16.w,
-                                    height: 16.w,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: AppColors.primary,
-                                    ),
-                                  ),
-                                  SizedBox(width: 8.w),
-                                  Text(
-                                    '...',
-                                    style: AppTextStyles.bodyMedium.copyWith(
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
-                                ],
+                            ? AnimatedPrimaryColor(
+                                builder: (context, primaryColor) {
+                                  return Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 16.w,
+                                        height: 16.w,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: primaryColor,
+                                        ),
+                                      ),
+                                      SizedBox(width: 8.w),
+                                      Text(
+                                        '...',
+                                        style: AppTextStyles.bodyMedium.copyWith(
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
                               )
                             : Text(
                                 _currentAddress ??
@@ -718,20 +743,25 @@ class _AddressMapPickerPageState extends State<AddressMapPickerPage> {
                       SizedBox(height: 24.h),
 
                       // Confirm button
-                      BlocBuilder<AddressCubit, AddressState>(
-                        builder: (context, addressState) {
-                          final isSaving = addressState is AddressSaving;
-                          return AppPrimaryButton(
-                            text: _isEditMode
-                                ? l10n.location_map_confirm_button
-                                : l10n.location_map_confirm_button,
-                            onPressed: (_selectedLatLng != null && _currentAddress != null && !isSaving)
-                                ? _handleConfirmLocation
-                                : null,
-                            isLoading: isSaving,
-                            size: AppButtonSize.medium,
-                            borderRadius: 12.r,
-                            disabledBackgroundColor: AppColors.textDisabled,
+                      AnimatedPrimaryColor(
+                        builder: (context, primaryColor) {
+                          return BlocBuilder<AddressCubit, AddressState>(
+                            builder: (context, addressState) {
+                              final isSaving = addressState is AddressSaving;
+                              return AppPrimaryButton(
+                                text: _isEditMode
+                                    ? l10n.location_map_confirm_button
+                                    : l10n.location_map_confirm_button,
+                                onPressed: (_selectedLatLng != null && _currentAddress != null && !isSaving)
+                                    ? _handleConfirmLocation
+                                    : null,
+                                isLoading: isSaving,
+                                size: AppButtonSize.medium,
+                                borderRadius: 12.r,
+                                backgroundColor: primaryColor,
+                                disabledBackgroundColor: AppColors.textDisabled,
+                              );
+                            },
                           );
                         },
                       ),
@@ -742,7 +772,7 @@ class _AddressMapPickerPageState extends State<AddressMapPickerPage> {
             ),
           ],
         ),
-      ),
-    );
+      ));
+     
   }
 }

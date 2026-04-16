@@ -543,100 +543,32 @@ class _TopBar extends StatelessWidget {
   final AppLocalizations l10n;
   const _TopBar({required this.l10n});
 
-  Future<void> _handleLogout(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-        title: Text(
-          l10n.logout_dialog_title,
-          style: AppTextStyles.customStyle(
-            context,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: AppColors.primaryOfSeller,
-          ),
-        ),
-        content: Text(
-          l10n.logout_dialog_message,
-          style: AppTextStyles.customStyle(
-            context,
-            fontSize: 14,
-            color: AppColors.textSecondary,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: Text(
-              l10n.logout_dialog_cancel,
-              style: AppTextStyles.customStyle(
-                context,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textSecondary,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: Text(
-              l10n.logout_dialog_confirm,
-              style: AppTextStyles.customStyle(
-                context,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppColors.primaryOfSeller,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true && context.mounted) {
-      context.read<LoginCubit>().logout();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        BlocBuilder<LoginCubit, AuthState>(
-          builder: (context, state) {
-            if (state.isLoading) {
-              return Padding(
-                padding: EdgeInsets.all(12.w),
-                child: SizedBox(
-                  width: 24.w,
-                  height: 24.w,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation(AppColors.primaryOfSeller),
-                  ),
-                ),
-              );
-            }
-            
-            return Material(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(12.r),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(12.r),
-                onTap: () => _handleLogout(context),
-                child: Padding(
-                  padding: EdgeInsets.all(8.w),
-                  child: FaIcon(
-                    FontAwesomeIcons.arrowRightFromBracket,
-                    size: 18.w,
-                    color: AppColors.primaryOfSeller,
-                  ),
-                ),
+        Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(12.r),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12.r),
+            onTap: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go('/');
+              }
+            },
+            child: Padding(
+              padding: EdgeInsets.all(8.w),
+              child: FaIcon(
+                FontAwesomeIcons.arrowRight,
+                size: 20.w,
+                color: AppColors.textPrimary,
               ),
-            );
-          },
+            ),
+          ),
         ),
       ],
     );
@@ -2240,8 +2172,9 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
                         }
                       },
                       child: Container(
-                        width: 40.w,
-                        height: 40.h,
+                        width: 44.w,
+                        height: 44.w,
+                        alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: AppColors.primaryOfSeller,
                           shape: BoxShape.circle,
@@ -2440,6 +2373,7 @@ class _MapLocationBottomSheetState extends State<_MapLocationBottomSheet> {
                               Container(
                                 width: 80.w,
                                 height: 80.w,
+                                alignment: Alignment.center,
                                 decoration: BoxDecoration(
                                   color: AppColors.primaryOfSeller.withValues(alpha: 0.1),
                                   shape: BoxShape.circle,

@@ -15,8 +15,10 @@ import '../../../../core/utils/message_formatter.dart';
 import '../../../../core/widgets/buttons/app_primary_button.dart';
 import '../../../../core/extensions/snackbar_extension.dart';
 import '../../data/datasources/auth_local_data_source.dart';
+import '../../data/models/user_model.dart';
 import '../cubit/auth_state.dart';
 import '../cubit/otp_cubit.dart';
+import '../cubit/persona_cubit.dart';
 import '../utils/seller_routing_resolver.dart';
 import '../widgets/auth_success_bottom_sheet.dart';
 
@@ -169,6 +171,11 @@ class OtpScreen extends HookWidget {
             state.navSignal == AuthNavigation.toSellerLanding) {
           HapticFeedback.mediumImpact();
 
+          // ✅ Update PersonaCubit with fresh user data from API
+          if (state.user != null && state.user is UserModel) {
+            context.read<PersonaCubit>().resolveFromApi(state.user! as UserModel);
+          }
+
           // Capture before async/builder boundary to prevent use-after-dispose
           final targetNav  = state.navSignal;
           final targetUser = state.user;
@@ -179,13 +186,9 @@ class OtpScreen extends HookWidget {
 
             switch (targetNav) {
               case AuthNavigation.toSellerLanding:
-                if (targetUser != null) {
-                  SellerRoutingResolver.resolveForUser(
-                    context:     context,
-                    user:        targetUser,
-                    authLocalDs: di.sl<AuthLocalDataSource>(),
-                  );
-                }
+                // ✅ PersonaCubit.resolveFromApi() was called above
+                // Navigate directly to SellerHome (no splash needed)
+                context.go(AppRouter.sellerHome);
               case AuthNavigation.toSellerOnboarding:
                 context.go(AppRouter.sellerOnboarding);
               case AuthNavigation.toOnboarding:

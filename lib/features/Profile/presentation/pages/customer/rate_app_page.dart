@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/localization/l10n/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
+import '../../../../auth/presentation/widgets/role_animation_wrapper.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // RATE APP PAGE
@@ -75,18 +77,22 @@ class _RateAppPageState extends State<RateAppPage> {
             SizedBox(height: 32.h),
 
             // ── Rating Icon ──────────────────────────────────────────────────
-            Container(
-              width: 80.w,
-              height: 80.w,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.star_rounded,
-                size: 40.w,
-                color: AppColors.primary,
-              ),
+            AnimatedPrimaryColor(
+              builder: (context, primaryColor) {
+                return Container(
+                  width: 80.w,
+                  height: 80.w,
+                  decoration: BoxDecoration(
+                    color: primaryColor.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.star_rounded,
+                    size: 40.w,
+                    color: primaryColor,
+                  ),
+                );
+              },
             ),
             SizedBox(height: 24.h),
 
@@ -175,52 +181,56 @@ class _RateAppPageState extends State<RateAppPage> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14.r),
                   borderSide:
-                      BorderSide(color: AppColors.primary, width: 1.5.w),
+                      BorderSide(color: Theme.of(context).primaryColor, width: 1.5.w),
                 ),
               ),
             ),
             SizedBox(height: 32.h),
 
             // ── Submit Button ────────────────────────────────────────────────
-            Container(
-              width: double.infinity,
-              height: 56.h,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppColors.primary,
-                    AppColors.primary.withValues(alpha: 0.8),
-                  ],
-                  begin: AlignmentDirectional.centerStart,
-                  end: AlignmentDirectional.centerEnd,
-                ),
-                borderRadius: BorderRadius.circular(14.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
+            AnimatedPrimaryColor(
+              builder: (context, primaryColor) {
+                return Container(
+                  width: double.infinity,
+                  height: 56.h,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        primaryColor,
+                        primaryColor.withValues(alpha: 0.8),
+                      ],
+                      begin: AlignmentDirectional.centerStart,
+                      end: AlignmentDirectional.centerEnd,
+                    ),
+                    borderRadius: BorderRadius.circular(14.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: primaryColor.withValues(alpha: 0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () => _handleSubmit(context, l10n),
-                  borderRadius: BorderRadius.circular(14.r),
-                  child: Center(
-                    child: Text(
-                      l10n.rate_app_submit,
-                      style: AppTextStyles.customStyle(
-                        context,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => _handleSubmit(context, l10n),
+                      borderRadius: BorderRadius.circular(14.r),
+                      child: Center(
+                        child: Text(
+                          l10n.rate_app_submit,
+                          style: AppTextStyles.customStyle(
+                            context,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
             SizedBox(height: 24.h),
           ],

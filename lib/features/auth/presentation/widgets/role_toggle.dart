@@ -1,3 +1,4 @@
+import 'package:coupony/features/auth/presentation/cubit/persona_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -51,7 +52,11 @@ class RoleToggle extends StatelessWidget {
                       value: 'customer',
                       selected: selectedRole == 'customer',
                       primaryColor: primaryColor,
-                      onTap: () => context.read<AuthRoleCubit>().setRole('customer'),
+                      onTap: () {
+                        context.read<AuthRoleCubit>().setRole('customer');
+                        // ✅ Sync PersonaCubit for animation
+                        _syncPersonaCubit(context, 'customer');
+                      },
                     ),
                   ),
                   Expanded(
@@ -60,7 +65,11 @@ class RoleToggle extends StatelessWidget {
                       value: 'seller',
                       selected: selectedRole == 'seller',
                       primaryColor: primaryColor,
-                      onTap: () => context.read<AuthRoleCubit>().setRole('seller'),
+                      onTap: () {
+                        context.read<AuthRoleCubit>().setRole('seller');
+                        // ✅ Sync PersonaCubit for animation
+                        _syncPersonaCubit(context, 'seller');
+                      },
                     ),
                   ),
                 ],
@@ -70,6 +79,11 @@ class RoleToggle extends StatelessWidget {
         );
       },
     );
+  }
+
+  /// Sync PersonaCubit state to trigger animations
+  void _syncPersonaCubit(BuildContext context, String role) {
+    context.read<PersonaCubit>().updatePersonaForAnimation(role);
   }
 }
 

@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/localization/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../auth/presentation/widgets/role_animation_wrapper.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MODERN PROFILE PHOTO BOTTOM SHEET
@@ -147,20 +148,24 @@ class _ProfilePhotoBottomSheetContent extends StatelessWidget {
               child: Row(
                 children: [
                   // ── Icon ───────────────────────────────────────────────────
-                  Container(
-                    width: 44.w,
-                    height: 44.w,
-                    decoration: BoxDecoration(
-                      color: isDestructive
-                          ? AppColors.error.withValues(alpha: 0.1)
-                          : AppColors.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Icon(
-                      icon,
-                      size: 22.w,
-                      color: isDestructive ? AppColors.error : AppColors.primary,
-                    ),
+                  AnimatedPrimaryColor(
+                    builder: (context, primaryColor) {
+                      return Container(
+                        width: 44.w,
+                        height: 44.w,
+                        decoration: BoxDecoration(
+                          color: isDestructive
+                              ? AppColors.error.withValues(alpha: 0.1)
+                              : primaryColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        child: Icon(
+                          icon,
+                          size: 22.w,
+                          color: isDestructive ? AppColors.error : primaryColor,
+                        ),
+                      );
+                    },
                   ),
                   SizedBox(width: 16.w),
 
@@ -325,18 +330,22 @@ class _ChangePhotoOptionsSheet extends StatelessWidget {
           child: Row(
             children: [
               // ── Icon ───────────────────────────────────────────────────────
-              Container(
-                width: 44.w,
-                height: 44.w,
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Icon(
-                  icon,
-                  size: 22.w,
-                  color: AppColors.primary,
-                ),
+              AnimatedPrimaryColor(
+                builder: (context, primaryColor) {
+                  return Container(
+                    width: 44.w,
+                    height: 44.w,
+                    decoration: BoxDecoration(
+                      color: primaryColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Icon(
+                      icon,
+                      size: 22.w,
+                      color: primaryColor,
+                    ),
+                  );
+                },
               ),
               SizedBox(width: 16.w),
 

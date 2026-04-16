@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../domain/entities/store_display_entity.dart';
 
 // ════════════════════════════════════════════════════════
 // SELLER STORE STATE
@@ -52,6 +53,17 @@ class SellerStoreGuest extends SellerStoreState {
 /// Pending approval view.
 class SellerStorePending extends SellerStoreState {
   const SellerStorePending();
+}
+
+/// Store display data loaded successfully (replaces the placeholder SellerStoreLoaded).
+class SellerStoreDataLoaded extends SellerStoreState {
+  final StoreDisplayEntity store;
+  final int activeTabIndex;
+
+  const SellerStoreDataLoaded(this.store, {this.activeTabIndex = 0});
+
+  @override
+  List<Object?> get props => [store, activeTabIndex];
 }
 
 /// An operation failed.

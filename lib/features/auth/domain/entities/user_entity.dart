@@ -6,7 +6,7 @@ class UserEntity extends Equatable {
   final String lastName;
   final String email;
   final String phoneNumber;
-  final String role; // 'user' | 'merchant'
+  final String role; // 'seller' | 'customer'
   final String? accessToken;
   final String? refreshToken;
   final String? fcmToken;
@@ -26,13 +26,22 @@ class UserEntity extends Equatable {
   /// false = seller must complete store creation before accessing the dashboard.
   final bool isStoreCreated;
 
+  /// Populated from the login/OTP/profile API response.
+  /// true  = the backend has APPROVED this user's store — they are a live seller.
+  /// false = pending review, rejected, or a pure customer.
+  ///
+  /// This is the authoritative gate for the Seller Flow.
+  /// A user with the 'seller_pending' role will ALWAYS have isStoreOwner = false
+  /// until the backend approves them and promotes their role to 'seller'.
+  final bool isStoreOwner;
+
   const UserEntity({
     required this.id,
     required this.firstName,
     required this.lastName,
     required this.email,
     required this.phoneNumber,
-    this.role = 'user',
+    this.role = 'customer',
     this.accessToken,
     this.refreshToken,
     this.fcmToken,
@@ -42,6 +51,7 @@ class UserEntity extends Equatable {
     this.language,
     this.isOnboardingCompleted = false,
     this.isStoreCreated = false,
+    this.isStoreOwner = false,
   });
 
   /// Full display name
@@ -52,6 +62,6 @@ class UserEntity extends Equatable {
     id, firstName, lastName, email, phoneNumber,
     role, accessToken, refreshToken, fcmToken,
     avatar, gender, bio, language,
-    isOnboardingCompleted, isStoreCreated,
+    isOnboardingCompleted, isStoreCreated, isStoreOwner,
   ];
 }

@@ -4,7 +4,10 @@ import 'package:logger/logger.dart';
 import '../../../../../core/constants/api_constants.dart';
 import '../../../../../core/errors/exceptions.dart';
 import '../../../../../core/network/dio_client.dart';
+import '../../../../../core/storage/secure_storage_service.dart';
 import '../../../auth/data/models/user_model.dart';
+import '../../../auth/domain/entities/user_persona.dart';
+import '../../../auth/presentation/cubit/persona_cubit.dart';
 import '../../domain/use_cases/update_profile_params.dart';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -31,10 +34,14 @@ abstract class ProfileRemoteDataSource {
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   final DioClient client;
   final Logger logger;
+  final SecureStorageService secureStorage;
+  final PersonaCubit personaCubit;
 
   ProfileRemoteDataSourceImpl({
     required this.client,
     required this.logger,
+    required this.secureStorage,
+    required this.personaCubit,
   });
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -46,7 +53,21 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     try {
       logger.i('📥 GET PROFILE REQUEST — ${ApiConstants.profile}');
 
-      final response = await client.get(ApiConstants.profile);
+      // X-User-Role is read from PersonaCubit (already resolved) — NOT from
+      // SecureStorage. This breaks the circular feedback loop where a stale
+      // 'seller' in storage caused the backend to return a seller-shaped
+      // profile, which then prevented the role from being corrected.
+      final currentRole = personaCubit.state is SellerPersona ? 'seller' : 'customer';
+      logger.i('📤 Sending X-User-Role header: $currentRole (from PersonaCubit)');
+
+      final response = await client.get(
+        ApiConstants.profile,
+        options: Options(
+          headers: {
+            'X-User-Role': currentRole,
+          },
+        ),
+      );
       final data = response.data as Map<String, dynamic>? ?? {};
 
       logger.i('✅ GET PROFILE RESPONSE: $data');

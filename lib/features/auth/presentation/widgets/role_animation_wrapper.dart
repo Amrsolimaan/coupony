@@ -3,24 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../features/auth/presentation/cubit/auth_role_cubit.dart';
-import '../../../../features/auth/presentation/cubit/auth_role_state.dart';
+import '../../../../features/auth/presentation/cubit/persona_cubit.dart';
+import '../../../../features/auth/domain/entities/user_persona.dart';
 
-/// Magical Role-Switch Animation Wrapper
-/// 
-/// Provides a smooth transition when switching between Customer and Seller roles:
-/// - Step 1: Blur background
-/// - Step 2: Morph logo (fade + scale)
-/// - Step 3: Interpolate theme colors
-/// 
-/// NOW USES GLOBAL AuthRoleCubit FOR PERSISTENCE ACROSS ALL AUTH SCREENS
-/// 
-/// Usage:
-/// ```dart
-/// RoleAnimationWrapper(
-///   child: YourContent(),
-/// )
-/// ```
+/// Role-Switch Animation Wrapper
+///
+/// Provides a smooth transition when switching between Customer and Seller
+/// personas. Driven exclusively by [PersonaCubit] — the single source of
+/// truth for role state across the app.
 class RoleAnimationWrapper extends StatefulWidget {
   final Widget child;
   final Duration animationDuration;
@@ -40,20 +30,19 @@ class _RoleAnimationWrapperState extends State<RoleAnimationWrapper>
   late AnimationController _controller;
   late Animation<double> _blurAnimation;
   late Animation<Color?> _colorAnimation;
-  
+
   bool _isSeller = false;
   bool _isInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    
+
     _controller = AnimationController(
       vsync: this,
       duration: widget.animationDuration,
     );
 
-    // Blur animation: 0 → 5 → 0 (peaks in the middle)
     _blurAnimation = TweenSequence<double>([
       TweenSequenceItem(
         tween: Tween<double>(begin: 0.0, end: 5.0)
@@ -67,7 +56,6 @@ class _RoleAnimationWrapperState extends State<RoleAnimationWrapper>
       ),
     ]).animate(_controller);
 
-    // Color animation: Orange ↔ Blue
     _colorAnimation = ColorTween(
       begin: AppColors.primary,
       end: AppColors.primaryOfSeller,
@@ -80,24 +68,18 @@ class _RoleAnimationWrapperState extends State<RoleAnimationWrapper>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    
-    // Initialize from current role on first build without animation
+
     if (!_isInitialized) {
-      final roleState = context.read<AuthRoleCubit>().state;
-      _isSeller = roleState.isSeller;
-      
-      // Set controller to correct position without animating
+      final persona = context.read<PersonaCubit>().state;
+      _isSeller = persona is SellerPersona;
       _controller.value = _isSeller ? 1.0 : 0.0;
-      
       _isInitialized = true;
     }
   }
 
   void _updateRoleAnimation(bool isSeller) {
-    // Only animate if initialized AND role actually changed
     if (_isInitialized && isSeller != _isSeller) {
       _isSeller = isSeller;
-      
       if (_isSeller) {
         _controller.forward();
       } else {
@@ -114,13 +96,12 @@ class _RoleAnimationWrapperState extends State<RoleAnimationWrapper>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthRoleCubit, AuthRoleState>(
-      builder: (context, roleState) {
-        // Schedule animation update after build completes
+    return BlocBuilder<PersonaCubit, UserPersona>(
+      builder: (context, persona) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _updateRoleAnimation(roleState.isSeller);
+          _updateRoleAnimation(persona is SellerPersona);
         });
-        
+
         return AnimatedBuilder(
           animation: _controller,
           builder: (context, child) {
@@ -144,10 +125,7 @@ class _RoleAnimationWrapperState extends State<RoleAnimationWrapper>
   }
 }
 
-/// Animated Logo Switcher
-/// 
-/// Morphs between Customer and Seller logos with fade + scale animation
-/// NOW USES GLOBAL AuthRoleCubit
+/// Animated Logo Switcher — morphs between Customer and Seller logos.
 class AnimatedLogoSwitcher extends StatelessWidget {
   final double size;
   final Duration duration;
@@ -160,17 +138,16 @@ class AnimatedLogoSwitcher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthRoleCubit, AuthRoleState>(
-      builder: (context, roleState) {
-        final isSeller = roleState.isSeller;
-        
+    return BlocBuilder<PersonaCubit, UserPersona>(
+      builder: (context, persona) {
+        final isSeller = persona is SellerPersona;
+
         return SizedBox(
           width: size.w,
           height: size.h,
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // Customer Logo
               AnimatedOpacity(
                 opacity: isSeller ? 0.0 : 1.0,
                 duration: duration,
@@ -187,8 +164,6 @@ class AnimatedLogoSwitcher extends StatelessWidget {
                   ),
                 ),
               ),
-              
-              // Seller Logo
               AnimatedOpacity(
                 opacity: isSeller ? 1.0 : 0.0,
                 duration: duration,
@@ -213,10 +188,7 @@ class AnimatedLogoSwitcher extends StatelessWidget {
   }
 }
 
-/// Animated Primary Color Provider
-/// 
-/// Provides the current interpolated primary color based on role
-/// NOW USES GLOBAL AuthRoleCubit
+/// Animated Primary Color — interpolates orange ↔ blue on persona toggle.
 class AnimatedPrimaryColor extends StatefulWidget {
   final Duration duration;
   final Widget Function(BuildContext context, Color primaryColor) builder;
@@ -240,7 +212,7 @@ class _AnimatedPrimaryColorState extends State<AnimatedPrimaryColor>
   @override
   void initState() {
     super.initState();
-    
+
     _controller = AnimationController(
       vsync: this,
       duration: widget.duration,
@@ -258,20 +230,15 @@ class _AnimatedPrimaryColorState extends State<AnimatedPrimaryColor>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    
-    // Initialize from current role on first build without animation
+
     if (!_isInitialized) {
-      final roleState = context.read<AuthRoleCubit>().state;
-      
-      // Set controller to correct position without animating
-      _controller.value = roleState.isSeller ? 1.0 : 0.0;
-      
+      final persona = context.read<PersonaCubit>().state;
+      _controller.value = persona is SellerPersona ? 1.0 : 0.0;
       _isInitialized = true;
     }
   }
 
   void _updateColorAnimation(bool isSeller) {
-    // Only animate if initialized
     if (_isInitialized) {
       if (isSeller) {
         _controller.forward();
@@ -289,13 +256,12 @@ class _AnimatedPrimaryColorState extends State<AnimatedPrimaryColor>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthRoleCubit, AuthRoleState>(
-      builder: (context, roleState) {
-        // Schedule animation update after build completes
+    return BlocBuilder<PersonaCubit, UserPersona>(
+      builder: (context, persona) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _updateColorAnimation(roleState.isSeller);
+          _updateColorAnimation(persona is SellerPersona);
         });
-        
+
         return AnimatedBuilder(
           animation: _colorAnimation,
           builder: (context, child) {
@@ -309,4 +275,3 @@ class _AnimatedPrimaryColorState extends State<AnimatedPrimaryColor>
     );
   }
 }
-

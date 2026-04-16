@@ -4,6 +4,7 @@ import '../../../../core/localization/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/buttons/buttons.dart';
+import '../../../auth/presentation/widgets/role_animation_wrapper.dart';
 
 /// Address Label Dialog
 /// Shows a dialog to input a label for the address
@@ -120,7 +121,7 @@ class _AddressLabelDialogState extends State<AddressLabelDialog> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.r),
                     borderSide: BorderSide(
-                      color: AppColors.primary,
+                      color: Theme.of(context).primaryColor,
                       width: 1.5.w,
                     ),
                   ),
@@ -134,7 +135,7 @@ class _AddressLabelDialogState extends State<AddressLabelDialog> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.r),
                     borderSide: BorderSide(
-                      color: AppColors.primary,
+                      color: Theme.of(context).primaryColor,
                       width: 2.w,
                     ),
                   ),
@@ -164,32 +165,41 @@ class _AddressLabelDialogState extends State<AddressLabelDialog> {
               SizedBox(height: 24.h),
 
               // ── Save Button ────────────────────────────────────────────
-              AppPrimaryButton(
-                text: l10n.address_save,
-                onPressed: _handleSave,
-                size: AppButtonSize.medium,
-                borderRadius: 12.r,
+              AnimatedPrimaryColor(
+                builder: (context, primaryColor) {
+                  return AppPrimaryButton(
+                    text: l10n.address_save,
+                    onPressed: _handleSave,
+                    size: AppButtonSize.medium,
+                    borderRadius: 12.r,
+                    backgroundColor: primaryColor,
+                  );
+                },
               ),
               SizedBox(height: 12.h),
 
               // ── Cancel Button ──────────────────────────────────────────
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 24.w,
-                    vertical: 12.h,
-                  ),
-                ),
-                child: Text(
-                  l10n.address_cancel,
-                  style: AppTextStyles.customStyle(
-                    context,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primary,
-                  ),
-                ),
+              AnimatedPrimaryColor(
+                builder: (context, primaryColor) {
+                  return TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 24.w,
+                        vertical: 12.h,
+                      ),
+                    ),
+                    child: Text(
+                      l10n.address_cancel,
+                      style: AppTextStyles.customStyle(
+                        context,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: primaryColor,
+                      ),
+                    ),
+                  );
+                },
               ),
             ],
           ),

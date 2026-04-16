@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../config/routes/app_router.dart';
 import '../../data/datasources/auth_local_data_source.dart';
+import '../../data/models/user_model.dart';
 import '../utils/seller_routing_resolver.dart';
 import '../../../../core/localization/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -20,6 +21,7 @@ import '../cubit/auth_state.dart';
 import '../cubit/login_cubit.dart';
 import '../cubit/auth_role_cubit.dart';
 import '../cubit/auth_role_state.dart';
+import '../cubit/persona_cubit.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/role_toggle.dart';
 import '../widgets/google_sign_in_button.dart';
@@ -41,7 +43,7 @@ class LoginScreen extends HookWidget {
     // ── Hook declarations ──────────────────────────────────────────────────
     final emailController    = useTextEditingController();
     final passwordController = useTextEditingController();
-    final rememberMe         = useValueNotifier<bool>(false);
+    final rememberMe         = useValueNotifier<bool>(true); // ✅ Default to true
     final showSuggestions    = useValueNotifier<bool>(false);
     final savedEmails        = useValueNotifier<List<String>>([]);
     final filteredEmails     = useValueNotifier<List<String>>([]);
@@ -49,6 +51,9 @@ class LoginScreen extends HookWidget {
 
     // ── Load saved emails on init ──────────────────────────────────────────
     useEffect(() {
+      // ✅ Clear guest status when opening login page
+      di.sl<AuthLocalDataSource>().cacheGuestStatus(false);
+      
       final emailsService = di.sl<SavedEmailsService>();
       final emails = emailsService.getSavedEmails();
       savedEmails.value = emails;
@@ -60,6 +65,9 @@ class LoginScreen extends HookWidget {
         emailController.text = lastEmail;
         rememberMe.value = true;  // Check "Remember Me" if we have saved email
       }
+      
+      // ✅ Load user's preferred role (customer/seller)
+      di.sl<AuthRoleCubit>().loadPersistedRole();
       
       return null;
     }, []);
@@ -109,6 +117,9 @@ class LoginScreen extends HookWidget {
 
     return MultiBlocProvider(
       providers: [
+        BlocProvider<PersonaCubit>.value(
+          value: di.sl<PersonaCubit>(),
+        ),
         BlocProvider<AuthRoleCubit>.value(
           value: di.sl<AuthRoleCubit>(),
         ),
@@ -128,6 +139,11 @@ class LoginScreen extends HookWidget {
               }
               if (state.successMessage != null) {
                 context.showSuccessSnackBar(context.getLocalizedMessage(state.successMessage));
+                
+                // ✅ Update PersonaCubit with fresh user data from API
+                if (state.user != null && state.user is UserModel) {
+                  context.read<PersonaCubit>().resolveFromApi(state.user! as UserModel);
+                }
                 
                 // ✅ Save or remove email based on "Remember Me" checkbox
                 final emailsService = di.sl<SavedEmailsService>();
@@ -150,15 +166,9 @@ class LoginScreen extends HookWidget {
                 case AuthNavigation.toSellerOnboarding:
                   context.go(AppRouter.sellerOnboarding);
                 case AuthNavigation.toSellerLanding:
-                  // Delegate to the shared 4-scenario resolver.
-                  // user is always a UserModel here (carries fresh stores list).
-                  if (state.user != null) {
-                    SellerRoutingResolver.resolveForUser(
-                      context:     context,
-                      user:        state.user!,
-                      authLocalDs: di.sl<AuthLocalDataSource>(),
-                    );
-                  }
+                  // ✅ PersonaCubit.resolveFromApi() was called above
+                  // Navigate directly to SellerHome (no splash needed)
+                  context.go(AppRouter.sellerHome);
                 case AuthNavigation.toRegister:
                   context.push(AppRouter.register);
                 default:
@@ -185,6 +195,11 @@ class LoginScreen extends HookWidget {
               }
 
               if (state.successMessage != null && state.navSignal != AuthNavigation.none) {
+                // ✅ Update PersonaCubit with fresh user data from API
+                if (state.user != null && state.user is UserModel) {
+                  context.read<PersonaCubit>().resolveFromApi(state.user! as UserModel);
+                }
+                
                 // ✅ Save or remove email for Google Sign-In based on "Remember Me"
                 final emailsService = di.sl<SavedEmailsService>();
                 final email = emailController.text.trim();
@@ -223,13 +238,9 @@ class LoginScreen extends HookWidget {
                         case AuthNavigation.toSellerOnboarding:
                           outerCtx.go(AppRouter.sellerOnboarding);
                         case AuthNavigation.toSellerLanding:
-                          if (snapUser != null) {
-                            SellerRoutingResolver.resolveForUser(
-                              context:     outerCtx,
-                              user:        snapUser,
-                              authLocalDs: di.sl<AuthLocalDataSource>(),
-                            );
-                          }
+                          // ✅ PersonaCubit.resolveFromApi() was called above
+                          // Navigate directly to SellerHome (no splash needed)
+                          outerCtx.go(AppRouter.sellerHome);
                         default:
                           break;
                       }
@@ -298,6 +309,7 @@ class LoginScreen extends HookWidget {
                                 hint: l10n.email,
                                 keyboardType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.next,
+                                forceLeftToRight: true, // ✅ Email is always LTR
                               ),
                               
                               // ── Email suggestions dropdown (with live filter) ───
@@ -492,17 +504,22 @@ class _TopBar extends StatelessWidget {
               borderRadius: BorderRadius.circular(12.r),
               child: InkWell(
                 borderRadius: BorderRadius.circular(12.r),
-                onTap: () {
-                  // Check if role is seller
+                onTap: () async {
+                  // ✅ FIX: Call PersonaCubit.skipAsGuest to set the correct state
+                  final personaCubit = context.read<PersonaCubit>();
+                  await personaCubit.skipAsGuest(roleState.role);
+                  
+                  // Navigate based on role
                   if (roleState.role == 'seller') {
-                    // Navigate to seller home in guest mode
-                    context.go(
-                      AppRouter.sellerHome,
-                      extra: {'isGuest': true, 'isPending': false},
-                    );
+                    // Navigate to seller home (PersonaCubit state will show guest view)
+                    if (context.mounted) {
+                      context.go(AppRouter.sellerHome);
+                    }
                   } else {
                     // Navigate to customer home
-                    context.go(AppRouter.home);
+                    if (context.mounted) {
+                      context.go(AppRouter.home);
+                    }
                   }
                 },
                 child: Padding(

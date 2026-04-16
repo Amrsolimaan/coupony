@@ -20,6 +20,7 @@ import '../../cubit/address_cubit.dart';
 import '../../cubit/address_state.dart';
 import '../../widgets/address_card_widget.dart';
 import '../../widgets/empty_address_widget.dart';
+import '../../../../auth/presentation/widgets/role_animation_wrapper.dart';
 
 /// Address Management Page
 /// Displays and manages user's saved addresses.
@@ -236,9 +237,13 @@ class _AddressManagementPageState extends State<AddressManagementPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            color: AppColors.primary,
-            strokeWidth: 3.w,
+          AnimatedPrimaryColor(
+            builder: (context, primaryColor) {
+              return CircularProgressIndicator(
+                color: primaryColor,
+                strokeWidth: 3.w,
+              );
+            },
           ),
           SizedBox(height: 16.h),
           Text(
@@ -353,16 +358,21 @@ class _AddressManagementPageState extends State<AddressManagementPage> {
       ),
       child: SafeArea(
         top: false,
-        child: AppPrimaryButton(
-          text: l10n.address_add_new,
-          onPressed: () async {
-            final result = await context.push(AppRouter.addressMapPicker);
-            if (result == true && context.mounted) {
-              context.read<AddressCubit>().loadAddresses();
-            }
+        child: AnimatedPrimaryColor(
+          builder: (context, primaryColor) {
+            return AppPrimaryButton(
+              text: l10n.address_add_new,
+              onPressed: () async {
+                final result = await context.push(AppRouter.addressMapPicker);
+                if (result == true && context.mounted) {
+                  context.read<AddressCubit>().loadAddresses();
+                }
+              },
+              size: AppButtonSize.large,
+              borderRadius: 12.r,
+              backgroundColor: primaryColor,
+            );
           },
-          size: AppButtonSize.large,
-          borderRadius: 12.r,
         ),
       ),
     );
@@ -386,21 +396,25 @@ class _AddressManagementPageState extends State<AddressManagementPage> {
       child: Row(
         children: [
           // ── Orange Location Icon ──────────────────────────────────────
-          Padding(
-            padding: EdgeInsets.all(12.w),
-            child: Container(
-              width: 32.w,
-              height: 32.w,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.location_on,
-                color: AppColors.surface,
-                size: 18.w,
-              ),
-            ),
+          AnimatedPrimaryColor(
+            builder: (context, primaryColor) {
+              return Padding(
+                padding: EdgeInsets.all(12.w),
+                child: Container(
+                  width: 32.w,
+                  height: 32.w,
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.location_on,
+                    color: AppColors.surface,
+                    size: 18.w,
+                  ),
+                ),
+              );
+            },
           ),
 
           // ── Search TextField ──────────────────────────────────────────
@@ -432,24 +446,28 @@ class _AddressManagementPageState extends State<AddressManagementPage> {
           ),
 
           // ── Clear (✕) / Search Icon ───────────────────────────────────
-          AnimatedBuilder(
-            animation: _searchController,
-            builder: (_, __) {
-              final hasText = _searchController.text.isNotEmpty;
-              return Padding(
-                padding: EdgeInsets.all(12.w),
-                child: GestureDetector(
-                  onTap: hasText ? _clearSearch : null,
-                  child: Icon(
-                    hasText
-                        ? Icons.close_rounded
-                        : Icons.search_rounded,
-                    color: hasText
-                        ? AppColors.primary
-                        : AppColors.textSecondary,
-                    size: 20.w,
-                  ),
-                ),
+          AnimatedPrimaryColor(
+            builder: (context, primaryColor) {
+              return AnimatedBuilder(
+                animation: _searchController,
+                builder: (_, __) {
+                  final hasText = _searchController.text.isNotEmpty;
+                  return Padding(
+                    padding: EdgeInsets.all(12.w),
+                    child: GestureDetector(
+                      onTap: hasText ? _clearSearch : null,
+                      child: Icon(
+                        hasText
+                            ? Icons.close_rounded
+                            : Icons.search_rounded,
+                        color: hasText
+                            ? primaryColor
+                            : AppColors.textSecondary,
+                        size: 20.w,
+                      ),
+                    ),
+                  );
+                },
               );
             },
           ),

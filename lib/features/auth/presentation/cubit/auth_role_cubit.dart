@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/storage/secure_storage_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/constants/storage_keys.dart';
 import '../../../../config/dependency_injection/injection_container.dart' as di;
 import '../../../auth/data/datasources/auth_local_data_source.dart';
@@ -7,7 +7,7 @@ import 'auth_role_state.dart';
 
 /// Auth Role Cubit
 /// Global state management for user role selection across all auth screens
-/// Persists role to secure storage for consistency across app sessions
+/// Persists role preference to SharedPreferences (survives logout)
 /// 
 /// ✅ IMPORTANT: Two-Layer Role System
 /// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -18,35 +18,47 @@ import 'auth_role_state.dart';
 ///    - Purpose: Determine what features user CAN access
 /// 
 /// 2. Active Role (User's Current Choice)
-///    - Stored in: SecureStorage (userRole)
+///    - Stored in: SharedPreferences (preferredRole) - PERSISTS ACROSS LOGOUT
 ///    - Example: 'seller' or 'customer'
-///    - Set by: User via role_toggle.dart OR backend's primary role
-///    - Purpose: Determine what UI/flow user IS CURRENTLY using
+///    - Set by: User via role_toggle.dart
+///    - Purpose: Remember user's preference even after logout
 /// 
 /// Flow:
-/// - User logs in → Backend sends roles: ['seller', 'customer']
-/// - getPrimaryRole() checks: Does user have saved preference?
-///   - YES → Validate preference against backend roles → Use it
-///   - NO  → Use backend's primary role (seller > customer)
-/// - User toggles role → setRole() saves preference → getPrimaryRole() respects it
+/// - User toggles role → setRole() saves to preferredRole
+/// - User logs out → preferredRole is NOT deleted (user preference preserved)
+/// - User opens login screen → loadPersistedRole() reads preferredRole
+/// - Result: Seller sees seller toggle, Customer sees customer toggle
 /// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 class AuthRoleCubit extends Cubit<AuthRoleState> {
-  final SecureStorageService _secureStorage;
+  final SharedPreferences _prefs;
 
-  AuthRoleCubit(this._secureStorage) : super(AuthRoleState.initial());
+  AuthRoleCubit(this._prefs) : super(AuthRoleState.initial());
 
-  /// Load persisted role from secure storage
-  /// Called on app initialization (splash screen)
-  /// ✅ Now reads from roles array (primary source) with fallback to single role
+  /// Load persisted role preference from SharedPreferences
+  /// Called on app initialization and when opening login screen
+  /// ✅ Reads user's last selected role (survives logout)
   Future<void> loadPersistedRole() async {
     try {
       emit(state.copyWith(isLoading: true));
       
-      // ✅ Use helper method to get primary role from roles array
+      // Read user's preferred role from SharedPreferences
+      final preferredRole = _prefs.getString(StorageKeys.preferredRole);
+      
+      // If user has a saved preference, use it
+      if (preferredRole != null && (preferredRole == 'customer' || preferredRole == 'seller')) {
+        print('✅ Loaded preferred role: $preferredRole');
+        emit(state.copyWith(
+          role: preferredRole,
+          isLoading: false,
+        ));
+        return;
+      }
+      
+      // No preference saved, check if user is logged in
       final authLocalDs = di.sl<AuthLocalDataSource>();
       final role = await authLocalDs.getPrimaryRole();
       
-      print('✅ Loaded primary role: $role');
+      print('✅ Loaded primary role from session: $role');
       
       emit(state.copyWith(
         role: role,
@@ -62,8 +74,9 @@ class AuthRoleCubit extends Cubit<AuthRoleState> {
     }
   }
 
-  /// Set role and persist to storage
+  /// Set role and persist preference to SharedPreferences
   /// Called when user toggles between customer/seller
+  /// ✅ This preference survives logout
   Future<void> setRole(String role) async {
     try {
       // Validate role - backend expects 'seller' not 'merchant'
@@ -72,15 +85,17 @@ class AuthRoleCubit extends Cubit<AuthRoleState> {
       // Update state immediately for instant UI feedback
       emit(state.copyWith(role: validRole));
       
-      // Persist to storage
-      await _secureStorage.write(StorageKeys.userRole, validRole);
+      // Persist preference to SharedPreferences (survives logout)
+      await _prefs.setString(StorageKeys.preferredRole, validRole);
+      
+      print('✅ Saved preferred role: $validRole');
     } catch (e) {
       // If storage fails, state is already updated for UI
-      // Log error if needed
+      print('⚠️ Failed to save preferred role: $e');
     }
   }
 
-  /// Reset role to customer (useful for logout)
+  /// Reset role to customer (useful for testing or first-time users)
   Future<void> resetRole() async {
     await setRole('customer');
   }

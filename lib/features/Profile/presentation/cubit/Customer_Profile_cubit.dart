@@ -5,7 +5,7 @@ import 'package:coupony/features/Profile/domain/use_cases/get_profile_use_case.d
 import 'package:coupony/features/Profile/domain/use_cases/update_profile_params.dart';
 import 'package:coupony/features/Profile/domain/use_cases/update_profile_use_case.dart';
 import 'package:coupony/features/Profile/presentation/cubit/Customer_Profile_state.dart';
-
+import 'package:coupony/features/auth/domain/use_cases/logout_use_case.dart';
 
 import '../../../../../core/errors/failures.dart';
 
@@ -14,15 +14,17 @@ import '../../../../../core/errors/failures.dart';
 // ════════════════════════════════════════════════════════
 
 class ProfileCubit extends Cubit<ProfileState> {
-  final GetProfileUseCase    getProfileUseCase;
+  final GetProfileUseCase getProfileUseCase;
   final UpdateProfileUseCase updateProfileUseCase;
   final DeleteAccountUseCase deleteAccountUseCase;
-  final Logger               logger;
+  final LogoutUseCase logoutUseCase;
+  final Logger logger;
 
   ProfileCubit({
     required this.getProfileUseCase,
     required this.updateProfileUseCase,
     required this.deleteAccountUseCase,
+    required this.logoutUseCase,
     required this.logger,
   }) : super(const ProfileInitial());
 
@@ -97,14 +99,36 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   // ──────────────────────────────────────────────────────────────────────────
+  // LOGOUT
+  // ──────────────────────────────────────────────────────────────────────────
+
+  Future<void> logout() async {
+    logger.i('🚪 ProfileCubit.logout');
+    _safeEmit(const ProfileLoading());
+
+    final result = await logoutUseCase();
+
+    result.fold(
+      (failure) {
+        logger.e('❌ logout failed: ${failure.message}');
+        _safeEmit(ProfileError(_mapFailure(failure)));
+      },
+      (_) {
+        logger.i('✅ logout success — local session cleared');
+        _safeEmit(const ProfileLogoutSuccess());
+      },
+    );
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
   // HELPERS
   // ──────────────────────────────────────────────────────────────────────────
 
   String _mapFailure(Failure failure) {
-    if (failure is NetworkFailure)     return 'error_no_internet';
+    if (failure is NetworkFailure) return 'error_no_internet';
     if (failure is UnauthorizedFailure) return 'error_unauthorized';
-    if (failure is ValidationFailure)  return failure.message;
-    if (failure is ServerFailure)      return failure.message;
+    if (failure is ValidationFailure) return failure.message;
+    if (failure is ServerFailure) return failure.message;
     return 'error_unexpected';
   }
 }

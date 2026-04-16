@@ -17,6 +17,7 @@ class ApiConstants {
   static const String stores         = '/stores';
   static const String createStore    = '/stores';
   static String updateStore(String storeId) => '/stores/$storeId';
+  static String storeProfile(String storeId) => '/stores/$storeId/profile';
   static const String getCategories  = '/store-categories';
   static const String getSocials     = '/socials';
 
@@ -48,4 +49,8 @@ class ApiConstants {
   static const String resendResetCode   = '/auth/password/resend-otp';
   static const String resetPassword     = '/auth/password/reset';
   static const String changePassword    = '/auth/change-password';
+
+  // ── Contact Us / Report Problem ────────────────────────
+  static const String contactUsCustomer = '/contact-us/customer';
+  static const String contactUsSeller   = '/contact-us/seller';
 }

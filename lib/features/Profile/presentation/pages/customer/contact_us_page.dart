@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -8,6 +9,7 @@ import '../../../../../core/localization/l10n/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../widgets/shared_card.dart';
+import '../../../../auth/presentation/widgets/role_animation_wrapper.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CONTACT US PAGE
@@ -77,34 +79,38 @@ class ContactUsPage extends StatelessWidget {
             child: Column(
               children: [
                 // ── Contact Icon ────────────────────────────────────────────────
-                Container(
-                  width: 80.w,
-                  height: 80.w,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        AppColors.primary,
-                        AppColors.primary.withValues(alpha: 0.7),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primary.withValues(alpha: 0.3),
-                        blurRadius: 20,
-                        offset: const Offset(0, 8),
+                AnimatedPrimaryColor(
+                  builder: (context, primaryColor) {
+                    return Container(
+                      width: 80.w,
+                      height: 80.w,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            primaryColor,
+                            primaryColor.withValues(alpha: 0.7),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: primaryColor.withValues(alpha: 0.3),
+                            blurRadius: 20,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Center(
-                    child: FaIcon(
-                      FontAwesomeIcons.headset,
-                      size: 38.w,
-                      color: Colors.white,
-                    ),
-                  ),
+                      child: Center(
+                        child: FaIcon(
+                          FontAwesomeIcons.headset,
+                          size: 38.w,
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 SizedBox(height: 20.h),
 
@@ -156,12 +162,16 @@ class ContactUsPage extends StatelessWidget {
           ),
 
           // ── Website ─────────────────────────────────────────────────────────
-          _buildContactCard(
-            context: context,
-            icon: FontAwesomeIcons.globe,
-            label: l10n.contact_website,
-            color: AppColors.primary,
-            onTap: () => _launchUrl(context, _websiteUrl),
+          AnimatedPrimaryColor(
+            builder: (context, primaryColor) {
+              return _buildContactCard(
+                context: context,
+                icon: FontAwesomeIcons.globe,
+                label: l10n.contact_website,
+                color: primaryColor,
+                onTap: () => _launchUrl(context, _websiteUrl),
+              );
+            },
           ),
 
           // ── Instagram ───────────────────────────────────────────────────────

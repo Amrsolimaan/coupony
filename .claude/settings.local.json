@@ -7,7 +7,8 @@
       "Bash(dir \"D:\\\\Courses\\\\AMITFlutter\\\\coupon\\\\android\\\\app\\\\\" 2>&1 | head -20:*)",
       "Bash(dart analyze:*)",
       "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(i['name'], '-', i['request']['method'], i['request']['url']['raw']\\) for i in d['item'][0]['item']]\")",
-      "Bash(flutter gen-l10n:*)"
+      "Bash(flutter gen-l10n:*)",
+      "Bash(flutter pub:*)"
     ]
   }
 }

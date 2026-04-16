@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/localization/l10n/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
+import '../../../../auth/domain/entities/user_persona.dart';
+import '../../../../auth/presentation/cubit/persona_cubit.dart';
+import '../../../../auth/presentation/widgets/role_animation_wrapper.dart';
 import '../../widgets/shared_card.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -54,47 +58,86 @@ class UsageGuidePage extends StatelessWidget {
 
   // ── Body ───────────────────────────────────────────────────────────────────
   Widget _buildBody(BuildContext context, AppLocalizations l10n) {
-    final guideSteps = [
-      _GuideStep(
-        stepNumber: '1',
-        title: l10n.guide_step1_title,
-        description: l10n.guide_step1_desc,
-        icon: Icons.person_add_rounded,
-      ),
-      _GuideStep(
-        stepNumber: '2',
-        title: l10n.guide_step2_title,
-        description: l10n.guide_step2_desc,
-        icon: Icons.search_rounded,
-      ),
-      _GuideStep(
-        stepNumber: '3',
-        title: l10n.guide_step3_title,
-        description: l10n.guide_step3_desc,
-        icon: Icons.local_offer_rounded,
-      ),
-      _GuideStep(
-        stepNumber: '4',
-        title: l10n.guide_step4_title,
-        description: l10n.guide_step4_desc,
-        icon: Icons.content_copy_rounded,
-      ),
-      _GuideStep(
-        stepNumber: '5',
-        title: l10n.guide_step5_title,
-        description: l10n.guide_step5_desc,
-        icon: Icons.shopping_bag_rounded,
-      ),
-    ];
+    return BlocBuilder<PersonaCubit, UserPersona>(
+      builder: (context, persona) {
+        final isSeller = persona is SellerPersona;
+        
+        final guideSteps = isSeller
+            ? [
+                _GuideStep(
+                  stepNumber: '1',
+                  title: l10n.guide_seller_step1_title,
+                  description: l10n.guide_seller_step1_desc,
+                  icon: Icons.store_rounded,
+                ),
+                _GuideStep(
+                  stepNumber: '2',
+                  title: l10n.guide_seller_step2_title,
+                  description: l10n.guide_seller_step2_desc,
+                  icon: Icons.add_business_rounded,
+                ),
+                _GuideStep(
+                  stepNumber: '3',
+                  title: l10n.guide_seller_step3_title,
+                  description: l10n.guide_seller_step3_desc,
+                  icon: Icons.analytics_rounded,
+                ),
+                _GuideStep(
+                  stepNumber: '4',
+                  title: l10n.guide_seller_step4_title,
+                  description: l10n.guide_seller_step4_desc,
+                  icon: Icons.people_rounded,
+                ),
+                _GuideStep(
+                  stepNumber: '5',
+                  title: l10n.guide_seller_step5_title,
+                  description: l10n.guide_seller_step5_desc,
+                  icon: Icons.trending_up_rounded,
+                ),
+              ]
+            : [
+                _GuideStep(
+                  stepNumber: '1',
+                  title: l10n.guide_step1_title,
+                  description: l10n.guide_step1_desc,
+                  icon: Icons.person_add_rounded,
+                ),
+                _GuideStep(
+                  stepNumber: '2',
+                  title: l10n.guide_step2_title,
+                  description: l10n.guide_step2_desc,
+                  icon: Icons.search_rounded,
+                ),
+                _GuideStep(
+                  stepNumber: '3',
+                  title: l10n.guide_step3_title,
+                  description: l10n.guide_step3_desc,
+                  icon: Icons.local_offer_rounded,
+                ),
+                _GuideStep(
+                  stepNumber: '4',
+                  title: l10n.guide_step4_title,
+                  description: l10n.guide_step4_desc,
+                  icon: Icons.content_copy_rounded,
+                ),
+                _GuideStep(
+                  stepNumber: '5',
+                  title: l10n.guide_step5_title,
+                  description: l10n.guide_step5_desc,
+                  icon: Icons.shopping_bag_rounded,
+                ),
+              ];
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(height: 12.h),
-          ...guideSteps.map((step) => _buildGuideCard(context, step)),
-          SizedBox(height: 24.h),
-        ],
-      ),
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 12.h),
+              ...guideSteps.map((step) => _buildGuideCard(context, step)),
+              SizedBox(height: 24.h),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -107,20 +150,24 @@ class UsageGuidePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // ── Step Icon Circle ────────────────────────────────────────────────
-          Container(
-            width: 40.w,
-            height: 40.w,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Icon(
-                step.icon,
-                size: 20.w,
-                color: AppColors.primary,
-              ),
-            ),
+          AnimatedPrimaryColor(
+            builder: (context, primaryColor) {
+              return Container(
+                width: 40.w,
+                height: 40.w,
+                decoration: BoxDecoration(
+                  color: primaryColor.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Icon(
+                    step.icon,
+                    size: 20.w,
+                    color: primaryColor,
+                  ),
+                ),
+              );
+            },
           ),
           SizedBox(width: 14.w),
 

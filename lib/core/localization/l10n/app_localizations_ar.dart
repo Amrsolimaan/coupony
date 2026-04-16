@@ -1337,6 +1337,41 @@ class AppLocalizationsAr extends AppLocalizations {
       'بالطبع! يمكنك التسجيل كتاجر من خلال صفحة الملف الشخصي والضغط على \"كن تاجراً\" لإنشاء متجرك.';
 
   @override
+  String get faq_seller_q1 => 'كيف أنشئ أول عرض لي؟';
+
+  @override
+  String get faq_seller_a1 =>
+      'من لوحة تحكم متجرك، اضغط على \"إضافة عرض\"، املأ تفاصيل العرض بما في ذلك نسبة الخصم، فترة الصلاحية، والشروط. سيتم مراجعة عرضك قبل نشره.';
+
+  @override
+  String get faq_seller_q2 => 'كم يستغرق الموافقة على المتجر؟';
+
+  @override
+  String get faq_seller_a2 =>
+      'عادةً تستغرق الموافقة على المتجر من 24 إلى 48 ساعة. ستتلقى إشعاراً عند الموافقة على متجرك وجاهزيته لنشر العروض.';
+
+  @override
+  String get faq_seller_q3 => 'هل هناك رسوم على التجار؟';
+
+  @override
+  String get faq_seller_a3 =>
+      'حالياً، كوبوني مجاني لجميع التجار. قد نقدم ميزات مدفوعة مستقبلاً، لكن إدارة المتجر والعروض الأساسية ستبقى مجانية.';
+
+  @override
+  String get faq_seller_q4 => 'كيف أتابع أداء عروضي؟';
+
+  @override
+  String get faq_seller_a4 =>
+      'توفر لوحة التحكم تحليلات تفصيلية تشمل المشاهدات، استخدام الكوبونات، وتفاعل العملاء. يمكنك تتبع أداء كل عرض بشكل منفصل.';
+
+  @override
+  String get faq_seller_q5 => 'هل يمكنني تعديل أو حذف العروض المنشورة؟';
+
+  @override
+  String get faq_seller_a5 =>
+      'نعم! يمكنك تعديل تفاصيل العرض أو حذف العروض في أي وقت من صفحة إدارة المتجر. التغييرات على العروض النشطة تسري فوراً.';
+
+  @override
   String get guide_step1_title => 'إنشاء حساب';
 
   @override
@@ -1370,6 +1405,41 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get guide_step5_desc =>
       'قدم الكوبون عند الدفع واستمتع بالتوفير سواء أونلاين أو في المحل.';
+
+  @override
+  String get guide_seller_step1_title => 'إنشاء متجرك';
+
+  @override
+  String get guide_seller_step1_desc =>
+      'سجل كتاجر وأنشئ متجرك الخاص بإضافة معلومات المتجر والشعار.';
+
+  @override
+  String get guide_seller_step2_title => 'إضافة العروض';
+
+  @override
+  String get guide_seller_step2_desc =>
+      'أنشئ عروض وكوبونات جذابة لعملائك مع تحديد نسبة الخصم والمدة.';
+
+  @override
+  String get guide_seller_step3_title => 'إدارة العروض';
+
+  @override
+  String get guide_seller_step3_desc =>
+      'تابع أداء عروضك وعدد المشاهدات والاستخدامات من لوحة التحكم.';
+
+  @override
+  String get guide_seller_step4_title => 'التفاعل مع العملاء';
+
+  @override
+  String get guide_seller_step4_desc =>
+      'استقبل إشعارات عند استخدام عملائك للكوبونات وتفاعل معهم.';
+
+  @override
+  String get guide_seller_step5_title => 'زيادة المبيعات';
+
+  @override
+  String get guide_seller_step5_desc =>
+      'استفد من التحليلات لتحسين عروضك وجذب المزيد من العملاء.';
 
   @override
   String get report_problem_description =>
@@ -1446,6 +1516,207 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get terms_section5_content =>
       'نحن نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية. لمزيد من المعلومات، يرجى الاطلاع على سياسة الخصوصية الخاصة بنا.';
+
+  @override
+  String get terms_seller_section1_title => 'قبول شروط التاجر';
+
+  @override
+  String get terms_seller_section1_content =>
+      'بتسجيلك كتاجر في تطبيق كوبوني، فإنك توافق على الالتزام بهذه الشروط والأحكام الخاصة بالتجار. إذا كنت لا توافق، يرجى عدم إنشاء متجر.';
+
+  @override
+  String get terms_seller_section2_title => 'مسؤوليات التاجر';
+
+  @override
+  String get terms_seller_section2_content =>
+      'أنت مسؤول عن دقة المعلومات والعروض التي تنشرها. يجب أن تكون جميع الكوبونات صالحة وقابلة للاستخدام. أي محتوى مضلل قد يؤدي إلى تعليق حسابك.';
+
+  @override
+  String get terms_seller_section3_title => 'إدارة المتجر';
+
+  @override
+  String get terms_seller_section3_content =>
+      'يجب عليك الحفاظ على معلومات متجرك محدثة وإدارة عروضك بشكل منتظم. أنت مسؤول عن الرد على استفسارات العملاء وحل أي مشاكل تتعلق بعروضك.';
+
+  @override
+  String get terms_seller_section4_title => 'العروض والكوبونات';
+
+  @override
+  String get terms_seller_section4_content =>
+      'يجب أن تلتزم بتطبيق شروط العروض التي تنشرها. كوبوني يحتفظ بالحق في إزالة أي عرض يخالف السياسات أو يتلقى شكاوى متكررة من العملاء.';
+
+  @override
+  String get terms_seller_section5_title => 'الرسوم والمدفوعات';
+
+  @override
+  String get terms_seller_section5_content =>
+      'استخدام المنصة مجاني حالياً للتجار. نحتفظ بالحق في تطبيق رسوم مستقبلية مع إشعار مسبق. أي تغييرات في نموذج التسعير سيتم إبلاغك بها.';
+
+  @override
+  String get terms_seller_section6_title => 'إنهاء الحساب';
+
+  @override
+  String get terms_seller_section6_content =>
+      'نحتفظ بالحق في تعليق أو إنهاء حساب التاجر في حالة انتهاك الشروط أو تلقي شكاوى متكررة. يمكنك إغلاق حسابك في أي وقت من إعدادات المتجر.';
+
+  @override
+  String get staff_list_title => 'الموظفين';
+
+  @override
+  String get staff_filter_all => 'الكل';
+
+  @override
+  String get staff_filter_active => 'الموظفين النشطين';
+
+  @override
+  String get staff_filter_stopped => 'الموظفين الموقفين';
+
+  @override
+  String get staff_status_active => 'نشط';
+
+  @override
+  String get staff_status_stopped => 'موقوف';
+
+  @override
+  String get staff_role_cashier => 'كاشير';
+
+  @override
+  String get staff_branch_label => 'محل البوب';
+
+  @override
+  String get staff_joined_since => 'منذ';
+
+  @override
+  String get staff_menu_edit => 'تعديل';
+
+  @override
+  String get staff_menu_delete => 'حذف';
+
+  @override
+  String get staff_delete_confirm_title => 'تأكيد حذف الموظف';
+
+  @override
+  String get staff_delete_confirm_message => 'هل أنت متأكد من حذف هذا الموظف؟';
+
+  @override
+  String get staff_delete_confirm_button => 'تأكيد الحذف';
+
+  @override
+  String get staff_delete_cancel_button => 'إلغاء';
+
+  @override
+  String get staff_empty_message => 'لا يوجد موظفين';
+
+  @override
+  String get staff_search_hint => 'ابحث عن موظف...';
+
+  @override
+  String get staff_no_search_results => 'لا توجد نتائج للبحث';
+
+  @override
+  String get staff_edit_save => 'حفظ';
+
+  @override
+  String get staff_edit_cancel => 'إلغاء';
+
+  @override
+  String get staff_name_hint => 'اسم الموظف';
+
+  @override
+  String get staff_role_hint => 'الوظيفة';
+
+  @override
+  String get staff_branch_hint => 'الفرع';
+
+  @override
+  String get staff_update_success => 'تم تحديث بيانات الموظف بنجاح';
+
+  @override
+  String get staff_update_error => 'فشل تحديث بيانات الموظف';
+
+  @override
+  String get notifications_page_title => 'الإشعارات';
+
+  @override
+  String get notifications_sort_newest => 'الأحدث';
+
+  @override
+  String get notifications_sort_oldest => 'الأقدم';
+
+  @override
+  String get notifications_filter_all => 'الكل';
+
+  @override
+  String get notifications_filter_offer => 'عرض';
+
+  @override
+  String get notifications_filter_coupon => 'كوبون';
+
+  @override
+  String get notifications_filter_system => 'نظام';
+
+  @override
+  String get notifications_filter_general => 'عام';
+
+  @override
+  String get notifications_empty_title => 'لا توجد إشعارات';
+
+  @override
+  String get notifications_empty_subtitle => 'سنخبرك عندما يكون هناك شيء جديد';
+
+  @override
+  String get notifications_type_coupon => 'كوبون';
+
+  @override
+  String get notifications_type_offer => 'عرض';
+
+  @override
+  String get notifications_type_system => 'نظام';
+
+  @override
+  String get notifications_type_general => 'عام';
+
+  @override
+  String get notifications_details_page_title => 'تفاصيل الإشعار';
+
+  @override
+  String get notifications_details_message_label => 'الرسالة';
+
+  @override
+  String get seller_notifications_filter_order => 'طلبات';
+
+  @override
+  String get seller_notifications_filter_store => 'متجر';
+
+  @override
+  String get seller_notifications_filter_analytics => 'تحليلات';
+
+  @override
+  String get seller_notifications_filter_employee => 'موظفين';
+
+  @override
+  String get seller_notifications_type_order => 'طلب';
+
+  @override
+  String get seller_notifications_type_store => 'متجر';
+
+  @override
+  String get seller_notifications_type_analytics => 'تحليلات';
+
+  @override
+  String get seller_notifications_type_employee => 'موظف';
+
+  @override
+  String get notification_badge_approved => 'تم القبول';
+
+  @override
+  String get notification_badge_rejected => 'مرفوض';
+
+  @override
+  String get notification_badge_pending => 'قيد المراجعة';
+
+  @override
+  String get notification_badge_used => 'كوبون خصم';
 
   @override
   String get contact_us_heading => 'تواصل معنا';
@@ -1564,13 +1835,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get seller_product_delete_confirm => 'حذف';
 
   @override
-  String get success_seller_product_created => 'تم إنشاء المنتج بنجاح!';
+  String get success_seller_product_created => 'تم إنشاء المنتج بنجاح';
 
   @override
-  String get success_seller_product_updated => 'تم تحديث المنتج بنجاح!';
+  String get success_seller_product_updated => 'تم تحديث المنتج بنجاح';
 
   @override
-  String get success_seller_product_deleted => 'تم حذف المنتج بنجاح!';
+  String get success_seller_product_deleted => 'تم حذف المنتج بنجاح';
 
   @override
   String get success_seller_product_status_updated =>
@@ -1743,7 +2014,104 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settings_app_version => 'الإصدار 1.0.0';
 
   @override
-  String get settings_copyright => '@2025 جميع الحقوق محفوظه';
+  String get settings_copyright => '@2025 جميع الحقوق محفوظة';
+
+  @override
+  String get offer_success_message => 'تم حفظ العرض بنجاح';
+
+  @override
+  String get offer_edit_title => 'تعديل العرض';
+
+  @override
+  String get offer_create_title => 'إنشاء عرض جديد';
+
+  @override
+  String get offer_save_action => 'حفظ';
+
+  @override
+  String get offer_title_label => 'عنوان العرض';
+
+  @override
+  String get offer_description_label => 'وصف العرض';
+
+  @override
+  String get offer_discount_type_label => 'نوع الخصم';
+
+  @override
+  String get offer_discount_type_percentage => 'نسبة مئوية';
+
+  @override
+  String get offer_discount_type_buy_get => 'اشتري واحصل';
+
+  @override
+  String get offer_discount_type_fixed => 'مبلغ ثابت';
+
+  @override
+  String get offer_category_label => 'التصنيف';
+
+  @override
+  String get offer_sub_category_label => 'التصنيف الفرعي';
+
+  @override
+  String get offer_select_hint => 'اختر';
+
+  @override
+  String get offer_sizes_label => 'المقاسات';
+
+  @override
+  String get offer_colors_label => 'الألوان';
+
+  @override
+  String get offer_original_price_label => 'السعر الأصلي';
+
+  @override
+  String get offer_discounted_price_label => 'السعر بعد الخصم';
+
+  @override
+  String get offer_discount_value_label => 'قيمة الخصم';
+
+  @override
+  String get offer_publish_settings_label => 'إعدادات النشر';
+
+  @override
+  String get offer_publish_now => 'نشر الآن';
+
+  @override
+  String get offer_schedule => 'جدولة';
+
+  @override
+  String get offer_start_date_label => 'تاريخ البدء';
+
+  @override
+  String get offer_end_date_label => 'تاريخ الانتهاء';
+
+  @override
+  String get offer_image_picker_hint => 'اضغط لرفع صورة العرض';
+
+  @override
+  String get offer_image_picker_sub => 'PNG أو JPG، حجم أقصى 5MB';
+
+  @override
+  String get offer_update => 'تحديث العرض';
+
+  @override
+  String get offer_save_publish => 'حفظ ونشر';
+
+  @override
+  String get offer_delete_confirm_title => 'حذف العرض';
+
+  @override
+  String get offer_delete_confirm_message =>
+      'هل أنت متأكد من حذف هذا العرض؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get offer_delete_confirm_button => 'حذف';
+
+  @override
+  String get offer_delete_cancel => 'إلغاء';
+
+  @override
+  String get offer_empty => 'لا توجد عروض بعد';
 
   @override
   String get delete_account_dialog_title => 'تأكيد حذف الحساب';
@@ -2013,6 +2381,76 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profile_switch_to_merchant => 'التحول إلى التاجر';
 
   @override
+  String get profile_track_request => 'متابعة طلبك';
+
+  @override
+  String get profile_switch_to_customer => 'التحول إلى مستخدم';
+
+  @override
+  String get profile_my_stores => 'المحلات';
+
+  @override
+  String get profile_add_store => 'إضافة محل';
+
+  @override
+  String get profile_stores_load_failed => 'فشل تحميل المحلات';
+
+  @override
+  String get profile_store_fetch_failed => 'فشل جلب تفاصيل المحل';
+
+  @override
+  String get profile_switched_to_customer => 'تم التحول إلى وضع المستخدم';
+
+  @override
+  String get profile_store_added_success => 'تم إضافة المحل بنجاح';
+
+  @override
+  String get store_selection_sheet_title => 'اختر متجرك';
+
+  @override
+  String get store_selection_sheet_subtitle => 'اختر المتجر الذي تريد إدارته';
+
+  @override
+  String get store_status_active => 'نشط';
+
+  @override
+  String get store_status_pending => 'قيد المراجعة';
+
+  @override
+  String get store_status_rejected => 'مرفوض';
+
+  @override
+  String get store_not_active_pending_message =>
+      'لا يمكن اختيار هذا المتجر لأنه قيد المراجعة';
+
+  @override
+  String get store_not_active_rejected_message =>
+      'لا يمكن اختيار هذا المتجر لأنه تم رفضه';
+
+  @override
+  String get store_already_active => 'هذا هو متجرك النشط حالياً';
+
+  @override
+  String store_switched_to(String name) {
+    return 'تم التحول إلى $name';
+  }
+
+  @override
+  String get store_delete_dialog_title => 'حذف المحل';
+
+  @override
+  String store_delete_dialog_message(String name) {
+    return 'هل أنت متأكد من حذف \"$name\"؟';
+  }
+
+  @override
+  String get store_delete_dialog_confirm => 'حذف';
+
+  @override
+  String get store_delete_coming_soon =>
+      'ميزة حذف المحلات ستكون متاحة في تحديث قادم';
+
+  @override
   String get merchant_no_changes_snackbar =>
       'لم يتم اكتشاف أي تغييرات. يرجى إصلاح المشكلات المذكورة قبل إعادة الإرسال.';
 
@@ -2024,4 +2462,508 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get seller_dashboard_coming_soon => 'لوحة التحكم قريباً';
+
+  @override
+  String get seller_analytics_greeting => 'أهلاً بيك';
+
+  @override
+  String get seller_analytics_filter_all => 'الكل';
+
+  @override
+  String get seller_analytics_filter_today => 'اليوم';
+
+  @override
+  String get seller_analytics_filter_last_7_days => 'آخر 7 أيام';
+
+  @override
+  String get seller_analytics_filter_last_30_days => 'آخر 30 يوم';
+
+  @override
+  String get seller_analytics_filter_custom => 'تاريخ مخصص...';
+
+  @override
+  String get seller_analytics_filter_this_month => 'هذا الشهر';
+
+  @override
+  String get seller_analytics_filter_this_year => 'هذه السنة';
+
+  @override
+  String get seller_analytics_monthly_goal_title => 'الهدف الشهري للكوبونات';
+
+  @override
+  String get seller_analytics_goal_label => 'الهدف';
+
+  @override
+  String get seller_analytics_achieved_label => 'المحقق';
+
+  @override
+  String seller_analytics_goal_completion(Object percent) {
+    return 'تم تحقيق $percent% من الهدف';
+  }
+
+  @override
+  String get seller_analytics_new_followers_title => 'المتابعين الجدد';
+
+  @override
+  String seller_analytics_this_month(Object count) {
+    return 'هذا الشهر  +$count';
+  }
+
+  @override
+  String get seller_analytics_offer_distribution_title => 'توزيع أنواع العروض';
+
+  @override
+  String get seller_analytics_top_offers_title => 'أفضل العروض أداءً';
+
+  @override
+  String seller_analytics_usage_count(Object count) {
+    return '$count استخدام';
+  }
+
+  @override
+  String get seller_analytics_retry_button => 'إعادة المحاولة';
+
+  @override
+  String get shop_display_edit_button => 'تعديل بيانات المحل';
+
+  @override
+  String get shop_display_rating_label => 'تقييم';
+
+  @override
+  String get shop_display_followers_label => 'متابعين';
+
+  @override
+  String get shop_display_coupons_label => 'كوبونات';
+
+  @override
+  String get shop_display_description_title => 'وصف المحل';
+
+  @override
+  String get shop_display_category_title => 'الفئة';
+
+  @override
+  String get shop_display_hours_title => 'مواعيد العمل';
+
+  @override
+  String get shop_display_reviews_title => 'التقييمات';
+
+  @override
+  String shop_display_total_reviews(Object count) {
+    return '$count تقييم';
+  }
+
+  @override
+  String get shop_display_open => 'مفتوح';
+
+  @override
+  String get shop_display_closed => 'مغلق';
+
+  @override
+  String get shop_display_no_description => 'لا يوجد وصف بعد';
+
+  @override
+  String get shop_display_no_category => 'لم تتم إضافة فئات بعد';
+
+  @override
+  String get shop_display_day_sun => 'الأحد';
+
+  @override
+  String get shop_display_day_mon => 'الاثنين';
+
+  @override
+  String get shop_display_day_tue => 'الثلاثاء';
+
+  @override
+  String get shop_display_day_wed => 'الأربعاء';
+
+  @override
+  String get shop_display_day_thu => 'الخميس';
+
+  @override
+  String get shop_display_day_fri => 'الجمعة';
+
+  @override
+  String get shop_display_day_sat => 'السبت';
+
+  @override
+  String get shop_display_customer_reviews_title => 'تقييمات العملاء';
+
+  @override
+  String get shop_display_no_reviews => 'لا توجد تقييمات بعد';
+
+  @override
+  String get shop_display_verified_badge => 'موثّق';
+
+  @override
+  String get followers_page_title => 'متابعين';
+
+  @override
+  String get followers_page_follow_btn => 'متابع';
+
+  @override
+  String get following_page_title => 'المتابَعون';
+
+  @override
+  String get following_page_search_hint => 'ابحث عن متجر...';
+
+  @override
+  String get following_page_empty_title => 'لا تتابع أي متجر بعد';
+
+  @override
+  String get following_page_empty_subtitle =>
+      'استعرض المتاجر وتابع التي تعجبك لترى أحدث عروضها هنا.';
+
+  @override
+  String get following_page_unfollow_btn => 'إلغاء المتابعة';
+
+  @override
+  String get following_page_unfollow_confirm_title => 'إلغاء متابعة المتجر؟';
+
+  @override
+  String get following_page_unfollow_confirm_body =>
+      'لن تتلقى تحديثات من هذا المتجر بعد الآن.';
+
+  @override
+  String get following_page_unfollow_confirm_cancel => 'إلغاء';
+
+  @override
+  String get following_page_unfollow_confirm_ok => 'تأكيد';
+
+  @override
+  String get following_page_no_results => 'لا توجد متاجر تطابق بحثك';
+
+  @override
+  String get home_greeting => 'صباح الخير';
+
+  @override
+  String get home_delivery_to => 'التوصيل إلى';
+
+  @override
+  String get home_search_hint => 'ابحث عن العروض والمتاجر...';
+
+  @override
+  String get home_categories_title => 'فئات';
+
+  @override
+  String get home_promo_on_going => 'Promo on Going';
+
+  @override
+  String get home_shop_now => 'تسوق الآن';
+
+  @override
+  String get home_personalized_title => 'عروض مخصصة لك';
+
+  @override
+  String get home_brands_title => 'ماركات';
+
+  @override
+  String get home_category_offers_title => 'عروض الفئات';
+
+  @override
+  String get home_favorites_title => 'أخر المفضلات';
+
+  @override
+  String get home_travel_offers_title => 'عروض تنقلك بالسفر';
+
+  @override
+  String get home_egypt_offers_title => 'عروض مميزة في مصر';
+
+  @override
+  String get home_see_all => 'عرض الكل';
+
+  @override
+  String home_save_badge(Object percent) {
+    return 'وفر $percent%';
+  }
+
+  @override
+  String get home_discount_up_to => 'خصم يصل إلى';
+
+  @override
+  String get home_min_transaction => 'الحد الأدنى للمعاملة';
+
+  @override
+  String get nav_home => 'الرئيسية';
+
+  @override
+  String get nav_categories => 'فئات';
+
+  @override
+  String get nav_explore => 'اكسبلور';
+
+  @override
+  String get nav_coupons => 'كوبوناتي';
+
+  @override
+  String get nav_account => 'الحساب';
+
+  @override
+  String get home_stores_title => 'محلات';
+
+  @override
+  String get home_featured_offers_title => 'عروض';
+
+  @override
+  String get seller_home_subscription_renew_title => 'تجديد الاشتراك';
+
+  @override
+  String get seller_home_subscription_renew_body =>
+      'سينتهي اشتراكك خلال يومين. جدد للحفاظ على المزايا.';
+
+  @override
+  String get seller_home_stat_active_offers => 'العروض النشطة';
+
+  @override
+  String get seller_home_stat_used_coupons => 'الكوبونات المستخدمة';
+
+  @override
+  String get seller_home_stat_views => 'المشاهدات';
+
+  @override
+  String get seller_home_stat_shares => 'المشاركات';
+
+  @override
+  String get seller_home_quick_actions_title => 'إجراءات سريعة';
+
+  @override
+  String get seller_home_add_offer_label => 'أضف عرض جديد';
+
+  @override
+  String get seller_home_add_offer_subtitle => 'انشر عرض جديد دلوقتي';
+
+  @override
+  String get seller_home_add_product_label => 'أضف منتج جديد';
+
+  @override
+  String get seller_home_add_product_subtitle => 'انشر منتج جديد دلوقتي';
+
+  @override
+  String get seller_home_scan_qr => 'مسح QR';
+
+  @override
+  String get seller_home_add_employee => 'إضافة موظف';
+
+  @override
+  String get seller_home_manage_employees_title => 'إدارة الموظفين';
+
+  @override
+  String get seller_home_manage_employees_subtitle => 'عرض وإدارة الموظفين';
+
+  @override
+  String get staff_delete_dialog_title => 'تأكيد حذف الموظف';
+
+  @override
+  String get staff_delete_dialog_confirm => 'تأكيد الحذف';
+
+  @override
+  String get staff_delete_dialog_cancel => 'إلغاء';
+
+  @override
+  String get seller_home_active_offers_section => 'العروض النشطة';
+
+  @override
+  String get seller_home_no_active_offers => 'لا توجد عروض نشطة حالياً';
+
+  @override
+  String get seller_home_sidebar_active_seller => 'بائع نشط';
+
+  @override
+  String get seller_home_sidebar_notifications => 'الإشعارات';
+
+  @override
+  String seller_home_offer_usage_count(Object count) {
+    return '$count استخدام';
+  }
+
+  @override
+  String get seller_offers_tab_all => 'الكل';
+
+  @override
+  String get seller_offers_tab_active => 'النشطة';
+
+  @override
+  String get seller_offers_tab_expired => 'المنتهية';
+
+  @override
+  String get seller_offers_tab_scheduled => 'المجدولة';
+
+  @override
+  String get seller_offers_page_title => 'عروضي';
+
+  @override
+  String get seller_offers_empty_all => 'لا توجد عروض';
+
+  @override
+  String get seller_offers_empty_active => 'لا توجد عروض نشطة';
+
+  @override
+  String get seller_offers_empty_expired => 'لا توجد عروض منتهية';
+
+  @override
+  String get seller_offers_empty_scheduled => 'لا توجد عروض مجدولة';
+
+  @override
+  String get seller_offers_add_new => 'أضف عرض جديد +';
+
+  @override
+  String get seller_offer_status_active => 'نشط';
+
+  @override
+  String get seller_offer_status_expired => 'منتهي';
+
+  @override
+  String get seller_offer_status_scheduled => 'مجدول';
+
+  @override
+  String get seller_offer_chip_percentage => 'نسبة خصم';
+
+  @override
+  String get seller_offer_action_details => 'تفاصيل';
+
+  @override
+  String get seller_offer_delete_title => 'تأكيد الحذف';
+
+  @override
+  String get seller_offer_delete_message =>
+      'هل أنت متأكد من حذف هذا العرض؟\nلا يمكن التراجع عن هذه العملية.';
+
+  @override
+  String get edit_store_field_name => 'اسم المحل';
+
+  @override
+  String get edit_store_field_name_hint => 'أدخل اسم المحل';
+
+  @override
+  String get edit_store_field_name_required => 'اسم المحل مطلوب';
+
+  @override
+  String get edit_store_field_description_label => 'الوصف';
+
+  @override
+  String get edit_store_field_description_hint => 'أدخل وصف المتجر';
+
+  @override
+  String get edit_store_field_email_hint => 'أدخل البريد الإلكتروني';
+
+  @override
+  String get edit_store_field_phone_hint => 'أدخل رقم الهاتف';
+
+  @override
+  String get edit_store_working_hours_title => 'ساعات العمل';
+
+  @override
+  String get edit_store_category_label => 'فئة العرض';
+
+  @override
+  String get edit_store_select_category => 'اختر التصنيف';
+
+  @override
+  String get edit_store_loading_categories => 'جاري تحميل التصنيفات...';
+
+  @override
+  String get edit_store_categories_error => 'حدث خطأ في تحميل التصنيفات';
+
+  @override
+  String get edit_store_save_loading => 'جاري الحفظ...';
+
+  @override
+  String get edit_store_save_changes => 'حفظ التعديلات';
+
+  @override
+  String get edit_store_time_from => 'من';
+
+  @override
+  String get edit_store_time_to => 'إلى';
+
+  @override
+  String get offer_details_status_active_now => 'ساري الآن';
+
+  @override
+  String get offer_details_category_label => 'الفئة:';
+
+  @override
+  String get offer_details_sizes_title => 'المقاسات المتاحة';
+
+  @override
+  String get offer_details_colors_title => 'الألوان المتاحة';
+
+  @override
+  String get offer_details_valid_until => 'صالح حتى';
+
+  @override
+  String get offer_details_terms_title => 'الشروط و الأحكام';
+
+  @override
+  String get offer_details_edit_button => 'تعديل بيانات العرض';
+
+  @override
+  String get offer_details_date_placeholder => 'يوم/شهر/سنة';
+
+  @override
+  String offer_terms_validity_date(String date) {
+    return 'العرض ساري حتى $date فقط، ولن يُقبل بعد انتهاء هذا التاريخ تحت أي ظرف.';
+  }
+
+  @override
+  String get offer_terms_validity_open =>
+      'العرض ساري حتى إشعار آخر، ويحق للمتجر إيقافه في أي وقت.';
+
+  @override
+  String offer_terms_discount_percentage(
+    String pct,
+    String original,
+    String discounted,
+  ) {
+    return 'يمنح هذا العرض خصمًا بنسبة $pct٪ على السعر الأصلي ($original ر.س)، ليُصبح السعر النهائي $discounted ر.س.';
+  }
+
+  @override
+  String offer_terms_discount_fixed(String saved) {
+    return 'يُطبق الخصم بخفض ثابت قدره $saved ر.س من السعر الأصلي.';
+  }
+
+  @override
+  String get offer_terms_discount_buy_get =>
+      'العرض من نوع \"اشترِ واحصل\"؛ يُطبق تلقائيًا عند استيفاء شرط الشراء المحدد.';
+
+  @override
+  String offer_terms_category_scope(String scope) {
+    return 'العرض مخصص لفئة \"$scope\" فقط ولا يشمل باقي المنتجات.';
+  }
+
+  @override
+  String offer_terms_sizes(String sizes) {
+    return 'يُطبق الخصم على المقاسات المتاحة ($sizes) فقط، وقد تختلف الأسعار عند توفر مقاسات أخرى.';
+  }
+
+  @override
+  String offer_terms_start_date(String date) {
+    return 'يبدأ تفعيل العرض رسميًا في $date، ولن يُقبل قبل هذا الموعد.';
+  }
+
+  @override
+  String get offer_terms_no_combine =>
+      'لا يمكن تجميع هذا العرض مع أي خصومات أو عروض أخرى في نفس الوقت.';
+
+  @override
+  String offer_terms_store_rights(String storeName) {
+    return 'يحق لـ$storeName تعديل شروط العرض أو إلغاؤه دون الحاجة إلى إشعار مسبق.';
+  }
+
+  @override
+  String get offer_terms_return_policy =>
+      'في حالة الإرجاع أو الاستبدال، يُعاد احتساب المبلغ وفق سياسة المتجر المعتمدة دون الالتزام بسعر العرض.';
+
+  @override
+  String get guest_profile_title => 'ابدأ رحلتك في البيع على كوبوني';
+
+  @override
+  String get guest_profile_subtitle =>
+      'أنشئ متجرك واعرض خصوماتك وتواصل لعملائك جدد.';
+
+  @override
+  String get guest_login_button => 'تسجيل دخول';
+
+  @override
+  String get itch_button => 'Switch to Merchant';
 }

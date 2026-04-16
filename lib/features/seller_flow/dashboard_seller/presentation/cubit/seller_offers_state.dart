@@ -1,3 +1,5 @@
+import '../../domain/entities/offer_entity.dart';
+
 // ─────────────────────────────────────────────────────────────────────────────
 // SELLER OFFERS STATE
 // ─────────────────────────────────────────────────────────────────────────────
@@ -6,7 +8,6 @@ abstract class SellerOffersState {
   const SellerOffersState();
 }
 
-// ── Initial State ──────────────────────────────────────────────────────────
 class SellerOffersInitial extends SellerOffersState {
   final bool isGuest;
   final bool isPending;
@@ -17,12 +18,35 @@ class SellerOffersInitial extends SellerOffersState {
   });
 }
 
-// ── Loading State ──────────────────────────────────────────────────────────
 class SellerOffersLoading extends SellerOffersState {
   const SellerOffersLoading();
 }
 
-// ── Loaded State ───────────────────────────────────────────────────────────
+/// Offers list loaded and ready — with tab filtering support.
+class SellerOffersDataLoaded extends SellerOffersState {
+  final List<OfferEntity> offers;
+
+  /// Index of the active filter tab:
+  ///   0 = الكل, 1 = النشطة, 2 = المنتهية, 3 = المجدولة
+  final int activeTabIndex;
+
+  const SellerOffersDataLoaded(this.offers, {this.activeTabIndex = 0});
+
+  /// Returns only the offers matching the active tab.
+  List<OfferEntity> get filteredOffers {
+    switch (activeTabIndex) {
+      case 1:
+        return offers.where((o) => o.offerStatus == OfferStatus.active).toList();
+      case 2:
+        return offers.where((o) => o.offerStatus == OfferStatus.expired).toList();
+      case 3:
+        return offers.where((o) => o.offerStatus == OfferStatus.scheduled).toList();
+      default:
+        return offers;
+    }
+  }
+}
+
 class SellerOffersLoaded extends SellerOffersState {
   final bool isGuest;
   final bool isPending;
@@ -33,17 +57,14 @@ class SellerOffersLoaded extends SellerOffersState {
   });
 }
 
-// ── Guest State ────────────────────────────────────────────────────────────
 class SellerOffersGuest extends SellerOffersState {
   const SellerOffersGuest();
 }
 
-// ── Pending State ──────────────────────────────────────────────────────────
 class SellerOffersPending extends SellerOffersState {
   const SellerOffersPending();
 }
 
-// ── Error State ────────────────────────────────────────────────────────────
 class SellerOffersError extends SellerOffersState {
   final String message;
 
