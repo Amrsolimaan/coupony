@@ -3122,6 +3122,138 @@ abstract class AppLocalizations {
   /// **'Failed to update staff'**
   String get staff_update_error;
 
+  /// No description provided for @staff_add_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Staff'**
+  String get staff_add_title;
+
+  /// No description provided for @staff_add_personal_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Information'**
+  String get staff_add_personal_info;
+
+  /// No description provided for @staff_add_role_assignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Role & Assignment'**
+  String get staff_add_role_assignment;
+
+  /// No description provided for @staff_add_learn_more.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn More About Roles'**
+  String get staff_add_learn_more;
+
+  /// No description provided for @staff_add_email_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get staff_add_email_hint;
+
+  /// No description provided for @staff_add_branch_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Branch'**
+  String get staff_add_branch_hint;
+
+  /// No description provided for @staff_add_submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Invitation'**
+  String get staff_add_submit;
+
+  /// No description provided for @staff_add_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff member added successfully'**
+  String get staff_add_success;
+
+  /// No description provided for @staff_add_error_name_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get staff_add_error_name_required;
+
+  /// No description provided for @staff_add_error_email_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get staff_add_error_email_required;
+
+  /// No description provided for @staff_add_error_email_invalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email address'**
+  String get staff_add_error_email_invalid;
+
+  /// No description provided for @staff_add_error_role_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a role'**
+  String get staff_add_error_role_required;
+
+  /// No description provided for @staff_add_error_branch_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a branch'**
+  String get staff_add_error_branch_required;
+
+  /// No description provided for @staff_role_analyst.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Analyst'**
+  String get staff_role_analyst;
+
+  /// No description provided for @staff_role_manager.
+  ///
+  /// In en, this message translates to:
+  /// **'General Manager'**
+  String get staff_role_manager;
+
+  /// No description provided for @staff_roles_comparison_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Role Permissions Comparison'**
+  String get staff_roles_comparison_title;
+
+  /// No description provided for @staff_permission_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission'**
+  String get staff_permission_label;
+
+  /// No description provided for @staff_permission_scan_qr.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR Code'**
+  String get staff_permission_scan_qr;
+
+  /// No description provided for @staff_permission_view_data.
+  ///
+  /// In en, this message translates to:
+  /// **'View Data'**
+  String get staff_permission_view_data;
+
+  /// No description provided for @staff_permission_add_data.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Data'**
+  String get staff_permission_add_data;
+
+  /// No description provided for @staff_permission_edit_data.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Data'**
+  String get staff_permission_edit_data;
+
+  /// No description provided for @staff_permission_delete_data.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Data'**
+  String get staff_permission_delete_data;
+
   /// No description provided for @notifications_page_title.
   ///
   /// In en, this message translates to:
@@ -5633,12 +5765,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign In'**
   String get guest_login_button;
-
-  /// No description provided for @itch_button.
-  ///
-  /// In en, this message translates to:
-  /// **'Switch to Merchant'**
-  String get itch_button;
 }
 
 class _AppLocalizationsDelegate

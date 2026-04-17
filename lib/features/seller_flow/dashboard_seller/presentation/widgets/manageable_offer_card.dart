@@ -39,6 +39,9 @@ class ManageableOfferCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ✅ Check if RTL or LTR
+    final isRTL = Directionality.of(context) == TextDirection.rtl;
+    
     return ClipRRect(
       borderRadius: BorderRadius.circular(8.r),
       child: AspectRatio(
@@ -49,45 +52,28 @@ class ManageableOfferCard extends StatelessWidget {
             // ── Image / placeholder ──────────────────────────────────────────
             _buildImage(),
 
-            // ── Gradient overlay (bottom fade for button visibility) ─────────
+            // ── Action buttons (top-right for RTL, top-left for LTR) ─────────
             Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                height: 48.h,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [
-                      Colors.black.withValues(alpha: 0.45),
-                      Colors.transparent,
-                    ],
+              top: 6.h,
+              right: isRTL ? 6.w : null,
+              left: isRTL ? null : 6.w,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Edit button (top)
+                  _CircleActionButton(
+                    icon: Icons.edit_rounded,
+                    iconColor: AppColors.primaryOfSeller,
+                    onTap: onEditRequest,
                   ),
-                ),
-              ),
-            ),
-
-            // ── Delete button (bottom-left) ──────────────────────────────────
-            Positioned(
-              bottom: 6.h,
-              left: 6.w,
-              child: _CircleActionButton(
-                icon: Icons.delete_outline_rounded,
-                iconColor: AppColors.error,
-                onTap: onDeleteRequest,
-              ),
-            ),
-
-            // ── Edit button (bottom-right) ───────────────────────────────────
-            Positioned(
-              bottom: 6.h,
-              right: 6.w,
-              child: _CircleActionButton(
-                icon: Icons.edit_rounded,
-                iconColor: AppColors.primaryOfSeller,
-                onTap: onEditRequest,
+                  SizedBox(height: 4.h),
+                  // Delete button (bottom)
+                  _CircleActionButton(
+                    icon: Icons.delete_outline_rounded,
+                    iconColor: AppColors.error,
+                    onTap: onDeleteRequest,
+                  ),
+                ],
               ),
             ),
           ],
@@ -144,21 +130,21 @@ class _CircleActionButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 28.w,
-        height: 28.w,
+        width: 24.w,
+        height: 24.w,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.white.withValues(alpha: 0.92),
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.18),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 4,
+              offset: const Offset(0, 1),
             ),
           ],
         ),
         child: Center(
-          child: Icon(icon, size: 14.w, color: iconColor),
+          child: Icon(icon, size: 13.w, color: iconColor),
         ),
       ),
     );

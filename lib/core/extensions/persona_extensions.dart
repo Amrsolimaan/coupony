@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import '../../features/auth/domain/entities/user_persona.dart';
+import '../theme/app_colors.dart';
 
 /// ─────────────────────────────────────────────────────────────────────────────
 /// PERSONA EXTENSIONS
@@ -27,5 +29,25 @@ extension PersonaExtensions on UserPersona {
   /// Pending sellers have limited access and should see the pending view.
   bool get isPending {
     return this is SellerPersona && (this as SellerPersona).isPending;
+  }
+  
+  /// Returns the primary color based on the user's role.
+  /// 
+  /// - SELLER → primaryOfSeller (blue #215194)
+  /// - CUSTOMER → primary (orange)
+  /// - GUEST → primary (orange)
+  /// - LOADING → primary (orange)
+  /// 
+  /// Example:
+  /// ```dart
+  /// final color = context.read<PersonaCubit>().state.primaryColor;
+  /// ```
+  Color get primaryColor {
+    return switch (this) {
+      SellerPersona() => AppColors.primaryOfSeller,
+      CustomerPersona() => AppColors.primary,
+      GuestPersona() => AppColors.primary,
+      LoadingPersona() => AppColors.primary,
+    };
   }
 }

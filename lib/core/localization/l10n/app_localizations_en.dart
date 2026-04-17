@@ -1661,6 +1661,72 @@ class AppLocalizationsEn extends AppLocalizations {
   String get staff_update_error => 'Failed to update staff';
 
   @override
+  String get staff_add_title => 'Add New Staff';
+
+  @override
+  String get staff_add_personal_info => 'Personal Information';
+
+  @override
+  String get staff_add_role_assignment => 'Role & Assignment';
+
+  @override
+  String get staff_add_learn_more => 'Learn More About Roles';
+
+  @override
+  String get staff_add_email_hint => 'Email Address';
+
+  @override
+  String get staff_add_branch_hint => 'Select Branch';
+
+  @override
+  String get staff_add_submit => 'Send Invitation';
+
+  @override
+  String get staff_add_success => 'Staff member added successfully';
+
+  @override
+  String get staff_add_error_name_required => 'Name is required';
+
+  @override
+  String get staff_add_error_email_required => 'Email is required';
+
+  @override
+  String get staff_add_error_email_invalid => 'Invalid email address';
+
+  @override
+  String get staff_add_error_role_required => 'Please select a role';
+
+  @override
+  String get staff_add_error_branch_required => 'Please select a branch';
+
+  @override
+  String get staff_role_analyst => 'Data Analyst';
+
+  @override
+  String get staff_role_manager => 'General Manager';
+
+  @override
+  String get staff_roles_comparison_title => 'Role Permissions Comparison';
+
+  @override
+  String get staff_permission_label => 'Permission';
+
+  @override
+  String get staff_permission_scan_qr => 'Scan QR Code';
+
+  @override
+  String get staff_permission_view_data => 'View Data';
+
+  @override
+  String get staff_permission_add_data => 'Add Data';
+
+  @override
+  String get staff_permission_edit_data => 'Edit Data';
+
+  @override
+  String get staff_permission_delete_data => 'Delete Data';
+
+  @override
   String get notifications_page_title => 'Notifications';
 
   @override
@@ -3000,7 +3066,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get guest_login_button => 'Sign In';
-
-  @override
-  String get itch_button => 'Switch to Merchant';
 }

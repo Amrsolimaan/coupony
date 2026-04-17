@@ -789,7 +789,9 @@ class _SellerHomePageState extends State<SellerHomePage> {
             SizedBox(width: 12.w),
             Expanded(
               child: GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  context.push(AppRouter.addStaffMember);
+                },
                 child: Container(
                   height: 56.h,
                   padding: EdgeInsets.symmetric(horizontal: 12.w),

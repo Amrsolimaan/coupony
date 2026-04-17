@@ -37,6 +37,21 @@ class StoreCategoryEntity {
   });
 }
 
+/// Single reply to a review.
+class ReviewReplyEntity {
+  final String id;
+  final String authorName;
+  final String content;
+  final DateTime createdAt;
+
+  const ReviewReplyEntity({
+    required this.id,
+    required this.authorName,
+    required this.content,
+    required this.createdAt,
+  });
+}
+
 /// Single user review entry (mock field — not yet in the endpoint).
 class UserReviewEntity {
   final String id;
@@ -45,6 +60,9 @@ class UserReviewEntity {
   final double rating; // 1.0 – 5.0
   final String comment;
   final DateTime createdAt;
+  final int? likesCount; // Number of likes on this review
+  final bool? isLikedByCurrentUser; // Whether current user liked this review
+  final List<ReviewReplyEntity>? replies; // Replies to this review
 
   const UserReviewEntity({
     required this.id,
@@ -53,6 +71,9 @@ class UserReviewEntity {
     required this.rating,
     required this.comment,
     required this.createdAt,
+    this.likesCount,
+    this.isLikedByCurrentUser,
+    this.replies,
   });
 }
 

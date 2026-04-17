@@ -33,6 +33,17 @@ class StaffListCubit extends Cubit<StaffListState> {
     emit(StaffListLoading());
   }
 
+  void addStaff(StaffMemberEntity newStaff) {
+    if (state is StaffListLoaded) {
+      final currentState = state as StaffListLoaded;
+      final updatedList = [...currentState.allStaff, newStaff];
+      emit(currentState.copyWith(allStaff: updatedList));
+    } else {
+      // If state is loading or initial, create new loaded state
+      emit(StaffListLoaded(allStaff: [newStaff]));
+    }
+  }
+
   void updateStaff(StaffMemberEntity updatedStaff) {
     if (state is StaffListLoaded) {
       final currentState = state as StaffListLoaded;

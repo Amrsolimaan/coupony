@@ -1635,6 +1635,72 @@ class AppLocalizationsAr extends AppLocalizations {
   String get staff_update_error => 'فشل تحديث بيانات الموظف';
 
   @override
+  String get staff_add_title => 'إضافة موظف جديد';
+
+  @override
+  String get staff_add_personal_info => 'المعلومات الشخصية';
+
+  @override
+  String get staff_add_role_assignment => 'الدور والتعيين';
+
+  @override
+  String get staff_add_learn_more => 'تعرف أكتر على الأدوار';
+
+  @override
+  String get staff_add_email_hint => 'البريد الإلكتروني';
+
+  @override
+  String get staff_add_branch_hint => 'اختر الفرع';
+
+  @override
+  String get staff_add_submit => 'إرسال دعوة';
+
+  @override
+  String get staff_add_success => 'تم إضافة الموظف بنجاح';
+
+  @override
+  String get staff_add_error_name_required => 'الاسم مطلوب';
+
+  @override
+  String get staff_add_error_email_required => 'البريد الإلكتروني مطلوب';
+
+  @override
+  String get staff_add_error_email_invalid => 'البريد الإلكتروني غير صحيح';
+
+  @override
+  String get staff_add_error_role_required => 'يرجى اختيار الدور';
+
+  @override
+  String get staff_add_error_branch_required => 'يرجى اختيار الفرع';
+
+  @override
+  String get staff_role_analyst => 'محلل بيانات';
+
+  @override
+  String get staff_role_manager => 'مدير عام';
+
+  @override
+  String get staff_roles_comparison_title => 'مقارنة صلاحيات الأدوار';
+
+  @override
+  String get staff_permission_label => 'الصلاحية';
+
+  @override
+  String get staff_permission_scan_qr => 'مسح الـ QR';
+
+  @override
+  String get staff_permission_view_data => 'عرض البيانات';
+
+  @override
+  String get staff_permission_add_data => 'إضافة بيانات';
+
+  @override
+  String get staff_permission_edit_data => 'تعديل البيانات';
+
+  @override
+  String get staff_permission_delete_data => 'حذف البيانات';
+
+  @override
   String get notifications_page_title => 'الإشعارات';
 
   @override
@@ -2963,7 +3029,4 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get guest_login_button => 'تسجيل دخول';
-
-  @override
-  String get itch_button => 'Switch to Merchant';
 }

@@ -39,6 +39,8 @@ import 'package:coupony/features/seller_flow/dashboard_seller/presentation/pages
 import 'package:coupony/features/seller_flow/dashboard_seller/presentation/pages/edit_info_shop.dart';
 import 'package:coupony/features/seller_flow/dashboard_seller/presentation/pages/followers_shop.dart';
 import 'package:coupony/features/seller_flow/shop_stuff/presentation/pages/display_stuff_details.dart';
+import 'package:coupony/features/seller_flow/shop_stuff/presentation/pages/add_shop_stuff.dart';
+import 'package:coupony/features/seller_flow/shop_stuff/presentation/cubit/staff_list_cubit.dart';
 import 'package:coupony/features/seller_flow/dashboard_seller/presentation/cubit/edit_store_info_cubit.dart';
 import 'package:coupony/features/seller_flow/dashboard_seller/presentation/cubit/seller_home_cubit.dart';
 import 'package:coupony/features/seller_flow/dashboard_seller/presentation/cubit/seller_store_cubit.dart';
@@ -203,6 +205,7 @@ const _sellerOnlyRoutes = {
   AppRouter.sellerEditStore,
   AppRouter.sellerFollowers,
   AppRouter.displayStaffDetails,
+  AppRouter.addStaffMember,
   AppRouter.storeSelection,
 };
 
@@ -231,6 +234,7 @@ class AppRouter {
   static const String sellerEditStore = '/seller-edit-store';
   static const String sellerFollowers = '/seller-followers';
   static const String displayStaffDetails = '/display-staff-details';
+  static const String addStaffMember = '/add-staff-member';
   static const String login = '/login';
   static const String register = '/register';
   static const String otpVerification = '/otp-verification';
@@ -622,6 +626,18 @@ class AppRouter {
           context: context,
           state: state,
           child: const DisplayStaffDetailsPage(),
+        ),
+      ),
+
+      GoRoute(
+        path: addStaffMember,
+        pageBuilder: (context, state) => AppPageTransition.build(
+          context: context,
+          state: state,
+          child: BlocProvider(
+            create: (context) => StaffListCubit()..loadStaff(),
+            child: const AddShopStuffPage(),
+          ),
         ),
       ),
 
